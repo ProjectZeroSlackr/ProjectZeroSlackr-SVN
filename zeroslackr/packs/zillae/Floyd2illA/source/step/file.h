@@ -1,0 +1,11 @@
+int countCommas(const char *s);
+char * cutLSpaces(const char * s);
+inline unsigned char getStepByte(char c);
+int getTag(char* data, char **tag, char ** tdata, const char d);
+int getTagSafe(char* data, char* tag, char* tdata);
+int importSteps(const char *s);
+int handleTagInfo(char *tagd, char *data, songInfo *song);
+int handleTag(char *tagd, char *data);
+void loadSong(char* filename, songInfo* song);
+void findSongs();
+void writeAlbumList(char *filename);
