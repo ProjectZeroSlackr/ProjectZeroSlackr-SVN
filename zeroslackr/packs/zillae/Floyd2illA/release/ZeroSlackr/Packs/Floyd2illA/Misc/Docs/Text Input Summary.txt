@@ -1,0 +1,166 @@
+Serial
+
+This mode will only work with a physical keyboard, most likely attached to the iPod's
+serial port. This mode can generate whatever ASCII characters the keyboard generates.
+
+Backspace: Backspace
+Space: Space
+Move Cursor: ASCII Codes 0x1C and 0x1D (^\ and ^]; FS and GS)
+New Line: ASCII Code 0x0A or 0x0D (^J or ^M; LF or CR)
+Exit: ASCII Code 0x1B (^[; ESC)
+
+
+Scroll Through & Dial Type
+
+Use the scroll wheel to select a character. Press the action button to input that character.
+If you're using Dial Type, you will return to the beginning of the character list after
+inputting a character. To move the cursor, select the M at the end of the character list,
+then use the scroll wheel to move the cursor; to return to character selection, press the
+action button.
+
+Scroll Through and Dial Type will output all basic ASCII characters.
+
+Backspace: Rewind
+Space: Forward
+Move Cursor: option at end of character list
+New Line: Play/Pause
+Exit: Menu
+
+
+On-Screen Keyboard
+
+Use the scroll wheel to select a key on the on-screen keyboard. Press the action button to
+hit that key. Use the two arrow keys to move the cursor.
+
+On-Screen Keyboard will output all basic ASCII, all ISO Latin 1, and some Latin Extended
+characters.
+
+Backspace: Rewind
+Space: Forward
+Move Cursor: arrow keys on on-screen keyboard
+New Line: Play/Pause
+Exit: Menu
+
+
+Morse Code
+
+Use the action button as a telegraph key to enter characters in morse code. To shift
+between uppercase and lowercase, move the scroll wheel left or right respectively.
+Use .-... and .-..- to move the cursor left or right, respectively.
+
+Morse Code will output all basic ASCII and a couple ISO Latin 1 characters.
+
+Backspace: Rewind
+Space: Forward
+Move Cursor: .-... and .-..-
+New Line: Play/Pause
+Exit: Menu
+
+
+Cursive
+
+Use the scroll wheel and action button to approximate English cursive script. Use
+Play/Pause to shift into uppercase and additional symbols. Use the strokes oll
+and orr to move the cursor.
+
+Cursive will output all basic ASCII characters.
+
+Backspace: Rewind
+Space: Forward
+Move Cursor: oll and orr
+New Line: orrr
+Exit: Menu
+
+
+WheelBoard
+
+Use the scroll wheel to select the side of the screen with the character you want.
+Use the center button to change character sets. Character sets cycle as thus:
+lowercase > uppercase > numbers > punctuation > lowercase accents > uppercase
+accents > cursor movement. Use the scroll wheel in the Move Cursor character set
+to move the cursor.
+
+WheelBoard will output all basic ASCII and some ISO Latin 1 characters.
+
+Backspace: Rewind
+Space: Forward
+Move Cursor: special character set
+New Line: Play/Pause
+Exit: Menu
+
+
+Four-Button Keyboard
+
+Use the four buttons Rewind, Menu, Play/Pause, and Forward to select among the four
+options in the menu at the bottom of the screen. (This makes most sense on a third-
+generation iPod, but still works on other generations once you get the pattern.) Each
+option either changes the menu, or inputs a character and returns to the home menu.
+Pressing the center button returns to the home menu no matter where you are.
+Use the scroll wheel to move the cursor.
+
+Four-Button Keyboard will output all basic ASCII and all ISO Latin 1 characters.
+
+Backspace: Forward, Play/Pause
+Space: Forward, Menu
+Move Cursor: Scroll Wheel
+New Line: Forward, Forward, Forward
+Exit: Hold Down Action Button
+
+
+Telephone Keypad (4g)
+
+This will only work with fourth-generation, second-generation mini, photo, and color iPods.
+Use eight sections of the click wheel and the action button as a telephone keypad and
+input characters as you would on a cellular phone. Use Rewind and Forward to move the
+cursor.
+
+To enter predictive text mode, hold down the action button. The first time you do this
+the predictive text dictionary will be loaded from /usr/share/dict/ptextwords. A P will
+appear in the bottom right corner of the text window to show you are in predictive text
+mode. The buttons 2-9 will immediately enter characters. If there is more than one word
+for a number sequence, use the 1 key to enter 1's after the word until it is the word
+you want.
+
+Backspace: 1 (x2)
+Space: 1 (x1)
+Move Cursor: Rewind and Forward
+New Line: Play/Pause or 1 (x9)
+Exit: Menu
+
+
+Thumbscript (4g)
+
+This will only work with fourth-generation, second-generation mini, photo, and color iPods.
+Use eight sections of the click wheel and the action button as a telephone keypad and
+input characters using Thumbscript (see http://www.thumbscript.com). Use Rewind and Forward
+to move the cursor.
+
+Backspace: 3, 3
+Space: 8, 8
+Move Cursor: Rewind and Forward
+New Line: Play/Pause or 6, 6 or 6, 7
+Exit: Menu
+
+
+Four-Button Telephone Keypad
+
+Use the three buttons Rewind, Action, and Forward (or Rewind, Menu, Play/Pause on
+a third-generation iPod) as a row of the telephone keypad and input characters as
+you would on a cellular phone. Use Play/Pause (or Forward on a third-generation iPod)
+to switch rows. Use the scroll wheel to move the cursor.
+
+To enter predictive text mode, hold down the action button (on all generations). The first
+time you do this the predictive text dictionary will be loaded from /usr/share/dict/ptextwords.
+A P will appear in the bottom right corner of the text window to show you are in predictive
+text mode. The buttons 2-9 will immediately enter characters. If there is more than one
+word for a number sequence, use the 1 key to enter 1's after the word until it is the word
+you want.
+
+Four-Button Telephone Keypad will output all basic ASCII and some ISO Latin 1 characters.
+
+Backspace: 1 (x2)
+Space: 1 (x1)
+Move Cursor: Scroll Wheel
+New Line: 1 (x9)
+Exit: Action Button
+
