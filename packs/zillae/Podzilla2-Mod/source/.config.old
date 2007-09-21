@@ -1,0 +1,9 @@
+#
+# Automatically generated make config: don't edit
+#
+MODULES=y
+
+#
+# Miscellaneous
+#
+MODULE_Built-In-File-Browser=m
