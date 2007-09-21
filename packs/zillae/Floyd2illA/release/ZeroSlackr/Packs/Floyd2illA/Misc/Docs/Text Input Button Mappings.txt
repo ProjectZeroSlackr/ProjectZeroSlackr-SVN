@@ -1,0 +1,81 @@
+Scroll Through & Dial Type:
+Rewind - Backspace
+Menu - Exit
+Play - Newline
+Forward - Space
+Left - Previous Char
+Right - Next Char
+Center - Input Char
+
+On-Screen Keyboard:
+Rewind - Backspace
+Menu - Exit
+Play - Newline
+Forward - Space
+Left - Select Previous Key
+Right - Select Next Key
+Center - Press Key
+
+Morse Code:
+Rewind - Backspace
+Menu - Exit
+Play - Newline
+Forward - Space
+Left - Uppercase
+Right - Lowercase
+Center - Key
+
+Cursive:
+Rewind - Backspace
+Menu - Exit
+Play - Shift
+Forward - Space
+Left - L Stroke
+Right - R Stroke
+Center - O Stroke
+
+Wheelboard:
+Rewind - Backspace
+Menu - Exit
+Play - Newline
+Forward - Space
+Left - Left
+Right - Right
+Center - Switch Character Sets
+
+Four Button Keyboard:
+Rewind - Option 1
+Menu - Option 2
+Play - Option 3
+Forward - Option 4
+Left - Move Cursor Left
+Right - Move Cursor Right
+Center - Home, Exit
+
+Telephone Keypad & Thumbscript:
+Rewind - Move Cursor Left
+Menu - Exit
+Play - Newline
+Forward - Move Cursor Right
+Left - 1, 2, 3, 4, 6, 7, 8, 9 Keys
+Right - 1, 2, 3, 4, 6, 7, 8, 9 Keys
+Center - 5 Key
+
+Four Button Keypad (3g):
+Rewind - Button 1
+Menu - Button 2
+Play - Button 3
+Forward - Switch Rows
+Left - Move Cursor Left
+Right - Move Cursor Right
+Center - Exit
+
+Four Button Keypad (Others):
+Rewind - Button 1
+Center - Button 2
+Forward - Button 3
+Play - Switch Rows
+Menu - Exit
+Left - Move Cursor Left
+Right - Move Cursor Right
+

@@ -1,0 +1,9 @@
+Step Dance Revolution whatever pre alpha
+
+Instructions for installation
+1. Place tstep.h and tstep.c, and the .dwi file into the podzilla directory.
+2. Goto http://www.ipodlinux.org/Modifying_Podzilla
+3. Scroll down to "The podzilla menu system"
+4. Follow their directions, except whenever "steroids" is mentioned, replace that with "tstep".
+5. Also follow the directions for Building podzilla.
+
