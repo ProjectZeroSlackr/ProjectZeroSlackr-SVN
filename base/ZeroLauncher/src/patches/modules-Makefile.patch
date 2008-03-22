@@ -1,0 +1,21 @@
+Index: modules/Makefile
+===================================================================
+--- modules/Makefile	(revision 2399)
++++ modules/Makefile	(working copy)
+@@ -22,6 +22,8 @@
+ 		cd $$dir; \
+ 		make -sqf ../../module.mk || echo $$dir >> ../.mods; \
+ 		make -sf ../../module.mk; \
++		cp Module PackInfo; \
++		rm -f *.o; \
+ 		cd ..; \
+ 	done
+ 	@if find * -name built-in.o | grep -q '/built-in.o'; then \
+@@ -54,6 +57,7 @@
+ 		cd $$dir; \
+ 		echo " CLEAN   $$dir"; \
+ 		make -sf ../../module.mk clean; \
++		rm -f PackInfo; \
+ 		cd ..; \
+ 	done
+ 	@rm -f built-in.o

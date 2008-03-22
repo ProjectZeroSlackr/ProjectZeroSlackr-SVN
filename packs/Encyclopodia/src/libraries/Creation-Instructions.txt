@@ -1,0 +1,26 @@
+Last updated: March 7, 2008
+~Keripo
+
+1. Compile wiki2ebook. A pre-compiled Linux binary is provided.
+2. Download an .xml wiki dump.
+   For creating an iPodLinux wiki dump, go to
+   http://ipodlinux.org/Special:Export
+   Copy-paste the content of "iPL-Export-List.txt"
+   into the text box, then save the export as a .xml file
+   (you can generate your own list by copying the content of
+   http://ipodlinux.org/Special:Allpages, then replacing
+   all tab characters with newline characters)
+   Note that if you downloaded a dump with a .gz extension
+   you will have to extract it first (e.g. "gzip -d blah.xml.gz")
+3. Run "wiki2ebook blah.xml"
+4. Create a duplicate of "ipodlinux-wiki-articles-YYYY-MM-DD.epodia"
+   and modify it using an advanced text editor (e.g. your new file
+   can be named "blah.epodia") - make sure the last two hex
+   characters are "0A 0A"
+5. Run the following commands in order:
+   cat articleindex_top >> blah.epodia
+   cat articleindex >> blah.epodia
+   cat compressedarticles >> blah.epodia
+6. You now have an .epodia file that should work with Encyclopodia
+   (test it out - if its good, upload it and share it on the forums)
+

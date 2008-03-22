@@ -1,0 +1,6 @@
+Module: browser-ext
+Display-name: browser-ext
+Description: Collection of useful browser functions for ZeroLauncher.
+Category: Tools
+Author: Keripo
+Dependencies: browser,terminal

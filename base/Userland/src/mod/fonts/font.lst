@@ -1,0 +1,57 @@
+# Last updated: March 9, 2008
+# ~Keripo
+#
+# Edited list to include some user-generated fonts.
+# SVN fonts are unlikely to change.
+# This is for podzilla-legacy (PZ0) based zillae
+#
+[Apple_II_40_Column.fnt] (Apple II 40 Column) <9>
+[Apple_II_80_Column.fnt] (Apple II 80 Column) <18>
+[CFuturo-15.fnt] (C-Futuro) <15>
+[Chalk-18.fnt] (Chalk) <18>
+[Chalkboard.fnt] (Chalkboard) <12>
+[Chicago.fnt] (Chicago) <12> {+2}
+[Chixa-14.fnt] (Chixa) <14> {-1}
+[ComicSansMS.fnt] (Comic Sans MS) <12>
+[ComicSansMS-Bold.fnt] (Comic Sans MS Bold) <12>
+[Commodore_diamond_12.fnt] (Diamond) <12> {+2}
+[EpilepsySans.fnt] (Epilepsy Sans) <10>
+[EspySans-13.fnt] (Espy Sans) <10>
+[GadgetRegular.fnt] (Gadget) <12>
+[GPalatino-12.fnt] (GPalatino) <12>
+[GPalatino-14.fnt] (GPalatino) <14>
+[LiorahBT-Regular-12.fnt] (Liorah) <12>
+[LisaWrite_Paper.fnt] (LisaWrite Paper) <12>
+[Los_Angeles.fnt] (Los Angeles) <12>
+[LucidaGrande.fnt] (Lucida Grande) <12>
+[MyriadPro-12.fnt] (Myriad) <12>
+[Commodore_opal_9.fnt] (Opal) <9> {+1}
+[UmlautLlama_onyx_9.fnt] (Onyx) <9>
+[Commodore_opal_9_dbl.fnt] (Opal Double) <18> {+1}
+[UmlautLlama_peridot_7.fnt] (Peridot) <7> {+1}
+[Sabine_Doscbthm.fnt] (Sabine Doscbthm) <9>
+[Sabine_Doscbthm_Black.fnt] (Sabine Doscbthm Black) <9>
+[Sabine_Doscbthm_Script.fnt] (Sabine Doscbthm Script) <9>
+[Sabine_Doscbthm_Serif.fnt] (Sabine Doscbthm Serif) <9>
+[Sabine_Doscbthm_Smallcaps.fnt] (Sabine Doscbthm Smallcaps) <9>
+[SeaChelUnicode.fnt] (SeaChel) <9>
+[Sempach.fnt] (Sempach) <9>
+[Sempach-12.fnt] (Sempach II) <12>
+[Some_Acronym.fnt] (Some Acronym) <9>
+[Commodore_topaz_8.fnt] (Topaz) <8>
+[Commodore_topaz_8_dbl.fnt] (Topaz Doubled) <16> {+1}
+[Commodore_topaz2_8.fnt] (Topaz Sans) <8>
+[Commodore_topaz2_8_dbl.fnt] (Topaz Sans Doubled) <16> {+1}
+[Twiggy.fnt] (Twiggy) <12>
+[Unifont.fnt] (Unifont) <12>
+[1979.fnt] (1979) <12>
+[burton.fnt] (Burton) <12>
+[Familyguy.fnt] (FamilyGuy) <12>
+[gishhand.fnt] (Gish Handwriting) <12>
+[gishreg.fnt] (Gish) <12>
+[jfont.fnt] (JFont) <12>
+[siamese.fnt] (Siamese) <12>
+[snap.fnt] (Snap) <11>
+[SixteenSegments.fnt] (Segments) <12>
+[tonight.fnt] (Tonight) <12>
+[zero.fnt] (Zero) <12>

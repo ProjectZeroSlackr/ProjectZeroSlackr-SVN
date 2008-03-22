@@ -1,0 +1,61 @@
+Last updated: March 19, 2008
+~Keripo
+
+All code/scripts written by Keripo are licensed under
+GNU GPL - see License.txt. For the licensing of the
+software/application, refer to the documents found in
+Docs/Original or the license that comes with the
+original/ported software.
+
+Overview:
+Podzilla2-SVN
+- Podzilla2-SVN is an SVN build of podzilla2 (also known
+  as podzilla or PZ2).
+- Podzilla2 is the official GUI of iPodLinux, replacing
+  the now defunct podzilla0.
+- It is written as a series of APIs allowing for the extension
+  of functionality through modules; PZ2 is also skinable.
+- The ZeroSlackr pack comes with all official SVN modules
+  presorted into categories for which ZeroLauncher can select
+  for loading.
+- The ZeroSlackr version just has a few string changes for
+  ZeroSlackr Framework compatibility (most previous patches
+  have already been accepted into the official SVN).
+For more information, see:
+- http://ipodlinux.org/Podzilla
+- http://ipodlinux.org/Special:Module
+- http://ipodlinux.org/Special:Scheme
+- http://ipodlinux.org/IPLCSE
+- http://ipodlinux.org/Creating_podzilla2_schemes
+- http://www.ipodlinux.org/forums/viewtopic.php?p=47290#47290 (epic post)
+- http://en.wikipedia.org/wiki/Graphical_user_interface
+
+
+Original:
+- Authors: iPL Core Devs
+- Source: SVN
+- Link: https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/apps/ipod/podzilla2
+- Date: March 16, 2008
+- Version: Revision 2403
+
+ZS Version:
+- Modder: Keripo
+- Type: Mod and ZS Recompile
+- Date: March 19, 2008
+- Version: B X.X
+
+Modifications:
+(see patch files of source for details)
+- modified paths
+- custom default settings
+- same module modifications as ZeroLauncher
+
+Launch Module:
+- multiple pre-set module folder loads
+- settings for toggling on-off menu items
+
+To do:
+- none
+
+Changelog:
+[keep untouched till beta release]

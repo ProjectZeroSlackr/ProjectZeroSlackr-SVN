@@ -1,0 +1,65 @@
+diff -ur ipod.h ipod.h
+--- ipod.h	2008-02-29 18:39:35.000000000 +0000
++++ ipod.h	2008-02-29 18:39:36.000000000 +0000
+@@ -22,7 +22,7 @@
+ /* Global Settings */
+ 
+ #ifdef IPOD
+-#define IPOD_SETTINGS_FILE	"/etc/podzilla.conf"
++#define IPOD_SETTINGS_FILE	"/opt/Podzilla0-SVN/Conf/podzilla0-svn.conf"
+ #else
+ #define IPOD_SETTINGS_FILE	"podzilla.conf"
+ #endif
+Only in compiling: mp3decoder.o
+Only in mpdc: menu.o
+Only in mpdc: mpdc.o
+Only in mpdc: playing.o
+Only in mpdc: submenu.o
+diff -ur poddraw.c poddraw.c
+--- poddraw.c	2008-02-29 18:39:35.000000000 +0000
++++ poddraw.c	2008-02-29 18:40:53.000000000 +0000
+@@ -105,7 +105,7 @@
+ 
+ 	t = time( NULL );
+ 	current_time = localtime( &t );
+-	strftime( buf, 64, "%Y-%m-%d_%H%M.ppm", current_time );
++	strftime( buf, 64, "/opt/Podzilla0-Lite/Data/%Y-%m-%d_%H%M.ppm", current_time );
+ 
+ 	fp = fopen( buf, "w" );
+ 	if( !fp ) return;
+diff -ur tunnel.c tunnel.c
+--- tunnel.c	2008-02-29 18:39:35.000000000 +0000
++++ tunnel.c	2008-02-29 18:41:14.000000000 +0000
+@@ -35,7 +35,7 @@
+ static GR_WINDOW_ID temp_pixmap;
+ 
+ #ifdef IPOD
+-#define SAVEFILE "/home/.tunnel"
++#define SAVEFILE "/opt/Podzilla0-Lite/Data/tunnel.txt"
+ #else
+ #define SAVEFILE ".tunnel"
+ #endif
+diff -ur tuxchess/main.c tuxchess/main.c
+--- tuxchess/main.c	2008-03-03 16:05:16.000000000 +0000
++++ tuxchess/main.c	2008-03-03 16:20:06.000000000 +0000
+@@ -16,7 +16,7 @@
+ #include "../ipod.h"
+ #include "../pz.h"
+ 
+-#define LASTGAME ".tuxchess"
++#define LASTGAME "/opt/Podzilla0-SVN/Data/tuxchess.save"
+ 
+ #define MWINCLUDECOLORS
+ #include "nano-X.h"
+diff -ur bluecube/main.c bluecube/main.c
+--- bluecube/main.c	2008-03-03 16:05:16.000000000 +0000
++++ bluecube/main.c	2008-03-03 16:21:43.000000000 +0000
+@@ -29,7 +29,7 @@
+ #include "../ipod.h"
+ #include "../pz.h"
+ 
+-#define HIGHSCORE ".bluecube"
++#define HIGHSCORE "/opt/Podzilla0-SVN/Data/bluecube.txt"
+ 
+ static void tetris_do_draw(void);
+ static int tetris_do_keystroke(GR_EVENT *);

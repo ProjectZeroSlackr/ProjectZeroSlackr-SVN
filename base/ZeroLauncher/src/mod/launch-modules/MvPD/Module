@@ -1,0 +1,6 @@
+Module: MvPD
+Display-name: MvPD
+Description: Compressed video player for specially converted format. 
+Category: Media
+Author: Gaspode
+Dependencies: browser,browser-ext

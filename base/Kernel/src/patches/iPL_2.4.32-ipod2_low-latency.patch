@@ -1,0 +1,1798 @@
+Index: linux-2.4.32-ipod1/Documentation/Configure.help
+===================================================================
+--- linux-2.4.32-ipod1.orig/Documentation/Configure.help
++++ linux-2.4.32-ipod1/Documentation/Configure.help
+@@ -110,6 +110,23 @@ CONFIG_ADVANCED_OPTIONS
+ 
+   Unless you know what you are doing you *should not* enable this option.
+ 
++Low latency scheduling
++CONFIG_LOLAT
++  This enables low latency scheduling, with reduces the scheduling
++  latency of the kernel.  This makes the kernel more responsive, and
++  potentially increases its bandwidth; since threads waste less time
++  waiting for execution.
++
++  If you don't know what to do here, say Y.
++
++Control low latency with sysctl
++CONFIG_LOLAT_SYSCTL
++  If you say Y here, you will be able to control low latency
++  scheduling using /proc/sys/kernel/lowlatency.  It will default
++  to '0': low latency disabled.
++
++  If you say N here, then low latency scheduling is always enabled.
++
+ Symmetric Multi-Processing support
+ CONFIG_SMP
+   This enables support for systems with more than one CPU. If you have
+Index: linux-2.4.32-ipod1/arch/armnommu/config.in
+===================================================================
+--- linux-2.4.32-ipod1.orig/arch/armnommu/config.in
++++ linux-2.4.32-ipod1/arch/armnommu/config.in
+@@ -59,6 +59,9 @@ choice 'ARM system type' \
+ 	  Atmel			CONFIG_ARCH_ATMEL \
+ 	  iPod			CONFIG_ARCH_IPOD" TI-DSC21
+ 
++bool 'Low latency scheduling' CONFIG_LOLAT
++dep_bool 'Control low latency with sysctl' CONFIG_LOLAT_SYSCTL $CONFIG_LOLAT
++
+ if [ "$CONFIG_ARCH_TA7V" = "y" ]; then
+    choice ' Triscend A7V Derivative' \
+    	" A7VL		CONFIG_ARCH_TA7VL \
+Index: linux-2.4.32-ipod1/arch/i386/config.in
+===================================================================
+--- linux-2.4.32-ipod1.orig/arch/i386/config.in
++++ linux-2.4.32-ipod1/arch/i386/config.in
+@@ -25,6 +25,9 @@ endmenu
+ 
+ mainmenu_option next_comment
+ comment 'Processor type and features'
++bool 'Low latency scheduling' CONFIG_LOLAT
++dep_bool 'Control low latency with sysctl' CONFIG_LOLAT_SYSCTL $CONFIG_LOLAT
++
+ choice 'Processor family' \
+ 	"386					CONFIG_M386 \
+ 	 486					CONFIG_M486 \
+Index: linux-2.4.32-ipod1/drivers/block/ll_rw_blk.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/drivers/block/ll_rw_blk.c
++++ linux-2.4.32-ipod1/drivers/block/ll_rw_blk.c
+@@ -1328,6 +1328,7 @@ void submit_bh(int rw, struct buffer_hea
+ 			kstat.pgpgin += count;
+ 			break;
+ 	}
++	conditional_schedule();
+ }
+ 
+ /**
+Index: linux-2.4.32-ipod1/drivers/char/mem.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/drivers/char/mem.c
++++ linux-2.4.32-ipod1/drivers/char/mem.c
+@@ -420,7 +420,7 @@ static inline size_t read_zero_pagealign
+ 		if (count > size)
+ 			count = size;
+ 
+-		zap_page_range(mm, addr, count);
++		zap_page_range(mm, addr, count, 0);
+         	zeromap_page_range(addr, count, PAGE_COPY);
+ 
+ 		size -= count;
+Index: linux-2.4.32-ipod1/drivers/char/random.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/drivers/char/random.c
++++ linux-2.4.32-ipod1/drivers/char/random.c
+@@ -1379,6 +1379,11 @@ static ssize_t extract_entropy(struct en
+ 		buf += i;
+ 		ret += i;
+ 		add_timer_randomness(&extract_timer_state, nbytes);
++#if LOWLATENCY_NEEDED
++		/* This can happen in softirq's, but that's what we want */
++		if (conditional_schedule_needed())
++			break;
++#endif
+ 	}
+ 
+ 	/* Wipe data just returned from memory */
+Index: linux-2.4.32-ipod1/drivers/i2c/i2c-algo-bit.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/drivers/i2c/i2c-algo-bit.c
++++ linux-2.4.32-ipod1/drivers/i2c/i2c-algo-bit.c
+@@ -367,6 +367,7 @@ static int sendbytes(struct i2c_adapter 
+ 			return (retval<0)? retval : -EFAULT;
+ 			        /* got a better one ?? */
+ 		}
++		conditional_schedule();
+ #if 0
+ 		/* from asm/delay.h */
+ 		__delay(adap->mdelay * (loops_per_sec / 1000) );
+Index: linux-2.4.32-ipod1/drivers/i2c/i2c-core.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/drivers/i2c/i2c-core.c
++++ linux-2.4.32-ipod1/drivers/i2c/i2c-core.c
+@@ -724,6 +724,8 @@ int i2c_transfer(struct i2c_adapter * ad
+ {
+ 	int ret;
+ 
++	conditional_schedule();
++
+ 	if (adap->algo->master_xfer) {
+  	 	DEB2(printk(KERN_DEBUG "i2c-core.o: master_xfer: %s with %d msgs.\n",
+ 		            adap->name,num));
+@@ -746,6 +748,8 @@ int i2c_master_send(struct i2c_client *c
+ 	struct i2c_adapter *adap=client->adapter;
+ 	struct i2c_msg msg;
+ 
++	conditional_schedule();
++
+ 	if (client->adapter->algo->master_xfer) {
+ 		msg.addr   = client->addr;
+ 		msg.flags = client->flags & I2C_M_TEN;
+@@ -775,6 +779,9 @@ int i2c_master_recv(struct i2c_client *c
+ 	struct i2c_adapter *adap=client->adapter;
+ 	struct i2c_msg msg;
+ 	int ret;
++
++	conditional_schedule();
++
+ 	if (client->adapter->algo->master_xfer) {
+ 		msg.addr   = client->addr;
+ 		msg.flags = client->flags & I2C_M_TEN;
+Index: linux-2.4.32-ipod1/drivers/video/fbcon-cfb16.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/drivers/video/fbcon-cfb16.c
++++ linux-2.4.32-ipod1/drivers/video/fbcon-cfb16.c
+@@ -15,6 +15,7 @@
+ #include <linux/string.h>
+ #include <linux/fb.h>
+ #include <asm/io.h>
++#include <linux/sched.h>
+ 
+ #include <video/fbcon.h>
+ #include <video/fbcon-cfb16.h>
+@@ -199,6 +200,7 @@ void fbcon_cfb16_putcs(struct vc_data *c
+     case 6:
+     case 8:
+ 	while (count--) {
++	    conditional_schedule();
+ 	    c = scr_readw(s++) & p->charmask;
+ 	    cdat = p->fontdata + c * fontheight(p);
+ 	    for (rows = fontheight(p), dest = dest0; rows--; dest += bytes) {
+@@ -217,6 +219,7 @@ void fbcon_cfb16_putcs(struct vc_data *c
+     case 12:
+     case 16:
+ 	while (count--) {
++	    conditional_schedule();
+ 	    c = scr_readw(s++) & p->charmask;
+ 	    cdat = p->fontdata + (c * fontheight(p) << 1);
+ 	    for (rows = fontheight(p), dest = dest0; rows--; dest += bytes) {
+Index: linux-2.4.32-ipod1/fs/buffer.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/fs/buffer.c
++++ linux-2.4.32-ipod1/fs/buffer.c
+@@ -261,8 +261,10 @@ static int write_some_buffers(kdev_t dev
+ 
+ 		if (dev != NODEV && bh->b_dev != dev)
+ 			continue;
+-		if (test_and_set_bit(BH_Lock, &bh->b_state))
++		if (test_and_set_bit(BH_Lock, &bh->b_state)) {
++			__refile_buffer(bh);
+ 			continue;
++		}
+ 		if (buffer_delay(bh)) {
+ 			if (write_buffer_delay(bh)) {
+ 				if (count)
+@@ -278,6 +280,7 @@ static int write_some_buffers(kdev_t dev
+ 
+ 			spin_unlock(&lru_list_lock);
+ 			write_locked_buffers(array, count);
++			conditional_schedule();
+ 			return -EAGAIN;
+ 		}
+ 		unlock_buffer(bh);
+@@ -311,12 +314,19 @@ static int wait_for_buffers(kdev_t dev, 
+ 	struct buffer_head * next;
+ 	int nr;
+ 
+-	next = lru_list[index];
+ 	nr = nr_buffers_type[index];
++repeat:
++	next = lru_list[index];
+ 	while (next && --nr >= 0) {
+ 		struct buffer_head *bh = next;
+ 		next = bh->b_next_free;
+ 
++		if (conditional_schedule_needed()) {
++			spin_unlock(&lru_list_lock);
++			unconditional_schedule();
++			spin_lock(&lru_list_lock);
++			goto repeat;
++		}
+ 		if (!buffer_locked(bh)) {
+ 			if (refile)
+ 				__refile_buffer(bh);
+@@ -324,7 +334,6 @@ static int wait_for_buffers(kdev_t dev, 
+ 		}
+ 		if (dev != NODEV && bh->b_dev != dev)
+ 			continue;
+-
+ 		get_bh(bh);
+ 		spin_unlock(&lru_list_lock);
+ 		wait_on_buffer (bh);
+@@ -357,6 +366,15 @@ int sync_buffers(kdev_t dev, int wait)
+ {
+ 	int err = 0;
+ 
++#if LOWLATENCY_NEEDED
++	/*
++	 * syncing devA when there are lots of buffers dirty against
++	 * devB is expensive.
++	 */
++	if (enable_lowlatency)
++		dev = NODEV;
++#endif
++
+ 	/* One pass for no-wait, three for wait:
+ 	 * 0) write out all dirty, unlocked buffers;
+ 	 * 1) wait for all dirty locked buffers;
+@@ -724,6 +742,7 @@ void invalidate_bdev(struct block_device
+ 	int i, nlist, slept;
+ 	struct buffer_head * bh, * bh_next;
+ 	kdev_t dev = to_kdev_t(bdev->bd_dev);	/* will become bdev */
++	int lolat_retry = 0;
+ 
+  retry:
+ 	slept = 0;
+@@ -741,6 +760,17 @@ void invalidate_bdev(struct block_device
+ 			/* Not hashed? */
+ 			if (!bh->b_pprev)
+ 				continue;
++
++			if (lolat_retry < 10 && conditional_schedule_needed()) {
++				get_bh(bh);
++				spin_unlock(&lru_list_lock);
++				unconditional_schedule();
++				spin_lock(&lru_list_lock);
++				put_bh(bh);
++				slept = 1;
++				lolat_retry++;
++			}
++
+ 			if (buffer_locked(bh)) {
+ 				get_bh(bh);
+ 				spin_unlock(&lru_list_lock);
+@@ -892,12 +922,18 @@ int fsync_buffers_list(struct list_head 
+ 	struct buffer_head *bh;
+ 	struct list_head tmp;
+ 	int err = 0, err2;
+-	
++	DEFINE_RESCHED_COUNT;
++
+ 	INIT_LIST_HEAD(&tmp);
+-	
++repeat:
+ 	spin_lock(&lru_list_lock);
+ 
+ 	while (!list_empty(list)) {
++		if (conditional_schedule_needed()) {
++			spin_unlock(&lru_list_lock);
++			unconditional_schedule();
++			goto repeat;
++		}
+ 		bh = BH_ENTRY(list->next);
+ 		list_del(&bh->b_inode_buffers);
+ 		if (!buffer_dirty(bh) && !buffer_locked(bh))
+@@ -922,8 +958,18 @@ int fsync_buffers_list(struct list_head 
+ 				spin_lock(&lru_list_lock);
+ 			}
+ 		}
++		if (TEST_RESCHED_COUNT(32)) {
++			RESET_RESCHED_COUNT();
++			if (conditional_schedule_needed()) {
++				spin_unlock(&lru_list_lock);
++				unconditional_schedule();
++				spin_lock(&lru_list_lock);
++			}
++		}
+ 	}
+ 
++	RESET_RESCHED_COUNT();
++
+ 	while (!list_empty(&tmp)) {
+ 		bh = BH_ENTRY(tmp.prev);
+ 		remove_inode_queue(bh);
+@@ -933,6 +979,7 @@ int fsync_buffers_list(struct list_head 
+ 		if (!buffer_uptodate(bh))
+ 			err = -EIO;
+ 		brelse(bh);
++		conditional_schedule();
+ 		spin_lock(&lru_list_lock);
+ 	}
+ 	
+@@ -960,11 +1007,20 @@ static int osync_buffers_list(struct lis
+ 	struct buffer_head *bh;
+ 	struct list_head *p;
+ 	int err = 0;
++	DEFINE_RESCHED_COUNT;
+ 
++repeat:
++	conditional_schedule();
+ 	spin_lock(&lru_list_lock);
+ 	
+- repeat:
+ 	list_for_each_prev(p, list) {
++		if (TEST_RESCHED_COUNT(32)) {
++			RESET_RESCHED_COUNT();
++			if (conditional_schedule_needed()) {
++				spin_unlock(&lru_list_lock);
++				goto repeat;
++			}
++		}
+ 		bh = BH_ENTRY(p);
+ 		if (buffer_locked(bh)) {
+ 			get_bh(bh);
+@@ -973,7 +1029,6 @@ static int osync_buffers_list(struct lis
+ 			if (!buffer_uptodate(bh))
+ 				err = -EIO;
+ 			brelse(bh);
+-			spin_lock(&lru_list_lock);
+ 			goto repeat;
+ 		}
+ 	}
+@@ -990,12 +1045,24 @@ static int osync_buffers_list(struct lis
+ void invalidate_inode_buffers(struct inode *inode)
+ {
+ 	struct list_head * entry;
+-	
++
++repeat:
++	conditional_schedule();
+ 	spin_lock(&lru_list_lock);
+-	while ((entry = inode->i_dirty_buffers.next) != &inode->i_dirty_buffers)
++	while ((entry = inode->i_dirty_buffers.next) != &inode->i_dirty_buffers) {
++		if (conditional_schedule_needed()) {
++			spin_unlock(&lru_list_lock);
++			goto repeat;
++		}
+ 		remove_inode_queue(BH_ENTRY(entry));
+-	while ((entry = inode->i_dirty_data_buffers.next) != &inode->i_dirty_data_buffers)
++	}
++	while ((entry = inode->i_dirty_data_buffers.next) != &inode->i_dirty_data_buffers) {
++		if (conditional_schedule_needed()) {
++			spin_unlock(&lru_list_lock);
++			goto repeat;
++		}
+ 		remove_inode_queue(BH_ENTRY(entry));
++	}
+ 	spin_unlock(&lru_list_lock);
+ }
+ 
+@@ -1018,6 +1085,7 @@ struct buffer_head * getblk(kdev_t dev, 
+ 		bh = get_hash_table(dev, block, size);
+ 		if (bh) {
+ 			touch_buffer(bh);
++			conditional_schedule();
+ 			return bh;
+ 		}
+ 
+Index: linux-2.4.32-ipod1/fs/dcache.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/fs/dcache.c
++++ linux-2.4.32-ipod1/fs/dcache.c
+@@ -324,11 +324,23 @@ static inline void prune_one_dentry(stru
+  
+ void prune_dcache(int count)
+ {
++	DEFINE_RESCHED_COUNT;
++
++redo:
+ 	spin_lock(&dcache_lock);
+ 	for (;;) {
+ 		struct dentry *dentry;
+ 		struct list_head *tmp;
+ 
++		if (TEST_RESCHED_COUNT(100)) {
++			RESET_RESCHED_COUNT();
++			if (conditional_schedule_needed()) {
++				spin_unlock(&dcache_lock);
++				unconditional_schedule();
++				goto redo;
++			}
++		}
++
+ 		tmp = dentry_unused.prev;
+ 
+ 		if (tmp == &dentry_unused)
+@@ -483,6 +495,7 @@ static int select_parent(struct dentry *
+ 	struct dentry *this_parent = parent;
+ 	struct list_head *next;
+ 	int found = 0;
++	DEFINE_RESCHED_COUNT;
+ 
+ 	spin_lock(&dcache_lock);
+ repeat:
+@@ -497,6 +510,13 @@ resume:
+ 			list_add(&dentry->d_lru, dentry_unused.prev);
+ 			found++;
+ 		}
++
++		if (TEST_RESCHED_COUNT(500) && found > 10) {
++			if (conditional_schedule_needed())	/* Typically sys_rmdir() */
++				goto out;
++			RESET_RESCHED_COUNT();
++		}
++
+ 		/*
+ 		 * Descend a level if the d_subdirs list is non-empty.
+ 		 */
+@@ -521,6 +541,7 @@ this_parent->d_parent->d_name.name, this
+ #endif
+ 		goto resume;
+ 	}
++out:
+ 	spin_unlock(&dcache_lock);
+ 	return found;
+ }
+@@ -536,8 +557,10 @@ void shrink_dcache_parent(struct dentry 
+ {
+ 	int found;
+ 
+-	while ((found = select_parent(parent)) != 0)
++	while ((found = select_parent(parent)) != 0) {
+ 		prune_dcache(found);
++		conditional_schedule();		/* Typically sys_rmdir() */
++	}
+ }
+ 
+ /*
+Index: linux-2.4.32-ipod1/fs/exec.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/fs/exec.c
++++ linux-2.4.32-ipod1/fs/exec.c
+@@ -256,7 +256,7 @@ int copy_strings(int argc,char ** argv, 
+ 					memset(kaddr+offset+len, 0,
+ 						PAGE_SIZE-offset-len);
+ 			}
+-			err = copy_from_user(kaddr+offset, str, bytes_to_copy);
++			err = ll_copy_from_user(kaddr+offset, str, bytes_to_copy);
+ 			if (err) {
+ 				ret = -EFAULT;
+ 				goto out;
+Index: linux-2.4.32-ipod1/fs/ext2/dir.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/fs/ext2/dir.c
++++ linux-2.4.32-ipod1/fs/ext2/dir.c
+@@ -153,6 +153,7 @@ static struct page * ext2_get_page(struc
+ 	struct address_space *mapping = dir->i_mapping;
+ 	struct page *page = read_cache_page(mapping, n,
+ 				(filler_t*)mapping->a_ops->readpage, NULL);
++	conditional_schedule();		/* Scanning large directories */
+ 	if (!IS_ERR(page)) {
+ 		wait_on_page(page);
+ 		kmap(page);
+Index: linux-2.4.32-ipod1/fs/ext2/inode.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/fs/ext2/inode.c
++++ linux-2.4.32-ipod1/fs/ext2/inode.c
+@@ -727,8 +727,13 @@ static inline void ext2_free_data(struct
+ {
+ 	unsigned long block_to_free = 0, count = 0;
+ 	unsigned long nr;
++	DEFINE_RESCHED_COUNT;
+ 
+ 	for ( ; p < q ; p++) {
++		if (TEST_RESCHED_COUNT(32)) {
++			RESET_RESCHED_COUNT();
++			conditional_schedule();
++		}
+ 		nr = le32_to_cpu(*p);
+ 		if (nr) {
+ 			*p = 0;
+@@ -771,6 +776,7 @@ static void ext2_free_branches(struct in
+ 	if (depth--) {
+ 		int addr_per_block = EXT2_ADDR_PER_BLOCK(inode->i_sb);
+ 		for ( ; p < q ; p++) {
++			conditional_schedule();		/* Deleting large files */
+ 			nr = le32_to_cpu(*p);
+ 			if (!nr)
+ 				continue;
+Index: linux-2.4.32-ipod1/fs/ext3/balloc.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/fs/ext3/balloc.c
++++ linux-2.4.32-ipod1/fs/ext3/balloc.c
+@@ -363,6 +363,9 @@ do_more:
+ 			}
+ 		}
+ #endif
++		/* superblock lock is held, so this is safe */
++		conditional_schedule();
++
+ 		BUFFER_TRACE(bitmap_bh, "clear bit");
+ 		if (!ext3_clear_bit (bit + i, bitmap_bh->b_data)) {
+ 			ext3_error(sb, __FUNCTION__,
+Index: linux-2.4.32-ipod1/fs/ext3/inode.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/fs/ext3/inode.c
++++ linux-2.4.32-ipod1/fs/ext3/inode.c
+@@ -930,6 +930,8 @@ struct buffer_head *ext3_bread(handle_t 
+ 
+ 	prev_blocks = inode->i_blocks;
+ 
++	conditional_schedule();		/* Reading large directories */
++
+ 	bh = ext3_getblk (handle, inode, block, create, err);
+ 	if (!bh)
+ 		return bh;
+@@ -1633,6 +1635,7 @@ ext3_clear_blocks(handle_t *handle, stru
+ 	 */
+ 	for (p = first; p < last; p++) {
+ 		u32 nr = le32_to_cpu(*p);
++		conditional_schedule();
+ 		if (nr) {
+ 			struct buffer_head *bh;
+ 
+@@ -1687,6 +1690,7 @@ static void ext3_free_data(handle_t *han
+ 	}
+ 
+ 	for (p = first; p < last; p++) {
++		conditional_schedule();
+ 		nr = le32_to_cpu(*p);
+ 		if (nr) {
+ 			/* accumulate blocks to free if they're contiguous */
+Index: linux-2.4.32-ipod1/fs/ext3/namei.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/fs/ext3/namei.c
++++ linux-2.4.32-ipod1/fs/ext3/namei.c
+@@ -157,6 +157,7 @@ restart:
+ 		if ((bh = bh_use[ra_ptr++]) == NULL)
+ 			goto next;
+ 		wait_on_buffer(bh);
++		conditional_schedule();
+ 		if (!buffer_uptodate(bh)) {
+ 			/* read error, skip block & hope for the best */
+ 			brelse(bh);
+Index: linux-2.4.32-ipod1/fs/inode.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/fs/inode.c
++++ linux-2.4.32-ipod1/fs/inode.c
+@@ -348,6 +348,8 @@ static inline void __sync_one(struct ino
+ 
+ 	filemap_fdatawait(inode->i_mapping);
+ 
++	conditional_schedule();
++
+ 	spin_lock(&inode_lock);
+ 	inode->i_state &= ~I_LOCK;
+ 	__refile_inode(inode);
+@@ -650,6 +652,7 @@ static void dispose_list(struct list_hea
+ 	while (!list_empty(head)) {
+ 		struct inode *inode;
+ 
++		conditional_schedule();
+ 		inode = list_entry(head->next, struct inode, i_list);
+ 		list_del(&inode->i_list);
+ 
+@@ -686,9 +689,22 @@ static int invalidate_list(struct list_h
+ 		if (tmp == head)
+ 			break;
+ 		inode = list_entry(tmp, struct inode, i_list);
++
++		if (conditional_schedule_needed()) {
++			atomic_inc(&inode->i_count);
++			spin_unlock(&inode_lock);
++			unconditional_schedule();
++			spin_lock(&inode_lock);
++			atomic_dec(&inode->i_count);
++		}
++
+ 		if (inode->i_sb != sb)
+ 			continue;
++		atomic_inc(&inode->i_count);
++		spin_unlock(&inode_lock);
+ 		invalidate_inode_buffers(inode);
++		spin_lock(&inode_lock);
++		atomic_dec(&inode->i_count);
+ 		if (!atomic_read(&inode->i_count)) {
+ 			list_del_init(&inode->i_hash);
+ 			list_del(&inode->i_list);
+@@ -798,15 +814,28 @@ void prune_icache(int goal)
+ 	int avg_pages;
+ #endif
+ 	struct inode * inode;
++	int nr_to_scan = inodes_stat.nr_unused;
+ 
++resume:
+ 	spin_lock(&inode_lock);
+-
+ 	count = 0;
+ 	entry = inode_unused.prev;
+-	while (entry != &inode_unused)
+-	{
++	while (entry != &inode_unused && nr_to_scan--) {
+ 		struct list_head *tmp = entry;
+ 
++		if (conditional_schedule_needed()) {
++			/*
++			 * Need to drop the lock.  Reposition
++			 * the list head so we start here next time.
++			 * This can corrupt the LRU nature of the
++			 * unused list, but this isn't very important.
++			 */
++			list_del(&inode_unused);
++			list_add(&inode_unused, entry);
++			spin_unlock(&inode_lock);
++			unconditional_schedule();
++			goto resume;
++		}
+ 		entry = entry->prev;
+ 		inode = INODE(tmp);
+ 		if (inode->i_state & (I_FREEING|I_CLEAR|I_LOCK))
+@@ -1008,6 +1037,8 @@ static struct inode * get_new_inode(stru
+ 	if (inode) {
+ 		struct inode * old;
+ 
++		conditional_schedule();			/* sync_old_buffers */
++
+ 		spin_lock(&inode_lock);
+ 		/* We released the lock, so.. */
+ 		old = find_inode(sb, ino, head, find_actor, opaque);
+Index: linux-2.4.32-ipod1/fs/jbd/checkpoint.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/fs/jbd/checkpoint.c
++++ linux-2.4.32-ipod1/fs/jbd/checkpoint.c
+@@ -431,7 +431,11 @@ int __journal_clean_checkpoint_list(jour
+ {
+ 	transaction_t *transaction, *last_transaction, *next_transaction;
+ 	int ret = 0;
++	int ll_retries = 4;		/* lowlatency addition */
+ 
++restart:
++	if (ll_retries-- == 0)
++		goto out;
+ 	transaction = journal->j_checkpoint_transactions;
+ 	if (transaction == 0)
+ 		goto out;
+@@ -451,6 +455,12 @@ int __journal_clean_checkpoint_list(jour
+ 				jh = next_jh;
+ 				next_jh = jh->b_cpnext;
+ 				ret += __try_to_free_cp_buf(jh);
++				if (conditional_schedule_needed()) {
++					spin_unlock(&journal_datalist_lock);
++					unconditional_schedule();
++					spin_lock(&journal_datalist_lock);
++					goto restart;
++				}
+ 			} while (jh != last_jh);
+ 		}
+ 	} while (transaction != last_transaction);
+Index: linux-2.4.32-ipod1/fs/jbd/commit.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/fs/jbd/commit.c
++++ linux-2.4.32-ipod1/fs/jbd/commit.c
+@@ -280,8 +280,7 @@ write_out_data_locked:
+ 		journal_brelse_array(wbuf, bufs);
+ 		lock_journal(journal);
+ 		spin_lock(&journal_datalist_lock);
+-		if (bufs)
+-			goto write_out_data_locked;
++		goto write_out_data_locked;
+ 	}
+ 
+ 	/*
+@@ -317,6 +316,15 @@ sync_datalist_empty:
+ 	 */
+ 	while ((jh = commit_transaction->t_async_datalist)) {
+ 		struct buffer_head *bh = jh2bh(jh);
++
++		if (conditional_schedule_needed()) {
++			spin_unlock(&journal_datalist_lock);
++			unlock_journal(journal);
++			unconditional_schedule();
++			lock_journal(journal);
++			spin_lock(&journal_datalist_lock);
++			continue;	/* List may have changed */
++		}
+ 		if (__buffer_state(bh, Freed)) {
+ 			BUFFER_TRACE(bh, "Cleaning freed buffer");
+ 			clear_bit(BH_Freed, &bh->b_state);
+@@ -347,6 +355,16 @@ sync_datalist_empty:
+ 			if (bh->b_list != BUF_CLEAN)
+ 				refile_buffer(bh);
+ 			__brelse(bh);
++				if (conditional_schedule_needed()) {
++					if (commit_transaction->t_sync_datalist)
++						commit_transaction->t_sync_datalist =
++							next_jh;
++					if (bufs)
++						break;
++					spin_unlock(&journal_datalist_lock);
++					unconditional_schedule();
++					goto write_out_data;
++				}
+ 		}
+ 	}
+ 	spin_unlock(&journal_datalist_lock);
+@@ -536,6 +554,8 @@ start_journal_io:
+  wait_for_iobuf:
+ 	while (commit_transaction->t_iobuf_list != NULL) {
+ 		struct buffer_head *bh;
++
++		conditional_schedule();
+ 		jh = commit_transaction->t_iobuf_list->b_tprev;
+ 		bh = jh2bh(jh);
+ 		if (buffer_locked(bh)) {
+@@ -695,6 +715,8 @@ skip_commit: /* The journal should be un
+ 		struct buffer_head *bh;
+ 		int was_freed = 0;
+ 		
++		conditional_schedule();		/* journal is locked */
++
+ 		jh = commit_transaction->t_forget;
+ 		J_ASSERT_JH(jh,	jh->b_transaction == commit_transaction ||
+ 			jh->b_transaction == journal->j_running_transaction);
+Index: linux-2.4.32-ipod1/fs/proc/array.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/fs/proc/array.c
++++ linux-2.4.32-ipod1/fs/proc/array.c
+@@ -494,9 +494,11 @@ static inline void statm_pte_range(pmd_t
+ 	if (end > PMD_SIZE)
+ 		end = PMD_SIZE;
+ 	do {
+-		pte_t page = *pte;
++		pte_t page;
+ 		struct page *ptpage;
+ 
++		conditional_schedule();		/* For `top' and `ps' */
++		page = *pte;
+ 		address += PAGE_SIZE;
+ 		pte++;
+ 		if (pte_none(page))
+Index: linux-2.4.32-ipod1/fs/proc/generic.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/fs/proc/generic.c
++++ linux-2.4.32-ipod1/fs/proc/generic.c
+@@ -101,6 +101,8 @@ proc_file_read(struct file * file, char 
+ 				retval = n;
+ 			break;
+ 		}
++
++		conditional_schedule();		/* Some /proc files are large */
+ 		
+ 		/* This is a hack to allow mangling of file pos independent
+  		 * of actual bytes read.  Simply place the data at page,
+Index: linux-2.4.32-ipod1/fs/reiserfs/buffer2.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/fs/reiserfs/buffer2.c
++++ linux-2.4.32-ipod1/fs/reiserfs/buffer2.c
+@@ -54,6 +54,7 @@ struct buffer_head  * reiserfs_bread (st
+     PROC_EXP( unsigned int ctx_switches = kstat.context_swtch );
+ 
+     result = bread (super -> s_dev, n_block, n_size);
++    conditional_schedule();
+     PROC_INFO_INC( super, breads );
+     PROC_EXP( if( kstat.context_swtch != ctx_switches ) 
+ 	      PROC_INFO_INC( super, bread_miss ) );
+Index: linux-2.4.32-ipod1/fs/reiserfs/journal.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/fs/reiserfs/journal.c
++++ linux-2.4.32-ipod1/fs/reiserfs/journal.c
+@@ -577,6 +577,7 @@ inline void insert_journal_hash(struct r
+ /* lock the current transaction */
+ inline static void lock_journal(struct super_block *p_s_sb) {
+   PROC_INFO_INC( p_s_sb, journal.lock_journal );
++  conditional_schedule();
+   while(atomic_read(&(SB_JOURNAL(p_s_sb)->j_wlock)) > 0) {
+     PROC_INFO_INC( p_s_sb, journal.lock_journal_wait );
+     sleep_on(&(SB_JOURNAL(p_s_sb)->j_wait)) ;
+@@ -707,6 +708,7 @@ reiserfs_panic(s, "journal-539: flush_co
+ 	mark_buffer_dirty(tbh) ;
+       }
+       ll_rw_block(WRITE, 1, &tbh) ;
++      conditional_schedule();
+       count++ ;
+       put_bh(tbh) ; /* once for our get_hash */
+     } 
+@@ -836,6 +838,7 @@ static int _update_journal_header_block(
+     set_bit(BH_Dirty, &(SB_JOURNAL(p_s_sb)->j_header_bh->b_state)) ;
+     ll_rw_block(WRITE, 1, &(SB_JOURNAL(p_s_sb)->j_header_bh)) ;
+     wait_on_buffer((SB_JOURNAL(p_s_sb)->j_header_bh)) ; 
++    conditional_schedule();
+     if (!buffer_uptodate(SB_JOURNAL(p_s_sb)->j_header_bh)) {
+       reiserfs_warning( p_s_sb, "reiserfs: journal-837: IO error during journal replay\n" );
+       return -EIO ;
+@@ -2363,6 +2366,7 @@ static int journal_join(struct reiserfs_
+ }
+ 
+ int journal_begin(struct reiserfs_transaction_handle *th, struct super_block  * p_s_sb, unsigned long nblocks) {
++  conditional_schedule();
+   return do_journal_begin_r(th, p_s_sb, nblocks, 0) ;
+ }
+ 
+@@ -2503,6 +2507,7 @@ int journal_mark_dirty_nolog(struct reis
+ }
+ 
+ int journal_end(struct reiserfs_transaction_handle *th, struct super_block *p_s_sb, unsigned long nblocks) {
++  conditional_schedule();
+   return do_journal_end(th, p_s_sb, nblocks, 0) ;
+ }
+ 
+@@ -2974,6 +2979,7 @@ void reiserfs_prepare_for_journal(struct
+       RFALSE( buffer_locked(bh) && cur_tb != NULL,
+ 	      "waiting while do_balance was running\n") ;
+       wait_on_buffer(bh) ;
++      conditional_schedule();
+     }
+     PROC_INFO_INC( p_s_sb, journal.prepare_retry );
+     retry_count++ ;
+@@ -3148,6 +3154,7 @@ reiserfs_warning(p_s_sb, "journal-2020: 
+     /* copy all the real blocks into log area.  dirty log blocks */
+     if (test_bit(BH_JDirty, &cn->bh->b_state)) {
+       struct buffer_head *tmp_bh ;
++      conditional_schedule();
+       tmp_bh =  journal_getblk(p_s_sb, SB_ONDISK_JOURNAL_1st_BLOCK(p_s_sb) + 
+ 		       ((cur_write_start + jindex) % SB_ONDISK_JOURNAL_SIZE(p_s_sb))) ;
+       mark_buffer_uptodate(tmp_bh, 1) ;
+Index: linux-2.4.32-ipod1/fs/reiserfs/stree.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/fs/reiserfs/stree.c
++++ linux-2.4.32-ipod1/fs/reiserfs/stree.c
+@@ -652,9 +652,8 @@ int search_by_key (struct super_block * 
+                                        stop at leaf level - set to
+                                        DISK_LEAF_NODE_LEVEL */
+     ) {
+-    int  n_block_number = SB_ROOT_BLOCK (p_s_sb),
+-      expected_level = SB_TREE_HEIGHT (p_s_sb),
+-      n_block_size    = p_s_sb->s_blocksize;
++    int n_block_number, expected_level;
++    int n_block_size    = p_s_sb->s_blocksize;
+     struct buffer_head  *       p_s_bh;
+     struct path_element *       p_s_last_element;
+     int				n_node_level, n_retval;
+@@ -666,7 +665,8 @@ int search_by_key (struct super_block * 
+ #endif
+     
+     PROC_INFO_INC( p_s_sb, search_by_key );
+-    
++    conditional_schedule();
++
+     /* As we add each node to a path we increase its count.  This means that
+        we must be careful to release all nodes in a path before we either
+        discard the path struct or re-use the path struct, as we do here. */
+@@ -678,6 +678,8 @@ int search_by_key (struct super_block * 
+     /* With each iteration of this loop we search through the items in the
+        current node, and calculate the next current node(next path element)
+        for the next iteration of this loop.. */
++    n_block_number = SB_ROOT_BLOCK (p_s_sb);
++    expected_level = SB_TREE_HEIGHT (p_s_sb);
+     while ( 1 ) {
+ 
+ #ifdef CONFIG_REISERFS_CHECK
+@@ -1104,6 +1106,8 @@ static char  prepare_for_delete_or_cut(
+ 	    for (n_counter = *p_n_removed;
+ 		 n_counter < n_unfm_number; n_counter++, p_n_unfm_pointer-- ) {
+ 
++		conditional_schedule();
++
+ 		if (item_moved (&s_ih, p_s_path)) {
+ 		    need_research = 1 ;
+ 		    break;
+Index: linux-2.4.32-ipod1/include/linux/low-latency.h
+===================================================================
+--- /dev/null
++++ linux-2.4.32-ipod1/include/linux/low-latency.h
+@@ -0,0 +1,109 @@
++/*
++ * include/linux/low-latency.h
++ *
++ * Andrew Morton <akpm@zip.com.au>
++ */
++
++#ifndef LOW_LATENCY_H_INCLUDED
++#define LOW_LATENCY_H_INCLUDED
++
++#if defined(CONFIG_LOLAT)
++#define LOWLATENCY_NEEDED	1
++#else
++#define LOWLATENCY_NEEDED	0
++#endif
++
++#if LOWLATENCY_NEEDED
++
++#include <linux/cache.h>		/* For ____cacheline_aligned */
++
++#ifdef CONFIG_LOLAT_SYSCTL
++extern struct low_latency_enable_struct {
++	int yep;
++} ____cacheline_aligned __enable_lowlatency;
++#define enable_lowlatency __enable_lowlatency.yep
++
++#else
++#define enable_lowlatency 1
++#endif
++
++/*
++ * Set this non-zero to generate low-latency instrumentation
++ */
++#define LOWLATENCY_DEBUG		0
++
++/*
++ * Set this non-zero for robustness testing
++ */
++#define LOWLATENCY_ALWAYS_SCHEDULE	0
++
++#if LOWLATENCY_DEBUG
++
++#if LOWLATENCY_ALWAYS_SCHEDULE
++#define conditional_schedule_needed() ((enable_lowlatency == 2) || (enable_lowlatency && current->need_resched))
++#else
++#define conditional_schedule_needed() (enable_lowlatency && current->need_resched)
++#endif
++
++struct lolat_stats_t {
++	unsigned long count;
++	int visited;
++	const char *file;
++	int line;
++	struct lolat_stats_t *next;
++};
++
++void set_running_and_schedule(struct lolat_stats_t *stats);
++
++#define unconditional_schedule()					\
++	do {								\
++		static struct lolat_stats_t stats = {			\
++			file: __FILE__,					\
++			line: __LINE__,					\
++		};							\
++		set_running_and_schedule(&stats);			\
++	} while (0)
++
++extern void show_lolat_stats(void);
++
++#else	/* LOWLATENCY_DEBUG */
++
++#if LOWLATENCY_ALWAYS_SCHEDULE
++#define conditional_schedule_needed() 1
++#else
++#define conditional_schedule_needed() (current->need_resched)
++#endif
++
++void set_running_and_schedule(void);
++#define unconditional_schedule() set_running_and_schedule()
++
++#endif	/* LOWLATENCY_DEBUG */
++
++#define conditional_schedule()						\
++	do {								\
++		if (conditional_schedule_needed())			\
++			unconditional_schedule();			\
++	} while (0)
++
++#define DEFINE_RESCHED_COUNT	int resched_count = 0
++#define TEST_RESCHED_COUNT(n)	(enable_lowlatency && (++resched_count > (n)))
++#define RESET_RESCHED_COUNT()	resched_count = 0
++extern int ll_copy_to_user(void *to_user, const void *from, unsigned long len);
++extern int ll_copy_from_user(void *to, const void *from_user, unsigned long len);
++
++#else	/* LOWLATENCY_NEEDED */
++
++#define conditional_schedule_needed() 0
++#define conditional_schedule()
++#define unconditional_schedule()
++
++#define DEFINE_RESCHED_COUNT
++#define TEST_RESCHED_COUNT(n)	0
++#define RESET_RESCHED_COUNT()
++#define ll_copy_to_user(to_user, from, len) copy_to_user((to_user), (from), (len))
++#define ll_copy_from_user(to, from_user, len) copy_from_user((to), (from_user), (len))
++
++#endif	/* LOWLATENCY_NEEDED */
++
++#endif /* LOW_LATENCY_H_INCLUDED */
++
+Index: linux-2.4.32-ipod1/include/linux/mm.h
+===================================================================
+--- linux-2.4.32-ipod1.orig/include/linux/mm.h
++++ linux-2.4.32-ipod1/include/linux/mm.h
+@@ -518,7 +518,7 @@ struct file *shmem_file_setup(char * nam
+ extern void shmem_lock(struct file * file, int lock);
+ extern int shmem_zero_setup(struct vm_area_struct *);
+ 
+-extern void zap_page_range(struct mm_struct *mm, unsigned long address, unsigned long size);
++extern void zap_page_range(struct mm_struct *mm, unsigned long address, unsigned long size, int actions);
+ extern int copy_page_range(struct mm_struct *dst, struct mm_struct *src, struct vm_area_struct *vma);
+ extern int remap_page_range(unsigned long from, unsigned long to, unsigned long size, pgprot_t prot);
+ extern int zeromap_page_range(unsigned long from, unsigned long size, pgprot_t prot);
+@@ -718,6 +718,8 @@ static inline int expand_stack(struct vm
+ 		return -ENOMEM;
+ 	}
+ 
++/* Actions for zap_page_range() */
++#define ZPR_COND_RESCHED	1	/* Do a conditional_schedule() occasionally */
+ 
+ 	vma->vm_start = address;
+ 	vma->vm_pgoff -= grow;
+Index: linux-2.4.32-ipod1/include/linux/reiserfs_fs.h
+===================================================================
+--- linux-2.4.32-ipod1.orig/include/linux/reiserfs_fs.h
++++ linux-2.4.32-ipod1/include/linux/reiserfs_fs.h
+@@ -1329,8 +1329,8 @@ static inline loff_t max_reiserfs_offset
+ #define fs_generation(s) ((s)->u.reiserfs_sb.s_generation_counter)
+ #define get_generation(s) atomic_read (&fs_generation(s))
+ #define FILESYSTEM_CHANGED_TB(tb)  (get_generation((tb)->tb_sb) != (tb)->fs_gen)
+-#define fs_changed(gen,s) (gen != get_generation (s))
+-
++#define __fs_changed(gen,s) (gen != get_generation (s))
++#define fs_changed(gen,s) ({conditional_schedule(); __fs_changed(gen,s);})
+ 
+ /***************************************************************************/
+ /*                  FIXATE NODES                                           */
+Index: linux-2.4.32-ipod1/include/linux/sched.h
+===================================================================
+--- linux-2.4.32-ipod1.orig/include/linux/sched.h
++++ linux-2.4.32-ipod1/include/linux/sched.h
+@@ -13,7 +13,7 @@ extern unsigned long event;
+ #include <linux/times.h>
+ #include <linux/timex.h>
+ #include <linux/rbtree.h>
+-
++#include <linux/low-latency.h>
+ #include <asm/system.h>
+ #include <asm/semaphore.h>
+ #include <asm/page.h>
+Index: linux-2.4.32-ipod1/include/linux/sysctl.h
+===================================================================
+--- linux-2.4.32-ipod1.orig/include/linux/sysctl.h
++++ linux-2.4.32-ipod1/include/linux/sysctl.h
+@@ -126,6 +126,7 @@ enum
+ 	KERN_CORE_USES_PID=52,		/* int: use core or core.%pid */
+ 	KERN_TAINTED=53,	/* int: various kernel tainted flags */
+ 	KERN_CADPID=54,		/* int: PID of the process to notify on CAD */
++	KERN_LOWLATENCY=55,     /* int: enable low latency scheduling */
+  	KERN_CORE_PATTERN=56,	/* string: pattern for core-files */
+ 	KERN_PPC_L3CR=57,       /* l3cr register on PPC */
+ 	KERN_EXCEPTION_TRACE=58, /* boolean: exception trace */
+Index: linux-2.4.32-ipod1/kernel/exit.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/kernel/exit.c
++++ linux-2.4.32-ipod1/kernel/exit.c
+@@ -196,6 +196,7 @@ static inline void close_files(struct fi
+ 			}
+ 			i++;
+ 			set >>= 1;
++			conditional_schedule();		/* sys_exit, many files open */
+ 		}
+ 	}
+ }
+Index: linux-2.4.32-ipod1/kernel/ksyms.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/kernel/ksyms.c
++++ linux-2.4.32-ipod1/kernel/ksyms.c
+@@ -500,6 +500,13 @@ EXPORT_SYMBOL(xtime);
+ EXPORT_SYMBOL(do_gettimeofday);
+ EXPORT_SYMBOL(do_settimeofday);
+ 
++#if LOWLATENCY_NEEDED
++EXPORT_SYMBOL(set_running_and_schedule);
++#ifdef CONFIG_LOLAT_SYSCTL
++EXPORT_SYMBOL(__enable_lowlatency);
++#endif
++#endif
++
+ #if !defined(__ia64__)
+ EXPORT_SYMBOL(loops_per_jiffy);
+ #endif
+Index: linux-2.4.32-ipod1/kernel/module.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/kernel/module.c
++++ linux-2.4.32-ipod1/kernel/module.c
+@@ -1189,6 +1189,11 @@ static void *s_start(struct seq_file *m,
+ 		return ERR_PTR(-ENOMEM);
+ 	lock_kernel();
+ 	for (v = module_list, n = *pos; v; n -= v->nsyms, v = v->next) {
++#if 0
++		/* We can't actually do this, because we'd create a
++		 * race against module unload.  Need a semaphore. */
++		conditional_schedule();
++#endif
+ 		if (n < v->nsyms) {
+ 			p->mod = v;
+ 			p->index = n;
+Index: linux-2.4.32-ipod1/kernel/sched.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/kernel/sched.c
++++ linux-2.4.32-ipod1/kernel/sched.c
+@@ -302,6 +302,17 @@ send_now_idle:
+ 		if (tsk->processor != this_cpu)
+ 			smp_send_reschedule(tsk->processor);
+ 	}
++#if LOWLATENCY_NEEDED
++	if (enable_lowlatency && (p->policy != SCHED_OTHER)) {
++		struct task_struct *t;
++		for (i = 0; i < smp_num_cpus; i++) {
++			cpu = cpu_logical_map(i);
++			t = cpu_curr(cpu);
++			if (t != tsk)
++				t->need_resched = 1;
++		}
++	}
++#endif
+ 	return;
+ 		
+ 
+@@ -630,6 +641,11 @@ repeat_schedule:
+ 		goto repeat_schedule;
+ 	}
+ 
++	if (unlikely(prev->need_resched)) {
++		prev->need_resched = 0;
++		goto repeat_schedule;
++	}
++
+ 	/*
+ 	 * from this point on nothing can prevent us from
+ 	 * switching to the next task, save this fact in
+@@ -1407,3 +1423,93 @@ void __init sched_init(void)
+ 	atomic_inc(&init_mm.mm_count);
+ 	enter_lazy_tlb(&init_mm, current, cpu);
+ }
++
++#if LOWLATENCY_NEEDED
++#if LOWLATENCY_DEBUG
++
++static struct lolat_stats_t *lolat_stats_head;
++static spinlock_t lolat_stats_lock = SPIN_LOCK_UNLOCKED;
++
++void set_running_and_schedule(struct lolat_stats_t *stats)
++{
++	spin_lock(&lolat_stats_lock);
++	if (stats->visited == 0) {
++		stats->visited = 1;
++		stats->next = lolat_stats_head;
++		lolat_stats_head = stats;
++	}
++	stats->count++;
++	spin_unlock(&lolat_stats_lock);
++
++	if (current->state != TASK_RUNNING)
++		set_current_state(TASK_RUNNING);
++	schedule();
++}
++
++void show_lolat_stats(void)
++{
++	struct lolat_stats_t *stats = lolat_stats_head;
++
++	printk("Low latency scheduling stats:\n");
++	while (stats) {
++		printk("%s:%d: %lu\n", stats->file, stats->line, stats->count);
++		stats->count = 0;
++		stats = stats->next;
++	}
++}
++
++#else	/* LOWLATENCY_DEBUG */
++
++void set_running_and_schedule()
++{
++	if (current->state != TASK_RUNNING)
++		__set_current_state(TASK_RUNNING);
++	schedule();
++}
++
++#endif	/* LOWLATENCY_DEBUG */
++
++int ll_copy_to_user(void *to_user, const void *from, unsigned long len)
++{
++	while (len) {
++		unsigned long n_to_copy = len;
++		unsigned long remainder;
++
++		if (n_to_copy > 4096)
++			n_to_copy = 4096;
++		len -= n_to_copy;
++		remainder = copy_to_user(to_user, from, n_to_copy);
++		if (remainder)
++			return remainder + len;
++		to_user = ((char *)to_user) + n_to_copy;
++		from = ((char *)from) + n_to_copy;
++		conditional_schedule();
++	}
++	return 0;
++}
++
++int ll_copy_from_user(void *to, const void *from_user, unsigned long len)
++{
++	while (len) {
++		unsigned long n_to_copy = len;
++		unsigned long remainder;
++
++		if (n_to_copy > 4096)
++			n_to_copy = 4096;
++		len -= n_to_copy;
++		remainder = copy_from_user(to, from_user, n_to_copy);
++		if (remainder)
++			return remainder + len;
++		to = ((char *)to) + n_to_copy;
++		from_user = ((char *)from_user) + n_to_copy;
++		conditional_schedule();
++	}
++	return 0;
++}
++
++#ifdef CONFIG_LOLAT_SYSCTL
++struct low_latency_enable_struct __enable_lowlatency = { 0, };
++#endif
++
++#endif	/* LOWLATENCY_NEEDED */
++
+Index: linux-2.4.32-ipod1/kernel/sysctl.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/kernel/sysctl.c
++++ linux-2.4.32-ipod1/kernel/sysctl.c
+@@ -287,6 +287,10 @@ static ctl_table kern_table[] = {
+ 	{KERN_EXCEPTION_TRACE,"exception-trace",
+ 	 &exception_trace,sizeof(int),0644,NULL,&proc_dointvec},
+ #endif	
++#ifdef CONFIG_LOLAT_SYSCTL
++	{KERN_LOWLATENCY, "lowlatency", &enable_lowlatency, sizeof (int),
++	 0644, NULL, &proc_dointvec},
++#endif
+ 	{0}
+ };
+ 
+Index: linux-2.4.32-ipod1/mm/filemap.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/mm/filemap.c
++++ linux-2.4.32-ipod1/mm/filemap.c
+@@ -185,7 +185,9 @@ void invalidate_inode_pages(struct inode
+ {
+ 	struct list_head *head, *curr;
+ 	struct page * page;
++	int ll_count = 100;
+ 
++restart:
+ 	head = &inode->i_mapping->clean_pages;
+ 
+ 	spin_lock(&pagemap_lru_lock);
+@@ -196,6 +198,14 @@ void invalidate_inode_pages(struct inode
+ 		page = list_entry(curr, struct page, list);
+ 		curr = curr->next;
+ 
++		if (conditional_schedule_needed() && ll_count) {
++			spin_unlock(&pagecache_lock);
++			spin_unlock(&pagemap_lru_lock);
++			unconditional_schedule();
++			ll_count--;
++			goto restart;
++		}
++
+ 		/* We cannot invalidate something in dirty.. */
+ 		if (PageDirty(page))
+ 			continue;
+@@ -259,8 +269,8 @@ static void truncate_complete_page(struc
+ 	page_cache_release(page);
+ }
+ 
+-static int FASTCALL(truncate_list_pages(struct list_head *, unsigned long, unsigned *));
+-static int fastcall truncate_list_pages(struct list_head *head, unsigned long start, unsigned *partial)
++static int truncate_list_pages(struct list_head *head, unsigned long start,
++				unsigned *partial, int *restart_count)
+ {
+ 	struct list_head *curr;
+ 	struct page * page;
+@@ -271,6 +281,17 @@ static int fastcall truncate_list_pages(
+ 	while (curr != head) {
+ 		unsigned long offset;
+ 
++		if (conditional_schedule_needed() && *restart_count) {
++			(*restart_count)--;
++			list_del(head);
++			list_add(head, curr);		/* Restart on this page */
++			spin_unlock(&pagecache_lock);
++			unconditional_schedule();
++			spin_lock(&pagecache_lock);
++			unlocked = 1;
++			goto restart;
++		}
++
+ 		page = list_entry(curr, struct page, list);
+ 		offset = page->index;
+ 
+@@ -303,13 +324,11 @@ static int fastcall truncate_list_pages(
+ 			} else
+  				wait_on_page(page);
+ 
+-			page_cache_release(page);
+-
+-			if (current->need_resched) {
+-				__set_current_state(TASK_RUNNING);
+-				schedule();
++			if (LOWLATENCY_NEEDED) {
++				*restart_count = 4;	/* We made progress */
+ 			}
+ 
++			page_cache_release(page);
+ 			spin_lock(&pagecache_lock);
+ 			goto restart;
+ 		}
+@@ -332,13 +351,14 @@ void truncate_inode_pages(struct address
+ {
+ 	unsigned long start = (lstart + PAGE_CACHE_SIZE - 1) >> PAGE_CACHE_SHIFT;
+ 	unsigned partial = lstart & (PAGE_CACHE_SIZE - 1);
++	int restart_count = 4;
+ 	int unlocked;
+ 
+ 	spin_lock(&pagecache_lock);
+ 	do {
+-		unlocked = truncate_list_pages(&mapping->clean_pages, start, &partial);
+-		unlocked |= truncate_list_pages(&mapping->dirty_pages, start, &partial);
+-		unlocked |= truncate_list_pages(&mapping->locked_pages, start, &partial);
++		unlocked = truncate_list_pages(&mapping->clean_pages, start, &partial, &restart_count);
++		unlocked |= truncate_list_pages(&mapping->dirty_pages, start, &partial, &restart_count);
++		unlocked |= truncate_list_pages(&mapping->locked_pages, start, &partial, &restart_count);
+ 	} while (unlocked);
+ 	/* Traversed all three lists without dropping the lock */
+ 	spin_unlock(&pagecache_lock);
+@@ -483,6 +503,7 @@ static int do_buffer_fdatasync(struct li
+ 
+ 		page_cache_get(page);
+ 		spin_unlock(&pagecache_lock);
++		conditional_schedule();		/* sys_msync() (only used by minixfs, udf) */
+ 		lock_page(page);
+ 
+ 		/* The buffers could have been free'd while we waited for the page lock */
+@@ -612,12 +633,14 @@ int filemap_fdatasync(struct address_spa
+ 		list_del(&page->list);
+ 		list_add(&page->list, &mapping->locked_pages);
+ 
+-		if (!PageDirty(page))
+-			continue;
+-
+ 		page_cache_get(page);
+ 		spin_unlock(&pagecache_lock);
+ 
++		conditional_schedule();		/* sys_msync() */
++
++		if (!PageDirty(page))
++			goto clean;
++
+ 		lock_page(page);
+ 
+ 		if (PageDirty(page)) {
+@@ -628,7 +651,7 @@ int filemap_fdatasync(struct address_spa
+ 				ret = err;
+ 		} else
+ 			UnlockPage(page);
+-
++clean:
+ 		page_cache_release(page);
+ 		spin_lock(&pagecache_lock);
+ 	}
+@@ -646,7 +669,8 @@ int filemap_fdatasync(struct address_spa
+ int filemap_fdatawait(struct address_space * mapping)
+ {
+ 	int ret = 0;
+-
++	DEFINE_RESCHED_COUNT;
++restart:
+ 	spin_lock(&pagecache_lock);
+ 
+         while (!list_empty(&mapping->locked_pages)) {
+@@ -655,6 +679,17 @@ int filemap_fdatawait(struct address_spa
+ 		list_del(&page->list);
+ 		list_add(&page->list, &mapping->clean_pages);
+ 
++		if (TEST_RESCHED_COUNT(32)) {
++			RESET_RESCHED_COUNT();
++			if (conditional_schedule_needed()) {
++				page_cache_get(page);
++				spin_unlock(&pagecache_lock);
++				unconditional_schedule();
++				page_cache_release(page);
++				goto restart;
++			}
++		}
++
+ 		if (!PageLocked(page))
+ 			continue;
+ 
+@@ -764,8 +799,10 @@ static int fastcall page_cache_read(stru
+ 	spin_lock(&pagecache_lock);
+ 	page = __find_page_nolock(mapping, offset, *hash);
+ 	spin_unlock(&pagecache_lock);
+-	if (page)
++	if (page) {
++		conditional_schedule();
+ 		return 0;
++	}
+ 
+ 	page = page_cache_alloc(mapping);
+ 	if (!page)
+@@ -1035,6 +1072,11 @@ static struct page * fastcall __find_loc
+ 	 * the hash-list needs a held write-lock.
+ 	 */
+ repeat:
++	if (conditional_schedule_needed()) {
++		spin_unlock(&pagecache_lock);
++		unconditional_schedule();
++		spin_lock(&pagecache_lock);
++	}
+ 	page = __find_page_nolock(mapping, offset, hash);
+ 	if (page) {
+ 		page_cache_get(page);
+@@ -1488,6 +1530,8 @@ found_page:
+ 		page_cache_get(page);
+ 		spin_unlock(&pagecache_lock);
+ 
++		conditional_schedule();		/* sys_read() */
++
+ 		if (!Page_Uptodate(page))
+ 			goto page_not_up_to_date;
+ 		generic_file_readahead(reada_ok, filp, inode, page);
+@@ -2247,6 +2291,12 @@ static inline int filemap_sync_pte_range
+ 		address += PAGE_SIZE;
+ 		pte++;
+ 	} while (address && (address < end));
++
++	if (conditional_schedule_needed()) {
++		spin_unlock(&vma->vm_mm->page_table_lock);
++		unconditional_schedule();		/* syncing large mapped files */
++		spin_lock(&vma->vm_mm->page_table_lock);
++	}
+ 	return error;
+ }
+ 
+@@ -2658,7 +2708,9 @@ static long madvise_dontneed(struct vm_a
+ 	if (vma->vm_flags & VM_LOCKED)
+ 		return -EINVAL;
+ 
+-	zap_page_range(vma->vm_mm, start, end - start);
++        zap_page_range(vma->vm_mm, start, end - start,
++		ZPR_COND_RESCHED);        /* sys_madvise(MADV_DONTNEED) */
++
+ 	return 0;
+ }
+ 
+@@ -3228,6 +3280,9 @@ do_generic_file_write(struct file *file,
+ 			goto sync_failure;
+ 		page_fault = __copy_from_user(kaddr+offset, buf, bytes);
+ 		flush_dcache_page(page);
++
++                conditional_schedule();
++
+ 		status = mapping->a_ops->commit_write(file, page, offset, offset+bytes);
+ 		if (page_fault)
+ 			goto fail_write;
+Index: linux-2.4.32-ipod1/mm/memory.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/mm/memory.c
++++ linux-2.4.32-ipod1/mm/memory.c
+@@ -357,7 +357,7 @@ static inline int zap_pmd_range(mmu_gath
+ /*
+  * remove user pages in a given range.
+  */
+-void zap_page_range(struct mm_struct *mm, unsigned long address, unsigned long size)
++static void do_zap_page_range(struct mm_struct *mm, unsigned long address, unsigned long size)
+ {
+ 	mmu_gather_t *tlb;
+ 	pgd_t * dir;
+@@ -478,6 +478,10 @@ int get_user_pages(struct task_struct *t
+ 			struct page *map;
+ 			while (!(map = follow_page(mm, start, write))) {
+ 				spin_unlock(&mm->page_table_lock);
++
++				/* Pinning down many physical pages (kiobufs, mlockall) */
++				conditional_schedule();
++
+ 				switch (handle_mm_fault(mm, vma, start, write)) {
+ 				case 1:
+ 					tsk->min_flt++;
+@@ -641,6 +645,21 @@ void unmap_kiobuf (struct kiobuf *iobuf)
+ 	iobuf->locked = 0;
+ }
+ 
++#define MAX_ZAP_BYTES 256*PAGE_SIZE
++
++void zap_page_range(struct mm_struct *mm, unsigned long address, unsigned long size, int actions)
++{
++	while (size) {
++		unsigned long chunk = size;
++		if (actions & ZPR_COND_RESCHED && chunk > MAX_ZAP_BYTES)
++			chunk = MAX_ZAP_BYTES;
++		do_zap_page_range(mm, address, chunk);
++		if (actions & ZPR_COND_RESCHED)
++			conditional_schedule();
++		address += chunk;
++		size -= chunk;
++	}
++}
+ 
+ /*
+  * Lock down all of the pages of a kiovec for IO.
+@@ -750,11 +769,18 @@ int unlock_kiovec(int nr, struct kiobuf 
+ 	return 0;
+ }
+ 
+-static inline void zeromap_pte_range(pte_t * pte, unsigned long address,
+-                                     unsigned long size, pgprot_t prot)
++static inline void zeromap_pte_range(struct mm_struct *mm, pte_t * pte,
++				unsigned long address, unsigned long size,
++				pgprot_t prot)
+ {
+ 	unsigned long end;
+ 
++	if (conditional_schedule_needed()) {
++		spin_unlock(&mm->page_table_lock);
++		unconditional_schedule();		/* mmap(/dev/zero) */
++		spin_lock(&mm->page_table_lock);
++	}
++
+ 	address &= ~PMD_MASK;
+ 	end = address + size;
+ 	if (end > PMD_SIZE)
+@@ -782,7 +808,7 @@ static inline int zeromap_pmd_range(stru
+ 		pte_t * pte = pte_alloc(mm, pmd, address);
+ 		if (!pte)
+ 			return -ENOMEM;
+-		zeromap_pte_range(pte, address, end - address, prot);
++		zeromap_pte_range(mm, pte, address, end - address, prot);
+ 		address = (address + PMD_SIZE) & PMD_MASK;
+ 		pmd++;
+ 	} while (address && (address < end));
+@@ -1017,7 +1043,7 @@ static void vmtruncate_list(struct vm_ar
+ 
+ 		/* mapping wholly truncated? */
+ 		if (mpnt->vm_pgoff >= pgoff) {
+-			zap_page_range(mm, start, len);
++                        zap_page_range(mm, start, len, 0);
+ 			continue;
+ 		}
+ 
+@@ -1030,7 +1056,7 @@ static void vmtruncate_list(struct vm_ar
+ 		/* Ok, partially affected.. */
+ 		start += diff << PAGE_SHIFT;
+ 		len = (len - diff) << PAGE_SHIFT;
+-		zap_page_range(mm, start, len);
++                zap_page_range(mm, start, len, 0);
+ 	} while ((mpnt = mpnt->vm_next_share) != NULL);
+ }
+ 
+Index: linux-2.4.32-ipod1/mm/mmap.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/mm/mmap.c
++++ linux-2.4.32-ipod1/mm/mmap.c
+@@ -619,7 +619,7 @@ unmap_and_free_vma:
+ 	fput(file);
+ 
+ 	/* Undo any partial mapping done by a device driver. */
+-	zap_page_range(mm, vma->vm_start, vma->vm_end - vma->vm_start);
++        zap_page_range(mm, vma->vm_start, vma->vm_end - vma->vm_start, 0);
+ free_vma:
+ 	kmem_cache_free(vm_area_cachep, vma);
+ 	return error;
+@@ -1033,7 +1033,7 @@ int do_munmap(struct mm_struct *mm, unsi
+ 		remove_shared_vm_struct(mpnt);
+ 		mm->map_count--;
+ 
+-		zap_page_range(mm, st, size);
++                zap_page_range(mm, st, size, ZPR_COND_RESCHED);   /* sys_munmap() */
+ 
+ 		/*
+ 		 * Fix the mapping, and free the old area if it wasn't reused.
+@@ -1209,7 +1209,7 @@ void exit_mmap(struct mm_struct * mm)
+ 		}
+ 		mm->map_count--;
+ 		remove_shared_vm_struct(mpnt);
+-		zap_page_range(mm, start, size);
++		zap_page_range(mm, start, size, ZPR_COND_RESCHED);      /* sys_exit() */
+ 		if (mpnt->vm_file)
+ 			fput(mpnt->vm_file);
+ 		kmem_cache_free(vm_area_cachep, mpnt);
+Index: linux-2.4.32-ipod1/mm/mremap.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/mm/mremap.c
++++ linux-2.4.32-ipod1/mm/mremap.c
+@@ -122,7 +122,7 @@ oops_we_failed:
+ 	flush_cache_range(mm, new_addr, new_addr + len);
+ 	while ((offset += PAGE_SIZE) < len)
+ 		move_one_page(mm, new_addr + offset, old_addr + offset);
+-	zap_page_range(mm, new_addr, len);
++        zap_page_range(mm, new_addr, len, 0);
+ 	return -1;
+ }
+ 
+Index: linux-2.4.32-ipod1/mm/slab.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/mm/slab.c
++++ linux-2.4.32-ipod1/mm/slab.c
+@@ -935,6 +935,7 @@ static int __kmem_cache_shrink_locked(km
+ 		list_del(&slabp->list);
+ 
+ 		spin_unlock_irq(&cachep->spinlock);
++		conditional_schedule();
+ 		kmem_slab_destroy(cachep, slabp);
+ 		ret++;
+ 		spin_lock_irq(&cachep->spinlock);
+@@ -1851,6 +1852,7 @@ perfect:
+ 		 */
+ 		spin_unlock_irq(&best_cachep->spinlock);
+ 		kmem_slab_destroy(best_cachep, slabp);
++		conditional_schedule();		/* try_to_free_pages() */
+ 		spin_lock_irq(&best_cachep->spinlock);
+ 	}
+ 	spin_unlock_irq(&best_cachep->spinlock);
+Index: linux-2.4.32-ipod1/mm/swapfile.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/mm/swapfile.c
++++ linux-2.4.32-ipod1/mm/swapfile.c
+@@ -834,7 +834,7 @@ int get_swaparea_info(char *buf)
+ 				len += sprintf(buf + len, "partition\t");
+ 
+ 			usedswap = 0;
+-			for (j = 0; j < ptr->max; ++j)
++			for (j = 0; j < ptr->max; ++j) {
+ 				switch (ptr->swap_map[j]) {
+ 					case SWAP_MAP_BAD:
+ 					case 0:
+@@ -842,6 +842,8 @@ int get_swaparea_info(char *buf)
+ 					default:
+ 						usedswap++;
+ 				}
++				conditional_schedule();
++			}
+ 			len += sprintf(buf + len, "%d\t%d\t%d\n", ptr->pages << (PAGE_SHIFT - 10), 
+ 				usedswap << (PAGE_SHIFT - 10), ptr->prio);
+ 		}
+@@ -1140,6 +1142,11 @@ void si_swapinfo(struct sysinfo *val)
+ 		if (swap_info[i].flags != SWP_USED)
+ 			continue;
+ 		for (j = 0; j < swap_info[i].max; ++j) {
++			if (conditional_schedule_needed()) {
++				swap_list_unlock();
++				conditional_schedule();
++				swap_list_lock();
++			}
+ 			switch (swap_info[i].swap_map[j]) {
+ 				case 0:
+ 				case SWAP_MAP_BAD:
+Index: linux-2.4.32-ipod1/mm/vmscan.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/mm/vmscan.c
++++ linux-2.4.32-ipod1/mm/vmscan.c
+@@ -210,6 +210,7 @@ static inline int swap_out_pmd(struct mm
+ {
+ 	pte_t * pte;
+ 	unsigned long pmd_end;
++	DEFINE_RESCHED_COUNT;
+ 
+ 	if (pmd_none(*dir))
+ 		return count;
+@@ -235,11 +236,17 @@ static inline int swap_out_pmd(struct mm
+ 					address += PAGE_SIZE;
+ 					break;
+ 				}
++                                if (TEST_RESCHED_COUNT(4)) {
++                                        if (conditional_schedule_needed())
++						goto out;
++                                        RESET_RESCHED_COUNT();
++                                }
+ 			}
+ 		}
+ 		address += PAGE_SIZE;
+ 		pte++;
+ 	} while (address && (address < end));
++out:
+ 	mm->swap_address = address;
+ 	return count;
+ }
+@@ -268,6 +275,8 @@ static inline int swap_out_pgd(struct mm
+ 		count = swap_out_pmd(mm, vma, pmd, address, end, count, classzone);
+ 		if (!count)
+ 			break;
++		if (conditional_schedule_needed())
++			return count;
+ 		address = (address + PMD_SIZE) & PMD_MASK;
+ 		pmd++;
+ 	} while (address && (address < end));
+@@ -292,6 +301,8 @@ static inline int swap_out_vma(struct mm
+ 		count = swap_out_pgd(mm, vma, pgdir, address, end, count, classzone);
+ 		if (!count)
+ 			break;
++		if (conditional_schedule_needed())
++			return count;
+ 		address = (address + PGDIR_SIZE) & PGDIR_MASK;
+ 		pgdir++;
+ 	} while (address && (address < end));
+@@ -313,6 +324,7 @@ static inline int swap_out_mm(struct mm_
+ 	 * Find the proper vm-area after freezing the vma chain 
+ 	 * and ptes.
+ 	 */
++continue_scan:
+ 	spin_lock(&mm->page_table_lock);
+ 	address = mm->swap_address;
+ 	if (address == TASK_SIZE || swap_mm != mm) {
+@@ -330,6 +342,12 @@ static inline int swap_out_mm(struct mm_
+ 			vma = vma->vm_next;
+ 			if (!vma)
+ 				break;
++                        if (conditional_schedule_needed()) {    /* Scanning a large vma */
++                                spin_unlock(&mm->page_table_lock);
++                                unconditional_schedule();
++                                /* Continue from where we left off */
++                                goto continue_scan;
++                        }
+ 			if (!count)
+ 				goto out_unlock;
+ 			address = vma->vm_start;
+Index: linux-2.4.32-ipod1/net/core/iovec.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/net/core/iovec.c
++++ linux-2.4.32-ipod1/net/core/iovec.c
+@@ -88,7 +88,7 @@ int memcpy_toiovec(struct iovec *iov, un
+ 		if(iov->iov_len)
+ 		{
+ 			int copy = min_t(unsigned int, iov->iov_len, len);
+-			if (copy_to_user(iov->iov_base, kdata, copy))
++                        if (ll_copy_to_user(iov->iov_base, kdata, copy))
+ 				goto out;
+ 			kdata+=copy;
+ 			len-=copy;
+Index: linux-2.4.32-ipod1/net/ipv4/tcp_minisocks.c
+===================================================================
+--- linux-2.4.32-ipod1.orig/net/ipv4/tcp_minisocks.c
++++ linux-2.4.32-ipod1/net/ipv4/tcp_minisocks.c
+@@ -440,6 +440,9 @@ static void SMP_TIMER_NAME(tcp_twkill)(u
+ {
+ 	struct tcp_tw_bucket *tw;
+ 	int killed = 0;
++#if LOWLATENCY_NEEDED
++	int max_killed = 0;
++#endif
+ 
+ 	/* NOTE: compare this to previous version where lock
+ 	 * was released after detaching chain. It was racy,
+@@ -453,6 +456,13 @@ static void SMP_TIMER_NAME(tcp_twkill)(u
+ 		goto out;
+ 
+ 	while((tw = tcp_tw_death_row[tcp_tw_death_row_slot]) != NULL) {
++#if LOWLATENCY_NEEDED
++		/* This loop takes ~6 usecs per iteration. */
++		if (killed > 100) {
++			max_killed = 1;
++			break;
++		}
++#endif
+ 		tcp_tw_death_row[tcp_tw_death_row_slot] = tw->next_death;
+ 		if (tw->next_death)
+ 			tw->next_death->pprev_death = tw->pprev_death;
+@@ -465,12 +475,24 @@ static void SMP_TIMER_NAME(tcp_twkill)(u
+ 		killed++;
+ 
+ 		spin_lock(&tw_death_lock);
++
++	}
++
++#if LOWLATENCY_NEEDED
++	if (max_killed) {	/* More to do: do it soon */
++		mod_timer(&tcp_tw_timer, jiffies+2);
++		tcp_tw_count -= killed;
++	}
++	else
++#endif
++	{
++		tcp_tw_death_row_slot =
++			((tcp_tw_death_row_slot + 1) & (TCP_TWKILL_SLOTS - 1));
++
++		if ((tcp_tw_count -= killed) != 0)
++			mod_timer(&tcp_tw_timer, jiffies+TCP_TWKILL_PERIOD);
+ 	}
+-	tcp_tw_death_row_slot =
+-		((tcp_tw_death_row_slot + 1) & (TCP_TWKILL_SLOTS - 1));
+ 
+-	if ((tcp_tw_count -= killed) != 0)
+-		mod_timer(&tcp_tw_timer, jiffies+TCP_TWKILL_PERIOD);
+ 	net_statistics[smp_processor_id()*2].TimeWaited += killed;
+ out:
+ 	spin_unlock(&tw_death_lock);

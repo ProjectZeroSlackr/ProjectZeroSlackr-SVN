@@ -1,0 +1,6 @@
+Module: XMP
+Display-name: Extended Module Player
+Description: Portable command-line module player supporting over 80 formats.
+Category: Media
+Author: cmatsuoka et al., Keripo
+Dependencies: browser,browser-ext

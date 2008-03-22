@@ -1,0 +1,837 @@
+diff -ur podwrite.c podwrite.c
+--- podwrite.c	2005-10-24 23:51:52.000000000 +0000
++++ podwrite.c	2008-03-02 15:24:32.000000000 +0000
+@@ -297,7 +297,7 @@
+ 	if (podwrite_saved_filename) {
+ 		new_text_box(0, 0, 0, 0, podwrite_saved_filename, podwrite_save_callback);
+ 	} else {
+-		new_text_box(0, 0, 0, 0, "/Notes/", podwrite_save_callback);
++		new_text_box(0, 0, 0, 0, "/mnt/Notes/", podwrite_save_callback);
+ 	}
+ }
+ 
+Index: about.c
+===================================================================
+--- about.c	(revision 2388)
++++ about.c	(working copy)
+@@ -33,26 +33,27 @@
+ 
+ static void populate_credits() {
+ 	int i, len = 0;
+-	char *cnames[] = {"Bernard Leach", "Matthew J. Sahagian",
+-			"Courtney Cavin", "matz-josh", "Matthis Rouch",
+-		       	"ansi", "Jens Taprogge", "Fredrik Bergholtz",
+-			"Jeffrey Nelson", "Scott Lawrence",
+-			"Cameron Nishiyama", "Prashant V", "Alastair Stuart",
+-			"David Carne", "Nik Rolls", "Filippo Forlani", 
+-			"Martin Kaltenbrunner", "Adam Johnston",
+-		        "Matthew Westcott", "Nils Schneider", "Damien Marchal",
+-			"Joshua Oreman", "Brett Ryland",
++	char *cnames[] = {"=Compilied thanks to=", "    [Keripo n mundi]", "~iPL Developers~",
++			"    Bernard Leach", "    Matthew J. Sahagian",
++			"    Courtney Cavin", "    matz-josh", "    Matthis Rouch",
++		       	"    ansi", "    Jens Taprogge", "    Fredrik Bergholtz",
++			"    Jeffrey Nelson", "    Scott Lawrence",
++			"    Cameron Nishiyama", "    Prashant V", "    Alastair Stuart",
++			"    David Carne", "    Nik Rolls", "    Filippo Forlani", 
++			"    Martin Kaltenbrunner", "    Adam Johnston",
++		        "    Matthew Westcott", "    Nils Schneider", "    Damien Marchal",
++			"    Joshua Oreman", "    Brett Ryland",
+ 			0};
+ 	for (i = 0; cnames[i] != 0; i++)
+ 		len += strlen(cnames[i]) + 9;
+ 	buf = malloc(sizeof(char) * (len + 47));
+-	strcpy(buf, "Brought to you by:\n\n");
++	strcpy(buf, "Podzilla0 Lite:\n\n");
+ 	for (i = 0; cnames[i] != 0; i++) {
+ 		strcat(buf, "        ");
+ 		strcat(buf, cnames[i]);
+ 		strcat(buf, "\n");
+ 	}
+-	strcat(buf, "\nhttp://www.ipodlinux.org\n");
++	strcat(buf, "\nsourceforge.net/projects/zeroslackr/\n");
+ }
+ 
+ static void populate_about() {
+Index: browser.c
+===================================================================
+--- browser.c	(revision 2388)
++++ browser.c	(working copy)
+@@ -36,11 +36,13 @@
+ #include "ipod.h"
+ #include "mlist.h"
+ #include "piezo.h"
++#include "textinput.h"
+ 
+ static GR_TIMER_ID browser_key_timer;
+ static GR_WINDOW_ID browser_wid;
+ static GR_GC_ID browser_gc;
+ static menu_st *browser_menu, *browser_menu_overlay;
++static char * browser_rename_oldname;
+ 
+ #define FILE_TYPE_PROGRAM 0
+ #define FILE_TYPE_DIRECTORY 1
+@@ -59,32 +61,33 @@
+ static int browser_nbEntries = 0;
+ static Directory browser_entries[MAX_ENTRIES];
+ 
+-extern int is_video_type(char *extension);
+-extern void new_video_window(char *filename);
++// extern int is_video_type(char *extension);
++// extern void new_video_window(char *filename);
+ extern void new_textview_window(char * filename);
+-extern int is_image_type(char *extension);
+-#ifdef MIKMOD
++// extern int is_image_type(char *extension);
++/*#ifdef MIKMOD
+ extern int is_mikmod_playlist_type(char *extension);
+ extern int is_mikmod_song_type(char *extension);
+ extern void new_mikmod_player(char *filename);
+ extern void new_mikmod_player_song(char *filename);
+-#endif
++#endif*/
+ #ifdef __linux__
+-#ifndef MPDC
+-extern int is_mp3_type(char *extension);
+-extern int is_aac_type(char *extension);
+-extern void new_mp3_window(char *filename, char *album, char *artist,
+-		char *title, unsigned short len);
+-extern void new_aac_window_get_meta(char *filename);
+-#endif /* !MPDC */
+-extern int is_raw_audio_type(char *extension);
+-extern void new_playback_window(char *filename);
+-extern int is_tzx_audio_type(char *extension);
+-extern void new_tzx_playback_window(char *filename);
++// #ifndef MPDC
++// extern int is_mp3_type(char *extension);
++// extern int is_aac_type(char *extension);
++// extern void new_mp3_window(char *filename, char *album, char *artist,
++// 		char *title, unsigned short len);
++// extern void new_aac_window_get_meta(char *filename);
++// #endif /* !MPDC */
++// extern int is_raw_audio_type(char *extension);
++// extern void new_playback_window(char *filename);
++// extern int is_tzx_audio_type(char *extension);
++// extern void new_tzx_playback_window(char *filename);
+ #endif /* __linux__ */
+ extern int is_text_type(char * extension);
+ extern int is_ascii_file(char *filename);
+ extern void new_stringview_window(char *buf, char *title);
++extern void new_podwrite_window_with_file(char * filename);
+ void new_exec_window(char *filename);
+ 
+ static int dir_cmp(const void *x, const void *y) 
+@@ -291,37 +294,37 @@
+ 			new_message_window(_("No Default Action for this Filetype"));
+ 		}
+ 	}
+-#ifdef MIKMOD
+-	else if (is_mikmod_playlist_type(ext)) {
+-		new_mikmod_player(filename);
+-	}
+-	else if (is_mikmod_song_type(ext)) {
+-		new_mikmod_player_song(filename);
+-	}
+-#endif
+-	else if (is_image_type(ext)) {
+-		new_image_window(filename);
+-	}
+-#ifdef __linux__
+-#ifndef MPDC
+-	else if (is_mp3_type(ext)) {
+-		new_mp3_window(filename, _("Unknown Album"),
+-				_("Unknown Artist"), _("Unknown Title"), 0);
+-	}
+-	else if (is_aac_type(ext)) {
+-		new_aac_window_get_meta(filename);
+-	}
+-#endif /* !MPDC */
+-	else if (is_tzx_audio_type(ext)) {
+-		new_tzx_playback_window(filename);
+-	}
+-	else if (is_raw_audio_type(ext)) {
+-		new_playback_window(filename);
+-	}
+-#endif /* __linux __ */
+-	else if (is_video_type(ext)) {
+-		new_video_window(filename);
+-	}
++// #ifdef MIKMOD
++// 	else if (is_mikmod_playlist_type(ext)) {
++// 		new_mikmod_player(filename);
++// 	}
++// 	else if (is_mikmod_song_type(ext)) {
++// 		new_mikmod_player_song(filename);
++// 	}
++// #endif
++// 	else if (is_image_type(ext)) {
++// 		new_image_window(filename);
++// 	}
++// #ifdef __linux__
++// #ifndef MPDC
++// 	else if (is_mp3_type(ext)) {
++// 		new_mp3_window(filename, _("Unknown Album"),
++// 				_("Unknown Artist"), _("Unknown Title"), 0);
++// 	}
++// 	else if (is_aac_type(ext)) {
++// 		new_aac_window_get_meta(filename);
++// 	}
++// #endif /* !MPDC */
++// 	else if (is_tzx_audio_type(ext)) {
++// 		new_tzx_playback_window(filename);
++// 	}
++// 	else if (is_raw_audio_type(ext)) {
++// 		new_playback_window(filename);
++// 	}
++// #endif /* __linux __ */
++// 	else if (is_video_type(ext)) {
++// 		new_video_window(filename);
++// 	}
+ 	else if (is_script_type(ext)) {
+ 		browser_exec_file(filename);
+ 	}
+@@ -368,6 +371,11 @@
+ 	free(execline);
+ }
+ 
++static void browser_podwrite_open_file()
++{
++	new_podwrite_window_with_file(current_file);
++}
++
+ static void browser_pipe_exec()
+ {
+ 	int len;
+@@ -476,6 +484,23 @@
+ 	}
+ }
+ 
++static void browser_rename_callback()
++{
++	if (text_get_buffer()[0] != 0) {
++		if ( rename(browser_rename_oldname, text_get_buffer()) == -1 ) {
++			pz_perror(current_file);
++		} else {
++			browser_mscandir("./");
++		}
++	}
++}
++
++static void browser_rename()
++{
++	browser_rename_oldname = current_file;
++	new_text_box(10, 40, 0, 0, current_file, browser_rename_callback);
++}
++
+ static void browser_action(unsigned short userChoice)
+ {
+ 	current_file = browser_entries[userChoice].full_name;
+@@ -499,10 +524,15 @@
+ 			menu_add_item(browser_menu, _("Open with viP"),
+ 					browser_vip_open_file, 0, ACTION_MENU |
+ 					SUB_MENU_PREV);
++			menu_add_item(browser_menu, _("Open with PodWrite"),
++					browser_podwrite_open_file, 0, ACTION_MENU |
++					SUB_MENU_PREV);
+ 		break;
+ 	}
+ 	menu_add_item(browser_menu, _("Delete"),  browser_delete_confirm, 0,
+ 			ACTION_MENU | ARROW_MENU);
++	menu_add_item(browser_menu, _("Rename"),  browser_rename, 0,
++			ACTION_MENU);
+ }
+ 
+ static int browser_do_keystroke(GR_EVENT * event)
+Index: fonts.c
+===================================================================
+--- ipod.h	(revision 2388)
++++ ipod.h	(working copy)
+@@ -22,9 +22,9 @@
+ /* Global Settings */
+ 
+ #ifdef IPOD
+-#define IPOD_SETTINGS_FILE	"/etc/podzilla.conf"
++#define IPOD_SETTINGS_FILE	"/opt/Podzilla0-Lite/Conf/podzilla0-lite.conf"
+ #else
+-#define IPOD_SETTINGS_FILE	"podzilla.conf"
++#define IPOD_SETTINGS_FILE	"/opt/Podzilla0-Lite/Conf/podzilla0-lite.conf"
+ #endif
+ 
+ /* DISPLAY SETINGS 0 - 9 */
+@@ -67,8 +67,9 @@
+ #define DECORATIONS	(45)	/* appearance */
+ #define BATTERY_DIGITS	(46)	/* appearance */
+ #define DISPLAY_LOAD	(47)	/* appearance */
+-#define FONT_FILE	(48)
++#define FONT_FILE		(48)
+ #define SLIDE_TRANSIT	(49)
++#define TEXT_INPUT 50
+ 
+ #define MIN_CONTRAST	0
+ #define MAX_CONTRAST	128
+Index: Makefile
+===================================================================
+--- Makefile	(revision 2388)
++++ Makefile	(working copy)
+@@ -78,7 +78,7 @@
+ 
+ endif
+ 
+-PZ_VER=\"podzilla `date -u +"%Y-%m-%d"`CVS\"
++PZ_VER=\"Podzilla0-Lite\"
+ 
+ CFLAGS+=\
+ 	-Wall -g \
+@@ -103,86 +103,27 @@
+ 	header.o \
+ 	dialog.o \
+ 	appearance.o \
+-	image.o \
+ 	browser.o \
+ 	ipod.o \
+ 	menu.o \
+ 	piezo.o \
+ 	textview.o \
+-	mp3.o \
+-	aac.o \
+ 	message.o \
+ 	slider.o \
+-	audio.o \
+ 	about.o \
+-	othello.o \
+-	pong.o \
+-	calendar.o \
+ 	btree.o \
+-	itunes_db.o \
+-	itunesmenu.o \
+-	tictactoe.o \
+-	tunnel.o \
+-	calc.o \
+-	poddraw.o \
+-	playlist.o \
+-	cube.o \
+-	mandelpod.o \
+-	matrix.o \
+-	lights.o \
+-	mlist.o \
+-	minesweeper.o \
+-	ipobble.o \
+-	invaders.o \
+ 	vectorfont.o \
+-	oss.o \
+-	clocks.o \
++	mlist.o \
+ 	fonts.o \
+-	tzx.o \
+-	dialer.o \
+-	wumpus.o \
+ 	settings.o \
+ 	usb.o \
+ 	fw.o \
+-	video/video.o \
+-	video/videocop.o \
+-	vortex/console.o \
+-	vortex/levels.o \
+-	vortex/vortex.o \
+-	vortex/globals.o \
+-	vortex/gameobjs.o \
+-	Steroids/asteroid.o \
+-	Steroids/main.o \
+-	Steroids/object.o \
+-	Steroids/polygon.o \
+-	Steroids/ship.o \
+-	Steroids/shot.o \
+-	Steroids/vector.o \
+-	bluecube/box.o \
+-	bluecube/main.o \
+-	bluecube/pieces.o \
+-	tuxchess/board.o \
+-	tuxchess/data.o \
+-	tuxchess/eval.o \
+-	tuxchess/main.o \
+-	tuxchess/search.o
++	podwrite.o \
++	clickwheel.o \
++	textinput.o \
++	textinput/dial.o \
+ 
+-ifneq ($(IPOD),)
+-OBJS+=\
+-	mp3decoder.o
+-endif
+ 
+-# additions for MikMod builds...
+-ifneq ($(MIKMOD),)
+-OBJS+= mikmod/ipodmikmod.o
+-LDFLAGS+= -L../mikmod/ipod/lib
+-CFLAGS+= -DMIKMOD -I../mikmod/ipod/include
+-ifneq ($(IPOD),)
+-LDFLAGS+= -lmikmod -lmmio
+-OBJS+= mikmod/mlist.o mikmod/marchive.o
+-endif
+-endif
+-
+ # locale stuff
+ ifneq ($(LOCALE),)
+ CFLAGS+= -DLOCALE
+@@ -206,10 +147,10 @@
+ all: podzilla
+ 
+ podzilla: $(OBJS) Makefile
+-	$(CC) $(OBJS) -o podzilla $(CFLAGS) $(LDFLAGS)
++	$(CC) $(OBJS) -o Podzilla0-Lite $(CFLAGS) $(LDFLAGS)
+ 
+ clean: 
+-	$(RM) $(OBJS) *~ podzilla podzilla.gdb podzilla.pot
++	$(RM) $(OBJS) *~ Podzilla0-Lite Podzilla0-Lite.gdb Podzilla0-Lite.pot
+ 
+ translate:
+-	xgettext -kN_ -k_ -o podzilla.pot `find . -type f -name '*.c' -print`
++	xgettext -kN_ -k_ -o Podzilla0-Lite.pot `find . -type f -name '*.c' -print`
+Index: menu.c
+===================================================================
+--- menu.c	(revision 2388)
++++ menu.c	(working copy)
+@@ -29,47 +29,50 @@
+ extern void toggle_backlight(void);
+ extern void set_wheeldebounce(void);
+ extern void set_buttondebounce(void);
+-#ifdef __linux__
+-extern void new_record_mic_window(void);
+-extern void new_record_line_in_window(void);
+-extern void new_playback_browse_window(void);
+-#endif /* __linux__ */
+-extern void new_calendar_window(void);
+-extern void new_clock_window(void);
+-extern void new_world_clock_window(void);
+-extern void new_Set_Time_window(void);
+-extern void new_Set_DateTime_window(void);
+-extern void new_oth_window(void);
+-extern void new_steroids_window(void);
+-extern void new_bluecube_window(void);
+-extern void new_mandel_window(void);
+-#ifndef MPDC
+-extern void new_itunes_track(void);
+-extern void new_itunes_artist(void);
+-extern void new_itunes_album(void);
+-extern void new_itunes_plist(void);
+-#endif /* !MPDC */
+-extern void new_pong_window(void);
+-extern void new_mines_window(void);
+-extern void new_tictactoe_window(void);
+-extern void new_tunnel_window(void);
+-extern void new_tuxchess_window(void);
+-extern void last_tuxchess_window(void);
+-extern void new_calc_window(void);
+-extern void new_dialer_window(void);
+-extern void new_poddraw_window(void);
+-extern void new_cube_window(void);
+-extern void new_matrix_window(void);
+-extern void new_ipobble_window(void);
+-extern void new_invaders_window(void);
++// #ifdef __linux__
++// extern void new_record_mic_window(void);
++// extern void new_record_line_in_window(void);
++// extern void new_playback_browse_window(void);
++// #endif /* __linux__ */
++// extern void new_calendar_window(void);
++// extern void new_clock_window(void);
++// extern void new_world_clock_window(void);
++// extern void new_Set_Time_window(void);
++// extern void new_Set_DateTime_window(void);
++// extern void new_oth_window(void);
++// extern void new_steroids_window(void);
++// extern void new_bluecube_window(void);
++// extern void new_mandel_window(void);
++// #ifndef MPDC
++// extern void new_itunes_track(void);
++// extern void new_itunes_artist(void);
++// extern void new_itunes_album(void);
++// extern void new_itunes_plist(void);
++// #endif /* !MPDC */
++// extern void new_pong_window(void);
++// extern void new_mines_window(void);
++// extern void new_tictactoe_window(void);
++// extern void new_tunnel_window(void);
++// extern void new_tuxchess_window(void);
++// extern void last_tuxchess_window(void);
++// extern void new_calc_window(void);
++// extern void new_dialer_window(void);
++// extern void new_poddraw_window(void);
++// extern void new_cube_window(void);
++// extern void new_matrix_window(void);
++// extern void new_ipobble_window(void);
++// extern void new_invaders_window(void);
+ extern void new_font_window(menu_st *);
+-extern void new_vortex_window(void);
+-extern void new_wumpus_window(void);
++// extern void new_vortex_window(void);
++// extern void new_wumpus_window(void);
+ extern void about_podzilla(void);
+ extern void show_credits(void);
+-#ifdef MIKMOD
+-extern void new_mikmod_window(void);
+-#endif
++extern void new_text_box_np(void);
++extern void new_text_box_nppw(void);
++extern void new_podwrite_window(void);
++// #ifdef MIKMOD
++// extern void new_mikmod_window(void);
++// #endif
+ #ifdef MPDC
+ extern void mpd_currently_playing(void);
+ 
+@@ -86,46 +89,47 @@
+ static GR_GC_ID menu_gc;
+ static menu_st *menuz;
+ 
+-static item_st tuxchess_menu[] = {
+-	{N_("Last Game"), last_tuxchess_window, ACTION_MENU},
+-	{N_("New Game"), new_tuxchess_window, ACTION_MENU},
+-	{0}
+-};
++// static item_st tuxchess_menu[] = {
++// 	{N_("Last Game"), last_tuxchess_window, ACTION_MENU},
++// 	{N_("New Game"), new_tuxchess_window, ACTION_MENU},
++// 	{0}
++// };
+ 
+-static item_st games_menu[] = {
+-	{N_("BlueCube"), new_bluecube_window, ACTION_MENU},
+-	{N_("Hunt The Wumpus"), new_wumpus_window, ACTION_MENU},
+-	{N_("Invaders"), new_invaders_window, ACTION_MENU},
+-	{N_("iPobble"), new_ipobble_window, ACTION_MENU},
+-	{N_("Lights"), lights_menu, SUB_MENU_HEADER},
+-	{N_("Minesweeper"), new_mines_window, ACTION_MENU},
+-	{N_("Othello"), new_oth_window, ACTION_MENU},
+-	{N_("Pong"), new_pong_window, ACTION_MENU},
+-	{N_("Steroids"), new_steroids_window, ACTION_MENU},
+-	{N_("Tic-Tac-Toe"), new_tictactoe_window, ACTION_MENU},
+-	{N_("Tunnel"), new_tunnel_window, ACTION_MENU},
+-	{N_("TuxChess"), tuxchess_menu, SUB_MENU_HEADER},
+-	{N_("Vortex Demo"), new_vortex_window, ACTION_MENU},
+-	{0}
+-};
++// static item_st games_menu[] = {
++// 	{N_("Hunt The Wumpus"), new_wumpus_window, ACTION_MENU},
++// 	{N_("iPobble"), new_ipobble_window, ACTION_MENU},
++// 	{N_("Pong"), new_pong_window, ACTION_MENU},
++// 	{N_("Invaders"), new_invaders_window, ACTION_MENU},
++// 	{N_("Lights"), lights_menu, SUB_MENU_HEADER},
++// 	{N_("Othello"), new_oth_window, ACTION_MENU},
++// 	{N_("Steroids"), new_steroids_window, ACTION_MENU},
++// 	{N_("Tic-Tac-Toe"), new_tictactoe_window, ACTION_MENU},
++// 	{N_("Tunnel"), new_tunnel_window, ACTION_MENU},
++// 	{N_("BlueCube"), new_bluecube_window, ACTION_MENU},
++// 	{N_("Minesweeper"), new_mines_window, ACTION_MENU},
++// 	{N_("TuxChess"), tuxchess_menu, SUB_MENU_HEADER},
++// 	{N_("Vortex Demo"), new_vortex_window, ACTION_MENU},
++// 	{0}
++// };
+ 
+-static item_st stuff_menu[] = {
+-	{N_("Cube"), new_cube_window, ACTION_MENU},
+-	{N_("Dialer"), new_dialer_window, ACTION_MENU},
+-	{N_("MandelPod"), new_mandel_window, ACTION_MENU},
+-	{N_("Matrix"), new_matrix_window, ACTION_MENU},
+-	{N_("PodDraw"), new_poddraw_window, ACTION_MENU},
+-	{0}
+-};
++// static item_st stuff_menu[] = {
++// 	{N_("Matrix"), new_matrix_window, ACTION_MENU},
++// 	{N_("Cube"), new_cube_window, ACTION_MENU},
++// 	{N_("Dialer"), new_dialer_window, ACTION_MENU},
++// 	{N_("MandelPod"), new_mandel_window, ACTION_MENU},
++// 	{N_("PodDraw"), new_poddraw_window, ACTION_MENU},
++// 	{N_("PodWrite"), new_podwrite_window, ACTION_MENU},
++// 	{0}
++// };
+ 
+ static char *backlight_options[] = {
+ 	N_("Off"), N_("1 sec"), N_("2 secs"), N_("5 secs"), N_("10 secs"),
+ 	N_("30 secs"), N_("1 min"), N_("On")
+ };
+ 
+-static char *sample_rates[] = {
+-	"8 kHz", "32 kHz", "44.1 kHz", "88.2 kHz", "96 kHz"
+-};
++// static char *sample_rates[] = {
++// 	"8 kHz", "32 kHz", "44.1 kHz", "88.2 kHz", "96 kHz"
++// };
+ 
+ static char *shuffle_options[] = {
+ 	N_("Off"), N_("Songs")
+@@ -135,61 +139,80 @@
+ 	N_("Off"), N_("One"), N_("All")
+ };
+ 
+-static item_st recording_menu[] = {
+-#ifdef __linux__
+-	{N_("Mic Record"), new_record_mic_window, ACTION_MENU},
+-	{N_("Line In Record"), new_record_line_in_window, ACTION_MENU},
+-	{N_("Playback"), new_playback_browse_window, ACTION_MENU},
+-#endif /* __linux__ */
+-	{N_("Sample Rate"), sample_rates, OPTION_MENU, DSPFREQUENCY, 5},
+-	{0}
+-};
++// static item_st recording_menu[] = {
++// #ifdef __linux__
++// 	{N_("Mic Record"), new_record_mic_window, ACTION_MENU},
++// 	{N_("Line In Record"), new_record_line_in_window, ACTION_MENU},
++// 	{N_("Playback"), new_playback_browse_window, ACTION_MENU},
++// #endif /* __linux__ */
++// 	{N_("Sample Rate"), sample_rates, OPTION_MENU, DSPFREQUENCY, 5},
++// 	{0}
++// };
+ 
+-extern char * clocks_timezones[]; /* for the timezones.  in clocks.c */
+-extern char * clocks_dsts[];	  /* for dst display.  in clocks.c */
++// extern char * clocks_timezones[]; /* for the timezones.  in clocks.c */
++// extern char * clocks_dsts[];	  /* for dst display.  in clocks.c */
++// 
++// static item_st world_clock_menu[] = {
++// 	{N_("Local Clock"), new_clock_window, ACTION_MENU},
++// 	{N_("World Clock"), new_world_clock_window, ACTION_MENU},
++// 	{N_("TZ"), clocks_timezones, OPTION_MENU, TIME_WORLDTZ, 39},
++// 	{N_("DST"), clocks_dsts, OPTION_MENU, TIME_WORLDDST, 3},
++// 	{0}
++// };
+ 
+-static item_st world_clock_menu[] = {
+-	{N_("Local Clock"), new_clock_window, ACTION_MENU},
+-	{N_("World Clock"), new_world_clock_window, ACTION_MENU},
+-	{N_("TZ"), clocks_timezones, OPTION_MENU, TIME_WORLDTZ, 39},
+-	{N_("DST"), clocks_dsts, OPTION_MENU, TIME_WORLDDST, 3},
+-	{0}
+-};
++// static item_st extras_menu[] = {
++// 	{N_("Miscellaneous"), stuff_menu, SUB_MENU_HEADER},
++// 	{N_("Games"), games_menu, SUB_MENU_HEADER},
++// 	{N_("Clock"), world_clock_menu, SUB_MENU_HEADER},
++// 	{N_("Calendar"), new_calendar_window, ACTION_MENU},
++// 	{N_("Calculator"), new_calc_window, ACTION_MENU},
++// 	{N_("Recordings"), recording_menu, SUB_MENU_HEADER},
++// 	{0}
++// };
+ 
+-static item_st extras_menu[] = {
+-	{N_("Recordings"), recording_menu, SUB_MENU_HEADER},
+-	{N_("Calendar"), new_calendar_window, ACTION_MENU},
+-	{N_("Calculator"), new_calc_window, ACTION_MENU},
+-	{N_("Clock"), world_clock_menu, SUB_MENU_HEADER},
+-	{N_("Games"), games_menu, SUB_MENU_HEADER},
+-	{N_("Stuff"), stuff_menu, SUB_MENU_HEADER},
+-	{0}
+-};
+-
+ static item_st reset_menu[] = {
+ 	{N_("Cancel"), NULL, SUB_MENU_PREV},
+ 	{N_("Absolutely"), ipod_reset_settings, ACTION_MENU | SUB_MENU_PREV},
+ 	{0}
+ };
+ 
+-static char * time1224_options[] = { N_("12-hour"), N_("24-hour") };
++// static char * time1224_options[] = { N_("12-hour"), N_("24-hour") };
++// 
++// static item_st clocks_menu[] = {
++//         { N_("Clock"), new_clock_window, ACTION_MENU },
++//         { N_("Set Time"), new_Set_Time_window, ACTION_MENU },
++//         { N_("Set Time & Date"), new_Set_DateTime_window, ACTION_MENU },
++// /* -- future expansion --
++// 	{ N_("Set Alarm"), NULL, SUB_MENU_PREV },
++// 	{ N_("Set Sleep Timer"), NULL, SUB_MENU_PREV },
++// 	{ N_("Time In Title"), NULL, BOOLEAN_MENU, TIME_IN_TITLE },
++// */
++// 	{ N_("TZ"), clocks_timezones, OPTION_MENU, TIME_ZONE, 39 },
++// 	{ N_("DST"), clocks_dsts, OPTION_MENU, TIME_DST, 3},
++// 	{ N_("Time"), time1224_options, OPTION_MENU, TIME_1224, 2 },
++// 	{ N_("Time Tick Noise"), NULL, BOOLEAN_MENU, TIME_TICKER },
++//         { 0 }
++// };
+ 
+-static item_st clocks_menu[] = {
+-        { N_("Clock"), new_clock_window, ACTION_MENU },
+-        { N_("Set Time"), new_Set_Time_window, ACTION_MENU },
+-        { N_("Set Time & Date"), new_Set_DateTime_window, ACTION_MENU },
+-/* -- future expansion --
+-	{ N_("Set Alarm"), NULL, SUB_MENU_PREV },
+-	{ N_("Set Sleep Timer"), NULL, SUB_MENU_PREV },
+-	{ N_("Time In Title"), NULL, BOOLEAN_MENU, TIME_IN_TITLE },
+-*/
+-	{ N_("TZ"), clocks_timezones, OPTION_MENU, TIME_ZONE, 39 },
+-	{ N_("DST"), clocks_dsts, OPTION_MENU, TIME_DST, 3},
+-	{ N_("Time"), time1224_options, OPTION_MENU, TIME_1224, 2 },
+-	{ N_("Time Tick Noise"), NULL, BOOLEAN_MENU, TIME_TICKER },
+-        { 0 }
++static item_st textinput_menu[] = {
++	{N_("Scroll Through"), NULL, SETTING_ITEM, TEXT_INPUT, 2},
++	{N_("OFF"), NULL, SETTING_ITEM, TEXT_INPUT, 0},
++// 	{N_("Serial"), NULL, SETTING_ITEM, TEXT_INPUT, 1},
++// 	{N_("On-Screen Keyboard"), NULL, SETTING_ITEM, TEXT_INPUT, 3},
++// 	{N_("Morse Code"), NULL, SETTING_ITEM, TEXT_INPUT, 4},
++// 	{N_("Cursive"), NULL, SETTING_ITEM, TEXT_INPUT, 5},
++// 	{N_("WheelBoard"), NULL, SETTING_ITEM, TEXT_INPUT, 6},
++// 	{N_("4-Button Keyboard"), NULL, SETTING_ITEM, TEXT_INPUT, 7},
++// 	{N_("Dial Type"), NULL, SETTING_ITEM, TEXT_INPUT, 8},
++// 	{N_("Telephone Keypad (4g)"), NULL, SETTING_ITEM, TEXT_INPUT, 9},
++// 	{N_("Thumbscript (4g)"), NULL, SETTING_ITEM, TEXT_INPUT, 10},
++// 	{N_("4-Button Telephone Keypad"), NULL, SETTING_ITEM, TEXT_INPUT, 11},
++// 	/* {N_("Dasher"), NULL, SETTING_ITEM, TEXT_INPUT, 12}, */
++// 	/* {N_("Speech Recognition"), NULL, SETTING_ITEM, TEXT_INPUT, 13}, */
++	{0}
+ };
+ 
++
+ static item_st appearance_menu[] = {
+ 	{N_("Color Scheme"), colorscheme_names, OPTION_MENU, COLORSCHEME, CS_NSCHEMES },
+ 	{N_("Decorations"), appearance_decorations, OPTION_MENU, DECORATIONS, NDECORATIONS },
+@@ -211,23 +234,29 @@
+ 	appearance_menu[0].item_count = val;
+ }
+ 
++
++
+ static item_st settings_menu[] = {
+-	{N_("About"), about_podzilla, ACTION_MENU},
+-	{N_("Credits"), show_credits, ACTION_MENU},
+-	{N_("Date & Time"), clocks_menu, SUB_MENU_HEADER},
+-	{N_("Repeat"), repeat_options, OPTION_MENU, REPEAT, 3},
+-	{N_("Shuffle"), shuffle_options, OPTION_MENU, SHUFFLE, 2},
++	{N_("Appearance"), appearance_menu, SUB_MENU_HEADER},
++	{N_("Clicker"), NULL, BOOLEAN_MENU, CLICKER},
+ 	{N_("Contrast"), set_contrast, ACTION_MENU},
++	{N_("Button Debounce"), set_buttondebounce, ACTION_MENU},
+ 	{N_("Wheel Sensitivity"), set_wheeldebounce, ACTION_MENU},
+-	{N_("Button Debounce"), set_buttondebounce, ACTION_MENU},
+ 	{N_("Backlight Timer"), backlight_options, OPTION_MENU, BACKLIGHT_TIMER, 8},
+-	{N_("Clicker"), NULL, BOOLEAN_MENU, CLICKER},
+-	{N_("Appearance"), appearance_menu, SUB_MENU_HEADER},
++	{N_("----"), NULL, NULL},
++// 	{N_("Date & Time"), clocks_menu, SUB_MENU_HEADER},
++	{N_("Repeat"), repeat_options, OPTION_MENU, REPEAT, 3},
++	{N_("Shuffle"), shuffle_options, OPTION_MENU, SHUFFLE, 2},
++	{N_("Text Input"), textinput_menu, SUB_MENU_HEADER},
++	{N_("Text Input Test"), new_text_box_np, ACTION_MENU},
++	{N_("Show Hidden Files"), NULL, BOOLEAN_MENU, BROWSER_HIDDEN},
+ 	{N_("Browser Path Display"), NULL, BOOLEAN_MENU, BROWSER_PATH},
+-	{N_("Show Hidden Files"), NULL, BOOLEAN_MENU, BROWSER_HIDDEN},
+-	{N_("Reset All Settings"), reset_menu, SUB_MENU_HEADER},
++	{N_("About"), about_podzilla, ACTION_MENU},
++	{N_("Credits"), show_credits, ACTION_MENU},
++	{N_("----"), NULL, NULL},
+ 	{N_("Save Settings"), ipod_save_settings, ACTION_MENU},
+ 	{N_("Load Settings"), ipod_load_settings, ACTION_MENU},
++	{N_("Reset All Settings"), reset_menu, SUB_MENU_HEADER},
+ 	{0}
+ };
+ 
+@@ -243,21 +272,18 @@
+ 	{0}
+ };
+ 
+-#ifndef MPDC
+-static item_st itunes_menu[] = {
+-	{N_("Playlists"), new_itunes_plist, ACTION_MENU | ARROW_MENU},
+-	{N_("Artists"), new_itunes_artist, ACTION_MENU | ARROW_MENU},
+-	{N_("Albums"), new_itunes_album, ACTION_MENU | ARROW_MENU},
+-	{N_("Songs"), new_itunes_track, ACTION_MENU | ARROW_MENU},
+-#ifdef MIKMOD
+-	{N_("MikMod"), new_mikmod_window, ACTION_MENU},
+-#endif
+-	{0}
+-};
+-#endif /* !MPDC */
++// #ifndef MPDC
++// static item_st itunes_menu[] = {
++// 	{N_("Playlists"), new_itunes_plist, ACTION_MENU | ARROW_MENU},
++// 	{N_("Songs"), new_itunes_track, ACTION_MENU | ARROW_MENU},
++// 	{N_("Artists"), new_itunes_artist, ACTION_MENU | ARROW_MENU},
++// 	{N_("Albums"), new_itunes_album, ACTION_MENU | ARROW_MENU},
++// 	{0}
++// };
++// #endif /* !MPDC */
+ 
+ static item_st power_menu[] = {
+-	{N_("Quit Podzilla"), quit_podzilla, ACTION_MENU},
++	{N_("Quit Podzilla0-Lite"), quit_podzilla, ACTION_MENU},
+ 	{N_("Reboot iPod"), reboot_menu, SUB_MENU_HEADER},
+ #ifdef NEVER /* just to show where this should go */
+ 	{N_("Sleep iPod"), sleep, ACTION_MENU};
+@@ -268,12 +294,16 @@
+ 
+ static item_st main_menu[] = {
+ #ifdef MPDC
+-	{N_("Music"), mpdc_menu, SUB_MENU_HEADER},
++	{N_("MPD"), mpdc_menu, SUB_MENU_HEADER},
+ #else
+ 	{N_("Music"), itunes_menu, SUB_MENU_HEADER},
+ #endif /* MPDC */
+-	{N_("Extras"), extras_menu, SUB_MENU_HEADER},
++	{N_("PodWrite"), new_podwrite_window, ACTION_MENU},
++// 	{N_("Extras"), extras_menu, SUB_MENU_HEADER},
+ 	{N_("Settings"), settings_menu, SUB_MENU_HEADER},
++// #ifdef MIKMOD
++// 	{N_("MikMod"), new_mikmod_window, ACTION_MENU},
++// #endif
+ #ifdef MPDC
+ 	{N_("Now Playing"), mpd_currently_playing, ACTION_MENU},
+ #endif /* MPDC */
+@@ -360,7 +390,7 @@
+ 	GrSelectEvents(menu_wid, GR_EVENT_MASK_EXPOSURE| GR_EVENT_MASK_KEY_UP|
+ 			GR_EVENT_MASK_KEY_DOWN | GR_EVENT_MASK_TIMER);
+ 
+-	menuz = menu_init(menu_wid, "podzilla", 0, 0, screen_info.cols,
++	menuz = menu_init(menu_wid, "Podzilla0-Lite", 0, 0, screen_info.cols,
+ 			screen_info.rows - (HEADER_TOPLINE + 1), NULL,
+ 			main_menu, ASCII | TRANSLATE);
+ 
+Index: mlist.c
+===================================================================
+--- mlist.c	(revision 2388)
++++ mlist.c	(working copy)
+@@ -619,6 +619,12 @@
+ 		menu_retext_pixmap(menulist, num - menulist->top_item, item);
+ 	}
+ 	
++	else if(SETTING_ITEM & item->op) {
++		if(item->setting != 0)
++			ipod_set_setting(item->setting, item->item_count);
++		menulist = menu_destroy(menulist);
++	}
++
+ 	/* this isnt an else, so you can do (ACTION_MENU|SUB_MENU_PREV) */
+ 	if(SUB_MENU_PREV & item->op) {
+ 		menulist = menu_destroy(menulist);
+Index: pz.c
+===================================================================
+--- pz.c	(revision 2388)
++++ pz.c	(working copy)
+@@ -366,7 +366,7 @@
+ 	GR_WINDOW_ID new_wid = GrNewWindowEx(GR_WM_PROPS_APPFRAME |
+ 			    GR_WM_PROPS_CAPTION |
+ 			    GR_WM_PROPS_CLOSEBOX,
+-			    (GR_CHAR *)"podzilla",
++			    (GR_CHAR *)"Podzilla0-Lite",
+ 			    root_wid,
+ 			    x, y, w, h, WHITE);
+ 
+@@ -445,8 +445,8 @@
+ 
+ #ifdef LOCALE
+ 	setlocale(LC_ALL, "");
+-	bindtextdomain("podzilla", LOCALEDIR);
+-	textdomain("podzilla");
++	bindtextdomain("Podzilla0-Lite", LOCALEDIR);
++	textdomain("Podzilla0-Lite");
+ #endif
+ 	root_gc = GrNewGC();
+ 	GrSetGCUseBackground(root_gc, GR_FALSE);
+@@ -456,7 +456,7 @@
+ 	root_wid = GrNewWindowEx(GR_WM_PROPS_APPFRAME |
+ 			    GR_WM_PROPS_CAPTION |
+ 			    GR_WM_PROPS_CLOSEBOX,
+-			    (GR_CHAR *)"podzilla",
++			    (GR_CHAR *)"Podzilla0-Lite",
+ 			    GR_ROOT_WINDOW_ID,
+ 			    0, 0, screen_info.cols, screen_info.rows, WHITE);
+ 

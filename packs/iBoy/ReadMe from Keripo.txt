@@ -1,0 +1,58 @@
+Last updated: March 19, 2008
+~Keripo
+
+All code/scripts written by Keripo are licensed under
+GNU GPL - see License.txt. For the licensing of the
+software/application, refer to the documents found in
+Docs/Original or the license that comes with the
+original/ported software.
+
+Overview:
+iBoy
+- iBoy is an optimized port of gnuboy, a Nintendo Gameboy Original/
+  Gameboy Color emulator, to iPodLinux.
+- It is extremely well optimized, very stable and one of the most
+  well known and widely used emulators for iPodLinux and has a
+  long history, appearing in a number of past publications
+  (magazine and online) featuring iPodLinux.
+- Public domain rom files can be optained through various internet
+  websites while commercial rom files should be dumped from real
+  Gameboy game cartriages (downloading commercial roms that you do
+  not own is ILLEGAL). Rom files should be placed in the "Roms"
+  folder.
+For more information, see:
+- http://ipodlinux.org/iBoy
+- http://en.wikipedia.org/wiki/Gnuboy
+- http://en.wikipedia.org/wiki/Game_Boy
+- http://en.wikipedia.org/wiki/Game_Boy_Color
+
+
+Original:
+- Authors: David Rigler (ducky) et al. (see SourceForge page)
+- Source: Website
+- Link:
+  http://sourceforge.net/projects/iboy
+- Date: Oct 3, 2007
+- Version: 0.7.5-4
+
+ZS Version:
+- Modder: Keripo
+- Type: ZS Recompile
+- Date: Feb 26, 2008
+- Version: B X.X
+
+Modifications:
+- made ZS-friendly
+- a few Public Domain roms from DCEMU
+  http://psp-news.dcemu.co.uk/gameboy-gameboycolourroms.shtml
+
+Launch Module:
+- FastLaunches iBoy with Chip the Chick rom
+- launch rom files from file browser
+
+To do:
+- none - iBoy is awesome ; )
+- direct loading of colour roms seem to be buggy ; /
+
+Changelog 
+[keep untouched till beta release]

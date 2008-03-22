@@ -1,0 +1,16 @@
+Last updated: March 22, 2008
+~Keripo
+
+All code/scripts written by Keripo are licensed under
+GNU GPL - see License.txt. For the licensing of the
+software/application, refer to the documents found in
+Docs/Original or the license that comes with the
+original/ported software.
+
+
+== Changelog ==
+
+March 22, 2008
+- Stable Snapshot pre-release
+- First proper SVN upload
+

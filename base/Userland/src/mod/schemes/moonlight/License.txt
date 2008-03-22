@@ -1,0 +1,24 @@
+The background image for the scheme is a modified
+copy of an artwork that I (Keripo) commissioned from
+TheNork a few years ago. The character copywrite is
+owned by me (Keripo) and thus usage of the original
+or any modified version (including this scheme's) is
+not allowed without my explicit permission (though I
+will probably grant it).
+The original artwork can be found here:
+http://s22.photobucket.com/albums/b334/Keripo/shortytss/?action=view&current=TheNork-shortytssamazingfull.jpg
+The original commission can be found here:
+http://forums.kingdomofloathing.com:8080/vb/showthread.php?t=116511
+
+The titlebar image was generated using the AmitySource
+Userbar Generator program and comes with whatever
+licensing restrictions UserBar Generator generated
+images comes with.
+AmitySource Userbar Generator can be found here:
+http://www.amitysource.com/userbar_maker.php
+
+The .png files were created using Photoshop CS3 10.0.
+To create them, the original images were resized,
+the colour set to Indexed, Selective, 32, then
+edited/cleaned up by hand. The monochrome images
+were set to grayscale, then smudged by hand.

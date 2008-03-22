@@ -1,0 +1,62 @@
+diff -ur linux-2.4.32-ipod2/arch/armnommu/mach-ipod/audio.c linux-2.4.32-ipod2-mod/arch/armnommu/mach-ipod/audio.c
+--- linux-2.4.32-ipod2/arch/armnommu/mach-ipod/audio.c	2008-01-31 14:22:37.000000000 +0000
++++ linux-2.4.32-ipod2-mod/arch/armnommu/mach-ipod/audio.c	2008-01-31 14:46:51.000000000 +0000
+@@ -32,7 +32,8 @@
+ #define D2A_POWER_ON    3
+ 
+ /* length of shared buffer in half-words (starting at DMA_BASE) */
+-#define BUF_LEN		(40*1024)
++volatile int *dma_len = (int *) DMA_BUF_LEN;
++#define BUF_LEN (*dma_len)
+ 
+ static int ipodaudio_isopen;
+ // static int ipodaudio_power_state;
+@@ -834,6 +835,7 @@
+ 	}
+ 
+ 	/* initialise shared variables */
++	BUF_LEN = 40 * 1024;
+ 	*r_off = 0;
+ 	*w_off = 0;
+ 	*dma_active = 0;
+@@ -1245,7 +1247,17 @@
+ 			put_user(BUF_LEN/2, (int *) arg);
+ 		}
+ 		break;
+-
++	case SNDCTL_DSP_SETFRAGMENT:
++		rc = verify_area(VERIFY_READ, (void *) arg, sizeof(val));
++		if (rc == 0) {
++			get_user(val, (int *) arg);
++			if (val >= 128 && val <= 40*1024) {
++				ipodaudio_txdrain();
++				BUF_LEN = val;
++			}
++			put_user(BUF_LEN, (int *) arg);
++		}
++		break;	
+ 	case SNDCTL_DSP_SYNC:
+ 		rc = 0;
+ 		ipodaudio_txdrain();
+@@ -1585,6 +1597,7 @@
+ 			SOUND_MAJOR, SND_DEV_DSP);
+ 		return 0;
+ 	}
++	BUF_LEN = 40 * 1024;
+ 
+ 	ipodaudio_hw_init();
+ 
+diff -ur linux-2.4.32-ipod2/include/asm-armnommu/arch-ipod/hardware.h linux-2.4.32-ipod2-mod/include/asm-armnommu/arch-ipod/hardware.h
+--- linux-2.4.32-ipod2/include/asm-armnommu/arch-ipod/hardware.h	2008-01-31 14:22:37.000000000 +0000
++++ linux-2.4.32-ipod2-mod/include/asm-armnommu/arch-ipod/hardware.h	2008-01-31 14:49:37.000000000 +0000
+@@ -30,8 +30,8 @@
+ #define DMA_ACTIVE	0x4000000c
+ #define DMA_STEREO	0x40000010
+ #define DMA_HANDLER	(ipod_dma_handler_t *)0x40000014
+-
+-#define DMA_BASE	0x40000018
++#define DMA_BUF_LEN	0x40000018
++#define DMA_BASE	0x4000001c
+ 
+ #define COP_HANDLER	(ipod_dma_handler_t *)0x4001501C
+ #define COP_STATE	0x40015020

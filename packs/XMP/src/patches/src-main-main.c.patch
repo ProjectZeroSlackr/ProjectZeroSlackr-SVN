@@ -1,0 +1,36 @@
+diff -urN src/main/main.c src/main/main.c
+--- src/main/main.c	2007-12-05 23:39:27.000000000 +0000
++++ src/main/main.c	2008-02-16 17:42:53.000000000 +0000
+@@ -290,7 +290,13 @@
+ 
+     if (k > 0) {
+ 	switch (cmd) {
+-	case 'q':	/* quit */
++	case 'r':	/* volume increase */
++	    xmp_gvol_inc(ctx);
++	    break;
++	case 'l':	/* volume decrease */
++	    xmp_gvol_dec(ctx);
++	    break;
++	case 'm':	/* quit */
+ 	    skip = -2;
+ 	    xmp_mod_stop(ctx);
+ 	    if (pause)
+@@ -301,7 +307,7 @@
+ 	    if (pause)
+ 		pause = xmp_mod_pause(ctx);
+ 	    break;
+-	case 'b':	/* jump to previous order */
++	case 'w':	/* jump to previous order */
+ 	    xmp_ord_prev(ctx);
+ 	    if (pause)
+ 		pause = xmp_mod_pause(ctx);
+@@ -318,7 +324,7 @@
+ 	    if (pause)
+ 		pause = xmp_mod_pause(ctx);
+ 	    break;
+-	case ' ':	/* pause module */
++	case 'd':	/* pause module */
+ 	    fprintf (stderr, "%s",  (pause = xmp_mod_pause(ctx))
+ 		? "] - PAUSED\b\b\b\b\b\b\b\b\b\b"
+ 		: "]         \b\b\b\b\b\b\b\b\b\b");

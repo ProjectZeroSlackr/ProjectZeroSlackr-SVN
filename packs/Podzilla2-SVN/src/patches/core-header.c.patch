@@ -1,0 +1,17 @@
+Index: core/header.c
+===================================================================
+--- core/header.c	(revision 2397)
++++ core/header.c	(working copy)
+@@ -2027,10 +2027,10 @@
+ 		pz_enable_widget_on_side( HEADER_SIDE_RIGHT, "Power Icon" );
+ 
+ 		/* set up "Plain" as the default */
+-		pz_enable_header_decorations( "Plain" );
++		pz_enable_header_decorations( "CS Gradient" );
+ 
+ 		/* and save them out */
+-		pz_set_string_setting( pz_global_config, DECORATIONS, "Plain" );
++		pz_set_string_setting( pz_global_config, DECORATIONS, "CS Gradient" );
+ 		header_settings_save();
+ 	} else {
+ 

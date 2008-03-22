@@ -1,0 +1,30 @@
+Index: core/module.c
+===================================================================
+--- core/module.c	(revision 2399)
++++ core/module.c	(working copy)
+@@ -135,13 +135,13 @@
+     return 0;
+ }
+ 
+-#define MODULE_INF_FILE "Module"
++#define MODULE_INF_FILE "Module"
+ static void load_modinf (PzModule *mod) 
+ {
+     char *buf = malloc (512);
+ #ifdef IPOD
+-    char *confdir = "/etc/podzilla";
+-    char *moddir = "/etc/podzilla/modules";
++    char *confdir = "/opt/Encyclopodia/Conf";
++    char *moddir = "/opt/Encyclopodia/Conf/Mods";
+ #else
+     char *confdir = malloc( MAXPATHLEN + 10 );
+     char *moddir = malloc( MAXPATHLEN + 20 );
+@@ -625,7 +625,7 @@
+ void pz_modules_init(char *path) 
+ {
+ #ifdef IPOD
+-#define MODULEDIR "/usr/lib"
++#define MODULEDIR "/opt/Encyclopodia/Modules"
+ #else
+ #define MODULEDIR "modules"
+ #endif

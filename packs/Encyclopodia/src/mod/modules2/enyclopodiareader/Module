@@ -1,0 +1,6 @@
+Module: encyclopodiareader
+Description: An ebook reader designed for Wikipedia
+Category: Reference
+Display-name: Encyclopodia
+Author: Robert Balmer, jsha
+Dependencies: libstdcxx,textinput,tiwidgets

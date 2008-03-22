@@ -1,0 +1,13 @@
+Index: core/menuconf.c
+===================================================================
+--- core/menuconf.c	(revision 2397)
++++ core/menuconf.c	(working copy)
+@@ -278,7 +278,7 @@
+ }
+ 
+ #ifdef IPOD
+-#define MENUCONF_CONFIG_FILE "/etc/podzilla/menu.conf"
++#define MENUCONF_CONFIG_FILE "/opt/Podzilla2-SVN/Conf/menu.conf"
+ #else
+ #define MENUCONF_CONFIG_FILE "config/menu.conf"
+ #endif

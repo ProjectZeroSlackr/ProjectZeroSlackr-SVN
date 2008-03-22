@@ -1,0 +1,48 @@
+Last updated: March 7, 2008
+~Keripo
+
+viP:
+/etc/viP.conf -> Data/viP.conf
+/root/.vip_dict -> Data/.vip_dict (x2)
+
+viPodzilla:
+/hp/vipodzilla/doom/iDoom -> Data/doom/iDoom.sh
+/etc/podzilla.conf -> Conf/podzilla.conf (x2)
+/bin/viP -> Data/viP
+/home/.tunnel -> Data/tunnel.txt
+/hp/vipodzilla/music.bmp -> Data/music.bmp
+/hp/vipodzilla/extras.bmp -> Data/extras.bmp
+/hp/vipodzilla/filebrowser.bmp -> Data/filebrowser.bmp
+/hp/vipodzilla/settings.bmp -> Data/settings.bmp
+/hp/vipodzilla/run.bmp -> Data/run.bmp
+/hp/vipodzilla/power.bmp -> Data/power.bmp
+/sbin/pd -> Data/pd
+/PureData -> Data/PdPod
+/usr/share/musictools/ -> Data/
+/etc/KMData/mapdata/stage%d.txt -> Data/KMData/mapdata/stage%d.txt
+/etc/KMData/tra/tra%d.txt -> Data/KMData/tra/tra%d.txt
+/etc/KMData/pict.gif -> Data/KMData/pict.gif
+/etc/KMData/mapdata/stage1.txt -> Data/KMData/mapdata/stage1.txt
+/etc -> Data
+/hp/connect4/0.gif -> Data/connect4/0.gif
+/hp/connect4/1.gif -> Data/connect4/1.gif
+/hp/connect4/2.gif -> Data/connect4/2.gif
+/hp/connect4/pfeil.gif -> Data/connect4/pfeil.gif
+/hp/connect4/turn_1.gif -> Data/connect4/turn1.gif
+/hp/connect4/turn_2.gif -> Data/connect4/turn2.gif
+nxsnake/boot_image.gif -> Data/boot_image.gif
+nxsnake/banner_image.gif -> Data/banner_image.gif
+/home/.blackjack -> Data/blackjack.txt
+hp/images/* -> Data/* (rock, paper, scissors
+hp/images/ggame_boot.bmp -> Data/ggame_boot.bmp
+map.bmp -> Data/mn
+bucket.bmp -> Data/buckt
+bomb.bmp -> Data/bmb
+/etc/MultiConvert.tabl -> Data/MultiConvert.tabl
+/Notes/ -> /mnt/
+/usr/share/dict/ptextwords -> Data/dict/ptextwords
+.tuxchess -> Data/chess
+/metallo.dwi -> Data/ddr.dwi
+worm_highscore -> Data/worm.txt
+simplesnake_highscore -> Data/simplesnake.txt
+%Y-%m-%d_%H%M.ppm -> Data/%m%d%H%M.ppm

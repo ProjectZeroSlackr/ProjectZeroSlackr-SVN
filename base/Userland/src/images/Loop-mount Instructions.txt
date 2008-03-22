@@ -1,0 +1,47 @@
+Last updated: Feb 2, 2008
+~Keripo
+
+Note: This should only be done on Linux (e.g. Slax).
+It may not work on Mac OS X and will not work Windows/Cygwin.
+
+This is for generating a userland image from scratch. If you want
+to use pre-generated images, see the "build.sh" script. If you
+just want to edit your userland image, see only the below
+"To mount and edit the image" instructions.
+ 
+
+Assuming your iPod's Linux partition is at /dev/sda3 and mounted at /mnt/sda3_removable, 
+and your iPod's data partition at /dev/sda2 and mounted at /mnt/sda2_removable,
+
+To create the image:
+
+dd if=/dev/sda3 of=/mnt/sda2_removable/linux.ext3 bs=512 (count=#)
+(where #: 16384 = 8MB, 32768=16MB, 65536=32MB)
+mkfs.ext3 /mnt/sda2_removable/userland.ext3 (answer "y")
+tune2fs -c 0 /mnt/sda2_removable/userland.ext3
+
+
+To mount and edit the image:
+
+mkdir /mnt/ipl
+mount -t ext3 -o loop,rw /mnt/sda2_removable/userland.ext3 /mnt/ipl
+(edit content at /mnt/ipl)
+(best to do rm -rf /mnt/ipl/* then start from scratch)
+(i.e. extract userland archive directly here)
+umount /mnt/ipl
+
+
+If you want to use a raw userland, you will have to
+make the following changes to the "rc" file:
+
+1. Add the line "mount -t devfs devfs /dev"
+   before the line "mount -t proc proc /proc"
+
+2. Change "mount -tvfat -osync,rw /dev/hda2 /mnt"
+   to "mount -tvfat -oremount,sync,rw /dev/hda2 /mnt"
+
+If you are using the 2.4.24 kernel, you must patch the
+command line to use "root=/dev/hda2 rootfstype=vfat rw".
+If you are using the 2.4.32 kernel, you can pass the above
+command line as a kernel argument through Loader 2.
+
