@@ -1,0 +1,11 @@
+--- src/inifile/mameconf.c	2008-03-14 16:52:22.000000000 +0000
++++ src/inifile/mameconf.c	2008-03-14 17:00:32.000000000 +0000
+@@ -17,6 +17,8 @@
+ 
+ /* lets make it easy to find the conf file. */
+ static char *searchpath[] = {
++	"../Conf/ipodmame.ini",
++	"/opt/iPodMAME/Conf/ipodmame.ini",
+ 	"/mnt/ipodmame.ini",
+ 	"/mnt/ipodmame/ipodmame.ini",
+ 	"/hp/ipodmame.ini",

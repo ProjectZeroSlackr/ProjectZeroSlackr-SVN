@@ -1,0 +1,12 @@
+All:
+/bin -> bin
+/sbin -> sbin
+/etc -> etc
+/home -> home
+/usr -> usr
+
+Note that extras such as viP
+that does not contribute to
+the zilla/application's specialty
+are neither hexed nor included
+(otherwise too much)

@@ -1,0 +1,2 @@
+This module has been modified for ZeroSlackr and
+should NOT be replaced by an official SVN build!

@@ -1,0 +1,109 @@
+Index: linux-2.4.32-ipod0/Makefile
+===================================================================
+--- linux-2.4.32-ipod0.orig/Makefile
++++ linux-2.4.32-ipod0/Makefile
+@@ -28,7 +28,7 @@ HOSTCC  	= unset GCC_EXEC_PREFIX; gcc
+ HOSTCFLAGS	= -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer
+ 
+ # CROSS_COMPILE 	= m68k-elf-
+-CROSS_COMPILE 	= arm-elf-
++CROSS_COMPILE 	= arm-uclinux-elf-
+ # CROSS_COMPILE 	= h8300-elf-
+ # CROSS_COMPILE 	= nios-elf-
+ # CROSS_COMPILE		= e1-coff-
+Index: linux-2.4.32-ipod0/arch/armnommu/Makefile
+===================================================================
+--- linux-2.4.32-ipod0.orig/arch/armnommu/Makefile
++++ linux-2.4.32-ipod0/arch/armnommu/Makefile
+@@ -57,8 +57,8 @@ LINKFLAGS	+= -EB
+ LDFLAGS		+= -EB
+ endif
+ 
+-CFLAGS		+= $(apcs-y) $(arch-y) $(tune-y) -mshort-load-bytes -msoft-float
+-AFLAGS		+= $(apcs-y) $(proc-y) -msoft-float -mno-fpu
++CFLAGS		+= $(apcs-y) $(arch-y) $(tune-y) -malignment-traps -msoft-float
++AFLAGS		+= $(apcs-y) $(proc-y) -msoft-float
+ 
+ LIBGCC		:= $(shell $(CC) $(CFLAGS) --print-libgcc-file-name)
+ 
+Index: linux-2.4.32-ipod0/arch/armnommu/mach-ipod/fb.c
+===================================================================
+--- linux-2.4.32-ipod0.orig/arch/armnommu/mach-ipod/fb.c
++++ linux-2.4.32-ipod0/arch/armnommu/mach-ipod/fb.c
+@@ -277,6 +277,31 @@ read_controller_id(void)
+ 	return ((data_hi & 0xff) << 8) | (data_lo & 0xff);
+ }
+ 
++static void lcd_send_lo(int v)
++{
++	lcd_wait_write();
++	outl(v | 0x80000000, 0x70008A0C);
++}
++
++static void lcd_send_hi(int v)
++{
++	lcd_wait_write();
++	outl(v | 0x81000000, 0x70008A0C);
++}
++
++static void lcd_cmd_data(int cmd, int data)
++{
++	if (lcd_type == 0) {
++		lcd_send_lo(cmd);
++		lcd_send_lo(data);
++	} else {
++		lcd_send_lo(0x0);
++		lcd_send_lo(cmd);
++		lcd_send_hi((data >> 8) & 0xff);
++		lcd_send_hi(data & 0xff);
++	}
++}
++
+ /* initialise the LCD */
+ static void
+ init_lcd(void)
+@@ -360,31 +385,6 @@ static void ipod_update_display(struct d
+ 	}
+ }
+ 
+-static void lcd_send_lo(int v)
+-{
+-	lcd_wait_write();
+-	outl(v | 0x80000000, 0x70008A0C);
+-}
+-
+-static void lcd_send_hi(int v)
+-{
+-	lcd_wait_write();
+-	outl(v | 0x81000000, 0x70008A0C);
+-}
+-
+-static void lcd_cmd_data(int cmd, int data)
+-{
+-	if (lcd_type == 0) {
+-		lcd_send_lo(cmd);
+-		lcd_send_lo(data);
+-	} else {
+-		lcd_send_lo(0x0);
+-		lcd_send_lo(cmd);
+-		lcd_send_hi((data >> 8) & 0xff);
+-		lcd_send_hi(data & 0xff);
+-	}
+-}
+-
+ static void lcd_bcm_write32(unsigned address, unsigned value) {
+ 	/* write out destination address as two 16bit values */
+ 	outw(address, 0x30010000);
+Index: linux-2.4.32-ipod0/include/asm-armnommu/arch-ipod/hardware.h
+===================================================================
+--- linux-2.4.32-ipod0.orig/include/asm-armnommu/arch-ipod/hardware.h
++++ linux-2.4.32-ipod0/include/asm-armnommu/arch-ipod/hardware.h
+@@ -100,7 +100,7 @@ struct sysinfo_t {
+ 
+ extern unsigned ipod_get_hw_version(void);
+ extern struct sysinfo_t *ipod_get_sysinfo(void);
+-extern int ipod_is_pp5022();
++extern int ipod_is_pp5022(void);
+ 
+ extern void ipod_i2c_init(void);
+ extern int ipod_i2c_send_bytes(unsigned int addr, unsigned int len, unsigned char *data);

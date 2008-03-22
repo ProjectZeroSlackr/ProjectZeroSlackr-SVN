@@ -1,0 +1,65 @@
+Last updated: March 22, 2008
+~Keripo
+
+All code/scripts written by Keripo are licensed under
+GNU GPL - see License.txt. For the licensing of the
+software/application, refer to the documents found in
+Docs/Original or the license that comes with the
+original/ported software.
+
+
+== To do ==
+
+Fixes:
+- none; pending results
+- Encyclopodia module (waiting for Robert Bamler)
+
+Testing: 
+- CmdLine-Tools: try with sample files
+- TimeWalk: test with old monochrome iPods, complete zillae list
+- iPodMAME launch: browser-type launcher
+
+
+== To add ==
+
+Emulators:
+- ScummVM
+- iDarcNES
+- igpSP
+- iGameGear
+- iGens
+- Atari800
+- Apple iiPod
+
+Zillae:
+- PalmZilla
+- iZilla
+
+Tools:
+- LET Basic
+- Python
+- NCurses
+- iPod Toolchain
+- Lua
+
+Misc:
+- sidplay
+- iPod Midi Player
+- iRoids
+- Bootsplash
+- iLoadz
+
+Attempt:
+- iNeoGeo
+- iNES
+- Clone Keen
+- bb
+- aalib
+
+To port:
+- PZ0 AVI player (port as PZ2 module)
+- PZ0 TZX emulator (port as PZ2 module)
+- BSD Games
+- Flite
+- dc
+- John the Ripper

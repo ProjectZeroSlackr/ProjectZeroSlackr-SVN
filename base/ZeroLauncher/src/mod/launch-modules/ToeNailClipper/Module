@@ -1,0 +1,6 @@
+Module: ToeNailClipper
+Display-name: ToeNailClipper
+Description: Fun little toenail clipping game.
+Category: Media
+Author: Paul Taylor, Brandon Holland
+Dependencies: terminal

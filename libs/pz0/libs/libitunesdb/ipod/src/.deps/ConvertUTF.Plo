@@ -1,0 +1,4 @@
+ConvertUTF.lo : \
+ ConvertUTF.c ConvertUTF.h
+ConvertUTF.c :
+ConvertUTF.h :

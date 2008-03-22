@@ -1,0 +1,64 @@
+Index: modules/browser/browser.c
+===================================================================
+--- modules/browser/browser.c	(revision 2399)
++++ modules/browser/browser.c	(working copy)
+@@ -40,7 +40,7 @@
+ 
+ static PzModule *module;
+ 
+-static TWindow *open_directory(const char *filename);
++TWindow *open_directory(const char *filename);
+ 
+ static TWindow *previous_directory(ttk_menu_item *item)
+ {
+@@ -182,7 +182,7 @@
+ 	return ret;
+ }
+ 
+-static TWindow *open_directory(const char *filename)
++TWindow *open_directory_title(const char *filename, const char *title)
+ {
+ 	TWindow *ret;
+ 	TWidget *menu;
+@@ -191,16 +191,19 @@
+ 	lwd = open(".", O_RDONLY);
+ 
+ 	chdir(filename);
+-	if (pz_get_int_setting(pz_global_config, BROWSER_PATH)) {
+-		char wd[MAXPATHLEN], *p;
+-		p = getcwd(wd, MAXPATHLEN);
+-		while (ttk_text_width(ttk_menufont, p) > ttk_screen->w - 60)
+-			memcpy((void *)++p, "...", 3);
+-		ret = pz_new_window(p, PZ_WINDOW_NORMAL);
+-	}
+-	else
+-		ret = pz_new_window(_("File Browser"), PZ_WINDOW_NORMAL);
+-
++	if (title != NULL) {
++		ret = pz_new_window(_(title), PZ_WINDOW_NORMAL);
++	} else {
++		if (pz_get_int_setting(pz_global_config, BROWSER_PATH)) {
++			char wd[MAXPATHLEN], *p;
++			p = getcwd(wd, MAXPATHLEN);
++			while (ttk_text_width(ttk_menufont, p) > ttk_screen->w - 60)
++				memcpy((void *)++p, "...", 3);
++			ret = pz_new_window(p, PZ_WINDOW_NORMAL);
++		} else {
++			ret = pz_new_window(_("File Browser"), PZ_WINDOW_NORMAL);
++		}
++ 	}
+ 	menu = read_directory("./");
+ 	menu->data2 = malloc(sizeof(int));
+ 	*(int *)menu->data2 = lwd;
+@@ -210,6 +213,11 @@
+ 	return pz_finish_window(ret);
+ }
+ 
++TWindow *open_directory(const char *filename)
++{
++	return open_directory_title(filename, NULL);
++}
++
+ PzWindow *new_browser_window()
+ {
+ 	return open_directory("/");

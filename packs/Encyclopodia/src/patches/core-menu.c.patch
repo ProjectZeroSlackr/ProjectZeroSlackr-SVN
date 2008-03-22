@@ -1,0 +1,31 @@
+Index: core/menu.c
+===================================================================
+--- core/menu.c	(revision 2397)
++++ core/menu.c	(working copy)
+@@ -237,8 +237,6 @@
+     ttk_menu_item * item;
+ 
+     check_init();
+-    pz_menu_add_stub_group ("/Music", "Media");
+-    pz_menu_add_stub_group ("/Now Playing", "Media");
+     pz_menu_add_stub_group ("/Extras", "Utility");
+     pz_menu_add_stub_group ("/File Browser", "Utility");
+     pz_menu_add_stub_group ("/Settings", "~System");
+@@ -328,7 +326,7 @@
+     pz_menu_add_setting ("/Settings/Verbosity", VERBOSITY, pz_global_config, verbosity_options);
+     pz_menu_add_setting_group ("/Settings/Browser Path Display", "Browser", BROWSER_PATH, pz_global_config, 0);
+     pz_menu_add_setting_group ("/Settings/Browser Show Hidden", "Browser", BROWSER_HIDDEN, pz_global_config, 0);
+-    pz_menu_add_action ("/~Power/Quit podzilla", quit_podzilla);
++    pz_menu_add_action ("/~Power/Quit Encyclopodia", quit_podzilla);
+     pz_menu_add_action ("/~Power/Reboot iPod/Cancel", PZ_MENU_UPONE);
+     pz_menu_add_action ("/~Power/Reboot iPod/Absolutely", reboot_ipod);
+     pz_menu_add_action ("/~Power/Turn Off iPod/Cancel", PZ_MENU_UPONE);
+@@ -345,7 +343,7 @@
+     // If you don't want to directly use menu_wid, you can use ttk_menu_get_item() and friends.
+     TWindow *ret = ttk_new_window();
+     ttk_add_widget (ret, menu_wid);
+-    ttk_window_title (ret, "podzilla");
++    ttk_window_title (ret, "Encyclopodia");
+     return ret;
+ }
+ 

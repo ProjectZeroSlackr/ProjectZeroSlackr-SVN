@@ -1,0 +1,363 @@
+diff -ur d_main.c d_main.c
+--- d_main.c	2006-01-22 21:15:44.000000000 -0500
++++ d_main.c	2008-02-17 16:37:12.656250000 -0500
+@@ -589,7 +589,7 @@
+     char *doomwaddir;
+     doomwaddir = getenv("DOOMWADDIR");
+     if (!doomwaddir)
+-	doomwaddir = ".";
++	doomwaddir = "/opt/iDoom/IWADs";
+ 
+     // Commercial.
+     doom2wad = malloc(strlen(doomwaddir)+1+9+1);
+@@ -620,11 +620,8 @@
+     doom2fwad = malloc(strlen(doomwaddir)+1+10+1);
+     sprintf(doom2fwad, "%s/doom2f.wad", doomwaddir);
+ 
+-    home = getenv("HOME");
+-    if (!home)
+-	home = ".";
+-//      I_Error("Please set $HOME to your home directory");
+-    sprintf(basedefault, "%s/.doomrc", home);
++    home = "/opt/iDoom/Conf";
++    sprintf(basedefault, "%s/doom.rc", home);
+ #endif
+ 
+     if (M_CheckParm ("-shdev"))
+@@ -827,6 +827,7 @@
+     else if (M_CheckParm ("-deathmatch"))
+ 	deathmatch = 1;
+ 
++	/*
+     switch ( gamemode )
+     {
+       case retail:
+@@ -857,6 +858,7 @@
+ 		 "                           ",
+ 		 VERSION/100,VERSION%100);
+ 	break;
++	*/
+ /*FIXME
+        case pack_plut:
+ 	sprintf (title,
+@@ -873,6 +875,7 @@
+ 		 VERSION/100,VERSION%100);
+ 	break;
+ */
++	/*
+       default:
+ 	sprintf (title,
+ 		 "                     "
+@@ -883,6 +886,7 @@
+     }
+     
+     printf ("%s\n",title);
++	*/
+ 
+     if (devparm)
+ 	printf(D_DEVSTR);
+@@ -1021,16 +1025,16 @@
+     }
+     
+     // init subsystems
+-    printf ("V_Init: allocate screens.\n");
++    //printf ("V_Init: allocate screens.\n");
+     V_Init ();
+ 
+-    printf ("M_LoadDefaults: Load system defaults.\n");
++    //printf ("M_LoadDefaults: Load system defaults.\n");
+     M_LoadDefaults ();              // load before initing other systems
+ 
+-    printf ("Z_Init: Init zone memory allocation daemon. \n");
++    //printf ("Z_Init: Init zone memory allocation daemon. \n");
+     Z_Init ();
+ 
+-    printf ("W_Init: Init WADfiles.\n");
++    //printf ("W_Init: Init WADfiles.\n");
+     W_InitMultipleFiles (wadfiles);
+     
+ 
+@@ -1047,6 +1051,7 @@
+ 	};
+ 	int i;
+ 	
++	/*
+ 	if ( gamemode == shareware)
+ 	    I_Error("\nYou cannot -file with the shareware "
+ 		    "version. Register!");
+@@ -1057,12 +1062,15 @@
+ 	    for (i = 0;i < 23; i++)
+ 		if (W_CheckNumForName(name[i])<0)
+ 		    I_Error("\nThis is not the registered version.");
++	*/
+     }
+     
+     // Iff additonal PWAD files are used, print modified banner
++	/*
+     if (modifiedgame)
+     {
+-	/*m*/printf (
++	*/
++	/*m*//*printf (
+ 	    "===========================================================================\n"
+ 	    "ATTENTION:  This version of DOOM has been modified.  If you would like to\n"
+ 	    "get a copy of the original game, call 1-800-IDGAMES or see the readme file.\n"
+@@ -1071,10 +1079,11 @@
+ 	    "===========================================================================\n"
+ 	    );
+ 	getchar ();
+-    }
++    }*/
+ 	
+ 
+     // Check and print which version is executed.
++	/*
+     switch ( gamemode )
+     {
+       case shareware:
+@@ -1100,31 +1109,32 @@
+ 	// Ouch.
+ 	break;
+     }
++	*/
+ 
+-    printf ("M_Init: Init miscellaneous info.\n");
++    //printf ("M_Init: Init miscellaneous info.\n");
+     M_Init ();
+ 
+-    printf ("R_Init: Init DOOM refresh daemon - ");
++    //printf ("R_Init: Init DOOM refresh daemon - ");
+     R_Init ();
+ 
+-    printf ("\nP_Init: Init Playloop state.\n");
++    //printf ("\nP_Init: Init Playloop state.\n");
+     P_Init ();
+ 
+-    printf ("I_Init: Setting up machine state.\n");
++    //printf ("I_Init: Setting up machine state.\n");
+     I_Init ();
+ 
+-    printf ("D_CheckNetGame: Checking network game status.\n");
++    //printf ("D_CheckNetGame: Checking network game status.\n");
+     D_CheckNetGame ();
+ 
+ #ifdef USE_SOUND
+-   printf ("S_Init: Setting up sound.\n");
++   //printf ("S_Init: Setting up sound.\n");
+     S_Init (snd_SfxVolume /* *8 */, snd_MusicVolume /* *8*/ );
+ #endif
+ 
+-    printf ("HU_Init: Setting up heads up display.\n");
++    //printf ("HU_Init: Setting up heads up display.\n");
+     HU_Init ();
+ 
+-    printf ("ST_Init: Init status bar.\n");
++    //printf ("ST_Init: Init status bar.\n");
+     ST_Init ();
+ 
+     // check for a driver that wants intermission stats
+@@ -1135,7 +1145,7 @@
+ 	extern  void*	statcopy;                            
+ 
+ 	statcopy = (void*)atoi(myargv[p+1]);
+-	printf ("External statistics registered.\n");
++	//printf ("External statistics registered.\n");
+     }
+     
+     // start the apropriate game based on parms
+diff -ur d_net.c d_net.c
+--- d_net.c	2006-01-22 21:15:38.000000000 -0500
++++ d_net.c	2008-02-17 16:11:58.359375000 -0500
+@@ -574,8 +574,10 @@
+     if (netgame)
+ 	D_ArbitrateNetStart ();
+ 
++	/*
+     printf ("startskill %i  deathmatch: %i  startmap: %i  startepisode: %i\n",
+ 	    startskill, deathmatch, startmap, startepisode);
++	*/
+ 	
+     // read values out of doomcom
+     ticdup = doomcom->ticdup;
+@@ -588,8 +590,10 @@
+     for (i=0 ; i<doomcom->numnodes ; i++)
+ 	nodeingame[i] = true;
+ 	
++	/*
+     printf ("player %i of %i (%i nodes)\n",
+ 	    consoleplayer+1, doomcom->numplayers, doomcom->numnodes);
++	*/
+ 
+ }
+ 
+diff -ur dstrings.h dstrings.h
+--- dstrings.h	2006-01-22 20:15:35.000000000 +0000
++++ dstrings.h	2008-02-26 20:07:48.000000000 +0000
+@@ -38,7 +38,7 @@
+ #endif
+ 
+ // Misc. other strings.
+-#define SAVEGAMENAME	"doomsav"
++#define SAVEGAMENAME	"/opt/iDoom/Saves/doomsav"
+ 
+ 
+ //
+diff -ur i_video.c i_video.c
+--- i_video.c	2006-04-15 21:47:14.000000000 -0400
++++ i_video.c	2008-02-17 16:37:18.093750000 -0500
+@@ -301,11 +301,18 @@
+ #endif // FPSCOUNT
+ 	
+ 	printf("iPod port by: Benjamin Eriksson & Mattias Pierre\n");
++	printf("Modified by Keripo for ZeroSlackr\n");
+ 	sleep(1);
+ 	
+ 	startKeyHandler();
+ 	get_ipod_hw_info(&info);
+-	parseKeyMapFile("keys.key");
++	char keys[128];
++	char *home;
++	home = getenv("HOME");
++	if (!home)
++		home = "/opt/iDoom/Conf";
++	sprintf(keys, "%s/keys.key", home);
++	parseKeyMapFile(keys);
+ 	
+ 	// NOTE: The blitter can only blit widths that are multiples of 4.
+ 	// TODO: Fix this.
+diff -ur m_menu.c m_menu.c
+--- m_menu.c	2006-01-22 22:37:20.000000000 -0500
++++ m_menu.c	2008-02-17 15:59:38.171875000 -0500
+@@ -1092,7 +1092,7 @@
+ };
+ 
+ 
+-
++/*
+ void M_QuitResponse(int ch)
+ {
+     if (ch != 'y')
+@@ -1109,12 +1109,13 @@
+     }
+     I_Quit ();
+ }
+-
++*/
+ 
+ 
+ 
+ void M_QuitDOOM(int choice)
+ {
++  /*
+   // We pick index 0 which is language sensitive,
+   //  or one at random, between 1 and maximum number.
+   if (language != english )
+@@ -1123,6 +1124,8 @@
+     sprintf(endstring,"%s\n\n"DOSY, endmsg[ (gametic%(NUM_QUITMESSAGES-2))+1 ]);
+   
+   M_StartMessage(endstring,M_QuitResponse,true);
++  */
++  I_Quit ();
+ }
+ 
+ 
+diff -ur r_data.c r_data.c
+--- r_data.c	2006-01-22 21:15:36.000000000 -0500
++++ r_data.c	2008-02-17 16:03:08.843750000 -0500
+@@ -493,6 +493,7 @@
+     temp1 = W_GetNumForName ("S_START");  // P_???????
+     temp2 = W_GetNumForName ("S_END") - 1;
+     temp3 = ((temp2-temp1+63)/64) + ((numtextures+63)/64);
++	/*
+     printf("[");
+     for (i = 0; i < temp3; i++)
+ 	printf(" ");
+@@ -500,11 +501,14 @@
+     for (i = 0; i < temp3; i++)
+ 	printf("\x8");
+     printf("\x8\x8\x8\x8\x8\x8\x8\x8\x8\x8");	
++	*/
+ 	
+     for (i=0 ; i<numtextures ; i++, directory++)
+     {
++	/*
+ 	if (!(i&63))
+ 	    printf (".");
++	*/
+ 
+ 	if (i == numtextures1)
+ 	{
+@@ -615,8 +619,10 @@
+ 	
+     for (i=0 ; i< numspritelumps ; i++)
+     {
++	/*
+ 	if (!(i&63))
+ 	    printf (".");
++	*/
+ 
+ 	patch = W_CacheLumpNum (firstspritelump+i, PU_CACHE);
+ 	spritewidth[i] = SHORT(patch->width)<<FRACBITS;
+@@ -654,13 +660,13 @@
+ void R_InitData (void)
+ {
+     R_InitTextures ();
+-    printf ("\nInitTextures");
++    //printf ("\nInitTextures");
+     R_InitFlats ();
+-    printf ("\nInitFlats");
++    //printf ("\nInitFlats");
+     R_InitSpriteLumps ();
+-    printf ("\nInitSprites");
++    //printf ("\nInitSprites");
+     R_InitColormaps ();
+-    printf ("\nInitColormaps");
++    //printf ("\nInitColormaps");
+ }
+ 
+ 
+diff -ur r_main.c r_main.c
+--- r_main.c	2006-01-22 21:15:36.000000000 -0500
++++ r_main.c	2008-02-17 16:03:42.656250000 -0500
+@@ -773,22 +773,22 @@
+ void R_Init (void)
+ {
+     R_InitData ();
+-    printf ("\nR_InitData");
++    //printf ("\nR_InitData");
+     R_InitPointToAngle ();
+-    printf ("\nR_InitPointToAngle");
++    //printf ("\nR_InitPointToAngle");
+     R_InitTables ();
+     // viewwidth / viewheight / detailLevel are set by the defaults
+-    printf ("\nR_InitTables");
++    //printf ("\nR_InitTables");
+ 
+     R_SetViewSize (screenblocks, detailLevel);
+     R_InitPlanes ();
+-    printf ("\nR_InitPlanes");
++    //printf ("\nR_InitPlanes");
+     R_InitLightTables ();
+-    printf ("\nR_InitLightTables");
++    //printf ("\nR_InitLightTables");
+     R_InitSkyMap ();
+-    printf ("\nR_InitSkyMap");
++    //printf ("\nR_InitSkyMap");
+     R_InitTranslationTables ();
+-    printf ("\nR_InitTranslationsTables");
++    //printf ("\nR_InitTranslationsTables");
+ 	
+     framecount = 0;
+ }
+diff -ur w_wad.c w_wad.c
+--- w_wad.c	2006-01-22 21:15:44.000000000 -0500
++++ w_wad.c	2008-02-17 16:12:54.328125000 -0500
+@@ -156,7 +156,7 @@
+ 	return;
+     }
+ 
+-    printf (" adding %s\n",filename);
++    printf ("WAD: %s\n",filename);
+     startlump = numlumps;
+ 	
+     if (strcmpi (filename+strlen(filename)-3 , "wad" ) )

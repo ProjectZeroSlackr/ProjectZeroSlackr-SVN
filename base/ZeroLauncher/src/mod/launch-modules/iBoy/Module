@@ -1,0 +1,6 @@
+Module: iBoy
+Display-name: iBoy
+Description: Gameboy/Gameboy Color (GB/GBC) emulator.
+Category: Emulators
+Author: ducky et al.
+Dependencies: browser,browser-ext

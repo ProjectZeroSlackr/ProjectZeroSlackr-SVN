@@ -1,0 +1,12 @@
+Index: linux-2.4.32-ipod2/Makefile
+===================================================================
+--- linux-2.4.32-ipod2.orig/Makefile
++++ linux-2.4.32-ipod2/Makefile
+@@ -1,6 +1,6 @@
+ VERSION = 2
+ PATCHLEVEL = 4
+-SUBLEVEL = 24
++SUBLEVEL = 32
+ EXTRAVERSION = -ipod2
+ 
+ KERNELRELEASE=$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRAVERSION)

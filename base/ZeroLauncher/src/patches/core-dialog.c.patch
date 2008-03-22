@@ -1,0 +1,13 @@
+Index: core/dialog.c
+===================================================================
+--- core/dialog.c	(revision 2397)
++++ core/dialog.c	(working copy)
+@@ -474,7 +474,7 @@
+ void pz_message (const char *text) 
+ {
+ #ifdef IPOD
+-    FILE *fp = fopen ("msg.inf", "a");
++    FILE *fp = fopen ("/opt/ZeroLauncher/Misc/msg.inf", "a");
+     fprintf (fp, "I- %%%p \"%s\" len %ld\n", text, text, strlen (text));
+     fclose (fp);
+ #endif

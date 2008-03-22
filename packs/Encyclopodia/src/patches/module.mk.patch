@@ -1,0 +1,44 @@
+Index: module.mk
+===================================================================
+--- module.mk	(revision 2397)
++++ module.mk	(working copy)
+@@ -93,10 +93,10 @@
+ 	@echo " LD [SO] $(MODULE).so"
+ 	@$(MAKESO) $(LDFLAGS) -o $@ $(obj-m) $(MODLIBS)
+ else
+-finalmod = $(MODULE).mod.o
+-$(MODULE).mod.o: $(obj-m)
+-	@echo " LD [M]  $(MODULE).mod.o"
+-	@$(LD) -Ur -d -o $(MODULE).mod.o $(obj-m) $(WA) $(MODLIBS) $(NWA)
++finalmod = $(MODULE).mod
++$(MODULE).mod: $(obj-m)
++	@echo " LD [M]  $(MODULE).mod"
++	@$(LD) -Ur -d -o $(MODULE).mod $(obj-m) $(WA) $(MODLIBS) $(NWA)
+ endif
+ 
+ else
+@@ -147,13 +147,13 @@
+ 	@rm -f $(obj) built-in.o
+ 
+ clean:
+-	@rm -f $(MODULE).mod.o $(MODULE).so $(obj) built-in.o
++	@rm -f $(MODULE).mod $(MODULE).so $(obj) built-in.o
+ 
+ real-distfiles:
+ 	@echo Module
+ ifneq ($(MODULE_$(MODULE)),y)
+ ifdef IPOD
+-	@echo $(MODULE).mod.o
++	@echo $(MODULE).mod
+ else
+ 	@echo $(MODULE).so
+ endif
+@@ -172,7 +172,7 @@
+ 	@install -d -m 755 $(DESTDIR)/usr/lib/$(MODULE)
+ 	@install -m 644 Module $(DESTDIR)/usr/lib/$(MODULE)/Module
+ ifneq ($(MODULE_$(MODULE)),y)
+-	@install -m 755 $(MODULE).mod.o $(DESTDIR)/usr/lib/$(MODULE)/$(MODULE).mod.o
++	@install -m 755 $(MODULE).mod $(DESTDIR)/usr/lib/$(MODULE)/$(MODULE).mod
+ endif
+ 	@for file in $(DATA); do \
+ 		install -m 755 $$file $(DESTDIR)/usr/lib/$(MODULE)/; \

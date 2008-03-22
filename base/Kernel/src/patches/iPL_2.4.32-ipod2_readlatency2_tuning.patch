@@ -1,0 +1,44 @@
+diff -Naurp linux-2.4.31-lckrl/drivers/block/ll_rw_blk.c linux-2.4.31-lckrldt/drivers/block/ll_rw_blk.c
+--- linux-2.4.31-lckrl/drivers/block/ll_rw_blk.c	2005-07-05 22:23:02.000000000 -0400
++++ linux-2.4.31-lckrldt/drivers/block/ll_rw_blk.c	2005-07-05 22:33:40.000000000 -0400
+@@ -466,8 +466,6 @@ int blk_grow_request_list(request_queue_
+ 
+ static void blk_init_free_list(request_queue_t *q)
+ {
+-	struct sysinfo si;
+-	int megs;		/* Total memory, in megabytes */
+ 	int nr_requests, max_queue_sectors = MAX_QUEUE_SECTORS;
+ 
+ 	INIT_LIST_HEAD(&q->rq.free);
+@@ -475,15 +473,8 @@ static void blk_init_free_list(request_q
+ 	q->rq.pending[READ] = q->rq.pending[WRITE] = 0;
+ 	q->nr_requests = 0;
+ 
+-	si_meminfo(&si);
+-	megs = si.totalram >> (20 - PAGE_SHIFT);
+-	nr_requests = (megs * 2) & ~15;	/* One per half-megabyte */
+-	if (megs < 30)
+-		nr_requests /= 2;
+-	if (nr_requests < 32)
+-		nr_requests = 32;
+-	if (nr_requests > 1024)
+-		nr_requests = 1024;
++	nr_requests = 32;
++
+ 	/* notice early if anybody screwed the defaults */
+ 	BUG_ON(!nr_requests);
+ 	BUG_ON(!max_queue_sectors);
+diff -Naurp linux-2.4.31-lckrl/include/linux/elevator.h linux-2.4.31-lckrldt/include/linux/elevator.h
+--- linux-2.4.31-lckrl/include/linux/elevator.h	2005-07-05 22:23:02.000000000 -0400
++++ linux-2.4.31-lckrldt/include/linux/elevator.h	2005-07-05 22:33:40.000000000 -0400
+@@ -76,8 +76,8 @@ static inline int elevator_request_laten
+ #define ELEVATOR_LINUS							\
+ ((elevator_t) {								\
+ 	128,				/* read passovers */		\
+-	512,				/* write passovers */		\
+-	6,				/* max_bomb_segments */		\
++	256,				/* write passovers */		\
++	4,				/* max_bomb_segments */		\
+ 	elevator_linus_merge,		/* elevator_merge_fn */		\
+ 	elevator_linus_merge_req,	/* elevator_merge_req_fn */	\
+ 	})

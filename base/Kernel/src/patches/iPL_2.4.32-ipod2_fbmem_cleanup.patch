@@ -1,0 +1,13 @@
+Index: linux-2.4.32/drivers/video/fbmem.c
+===================================================================
+--- linux-2.4.32.orig/drivers/video/fbmem.c
++++ linux-2.4.32/drivers/video/fbmem.c
+@@ -636,7 +636,7 @@ fb_mmap(struct file *file, struct vm_are
+ #endif
+ #ifdef NO_MM 
+ 	fb->fb_get_fix(&fix, PROC_CONSOLE(info), info);
+-	vma->vm_start = fix.smem_start+ vma->vm_offset;
++	vma->vm_start = fix.smem_start+ vma->vm_pgoff;
+ 	return (0);
+ #else /* /NO_MM */   
+ 

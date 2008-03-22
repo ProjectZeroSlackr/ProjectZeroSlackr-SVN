@@ -1,0 +1,51 @@
+Index: modules/mpdc/mpdc.c
+===================================================================
+--- modules/mpdc/mpdc.c	(revision 2397)
++++ modules/mpdc/mpdc.c	(working copy)
+@@ -417,7 +417,7 @@
+ 	const int flag = TTK_MENU_ICON_SUB;
+ 	if ((mpdz = mpd_init_connection()) == NULL) {
+ #ifdef IPOD /* warning gets a bit annoying if you don't have MPD installed */
+-		pz_error(_("Unable to connect to MPD"));
++		//pz_error(_("Unable to connect to MPD"));
+ #endif
+ 		return;
+ 	}
+@@ -426,19 +426,20 @@
+ 	pz_register_global_unused_handler(PZ_BUTTON_NEXT, mpdc_unused_handler);
+ 	pz_register_global_unused_handler(PZ_BUTTON_PREVIOUS,
+ 			mpdc_unused_handler);
+-	pz_menu_add_action("/Music/Playlists", new_playlist_menu)->flags = flag;
+-	pz_menu_add_action("/Music/Artists", new_artist_menu)->flags = flag;
+-	pz_menu_add_action("/Music/Albums", new_album_menu)->flags = flag;
+-	pz_menu_add_action("/Music/Songs", new_song_menu)->flags = flag;
++	pz_menu_add_action_group("/Music/Playlists", "Playlists", new_playlist_menu)->flags = flag;
++	pz_menu_add_action_group("/Music/Artists", "Browse", new_artist_menu)->flags = flag;
++	pz_menu_add_action_group("/Music/Albums", "Browse", new_album_menu)->flags = flag;
++	pz_menu_add_action_group("/Music/Songs", "Browse", new_song_menu)->flags = flag;
+ #if 0
+-	pz_menu_add_action("/Music/Genre", new_genre_menu)->flags = flag;
++	pz_menu_add_action_group("/Music/Genre", "Browse", new_genre_menu)->flags = flag;
+ #endif
+-	pz_menu_add_action("/Music/Folders", new_folder_menu)->flags = flag;
++	pz_menu_add_action_group("/Music/Folders", "Browse", new_folder_menu)->flags = flag;
+ 	if (search_available())
+-		pz_menu_add_action("/Music/Search...", new_search_window);
+-	pz_menu_add_action("/Music/Queue", new_queue_menu)->flags = flag;
+-	pz_menu_add_action_group("/Now Playing", "Media", mpd_currently_playing);
++		pz_menu_add_action_group("/Music/Search...", "Browse", new_search_window);
++	pz_menu_add_action_group("/Music/Queue", "Playlists", new_queue_menu)->flags = flag;
++	pz_menu_add_action_group("/Now Playing", "#MPD", mpd_currently_playing);
+ 	pz_get_menu_item("/Now Playing")->visible = playing_visible;
++	pz_menu_sort("/Music");
+ 
+ 	SETUP_MENUITEM("/Settings/Shuffle", set_shuffle, init_shuffle());
+ 	SETUP_MENUITEM("/Settings/Repeat", set_repeat, init_repeat());
+@@ -450,6 +451,7 @@
+ 					      &widget_inf );
+ 	pz_add_header_widget( "MPD Icons", mpd_widg_icons_update,
+ 					   mpd_widg_icons_draw, NULL );
++	pz_enable_widget_on_side( HEADER_SIDE_LEFT, "MPD Icons" );
+ }
+ 
+ PZ_MOD_INIT(init_mpdc)
