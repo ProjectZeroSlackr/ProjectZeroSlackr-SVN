@@ -3,7 +3,7 @@
 # Auto-Lumping Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 21, 2008
+# Last updated: March 22, 2008
 #
 echo ""
 echo "==========================================="
@@ -16,6 +16,16 @@ echo "    This script will compile everything"
 echo "    and stick it in a convenient '_lump'"
 echo "    folder that can be copied directly"
 echo "    to your iPod."
+if [ -e /bin/cygwin1.dll ]; then
+	echo ""
+	echo "    Building is recommended to be done on"
+	echo "    Linux. If you are using Cygwin and"
+	echo "    also have TortoiseSVN installed, SVN"
+	echo "    downloading may sometimes fail. This"
+	echo "    is a known TortoiseSVN issue. You will"
+	echo "    have to either try recompiling the"
+	echo "    packs disabling TortoiseSVN."
+fi
 echo ""
 echo "==========================================="
 echo "==========================================="
@@ -63,6 +73,9 @@ do
 	rm -rf build
 	cd ../..
 done
+# cleanup
+cd $LUMP
+find . -name '.svn' -exec rm -rf {} >> /dev/null 2>&1\;
 # done
 echo ""
 echo ""

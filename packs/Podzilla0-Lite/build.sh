@@ -3,7 +3,7 @@
 # Podzilla0-Lite Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Feb 25, 2008
+# Last updated: March 22, 2008
 #
 echo ""
 echo "==========================================="
@@ -54,7 +54,7 @@ make IPOD=1 MPDC=1 >> ../build.log 2>&1
 echo "> Copying over compiled files..."
 cd ..
 mkdir compiled
-if [ -e compiling/podzilla.elf.bflt ]; then
+if [ -e compiling/Podzilla0-Lite.elf.bflt ]; then
 	cp -rf compiling/Podzilla0-Lite.elf.bflt compiled/Podzilla0-Lite
 else
 	cp -rf compiling/Podzilla0-Lite compiled/Podzilla0-Lite
