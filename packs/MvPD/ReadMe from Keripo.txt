@@ -1,4 +1,4 @@
-Last updated: March 19, 2008
+Last updated: March 22, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -52,7 +52,8 @@ Modifications:
 - Hex'd mvpd.cfg paths:
   /mvpd/mvpd.cfg -> Conf/mvpd.cfg
   /mnt/mvpd/mvpd.cfg -> /opt/MvPD/mvpd.cfg
-- comes with pre-converted clip of Miku-Hatsune of Vocaloid2 (melody PV 1.50)
+- comes with pre-converted clip of promotional video of
+  Hatsune Miku (Vocaloid2) singing "Miku Miku ni Shiteageru"
   converted with sMooVePoD 0.8 http://www.consumption.net/user/greeze/smoovepod/
   from YouTube video: http://www.youtube.com/watch?v=nEshhGNzfSg
   (originally from: http://www.nicovideo.jp/watch/sm1359820)
