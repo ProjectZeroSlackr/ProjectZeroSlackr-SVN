@@ -27,6 +27,7 @@
 #include <libgen.h>
 
 extern void pz_exec();
+extern PzWindow *new_terminal_window_with();
 
 #define DEFAULT "podzilla"
 
@@ -55,7 +56,8 @@ static PzWindow *iPod_Desktop()
 
 static PzWindow *Owen_OS()
 {
-	return exec_zilla("Owen-OS", "owenipod");
+	const char *const cmd[] = {"owenipod", NULL};
+	return new_terminal_window_with("/opt/TimeWalk/Owen-OS/owenipod", (char *const *)cmd);
 }
 
 static PzWindow *Margarelon()
@@ -313,13 +315,13 @@ static void init_launch()
 	pz_menu_add_action_group ("/~TimeWalk/pdPod",		"PZ0 Specials",	pdPod);
 	
 	// PZ0 Features
-	pz_menu_add_action_group ("/~TimeWalk/Keyman (PZ0)",	"PZ0 Features",	Keyman_pz0);
-	pz_menu_add_action_group ("/~TimeWalk/Keyman (Floyd)",	"PZ0 Features",	Keyman_floyd);
-	pz_menu_add_action_group ("/~TimeWalk/NXSnake",		"PZ0 Feature",	NXSnake);
-	pz_menu_add_action_group ("/~TimeWalk/Othello",		"PZ0 Feature",	Othello);
-	pz_menu_add_action_group ("/~TimeWalk/Sudoku",		"PZ0 Feature",	Sudoku);
-	pz_menu_add_action_group ("/~TimeWalk/Tuxchess",	"PZ0 Feature",	Tuxchess);
-	pz_menu_add_action_group ("/~TimeWalk/Video-podzilla",	"PZ0 Feature",	Video_podzilla);
+	pz_menu_add_action_group ("/~TimeWalk/Keyman (PZ0)",	"PZ0 Featured",	Keyman_pz0);
+	pz_menu_add_action_group ("/~TimeWalk/Keyman (Floyd)",	"PZ0 Featured",	Keyman_floyd);
+	pz_menu_add_action_group ("/~TimeWalk/NXSnake",		"PZ0 Featured",	NXSnake);
+	pz_menu_add_action_group ("/~TimeWalk/Othello",		"PZ0 Featured",	Othello);
+	pz_menu_add_action_group ("/~TimeWalk/Sudoku",		"PZ0 Featured",	Sudoku);
+	pz_menu_add_action_group ("/~TimeWalk/Tuxchess",	"PZ0 Featured",	Tuxchess);
+	pz_menu_add_action_group ("/~TimeWalk/Video-podzilla",	"PZ0 Featured",	Video_podzilla);
 	
 	// PZ0 Jonrelay's
 	pz_menu_add_action_group ("/~TimeWalk/podzilla-fbk",	"PZ0 Jonrelay",	podzilla_fbk);
