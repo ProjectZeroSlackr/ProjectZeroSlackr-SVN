@@ -1,5 +1,5 @@
 /*
- * Last updated: March 13, 2008
+ * Last updated: March 22, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -33,22 +33,28 @@ static ttk_menu_item browser_extension;
 
 const char *get_filename(const char *file)
 {
-	static char ret[256];
-	sprintf(ret, "%s", (strrchr(file, '/')+1));
-	return ret;
+	char *c = strrchr(file, '/');
+	if (c != NULL) {
+		static char ret[256];
+		sprintf(ret, "%s", c+1);
+		return ret;
+	} else {
+		return file;
+	}
 }
 
 const char *get_dirname(const char *file)
 {
-	int full_length = strlen(file);
-	int filename_length = strlen(get_filename(file));
-	int length = full_length-filename_length;
-	char dir[length+1];
-	strncpy(dir, file, (length));
-	strcat(dir, "\0");
-	static char ret[256];
-	sprintf(ret, "%s", dir);
-	return ret;
+	if (strrchr(file, '/') != NULL) {
+		static char ret[256];
+		int filename, fullname;
+		filename = strlen(get_filename(file));
+		fullname = strlen(file);
+		snprintf(ret, fullname-filename+1, "%s", file);
+		return ret;
+	} else {
+		return "";
+	}
 }
 
 int check_file_ext(const char *file, const char *ext)
