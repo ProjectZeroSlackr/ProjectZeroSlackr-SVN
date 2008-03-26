@@ -3,7 +3,7 @@
 # Encyclopodia Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 19, 2008
+# Last updated: March 25, 2008
 #
 echo ""
 echo "==========================================="
@@ -47,14 +47,18 @@ done
 cd ..
 # Symlink the libraries
 echo "> Symlinking libraries..."
-LIBS=../../../libs
-if [ ! -d $LIBS/ttk ]; then
-	echo "  - Building libraries..."
-	cd $LIBS
-	./build.sh
-	cd ../packs/Encyclopodia/build
-fi
-ln -s $LIBS/ttk ttk
+LIBSDIR=../../../libs
+LIBS="bzip2 ttk"
+for lib in $LIBS
+do
+	if [ ! -d $LIBSDIR/$lib ]; then
+		cd $LIBSDIR
+		echo "  - Building "$lib"..."
+		./src/$lib.sh
+		cd ../packs/Encyclopodia/build
+	fi
+	ln -s $LIBSDIR/$lib ./
+done
 # Compiling
 echo "> Compiling..."
 echo "  Note: All warnings/errors here will"

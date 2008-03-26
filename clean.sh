@@ -3,7 +3,7 @@
 # Auto-Cleaning Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 21, 2008
+# Last updated: March 25, 2008
 #
 echo ""
 echo "==========================================="
@@ -21,9 +21,7 @@ fi
 # libs
 echo "> Cleaning libs..."
 cd libs
-rm -rf hotdog
-rm -rf ttk
-rm -rf logs
+./clean.sh
 cd ..
 # base
 echo "> Cleaning base..."

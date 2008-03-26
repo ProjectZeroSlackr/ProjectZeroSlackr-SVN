@@ -1,4 +1,4 @@
-Last updated: March 22, 2008
+Last updated: March 25, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -11,11 +11,11 @@ original/ported software.
 == To do ==
 
 Fixes:
-- none; pending results
+- CmdLine-Tools: port tar and add bzip2
+- Add "Usage" info to ReadMe's, only archive Docs/Original
 - Encyclopodia module (waiting for Robert Bamler)
 
 Testing: 
-- CmdLine-Tools: try with sample files
 - TimeWalk: test with old monochrome iPods, complete zillae list
 - iPodMAME launch: browser-type launcher
 

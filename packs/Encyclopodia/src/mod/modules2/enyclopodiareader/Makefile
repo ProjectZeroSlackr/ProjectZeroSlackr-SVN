@@ -1,4 +1,4 @@
 obj-m = search.o encyclopodiareader.o bz2infile.o article.o
 MODULE = encyclopodiareader
-MYCFLAGS += -I../../bzip2-ipod
-MODLIBS = -L../../bzip2-ipod -lbz2
+MYCFLAGS += -I../../../bzip2
+MODLIBS = -L../../../bzip2 -lbz2
