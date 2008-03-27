@@ -1,0 +1,141 @@
+--- linux-2.4.32-ipod2/arch/armnommu/mach-ipod/fb.c	2008-03-26 18:28:03.343750000 -0400
++++ linux-2.4.32-ipod2/arch/armnommu/mach-ipod/fb.c	2008-03-26 18:45:12.375000000 -0400
+@@ -56,6 +56,7 @@
+ 
+ static int ipod_hw_ver;
+ 
++static u16 ipod_fbcon_cmap[16];
+ 
+ static unsigned long ipod_rtc;
+ static unsigned long lcd_base;
+@@ -67,7 +68,7 @@
+ static unsigned long lcd_type;
+ 
+ /* allow for 16bpp for photo res */ /* Sized to max we could possibly need */
+-static char ipod_scr[IPOD_PHOTO_LCD_HEIGHT * IPOD_PHOTO_LCD_WIDTH * 8];
++static char ipod_scr[IPOD_5G_LCD_HEIGHT * IPOD_5G_LCD_WIDTH * 8];
+ 
+ static unsigned int lcd_contrast = 0x6a;	/* required for mini2 */
+ 
+@@ -508,7 +509,6 @@
+ 	while (height > 0) {
+ 		int x, y;
+ 		int h, pixels_to_write;
+-		unsigned curpixel = 0;
+ 
+ 		pixels_to_write = (width * height) * 2;
+ 
+@@ -529,7 +529,10 @@
+ 			for (y = 0; y < width; y += 2) {
+ 				unsigned two_pixels;
+ 
+-				two_pixels = addr[0] | (addr[1] << 16);
++				two_pixels =  (((addr[0]&0x00FF) << 8) |
++					       ((addr[0]&0xFF00) >> 8)) |
++					     ((((addr[1]&0x00FF) << 8) |
++					       ((addr[1]&0xFF00) >> 8)) << 16);
+ 				addr += 2;
+ 
+ 				while ((inl(0x70008a20) & 0x1000000) == 0);
+@@ -579,8 +582,11 @@
+ 
+ 	for (y = 0; y < height; y++) {
+ 		for (x = 0; x < width; x+=2) {
+-			outw(*(addr++), 0x30000000);
+-			outw(*(addr++), 0x30000000);
++			unsigned short l, r;
++			l = *addr++;
++			r = *addr++;
++			outw(l, 0x30000000);
++			outw(r, 0x30000000);
+ 		}
+ 		addr += (lcd_width - width);
+ 	}
+@@ -663,6 +669,11 @@
+ 	ipod_update_display(p, xx, yy, xx+1, yy+1);
+ }
+ 
++void ipod_fb16_clear_margins(struct vc_data *conp,
++					struct display *p, int bottom_only)
++{
++	fbcon_cfb16.clear_margins(conp, p, bottom_only);
++}
+ 
+ /*
+  *  `switch' for the low level operations
+@@ -675,6 +686,7 @@
+ 	putc:		ipod_fb_putc,
+ 	putcs:		ipod_fb_putcs,
+ 	revc:		ipod_fb_revc,
++	clear_margins:	ipod_fb16_clear_margins,
+ 	fontwidthmask:	FONTWIDTH(8)
+ };
+ 
+@@ -788,7 +800,7 @@
+ 
+ 	strcpy(fix->id, "iPod");
+ 	/* required for mmap() */
+-	fix->smem_start = ipod_scr;
++	fix->smem_start = (unsigned long)ipod_scr;
+ 
+ 	fix->type = FB_TYPE_PACKED_PIXELS;
+ 
+@@ -862,6 +874,23 @@
+ 
+ 	if (ipod_hw_ver == 0x6 || ipod_hw_ver == 0xb || ipod_hw_ver == 0xc) {
+ 		var->bits_per_pixel = 16;
++		
++		var->red.offset = 0;
++		var->red.length = 5;
++		
++		var->green.offset = 5;
++		var->green.length = 6;
++		
++		var->blue.offset = 11;
++		var->blue.length = 5;
++		
++		var->transp.offset = 0;
++		var->transp.length = 0;
++		
++		var->red.msb_right = 0;
++		var->green.msb_right = 0;
++		var->blue.msb_right = 0;
++		var->transp.msb_right = 0;
+ 	} else {
+ 		var->bits_per_pixel = 2;
+ 		var->grayscale = 1;
+@@ -907,6 +936,13 @@
+ 	 */
+ 
+ 	/* ... */
++	if (regno >= 16) return 1;
++	if (ipod_hw_ver == 0x6 || ipod_hw_ver == 0xb || ipod_hw_ver == 0xc) {
++		*red   = (ipod_fbcon_cmap[regno]      ) & 0xf800;
++		*green = (ipod_fbcon_cmap[regno] <<  5) & 0xfc00;
++		*blue  = (ipod_fbcon_cmap[regno] << 11) & 0xf800;
++		*transp = 0;
++	}
+ 	return 0;
+ }
+ 
+@@ -921,6 +957,12 @@
+ 	 */
+ 
+ 	/* ... */
++	if (regno >= 16) return 1;
++	if (ipod_hw_ver == 0x6 || ipod_hw_ver == 0xb || ipod_hw_ver == 0xc) {
++		ipod_fbcon_cmap[regno] = ((red & 0xf800) |
++					 ((green & 0xfc00) >> 5) |
++					 ((blue & 0xf800) >> 11));
++	}
+ 	return 0;
+ }
+ 
+@@ -1009,6 +1051,7 @@
+ 	disp->screen_base = ipod_scr;
+ 	if (ipod_hw_ver == 0x6 || ipod_hw_ver == 0xb || ipod_hw_ver == 0xc) {
+ 		disp->dispsw = &fbcon_ipod16;
++		disp->dispsw_data = ipod_fbcon_cmap;
+ 	}
+ 	else {
+ 		disp->dispsw = &fbcon_ipod;
