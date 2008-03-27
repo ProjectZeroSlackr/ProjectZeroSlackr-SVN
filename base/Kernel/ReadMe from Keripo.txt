@@ -1,4 +1,4 @@
-Last updated: March 19, 2008
+Last updated: March 26, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -43,19 +43,25 @@ iPodLinux Patches:
 - Link:
   http://www.so2.sys-techs.com/ipod/linux/
   https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/linux/2.4
-- Date: Jan 31, 2008
-- Version: Revision 2397
+- Date: March 26, 2008
+- Version: Revision 2404
 
 ZS Version:
 - Modder: Keripo
 - Type: Mod and Recompile
 - Link:
   http://ipodlinux.org/images/8/81/Iboy_kernel_patches.zip (iBoy patches)
-- Date: Jan 31, 2008
+  http://so2.sys-techs.com/ipod/fb-fixes.diff
+  (White kernel text - see http://ipl.nonb.org/ticket/54)
+  http://ipl.nonb.org/attachment/ticket/43/5G_audio.diff (5G PCM audio level patch)
+  
+- Date: March 26, 2008
 - Version: B X.X
 
 Modifications:
 - iBoy audio buffer patch
+- White kernel text patch
+- 5G PCM level reading patch
 - preconfigured .config file (with CONFIG_BLK_DEV_LOOP=y)
 
 To do:
