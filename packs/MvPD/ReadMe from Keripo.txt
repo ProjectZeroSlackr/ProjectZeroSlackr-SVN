@@ -1,4 +1,4 @@
-Last updated: March 22, 2008
+Last updated: March 27, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -38,7 +38,6 @@ Original:
 - Link:
   http://www.justgeek.de/moviepod/
   http://www.justgeek.de/moviepod/preview/version.0.0.99-rc2/mv_player-0.0.99-rc2.tar.gz
-  http://ipodlinux.org/Mv_player/Schemes
 - Date: Jan 30, 2007
 - Version: 0.0.99-rc2
 
@@ -59,6 +58,12 @@ Modifications:
   (originally from: http://www.nicovideo.jp/watch/sm1359820)
   (translated here: http://www.youtube.com/watch?v=3rsBLRFONEs)
 - made ZS friendly
+- user-made MvPD schemes:
+  http://ipodlinux.org/Mv_player/Schemes (many)
+  http://www.ipodlinux.org/forums/viewtopic.php?t=29385 (newground)
+  http://www.ipodlinux.org/forums/viewtopic.php?p=182123#182123 (rx-7)
+  http://www.ipodlinux.org/forums/viewtopic.php?t=23008
+  (jwmp - had to download from http://www.ipodlinux.org/forums/viewtopic.php?t=22532)
 
 Launch Module:
 - FastLaunches MvPD
