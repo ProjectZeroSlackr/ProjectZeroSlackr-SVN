@@ -1,4 +1,4 @@
-Last updated: March 25, 2008
+Last updated: March 27, 2008
 ~Keripo
 
 Build individual libraries running
@@ -9,6 +9,12 @@ libraries)
 
 bzip2 source downloaded from
 http://www.bzip.org/downloads.html
+
+tar source downloaded from
+ftp://download.gnu.org.ua/pub/alpha/tar
+(version 1.16.2-20070123 had to be used
+since version 1.18.90 or higher don't
+seem to compile nicely)
 
 hotdog and ttk source downloaded from
 the official SVN. hotdog needs to be

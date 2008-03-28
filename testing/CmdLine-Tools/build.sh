@@ -3,7 +3,7 @@
 # CmdLine-Tools Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 13, 2008
+# Last updated: March 27, 2008
 #
 echo ""
 echo "==========================================="
@@ -28,9 +28,21 @@ tar zxf ../src/orig/Ipodsed.tar.gz
 tar zxf ../src/orig/diffutils-2.8.1.tar.gz
 tar zxf ../src/repack/unrar_repacked.tar.gz
 tar zxf ../src/repack/unzip_repacked.tar.gz
-cp -rf ../src/orig/Tar.gz ./
-gzip -d Tar.gz
 unzip -q ../src/orig/zip232.zip -d zip
+# Symlink the libraries
+echo "> Symlinking libraries..."
+LIBSDIR=../../../libs
+LIBS="bzip2 tar"
+for lib in $LIBS
+do
+	if [ ! -d $LIBSDIR/$lib ]; then
+		cd $LIBSDIR
+		echo "  - Building "$lib"..."
+		./src/$lib.sh
+		cd ../testing/CmdLine-Tools/build
+	fi
+	ln -s $LIBSDIR/$lib ./
+done
 # Compiling
 echo "> Compiling..."
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
@@ -78,11 +90,13 @@ cp -rf cmdlineutils/raise compiled/
 cp -rf gzip/gzip compiled/
 cp -rf unrar/unrar compiled/
 cp -rf unzip/unzip compiled/
-cp -rf Tar compiled/tar
 cp -rf zip/zip compiled/
 cp -rf zip/zipcloak compiled/
 cp -rf zip/zipnote compiled/
 cp -rf zip/zipsplit compiled/
+cp -rf tar/src/tar compiled/
+cp -rf bzip2/bzip2 compiled/
+cp -rf bzip2/bzip2recover compiled/
 # Creating release
 echo "> Creating 'release' folder..."
 tar -xf ../src/release.tar.gz

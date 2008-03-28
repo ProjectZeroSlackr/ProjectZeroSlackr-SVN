@@ -1,4 +1,4 @@
-Last updated: March 19, 2008
+Last updated: March 27, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -41,16 +41,20 @@ Original:
   http://ipodlinux.org/forums/viewtopic.php?t=705
   https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/apps/ipod/cmdlineutils
 
-  
   unzip and unrar
   Rufus, Oct 8, 2007
   http://ipodlinux.org/forums/viewtopic.php?t=28199
   http://www.box.net/shared/ib9ai6yzcm
   
   tar
-  Mrscolex, Feb 26, 2006
-  http://www.ipodlinux.org/Image:Tar.gz
-  http://www.ipodlinux.org/Tar_for_iPod
+  Keripo, March 27, 2008
+  (see /libs)
+  ftp://download.gnu.org.ua/pub/alpha/tar
+  
+  bzip2
+  (see /libs)
+  Keripo, March 27, 2008
+  http://www.bzip.org/downloads.html
 
   zip
   Keripo, March 12, 2008
@@ -59,14 +63,14 @@ Original:
 ZS Version:
 - Modder: Keripo
 - Type: ZS Recompile / Repack
-- Date: March 12, 2008
+- Date: March 27, 2008
 - Version: B X.X
 
 Modifications:
 - make ZS friendly
 
 Launch Module:
-- file handler for zip, unzip, unrar, tar and gzip
+- file handler for zip, unzip, unrar, tar, bzip2 and gzip
 - other binaries are in /usr/bin and so can be used by terminal
 
 To do:
