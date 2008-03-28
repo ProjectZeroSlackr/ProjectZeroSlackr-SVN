@@ -3,7 +3,7 @@
 # MvPD Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 21, 2008
+# Last updated: March 28, 2008
 #
 echo ""
 echo "==========================================="
@@ -46,11 +46,6 @@ cp -rf ../videos/* $PACK/Videos/Clips/
 DOCS=$PACK/Misc/Docs
 cp -rf "../../ReadMe from Keripo.txt" $DOCS/
 cp -rf ../../License.txt $DOCS/
-# Archive documents
-cd $PACK/Misc
-tar -cf Docs.tar Docs
-gzip --best Docs.tar
-rm -rf Docs
 # Done
 echo ""
 echo "Fin!"

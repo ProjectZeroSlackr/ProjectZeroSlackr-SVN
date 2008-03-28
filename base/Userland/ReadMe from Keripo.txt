@@ -1,4 +1,4 @@
-Last updated: March 19, 2008
+Last updated: March 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -22,6 +22,19 @@ For more information, see:
 - http://ipodlinux.org/Installation:_Winpod_without_datacorruption
 - http://ipodlinux.org/Userland
 - http://en.wikipedia.org/wiki/Userland_(computing)
+
+Usage:
+- Since ZeroSlackr uses a userland image instead of a
+  partition, the actual, full Linux partition is not
+  easily accessible.
+- Since /usr is symlinked, any binaries placed in /usr/bin
+  will also be accessible just like binaries in /bin.
+- Symlinks were made such that modification of the userland
+  is not needed; if you do need to modify/access the userland
+  however, you can do so via the old, depreciated "start" file
+  method (see http://ipodlinux.org/Start_File) or
+  loop-mounting the image on Linux/Mac OS X (see
+  "/boot/docs/userland/Loop-mount Instructions.txt").
 
 
 Original:

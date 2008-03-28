@@ -1,4 +1,4 @@
-Last updated: March 25, 2008
+Last updated: March 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -11,8 +11,7 @@ original/ported software.
 == To do ==
 
 Fixes:
-- CmdLine-Tools: port tar and add bzip2
-- Add "Usage" info to ReadMe's, only archive Docs/Original
+- CmdLine-Tools: add bzip2
 - Encyclopodia module (waiting for Robert Bamler)
 
 Testing: 

@@ -3,7 +3,7 @@
 # Encyclopodia Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 25, 2008
+# Last updated: March 28, 2008
 #
 echo ""
 echo "==========================================="
@@ -47,6 +47,7 @@ done
 cd ..
 # Symlink the libraries
 echo "> Symlinking libraries..."
+DIR=$(pwd)
 LIBSDIR=../../../libs
 LIBS="bzip2 ttk"
 for lib in $LIBS
@@ -55,7 +56,7 @@ do
 		cd $LIBSDIR
 		echo "  - Building "$lib"..."
 		./src/$lib.sh
-		cd ../packs/Encyclopodia/build
+		cd $DIR
 	fi
 	ln -s $LIBSDIR/$lib ./
 done
@@ -127,12 +128,13 @@ cp -rf $OFFSVN/API.tex $DOCSORIG/pz2
 cp -rf $OFFSVN/COPYING $DOCSORIG/pz2
 # Archive documents
 cd $PACK/Misc
-tar -cf Docs.tar Docs
-gzip --best Docs.tar
-rm -rf Docs
 tar -cf Patches.tar Patches
 gzip --best Patches.tar
 rm -rf Patches
+cd Docs
+tar -cf Original.tar Original
+gzip --best Original.tar
+rm -rf Original
 # Done
 echo ""
 echo "Fin!"

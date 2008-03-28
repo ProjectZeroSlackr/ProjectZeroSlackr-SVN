@@ -1,4 +1,4 @@
-Last updated: March 19, 2008
+Last updated: March 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -22,6 +22,18 @@ For more information, see:
 - http://ipodlinux.org/Loader2
 - http://www.rockbox.org/twiki/bin/view/Main/IpodPatcher
 - http://en.wikipedia.org/wiki/Bootloader
+
+Usage:
+- Since Loader2 is a bootloader written from scratch,
+  it has its own special syntax.
+- For proper usage of Loader2 and its various options/syntax,
+  see the provided "/boot/loader.cfg" file as well as
+  the iPodLinux wiki page: http://ipodlinux.org/Loader2
+- The iPodLinux kernel accepts most standard kernel arguments;
+  see "/boot/docs/kernel/Original/kernel-parameters.txt"
+- ZeroSlackr's userland uses getLoader2AutoExec instead of
+  getLoader2Args. For more information on how to use that,
+  read the comments of "/boot/loader.cfg".
 
 
 Loader 2:

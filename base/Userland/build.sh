@@ -3,7 +3,7 @@
 # Userland Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 7, 2008
+# Last updated: March 28, 2008
 #
 echo ""
 echo "==========================================="
@@ -47,13 +47,15 @@ echo "> Copying documents..."
 DOCS=release/boot/docs/userland
 cp -rf "../ReadMe from Keripo.txt" "$DOCS/ReadMe from Keripo.txt"
 cp -rf ../License.txt $DOCS/License.txt
-cp -rf ../src/mod $DOCS/Mod
 cp -rf "../src/images/Loop-mount Instructions.txt" $DOCS/
+mkdir $DOCS/Mod
+cp -rf ../src/mod/loop-mount.sh $DOCS/Mod/
+cp -rf ../src/mod/zeroslackr-userland-mod.tar.gz $DOCS/Mod/
 # Archive documents
-cd release/boot/docs
-tar -cf userland.tar userland
-gzip --best userland.tar
-rm -rf userland
+cd $DOCS
+tar -cf Mod.tar Mod
+gzip --best Mod.tar
+rm -rf Mod
 # Done
 echo ""
 echo "Fin!"

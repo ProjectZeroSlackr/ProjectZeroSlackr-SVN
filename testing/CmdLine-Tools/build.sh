@@ -3,7 +3,7 @@
 # CmdLine-Tools Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 27, 2008
+# Last updated: March 28, 2008
 #
 echo ""
 echo "==========================================="
@@ -31,6 +31,7 @@ tar zxf ../src/repack/unzip_repacked.tar.gz
 unzip -q ../src/orig/zip232.zip -d zip
 # Symlink the libraries
 echo "> Symlinking libraries..."
+DIR=$(pwd)
 LIBSDIR=../../../libs
 LIBS="bzip2 tar"
 for lib in $LIBS
@@ -39,7 +40,7 @@ do
 		cd $LIBSDIR
 		echo "  - Building "$lib"..."
 		./src/$lib.sh
-		cd ../testing/CmdLine-Tools/build
+		cd $DIR
 	fi
 	ln -s $LIBSDIR/$lib ./
 done
@@ -109,13 +110,12 @@ cp -rf ../compiled/* $USRBIN/
 DOCS=$PACK/Misc/Docs
 cp -rf "../../ReadMe from Keripo.txt" $DOCS/
 cp -rf ../../License.txt $DOCS/
-# Too many so did by hand
-#DOCSORIG=$DOCS/Original
 # Archive documents
 cd $PACK/Misc
-tar -cf Docs.tar Docs
-gzip --best Docs.tar
-rm -rf Docs
+cd Docs
+tar -cf Original.tar Original
+gzip --best Original.tar
+rm -rf Original
 # Done
 echo ""
 echo "Fin!"

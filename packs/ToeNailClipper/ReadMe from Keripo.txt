@@ -1,4 +1,4 @@
-Last updated: March 19, 2008
+Last updated: March 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -15,6 +15,12 @@ ToeNailClipper
 For more information, see:
 - http://www.brandon-holland.com/software.html
 - http://gotgrip.com/proggies.html
+
+Usage:
+- Terminal launch through "Media > ToeNailClipper".
+- Follow the printed out instructions to play the
+  game.
+
 
 Original:
 - Authors: Paul Taylor, Brandon Holland

@@ -3,7 +3,7 @@
 # Podzilla2-SVN Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 19, 2008
+# Last updated: March 28, 2008
 #
 echo ""
 echo "==========================================="
@@ -34,14 +34,19 @@ done
 cd ..
 # Symlink the libraries
 echo "> Symlinking libraries..."
-LIBS=../../../libs
-if [ ! -d $LIBS/ttk ]; then
-	echo "  - Building libraries..."
-	cd $LIBS
-	./build.sh
-	cd ../packs/Podzilla2-SVN/build
-fi
-ln -s $LIBS/ttk ttk
+DIR=$(pwd)
+LIBSDIR=../../../libs
+LIBS="ttk"
+for lib in $LIBS
+do
+	if [ ! -d $LIBSDIR/$lib ]; then
+		cd $LIBSDIR
+		echo "  - Building "$lib"..."
+		./src/$lib.sh
+		cd $DIR
+	fi
+	ln -s $LIBSDIR/$lib ./
+done
 # Compiling
 echo "> Compiling..."
 echo "  Note: All warnings/errors here will"
@@ -141,12 +146,13 @@ cp -rf $OFFSVN/API.tex $DOCSORIG/pz2
 cp -rf $OFFSVN/COPYING $DOCSORIG/pz2
 # Archive documents
 cd $PACK/Misc
-tar -cf Docs.tar Docs
-gzip --best Docs.tar
-rm -rf Docs
 tar -cf Patches.tar Patches
 gzip --best Patches.tar
 rm -rf Patches
+cd Docs
+tar -cf Original.tar Original
+gzip --best Original.tar
+rm -rf Original
 # Done
 echo ""
 echo "Fin!"

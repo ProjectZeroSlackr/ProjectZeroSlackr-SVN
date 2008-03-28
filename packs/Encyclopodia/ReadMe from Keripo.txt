@@ -1,4 +1,4 @@
-Last updated: March 19, 2008
+Last updated: March 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -21,15 +21,20 @@ Encyclopodia
   many features from the original Encyclopodia that are
   missing in the PZ2 module and it is prone to many bugs
   (notably font display).
-- A pre-converted iPodLinux wiki dump is provided. To create
-  your own .epodia file, see the "Creation-Instructions.txt"
-  file in the "Misc/Docs" archive or visit the official
-  Encyclopodia website (where you can also download a
-  preconverted Wikipedia dump) and place the .epodia file
-  in the "Library" folder
 For more information, see:
 - http://encyclopodia.sourceforge.net/
 - http://en.wikipedia.org/wiki/Wikipedia:Encyclopodia
+
+Usage:
+- FastLaunch through "Tools > Encyclopodia".
+- A pre-converted iPodLinux wiki dump is provided. To create
+  your own .epodia file, see "Misc/Docs/Creation-Instructions.txt"
+  or visit the official Encyclopodia website (where you can also
+  download a preconverted Wikipedia dump) and place the .epodia
+  file in the "Library" folder.
+- Encyclopodia contains only the bare minimum in modules;
+  if you really want to add more PZ2 modules, place them
+  in the "Modules" folder.
 
 
 Original:

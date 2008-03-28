@@ -1,4 +1,4 @@
-Last updated: March 19, 2008
+Last updated: March 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -24,6 +24,9 @@ Podzilla0-SVN
   ZeroSlackr Framework compatibility.
 For more information, see:
 - http://ipodlinux.org/Podzilla_(legacy)
+
+Usage:
+- FastLaunch through "Zillae > Podzilla0-SVN".
 
 
 Original:

@@ -1,4 +1,4 @@
-Last updated: March 19, 2008
+Last updated: March 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -29,6 +29,9 @@ For more information, see:
 - http://www.dansfloyd.com/floydzilla.html
 - http://ipodlinux.org/Floydzilla
 - http://ipodlinux.org/Podzillae
+
+Usage:
+- FastLaunch through "Zillae > Floydzilla".
 
 
 Original:

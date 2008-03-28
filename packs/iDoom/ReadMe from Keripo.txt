@@ -1,4 +1,4 @@
-Last updated: March 19, 2008
+Last updated: March 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -17,16 +17,27 @@ iDoom
   usage of "-file". An alternate launcher is also provided that
   uses the FreeDoom project's IWAD, allowing for the "-file" of
   Doom II PWADs without needing a commercial "doom2.wad" file.
-- If a legimate "doom2.wad" is owned, it should replace the
-  "freedm.wad" file (or may try keeping as doom2.wad for usage
-  with the normal iDoom launcher, but will screw up wad browsing)
-- PWADs intended to supplement doom.wad should be placed in the
-  "PWADs/Doom" folder and those for doom2.wad should be placed
-  in the "PWADs/DoomII" folder.
+
 For more information, see:
 - http://idoom.hyarion.com/
 - http://ipodlinux.org/IDoom
 - http://en.wikipedia.org/wiki/Doom
+
+Usage:
+- FastLaunch through "Media > iDoom > FastLaunch" or
+  launch iDoom without parameters through
+  "Media > iDoom > iDoom" or iFreeDoom without parameters
+  through "Media > iDoom > iFreeDoom".
+- Files with a ".wad" extension have their default
+  action set to iDoom.  
+- PWADs intended to supplement doom.wad should be placed in the
+  "PWADs/Doom" folder and those for doom2.wad should be placed
+  in the "PWADs/DoomII" folder.
+- If a legimate "doom2.wad" is owned, it should replace the
+  "freedm.wad" file (or may try keeping as doom2.wad for usage
+  with the normal iDoom launcher, but will screw up wad browsing).
+- You may want to edit the "Conf/keys.key" file if you want to
+  change settings, etc.
 
 
 Original:

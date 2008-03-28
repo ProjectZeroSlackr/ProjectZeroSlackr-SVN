@@ -1,4 +1,4 @@
-Last updated: March 21, 2008
+Last updated: March 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -51,6 +51,18 @@ TimeWalk
 For more information, see each zillae's respective links
 though most of their descriptions can be found here:
 - http://www.ipodlinux.org/Podzillae
+
+Usage:
+- Launch the different zillae through the "TimeWalk"
+  menu.
+- Remember that none of the zillae are guaranteed to
+  work on your specific iPod model so don't cry "Wolf!"
+  if it doesn't work for you.
+- If it does work for you but you notice I missed a few
+  string edits, contact me so I can correct them to the
+  best of my ability (keep in mind that these were all
+  pre-compiled a long time ago and I cannot recompile
+  the majority of them due to lack of source code).
 
 
 Originals: (no particular order)
