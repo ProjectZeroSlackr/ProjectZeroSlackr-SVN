@@ -1,0 +1,15 @@
+--- linux-2.4.32-ipod2/arch/armnommu/mach-ipod/audio.c	2008-03-28 15:34:27.968750000 -0400
++++ linux-2.4.32-ipod2/arch/armnommu/mach-ipod/audio.c	2008-03-28 15:41:37.796875000 -0400
+@@ -898,10 +898,12 @@
+ 	volatile int *w_off = (int *)DMA_WRITE_OFF;
+ 	volatile int *dma_active = (int *)DMA_ACTIVE;
+ 
++	/*
+ 	if (!*dma_active) {
+ 		printk(KERN_ERR "dma not active\n");
+ 		return;
+ 	}
++	*/
+ 
+ 	while (*r_off != *w_off) {
+ 		set_current_state(TASK_INTERRUPTIBLE);
