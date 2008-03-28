@@ -1,4 +1,4 @@
-Last updated: March 21, 2008
+Last updated: March 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -14,19 +14,24 @@ iPodMAME
 - Due to "some strange video driver bug",
   iPodMAME is only confirmed to work with
   iPod nanos and iPod videos (5G).
-- A list of working romsets can be found in the
-  Roms directory. Place your legally obtained
-  rom files in their proper folders. iPodMAME
-  will not run a romset game if any of the rom
-  files for that romset are missing/incorrect.
-- If you have an iPod video and/or you want to
-  configure the screen/controls, edit the
-  ipodmame.ini file in the Conf folder.
 For more information, see:
 - http://ipodlinux.org/Ipodmame
 - http://umlautllama.com/projects/nanomame/
 - http://mamedev.org/
 - http://en.wikipedia.org/wiki/MAME
+
+Usage:
+- FastLaunch through "Emulators > iPodMAME > FastLaunch"
+  to start the "Alien Armada" game or select a supported
+  romset in "Emulators > iPodMAME".
+- A list of working romsets can be found in the
+  "Roms" directory. Place your legally obtained
+  rom files in their proper folders. iPodMAME
+  will not run a romset game if any of the rom
+  files for that romset are missing/incorrect.
+- If you have an iPod video and/or you want to
+  configure the screen/controls, edit the
+  "Conf/ipodmame.ini" file.
 
 
 Original:

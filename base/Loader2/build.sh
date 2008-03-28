@@ -3,7 +3,7 @@
 # Loader2 & iPodPatcher Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Feb 25, 2008
+# Last updated: March 28, 2008
 #
 echo ""
 echo "==========================================="
@@ -83,10 +83,10 @@ cp -rf "../../ReadMe from Keripo.txt" "$DOCS/ReadMe from Keripo.txt"
 cp -rf ../../License.txt $DOCS/License.txt
 cp -rf ../../src/patches $DOCS/Patches
 # Archive documents
-cd boot/docs
-tar -cf loader2.tar loader2
-gzip --best loader2.tar
-rm -rf loader2
+cd $DOCS
+tar -cf Patches.tar Patches
+gzip --best Patches.tar
+rm -rf Patches
 # Done
 echo ""
 echo "Fin!"

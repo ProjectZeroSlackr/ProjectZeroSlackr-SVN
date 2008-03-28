@@ -1,4 +1,4 @@
-Last updated: March 19, 2008
+Last updated: March 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -15,16 +15,27 @@ iBoy
   well known and widely used emulators for iPodLinux and has a
   long history, appearing in a number of past publications
   (magazine and online) featuring iPodLinux.
-- Public domain rom files can be optained through various internet
-  websites while commercial rom files should be dumped from real
-  Gameboy game cartriages (downloading commercial roms that you do
-  not own is ILLEGAL). Rom files should be placed in the "Roms"
-  folder.
 For more information, see:
 - http://ipodlinux.org/iBoy
 - http://en.wikipedia.org/wiki/Gnuboy
 - http://en.wikipedia.org/wiki/Game_Boy
 - http://en.wikipedia.org/wiki/Game_Boy_Color
+
+Usage:
+- FastLaunch through "Emulators > iBoy > FastLaunch" or
+  use "Emulators > iBoy > Roms" to select a rom to play
+  (after the emulator starts, choose "Return to game").
+- Files with a ".gb" and ".gbc" extension have their default
+  action set to iBoy.
+- Rom files should be placed in the "Roms" folder.
+  Public domain rom files can be optained through various internet
+  websites while commercial rom files should be dumped from real
+  Gameboy game cartriages (downloading commercial roms that you do
+  not own is ILLEGAL).
+- You may want to edit the "Conf/iboy.cfg" file if you want to
+  change settings, etc.
+- iPod mini users should replace the "Conf/iboy.cfg" file with
+  "Conf/iboy.cfg_3g_mini" for better scaling.
 
 
 Original:

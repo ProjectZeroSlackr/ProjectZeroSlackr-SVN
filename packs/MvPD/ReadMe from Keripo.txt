@@ -1,4 +1,4 @@
-Last updated: March 27, 2008
+Last updated: March 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -8,8 +8,8 @@ Docs/Original or the license that comes with the
 original/ported software.
 
 Overview:
-MoviePod
-- MoviePod (also known as MvPD or MV Player) is compressed video
+MV Player
+- MV Player (also known as MvPD or MoviePod) is compressed video
   player specially designed for iPodLinux. It playbacks compressed
   videos converted to the non-standard, special .mvpd format
   (podzilla legacy has a built-in video player but it is only capable
@@ -17,19 +17,26 @@ MoviePod
 - As of the moment, MV Player only works for iPod nanos and photos;
   if you wish for support for your iPod model, you may try contacting
   the creator (Gaspode) to help.
-- A sample, preconverted YouTube video of Miku-Hatsune of Vocaloid2
-  is provided in the ZeroSlackr pack. To convert your own videos,
-  see the Video Converters link below (sMooVePoD recommended).
-- The menu version of MV Player is also skinnable with a few schemes
-  included in the ZeroSlackr pack (to switch schemes you must edit the
-  "Conf/mvpd.conf" file manually). To create your own scheme, see the
-  tutorial link below.
 For more information, see:
 - http://www.justgeek.de/moviepod/
 - http://ipodlinux.org/Mv_player
 - http://ipodlinux.org/Mv_player/Video_Converters
 - http://ipodlinux.org/Mv_player/Schemes
 - http://ipodlinux.org/forums/viewtopic.php?t=24546 (scheme tutorial)
+
+Usage:
+- FastLaunch through "Media > MvPD > FastLaunch" or
+  use "edia > MvPD > Videos" to select a video to play.
+- Files with a ".mvpd" extension have their default
+  action set to MV Player.
+- A sample, preconverted YouTube video of Miku-Hatsune of Vocaloid2
+  is provided in the ZeroSlackr pack. To convert your own videos,
+  see the Video Converters link above (sMooVePoD recommended) and
+  place the converted *.mvpd into one of the folders in "Video".
+- The menu version of MV Player is also skinnable with a few schemes
+  included in the ZeroSlackr pack (to switch schemes you must edit the
+  "Conf/mvpd.conf" file manually). To create your own scheme, see the
+  tutorial link above.
 
 
 Original:

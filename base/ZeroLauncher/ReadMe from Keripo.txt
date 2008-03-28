@@ -1,4 +1,4 @@
-Last updated: March 19, 2008
+Last updated: March 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -21,6 +21,26 @@ ZeroLauncher
 For more information, see:
 - http://ipodlinux.org/Podzilla
 - http://en.wikipedia.org/wiki/Graphical_user_interface
+
+Usage:
+- The ZeroSlackr userland launches ZeroLauncher by default
+  in an endless loop (or rather as long as
+  "/opt/ZeroLauncher/Fastlaunch.sh" exists)
+  until the user chooses the "Power off" or "Reboot" option
+  from the ZeroLauncher menu (or until iPodLinux freezes,
+  in which the user should manually reboot by holding the
+  correct key combinations for force rebooting their iPod
+  (see http://ipodlinux.org/Key_combinations).
+- ZeroLauncher loads special podzilla2 modules from both
+  "/opt" and "/opt/ZeroLauncher/Add-ons".
+- To add normal podzilla2 modules to ZeroLauncher, rename
+  the *.mod.o file to *.zl and rename "Module" to "PackInfo"
+  and place the module folder into "/opt/ZeroLauncher/Add-ons"
+  (it is recommended that normal modules be used by
+  Podzilla2-SVN instead of ZeroLauncher as ZeroLauncher should
+  be limited to only what is necessary for launching other apps).
+- ZeroLauncher can also be FastLaunch'd through
+  "Zillae > ZeroLauncher" but such is pretty pointless.
 
 
 Original:

@@ -1,4 +1,4 @@
-Last updated: March 19, 2008
+Last updated: March 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -14,13 +14,21 @@ XMP
   same name.
 - The official SourceForge page lists 81 supported formats,
   including most of the formats supported by mikmod.
-- Free modules can be downloaded from The Mod Archive
-  (http://modarchive.org/) and other places on the internet.
 For more information, see:
 - http://ipodlinux.org/XMP
 - http://www.ipodlinux.org/forums/viewtopic.php?t=29331
 - http://xmp.sourceforge.net/
 - http://en.wikipedia.org/wiki/Module_file
+
+Usage:
+- FastLaunch through "Media > XMP > FastLaunch" to
+  playback "a-depres.xm" or use "Media > XMP > Mods"
+  to select a module file to play.
+- Files with a supported module extension have their default
+  action set to xmp.
+- Module files should be placed in the "Mods" folder.
+  Free modules can be downloaded from The Mod Archive
+  (http://modarchive.org/) and other places on the internet.
 
 
 Original:

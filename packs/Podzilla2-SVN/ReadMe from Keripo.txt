@@ -1,4 +1,4 @@
-Last updated: March 19, 2008
+Last updated: March 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -29,6 +29,22 @@ For more information, see:
 - http://ipodlinux.org/Creating_podzilla2_schemes
 - http://www.ipodlinux.org/forums/viewtopic.php?p=47290#47290 (epic post)
 - http://en.wikipedia.org/wiki/Graphical_user_interface
+
+Usage:
+- Podzilla2-SVN is used in the same way as a normal podzilla2
+  but in the context of the ZeroSlackr Framework.
+- FastLaunch through "Zillae > Podzilla2-SVN > FastLaunch"
+  or select one of the many different launch options to run
+  their respective scripts (which will load modules only
+  in certain folders).
+- The special launch options can be hidden through their
+  toggles in "Zillae > Podzilla2-SVN > Settings".
+- Like with podzilla2, schemes should be placed in ZeroSlackr's
+  "/usr/share/schemes" while modules be placed in one of the
+  organized folders of "/usr/lib/" where they will/will not
+  be loaded depending on the launch option.
+- To make your launch option, edit the "FastLaunch.sh" script
+  or edit one of the pre-defined launch scripts in "Launches".
 
 
 Original:

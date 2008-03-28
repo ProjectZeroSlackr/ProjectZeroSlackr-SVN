@@ -3,7 +3,7 @@
 # ZacZilla Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 21, 2008
+# Last updated: March 28, 2008
 #
 echo ""
 echo "==========================================="
@@ -32,13 +32,21 @@ cd libs
 sh AutoCompile.sh
 rm -rf AutoCompile.sh
 cd ..
-TTK=../../../libs
-if [ ! -d $TTK/ttk ]; then
-	cd $TTK
-	./build.sh
-	cd ../packs/ZacZilla/build
-fi
-ln -s $TTK/ttk ttk
+# Symlink the libraries
+echo "> Symlinking libraries..."
+DIR=$(pwd)
+LIBSDIR=../../../libs
+LIBS="ttk"
+for lib in $LIBS
+do
+	if [ ! -d $LIBSDIR/$lib ]; then
+		cd $LIBSDIR
+		echo "  - Building "$lib"..."
+		./src/$lib.sh
+		cd $DIR
+	fi
+	ln -s $LIBSDIR/$lib ./
+done
 # Compiling
 echo "> Compiling..."
 echo "  Note: All warnings/errors here will"
@@ -61,14 +69,14 @@ PACK=ZeroSlackr/opt/ZacZilla
 cp -rf ../compiled/ZacZilla $PACK/ZacZilla
 # Documents
 DOCS=$PACK/Misc/Docs
-DOCSORIG=$DOCS/Original
 cp -rf "../../ReadMe from Keripo.txt" $DOCS/
 cp -rf ../../License.txt $DOCS/
 # Archive documents
 cd $PACK/Misc
-tar -cf Docs.tar Docs
-gzip --best Docs.tar
-rm -rf Docs
+cd Docs
+tar -cf Original.tar Original
+gzip --best Original.tar
+rm -rf Original
 # Done
 echo ""
 echo "Fin!"

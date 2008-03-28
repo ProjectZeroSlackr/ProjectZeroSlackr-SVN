@@ -3,7 +3,7 @@
 # nano Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 7, 2008
+# Last updated: March 28, 2008
 #
 echo ""
 echo "==========================================="
@@ -42,9 +42,10 @@ cp -rf ../compiling/nano.nfo $DOCSORIG/
 cp -rf ../compiling/readme.txt $DOCSORIG/
 # Archive documents
 cd $PACK/Misc
-tar -cf Docs.tar Docs
-gzip --best Docs.tar
-rm -rf Docs
+cd Docs
+tar -cf Original.tar Original
+gzip --best Original.tar
+rm -rf Original
 # Done
 echo ""
 echo "Fin!"

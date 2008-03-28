@@ -1,4 +1,4 @@
-Last updated: March 19, 2008
+Last updated: March 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -18,6 +18,13 @@ PiCalc
 For more information, see:
 - http://www.ipodlinux.org/forums/viewtopic.php?t=29515
 - http://myownlittleworld.com/miscellaneous/computers/otherpiprograms.html
+
+Usage:
+- Terminal launch through "Tools > PiCalc".
+- You need to type in all the commands in accordance
+  to the printed out instructions.
+- The calculated value will be saved as a text file in the
+  "Output" folder.
 
 
 Original:

@@ -1,4 +1,4 @@
-Last updated: March 21, 2008
+Last updated: March 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -25,6 +25,9 @@ For more information, see:
 - http://sourceforge.net/projects/zaczilla/
 - http://www.ipodlinux.org/Ttkzilla
 - http://www.ipodlinux.org/Podzillae
+
+Usage:
+- FastLaunch through "Zillae > ZacZilla".
 
 
 Original:

@@ -1,4 +1,4 @@
-Last updated: March 19, 2008
+Last updated: March 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -26,6 +26,10 @@ For more information, see:
 - http://keyj.s2000.ws/?p=51 (Making of >>nano<<)
 - http://www.pouet.net/prod.php?which=25857
 - http://en.wikipedia.org/wiki/Demoscene
+
+Usage:
+- FastLaunch through "Media > nano".
+
 
 Original:
 - Authors: Kakiarts

@@ -1,4 +1,4 @@
-Last updated: March 27, 2008
+Last updated: March 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -7,7 +7,7 @@ software/application, refer to the documents found in
 Docs/Original or the license that comes with the
 original/ported software.
 
-Overview
+Overview:
 CmdLine-Tools
 - This is a collection of various command-line tools
   ported or written for iPodLinux.
@@ -16,6 +16,16 @@ CmdLine-Tools
   since they do not require recompilation.
 - For information on what each binary does, see their
   respective links below.
+
+Usage:
+- Since all the command-line tools are placed in
+  "/usr/bin", they are accessible to the shell and
+  terminal. Thus they can be used in shell scripts
+  or via the terminal module.
+- The CmdLine-Tools launch module adds file handlers
+  for usage of the archiving tools; hold the centre/
+  select button on an item in the file browser to
+  access the archiving options.
 
 
 Original:
