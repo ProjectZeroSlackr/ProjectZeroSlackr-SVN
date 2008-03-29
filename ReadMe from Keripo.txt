@@ -1,4 +1,4 @@
-Last updated: March 22, 2008
+Last updated: March 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -104,13 +104,16 @@ pack (e.g. copy the content of ZeroLauncher's "build/release/
 ZeroSlackr/opt/$PACK" to the applications' "build/release/
 ZeroSlackr/opt/$PACK").
 
-For convenience I've also written "lump.sh", "clean.sh" and
-"rm-backups.sh" scripts. They can be used by doing a "cd" to
-the proper directory, then doing "./lump.sh", "./clean.sh",
-or "./rm-backups.sh". The "rm-backups.sh" script is mainly
-for Linux as annoying *~ backup files are often created here
-and there; the script carries out a search-and-destroy mission
-on these files. The "lump.sh" script will recursively enter
+For convenience I've also written "lump.sh", "clean.sh",
+"chmod-all.sh", and "rm-backups.sh" scripts. They can be
+used by doing a "cd" to the proper directory, then doing
+"./lump.sh", "./clean.sh", or "./rm-backups.sh". The
+"rm-backups.sh" script is mainly for Linux as annoying
+*~ backup files are often created here and there; the script
+carries out a search-and-destroy mission on these files.
+The "chmod-all.sh" script will conveniently execute
+"chmod ugo+rwx" on all the script files so you dont' have to.
+The "lump.sh" script will recursively enter
 each pack's folder, execute the pack's "build.sh", copy the
 content of that pack's "build/release" into one large "_lump"
 folder that can be directly copied to an iPod (note that the
