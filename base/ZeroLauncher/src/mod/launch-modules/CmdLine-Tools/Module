@@ -3,4 +3,4 @@ Display-name: CmdLine-Tools
 Description: Collection of command-line tools.
 Category: Tools
 Author: Various, Keripo
-Dependencies: browser,browser-ext,terminal
+Dependencies: browser,browser-ext
