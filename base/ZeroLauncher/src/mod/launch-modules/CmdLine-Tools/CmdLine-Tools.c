@@ -145,7 +145,7 @@ static PzWindow *bzip2_c(const char *file)
 	const char *f = get_filename(file);
 	const char *d = get_dirname(file);
 	chdir(d);
-	const char *const cmd[] = {"bzip2", "-vz", f, NULL};
+	const char *const cmd[] = {"bzip2", "-vz9", f, NULL};
 	pz_execv("/usr/bin/bzip2", (char *const *)cmd);
 	return NULL;
 }
