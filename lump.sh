@@ -76,7 +76,7 @@ do
 done
 # cleanup
 cd $DIR/$LUMP
-find . -name '.svn' -exec rm -rf {} >> /dev/null 2>&1\;
+find . -name '.svn' -exec rm -rfd {} \;
 # done
 echo ""
 echo ""
