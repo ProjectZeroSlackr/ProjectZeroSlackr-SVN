@@ -117,7 +117,7 @@ static PzWindow *tar_c(const char *file)
 	chdir(d);
 	char archive[strlen(f)+5];
 	sprintf(archive,"%s.tar", f);
-	const char *const cmd[] = {"tar", "-cvf", archive, f, NULL};
+	const char *const cmd[] = {"tar", "-cf", archive, f, NULL};
 	pz_execv("/usr/bin/tar", (char *const *)cmd);
 	return NULL;
 }
@@ -131,7 +131,7 @@ static PzWindow *tar_d(const char *file)
 	const char *f = get_filename(file);
 	const char *d = get_dirname(file);
 	chdir(d);
-	const char *const cmd[] = {"tar", "-xvf", f, NULL};
+	const char *const cmd[] = {"tar", "-xf", f, NULL};
 	pz_execv("/usr/bin/tar", (char *const *)cmd);
 	return NULL;
 }
