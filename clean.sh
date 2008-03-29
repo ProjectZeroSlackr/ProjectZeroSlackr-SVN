@@ -3,7 +3,7 @@
 # Auto-Cleaning Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 25, 2008
+# Last updated: March 28, 2008
 #
 echo ""
 echo "==========================================="
@@ -29,9 +29,11 @@ echo "> Cleaning base..."
 if [ -d base/Kernel/build/release ]; then
 	echo "  - Keeping kernel..."
 	mv base/Kernel/build/release base/Kernel/release
+	mv base/Kernel/build/.svn base/Kernel/.svn-release
 	rm -rf base/Kernel/build
 	mkdir base/Kernel/build
 	mv base/Kernel/release base/Kernel/build/
+	mv base/Kernel/.svn-release base/Kernel/build/.svn
 else
 	rm -rf base/Kernel/build
 fi
