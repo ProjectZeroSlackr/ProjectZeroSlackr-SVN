@@ -1,4 +1,4 @@
-Last updated: March 22, 2008
+Last updated: March 29, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -10,7 +10,36 @@ original/ported software.
 
 == Changelog ==
 
+March 29, 2008
+- More patches for the kernel
+- Added CmdLine-Tools
+- Finished all documentation
+
 March 22, 2008
 - Stable Snapshot pre-release
 - First proper SVN upload
+- Contains:
+	Base:
+	- Loader2 from SVN
+	- 2.4.32 kernel (loop-mount & iBoy patches)
+	- Modified, loop-mount userland
+	- User-generated schemes and fonts
+	- ZeroLauncher
+	- MPD (for ZeroLauncher and PZ2-SVN)
 
+	Packs:
+	- Encyclopodia
+	- Floyd2illA
+	- iBoy
+	- iDoom
+	- MvPD
+	- nano
+	- PiCalc
+	- Podfather
+	- Podzilla0-Lite
+	- Podzilla0-SVN
+	- Podzilla2-SVN
+	- ToeNailClipper
+	- viPodzilla
+	- XMP
+	- ZacZilla 
