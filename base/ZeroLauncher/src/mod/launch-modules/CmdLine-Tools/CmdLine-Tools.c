@@ -1,5 +1,5 @@
 /*
- * Last updated: March 24, 2008
+ * Last updated: March 28, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -38,6 +38,7 @@ static ttk_menu_item
 browser_extension_zip,
 browser_extension_unzip, browser_extension_unrar,
 browser_extension_tar_c, browser_extension_tar_d,
+browser_extension_bzip2_c, browser_extension_bzip2_d,
 browser_extension_gzip_c, browser_extension_gzip_d;
 
 static int check_ext_zip(const char *file)
@@ -53,6 +54,11 @@ static int check_ext_rar(const char *file)
 static int check_ext_tar(const char *file)
 {
 	return check_file_ext(file, ".tar");
+}
+
+static int check_ext_bz2(const char *file)
+{
+	return check_file_ext(file, ".bz2");
 }
 
 static int check_ext_gz(const char *file)
@@ -134,6 +140,34 @@ static PzWindow *load_file_handler_tar_d(ttk_menu_item * item)
 	return tar_d(item->data);
 }
 
+static PzWindow *bzip2_c(const char *file)
+{
+	const char *f = get_filename(file);
+	const char *d = get_dirname(file);
+	chdir(d);
+	const char *const cmd[] = {"bzip2", "-vz", f, NULL};
+	pz_execv("/usr/bin/bzip2", (char *const *)cmd);
+	return NULL;
+}
+static PzWindow *load_file_handler_bzip2_c(ttk_menu_item * item)
+{
+	return bzip2_c(item->data);
+}
+
+static PzWindow *bzip2_d(const char *file)
+{
+	const char *f = get_filename(file);
+	const char *d = get_dirname(file);
+	chdir(d);
+	const char *const cmd[] = {"bzip2", "-vd", f, NULL};
+	pz_execv("/usr/bin/bzip2", (char *const *)cmd);
+	return NULL;
+}
+static PzWindow *load_file_handler_bzip2_d(ttk_menu_item * item)
+{
+	return bzip2_d(item->data);
+}
+
 static PzWindow *gzip_c(const char *file)
 {
 	const char *f = get_filename(file);
@@ -165,7 +199,7 @@ static PzWindow *load_file_handler_gzip_d(ttk_menu_item * item)
 static void init_launch()
 {
 	module = pz_register_module("CmdLine-Tools", 0);
-
+	
 	browser_extension_zip.name = N_("Compress (zip)");
 	browser_extension_zip.makesub = load_file_handler_zip;
 	pz_browser_add_action(check_nothing, &browser_extension_zip);
@@ -185,11 +219,19 @@ static void init_launch()
 	browser_extension_tar_d.name = N_("Decompress (tar)");
 	browser_extension_tar_d.makesub = load_file_handler_tar_d;
 	pz_browser_add_action(check_ext_tar, &browser_extension_tar_d);
-
+	
+	browser_extension_bzip2_c.name = N_("Compress (bzip2)");
+	browser_extension_bzip2_c.makesub = load_file_handler_bzip2_c;
+	pz_browser_add_action(check_is_file, &browser_extension_bzip2_c);
+	
+	browser_extension_bzip2_d.name = N_("Decompress (bzip2)");
+	browser_extension_bzip2_d.makesub = load_file_handler_bzip2_d;
+	pz_browser_add_action(check_ext_bz2, &browser_extension_bzip2_d);
+	
 	browser_extension_gzip_c.name = N_("Compress (gzip)");
 	browser_extension_gzip_c.makesub = load_file_handler_gzip_c;
 	pz_browser_add_action(check_is_file, &browser_extension_gzip_c);
-
+	
 	browser_extension_gzip_d.name = N_("Decompress (gzip)");
 	browser_extension_gzip_d.makesub = load_file_handler_gzip_d;
 	pz_browser_add_action(check_ext_gz, &browser_extension_gzip_d);
