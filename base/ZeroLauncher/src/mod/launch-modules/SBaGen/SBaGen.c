@@ -34,18 +34,26 @@ static ttk_menu_item browser_extension;
 
 static int check_ext(const char* file)
 {
-	return check_file_ext(file, ".mvpd");
+	return check_file_ext(file, ".sbg");
+}
+
+static void warning()
+{
+	pz_message("WARNING! SBaGen is a binaural beat generator and may have adverse effects on your brain!");
+	pz_message("Neither the author (Jim Peters) nor I (Keripo) will take any responsibilities in your actions!");
+	pz_message("USE AND EXPERIMENT WITH THIS UTILITY AT YOUR OWN RISK!");
 }
 
 static PzWindow *load_file(const char *file)
 {
-	const char *const path = pz_module_get_datapath(module, "MV_Player-CLI");
-	const char *const cmd[] = {"MV_Player-CLI", file, NULL};
+	warning();
+	const char *const path = pz_module_get_datapath(module, "SBaGen");
+	const char *const cmd[] = {"SBaGen", file, NULL};
+	pz_set_backlight_timer(-2); // Save batteries
 	pz_execv(
 		path,
 		(char *const *)cmd
 	);
-	return NULL;
 }
 
 static PzWindow *load_file_handler(ttk_menu_item * item)
@@ -54,15 +62,16 @@ static PzWindow *load_file_handler(ttk_menu_item * item)
 	return 0;
 }
 
-static PzWindow *browse_vids()
+static PzWindow *browse_beats()
 {
-	const char *const path = pz_module_get_datapath(module, "Videos");
+	const char *const path = pz_module_get_datapath(module, "Beats");
 	chdir(path);
-	return open_directory_title(path, "MV Player Videos");
+	return open_directory_title(path, "Binaural Beats");
 }
 
 static PzWindow *fastlaunch()
 {
+	warning();
 	pz_exec(pz_module_get_datapath(module, "FastLaunch.sh"));
 	return NULL;
 }
@@ -74,14 +83,14 @@ static void cleanup()
 
 static void init_launch() 
 {
-	module = pz_register_module("MvPD", cleanup);
+	module = pz_register_module("SBaGen", cleanup);
 	
-	pz_menu_add_stub_group("/Media/MvPD", "Video");
-	pz_menu_add_action_group("/Media/MvPD/FastLaunch", "Launching", fastlaunch);
-	pz_menu_add_action_group("/Media/MvPD/Videos", "Launching", browse_vids);
-	pz_menu_sort("/Media/MvPD");
+	pz_menu_add_stub_group("/Media/SBaGen", "Music");
+	pz_menu_add_action_group("/Media/SBaGen/#FastLaunch", "Launching", fastlaunch);
+	pz_menu_add_action_group("/Media/SBaGen/Beats", "Launching", browse_beats);
+	pz_menu_sort("/Media/SBaGen");
 	
-	browser_extension.name = N_("Open with MV Player");
+	browser_extension.name = N_("Open with SBaGen");
 	browser_extension.makesub = load_file_handler;
 	pz_browser_add_action (check_ext, &browser_extension);
 	pz_browser_set_handler(check_ext, load_file);

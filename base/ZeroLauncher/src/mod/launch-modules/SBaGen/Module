@@ -1,0 +1,6 @@
+Module: SBaGen
+Display-name: SBaGen
+Description: Binaural beat generator. 
+Category: Media
+Author: Jim Peters
+Dependencies: browser,browser-ext
