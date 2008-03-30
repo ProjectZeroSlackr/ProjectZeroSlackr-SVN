@@ -3,7 +3,7 @@
 # Podzilla2-SVN Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 28, 2008
+# Last updated: March 29, 2008
 #
 echo ""
 echo "==========================================="
@@ -24,9 +24,9 @@ mkdir compiling
 echo "> Updating SVN..."
 svn co --quiet https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/apps/ipod/podzilla2 official-svn
 cp -r official-svn/* compiling/
-cp -r ../src/mod/* compiling/
 # Apply ZeroSlackr custom patches
 echo "> Applying ZeroSlackr patches..."
+cp -r ../src/mod/* compiling/
 cd compiling
 for file in ../../src/patches/*; do
 	patch -p0 -t -i $file >> ../build.log
