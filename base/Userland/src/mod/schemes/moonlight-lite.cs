@@ -1,5 +1,5 @@
-\name Moonlight
-# Based of Black Glass, with custom background.
+\name Moonlight-Lite
+# Default scheme for ZeroLauncher, Moonlight scheme sans background
 # by Keripo
 # Last updated: March 30, 2008
 
@@ -43,7 +43,7 @@ loadavg:
 	spike => gray
 
 window:
-	bg => b@moonlight/background-mono.png m@moonlight/background-mini.png p@moonlight/background-photo.png n@moonlight/background-nano.png v@moonlight/background-video.png,
+	bg => black,
 	fg => white,
 	border => white -3
 
