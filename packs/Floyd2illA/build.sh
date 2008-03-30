@@ -3,7 +3,7 @@
 # Floyd2illA Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 28, 2008
+# Last updated: March 29, 2008
 #
 echo ""
 echo "==========================================="
@@ -27,8 +27,8 @@ cd compiling
 tar zxf ../../src/repack/src_orig_repacked.tar.gz
 cd ..
 # Apply ZeroSlackr custom patches
-cp -r ../src/mod/* compiling/
 echo "> Applying ZeroSlackr patches..."
+cp -r ../src/mod/* compiling/
 cd compiling
 for file in ../../src/patches/*; do
 	patch -p0 -t -i $file >> ../build.log

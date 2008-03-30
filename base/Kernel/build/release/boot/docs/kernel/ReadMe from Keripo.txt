@@ -1,4 +1,4 @@
-Last updated: March 28, 2008
+Last updated: March 29, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -46,27 +46,24 @@ uClinux Patches:
 
 iPodLinux Patches:
 - Authors: iPL Core Devs
-- Source: SVN + Sys-Techs
+- Source: SVN + courtc
 - Link:
   http://www.so2.sys-techs.com/ipod/linux/
   https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/linux/2.4
-- Date: March 28, 2008
-- Version: Revision 2404
+- Date: March 29, 2008
+- Version: Revision 2405
 
 ZS Version:
 - Modder: Keripo
 - Type: Mod and Recompile
 - Link:
   http://ipodlinux.org/images/8/81/Iboy_kernel_patches.zip (iBoy patches)
-  http://so2.sys-techs.com/ipod/fb-fixes.diff
-  (White kernel text - see http://ipl.nonb.org/ticket/54)
   http://ipl.nonb.org/attachment/ticket/43/5G_audio.diff (5G PCM audio level patch)
-- Date: March 28, 2008
+- Date: March 29, 2008
 - Version: B X.X
 
 Modifications:
 - iBoy audio buffer patch
-- White kernel text patch
 - 5G PCM level reading patch
 - Removed annoying "dma not active" message
 - preconfigured .config file (with CONFIG_BLK_DEV_LOOP=y)

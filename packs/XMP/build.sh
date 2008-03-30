@@ -3,7 +3,7 @@
 # XMP Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 28, 2008
+# Last updated: March 29, 2008
 #
 echo ""
 echo "==========================================="
@@ -28,8 +28,8 @@ echo "> Updating CVS..."
 cvs -Q -d:pserver:anonymous@xmp.cvs.sourceforge.net:/cvsroot/xmp co -d official-cvs xmp2 >> build.log 2>&1
 cp -rf official-cvs/* compiling/
 # Apply ZeroSlackr custom patches
-cp -rf ../src/mod/* compiling/
 echo "> Applying ZeroSlackr patches..."
+cp -rf ../src/mod/* compiling/
 cd compiling
 for file in ../../src/patches/*; do
 	patch -p0 -t -i $file >> ../build.log
