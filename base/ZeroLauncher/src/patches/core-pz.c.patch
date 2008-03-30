@@ -46,12 +46,12 @@ Index: core/pz.c
 +	if (!SET(CLICKER))          pz_ipod_set (CLICKER, 0);
  	if (!SET(DSPFREQUENCY))     pz_ipod_set (DSPFREQUENCY, 0);
 -	if (!SET(SLIDE_TRANSIT))    pz_ipod_set (SLIDE_TRANSIT, 1);
-+	if (!SET(SLIDE_TRANSIT))    pz_ipod_set (SLIDE_TRANSIT, 0);
++	if (!SET(SLIDE_TRANSIT))    pz_ipod_set (SLIDE_TRANSIT, 2);
  	if (!SET(BACKLIGHT))        pz_ipod_set (BACKLIGHT, 1);
  	if (!SET(BACKLIGHT_TIMER))  pz_ipod_set (BACKLIGHT_TIMER, 3);
  	if (!SET(COLORSCHEME))
 -		pz_set_string_setting (pz_global_config,COLORSCHEME, "mono.cs");
-+		pz_set_string_setting (pz_global_config,COLORSCHEME, "moonlight.cs");
++		pz_set_string_setting (pz_global_config,COLORSCHEME, "moonlight-lite.cs");
 +	if (!SET(GROUPED_MENUS))	pz_ipod_set (GROUPED_MENUS, 1);
  	pz_save_config (pz_global_config);
  	pz_ipod_fix_settings (pz_global_config);
