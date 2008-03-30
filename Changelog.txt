@@ -1,4 +1,4 @@
-Last updated: March 29, 2008
+Last updated: March 30, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,10 @@ original/ported software.
 
 
 == Changelog ==
+
+March 30, 2008
+- Added SBaGen! On to flite!
+  (All un-mass-tested packs will remain in "/testing")
 
 March 29, 2008
 - More patches for the kernel
