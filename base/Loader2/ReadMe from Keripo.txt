@@ -1,4 +1,4 @@
-Last updated: March 28, 2008
+Last updated: March 31, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -41,13 +41,13 @@ Loader 2:
 - Source: SVN
 - Link:
   https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/apps/ipod/ipodloader2
-- Date: March 16, 2008
-- Version: Revision 2403
+- Date: March 31, 2008
+- Version: Revision 2408
 
 ZS Version:
 - Modder: Keripo
 - Type: Clean Compile
-- Date: March 19, 2008
+- Date: March 31, 2008
 - Version: B X.X
 
 iPodPatcher:
@@ -55,11 +55,13 @@ iPodPatcher:
 - Source: SVN
 - Link:
   svn://svn.rockbox.org/rockbox/trunk/rbutil/ipodpatcher
-- Date: March 19, 2008
-- Version: Revision 16718
+- Date: March 31, 2008
+- Version: Revision 16904
 
 Modifications:
 - none so far
+- added patch to fix ipodpatcher error levels Rockbox's Flyspray
+  task #8827: http://www.rockbox.org/tracker/task/8827
 - added easy "patch" scripts for Windows and Linux (untested on Macs)
 - added pre-compiled ipodpatcher binaries
   for Windows (compiled by Keripo), Linux x86 (compiled by Keripo),
