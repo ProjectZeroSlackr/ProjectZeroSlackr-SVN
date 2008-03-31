@@ -3,7 +3,7 @@
 # Loader2 & iPodPatcher Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 28, 2008
+# Last updated: March 31, 2008
 #
 echo ""
 echo "==========================================="
@@ -32,7 +32,7 @@ cp -r official-svn/* compiling/
 cd compiling
 # Apply ZeroSlackr custom patches
 echo "> Applying ZeroSlackr patches..."
-for file in ../../../src/patches/*; do
+for file in ../../../src/patches/loader2/*; do
 	patch -p0 -t -i $file >> build.log
 done
 # Compiling
@@ -57,9 +57,15 @@ mkdir compiling
 echo "> Updating SVN..."
 svn co --quiet svn://svn.rockbox.org/rockbox/trunk/rbutil/ipodpatcher official-svn
 cp -r official-svn/* compiling/
+cd compiling
+# Apply errorlevel patch; see Rockbox task #8827
+# http://www.rockbox.org/tracker/task/8827
+echo "> Applying errorlevel patch..."
+for file in ../../../src/patches/ipodpatcher/*; do
+	patch -p0 -t -i $file >> build.log
+done
 # Compiling
 echo "> Compiling..."
-cd compiling
 make >> ../build.log
 # Copy over compiled file
 echo "> Copying over compiled files..."
