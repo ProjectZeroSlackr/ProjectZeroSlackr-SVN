@@ -3,7 +3,7 @@
 # Auto-Lumping Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 28, 2008
+# Last updated: March 31, 2008
 #
 echo ""
 echo "==========================================="
@@ -76,7 +76,7 @@ do
 done
 # cleanup
 cd $DIR/$LUMP
-find . -name '.svn' -exec rm -rfd {} \;
+sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # done
 echo ""
 echo ""
