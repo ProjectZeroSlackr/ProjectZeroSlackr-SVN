@@ -1,6 +1,6 @@
 Module: iDarcNES
 Display-name: iDarcNES
-Description: Nintendo Entertainment System (NES) emulator.
+Description: Nintendo Entertainment System (NES) and Sega Master System/Sega Game Gear (SMS) emulator.
 Category: Emulators
 Author: zacaj, Zaphod, nyef
 Dependencies: browser,browser-ext

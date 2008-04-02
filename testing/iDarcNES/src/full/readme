@@ -1,0 +1,135 @@
+This file contains a few notes about the DarcNES Multi-System emulator.
+
+DarcNES is Copyright 1998, 1999, 2000, 2001 by Alastair Bridgewater.
+
+Commercial use prohibited without express written permission from
+the author. Everyone else can do whatever they want, provided that
+I am credited in the documentation (and, if released, the source code).
+
+People wishing to maintain a port for another system should contact me
+beforehand in order to learn the ground rules (and to make sure that no
+one else is already maintaining a port for that system).
+
+
+Disclaimer:
+
+This software is provided AS IS, etc. No warranty, etc, etc. You know
+the drill.
+
+
+Usage notes:
+
+    DOS users: edit the Makefile, the required changes should be fairly
+obvious. keys are 'A', 'S', '[', ']', arrows, and escape.
+
+    Linux/BSD users (both SVGALib and XWindows): If you are on an a.out
+system (as opposed to an ELF system), you may need to add "-DASM_UNDERBARS"
+to SFLAGS in the Makefile.
+
+    SVGALib users: edit the Makefile, the required change should be
+fairly obvious. keys are the same as the dos version + ctrl, alt, tab, and
+enter.
+
+    XWindows users: keys are the same as the dos version. you have to use
+file->exit to save the battery file (if any). if you don't specify a file
+on the command line, "cart.nes" will be used.
+
+    All other users: Good luck. Keys tend to be the same as for the DOS
+version, and the interface is usually fairly obvious.
+
+
+CD support notes:
+
+    To use the CD support, just load one of the syscard images as a ROM.
+Having a game CD in the drive at the time helps.
+
+    DOS users: No such luck. I believe CD support to be disabled for allegro
+builds.
+
+    Linux/BSD users: CD support should build automatically and correctly. The
+only thing you might want to check is the definition of CDROM_DEVICE in the
+appropriate section of cd_unix.c.
+
+    People who want to use ISO/FCD/HCD files: Go away. I have less than no
+interest in adding support for file formats used primarily for piracy when it
+is still possible to acquire legit CDs which will work in all modern computers.
+
+
+BIOS files:
+
+    ColecoVision emulation requires a file called "coleco.rom".
+    FDS emulation requires a file called "disksys.rom".
+    MSX emulation requires a file called "msx.rom".
+    Apple ][ emulation requires the following: "applecg.bin", "disk_ii.rom",
+"fpbasic_d0.rom", "fpbasic_d8.rom", "fpbasic_e0.rom", "fpbasic_e8.rom",
+"fpbasic_f0.rom", and "autostart_f8.rom".
+
+    With a recompile, the Apple ][ emulator can be convinced to use the integer
+basic ROM set ("programmers_aide_d0.rom", "intbasic_e0.rom", "intbasic_e8.rom",
+and "intbasic_f0.rom") instead of the "fpbasic_*.rom" set used for Applesoft
+BASIC. You can also substitute "monitor_f8.rom" for the autostart ROM, but I
+have been unable to find an uncorrupt copy of the monitor ROM.
+
+    All this should eventually be user-configurable.
+
+
+How to compile for non-x86 systems:
+
+    In the Makefile, uncomment the line about "C_ONLY" and select the
+BYTE_ORDER to be appropriate for your CPU. Also comment out the definition of
+MACH_TYPES (or write your own types_whatever.h, and set MACH_TYPES to it).
+    If you are using a compiler other than gcc, you will likely need to edit
+types.h to work with your compiler.
+    Build as per normal.
+
+
+Things that need work:
+
+    CAL. (has to be gotten rid of)
+    GUI. (Linux/XWin one is junk, DOS one doesn't exist)
+    Video. (XWin needs to support SHM/DGA, DOS needs to support 16bpp, all
+need to support 24bpp)
+    Documentation. (If you haven't noticed by now, I don't like writing
+it. I also don't comment my code very much either, prefering to spend
+my time making it obvious enough to not need comments)
+
+
+Other things that should be listed in this file:
+
+  Homepage location:
+
+    http://www.netway.com/~nyef/
+
+  This emulator was written by the following:
+
+    Nyef (Alastair Bridgewater) (nyef@softhome.net)
+
+  The following people (among others) provided documentation/inspiration/code:
+
+    Marat Fayzullin (nes.doc, m6502)
+    Jeremy Chadwick (nestech)
+    FireBug (mappers.doc)
+    Matt Conte (sound ideas)
+    Kritz (opinions, documentation, code)
+    Fx3 (opinions, documentation)
+    Toby Deshane (SVGALib support code)
+    Rafael Rigues (DOS testing, inspiration)
+    Magnus Oman (new nes palette)
+    Michael Vance (code)
+    Jussi Lindgren (testing, inspiration)
+    Charles Mac Donald (documentation)
+    Joshua Moore (inspiration)
+    Matan Ziv-Av (documentation, inspiration)
+    AmiDog (inspiration, code)
+    Zeograd (documentation, inspiration, code)
+    BERO (some m6280 code)
+    Maximiliano Di Dio (some NES bugfixes)
+    Thomas Klausner (inspiration, NetBSD code)
+    Jerome BENOIST (inspiration, some code fixes)
+    Nori (FDS documentation)
+    Richard Hunt (testing)
+    Johan Dahlin (testing, inspiration)
+    _Bnu (inspiration)
+    Marc Le Douarain (documentation, inspiration, code)
+
+/* EOF */
