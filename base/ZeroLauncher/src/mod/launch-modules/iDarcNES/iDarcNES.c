@@ -1,5 +1,5 @@
 /*
- * Last updated: March 14, 2008
+ * Last updated: April 1, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -76,6 +76,7 @@ static PzWindow *load_file(const char *file)
 			(char *const *)cmd
 		);
 	}
+	sound = 0;
 	return NULL;
 }
 

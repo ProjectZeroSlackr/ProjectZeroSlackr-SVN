@@ -1,4 +1,4 @@
-Last updated: March 28, 2008
+Last updated: April 1, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -11,7 +11,9 @@ original/ported software.
 == To do ==
 
 Fixes:
+- Add a "Known Issues" section (but not yet)
 - Encyclopodia module (waiting for Robert Bamler)
+- iDarcNES complete redo!!! (too many bugs to care about)
 
 Testing: 
 - TimeWalk: test with old monochrome iPods, complete zillae list
@@ -22,7 +24,6 @@ Testing:
 
 Emulators:
 - ScummVM
-- iDarcNES
 - igpSP
 - iGameGear
 - iGens

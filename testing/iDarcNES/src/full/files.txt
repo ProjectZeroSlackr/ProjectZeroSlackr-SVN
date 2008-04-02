@@ -1,0 +1,138 @@
+this file contains a brief description of the various components of DarcNES and
+what files are associated with each component. it will be updated as time and
+inclination allows. that is to say, it may not be updated as often as it
+should. anyway, this will tell you much information that you could easily
+gain by looking at the comment at the top of each of the files in question.
+
+cpu interface:
+
+cal.c cal.h
+
+    these are the interface to the various cpu cores. they provide a simpler
+api than directly working with the cores. they also allow using a variety of
+different styles of cpu core, such as Marat's and my own, which would normally
+be close to impossible to use interchangably.
+
+cpudefs.h
+
+    this contains a few defines for which cpu cores should be supported in the
+cal.
+
+
+cpu cores:
+
+mtypes.h
+
+    this contains some of the type definitions required for the "marat6502" and
+"maratz80" cores.
+
+m6502.c
+m6502.h
+m6502opc.h
+
+    this is the "marat6502" core. it is a modified version of Marat's infamous
+m6502 code.
+
+mz80.c
+mz80.h
+mz80opc1.h
+mz80opc2.h
+mz80opc3.h
+mz80opc4.h
+mz80opc5.h
+
+    this is the "maratz80" core. it is a modified version of Marat's infamous
+mz80 core.
+
+
+nes emulation:
+
+mappers.c
+mappers.h
+
+    emulation for the nes mappers.
+
+nes.c
+nes.h
+
+    basic routines for the nes driver.
+
+nes_ppu.c
+nes_ppu.h
+
+    the nes vdp.
+
+nes_psg.c
+nes_psg.h
+
+    nes sound emulation.
+
+nespal.c
+
+    the nes palette. if you want to use a better one, here's where to put it.
+
+
+pc-engine emulation:
+
+pce.c
+
+    the basic pc-engine driver. very preliminary.
+
+pce_vdp.c
+pce_vdp.h
+
+    the pc-engine vdp. very preliminary.
+
+
+master system emulation:
+
+sms.c
+
+    the basic master system driver.
+
+sms9918.c
+sms9918.h
+
+    the master system vdp.
+
+sms_psg.c
+sms_psg.h
+
+    sn76489 emulation (needs renaming).
+
+the rest:
+
+system.h
+tool.c
+tool.h
+
+    the romloader, system autodetect, and such.
+
+machdep.h
+
+    contains some defines that make porting to different systems slightly
+easier.
+
+blitters.S
+blitters.h
+
+    custom graphics rendering routines. designed to be fairly fast and
+reasonably applicable to multiple vdp emulations.
+
+ui.h
+ui_allegro.c
+ui_x.c
+
+    user interface stuff. all of it needs rewriting.
+
+video.h
+video_allegro.c
+video_svga.c
+video_x.c
+
+    video interface stuff. most of it needs rewriting.
+
+zarzon.c
+
+    the zarzon driver. I wouldn't bother with it much before I get the new GUI
+running if I were you. may not ever work properly.

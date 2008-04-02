@@ -1,4 +1,4 @@
-Last updated: March 30, 2008
+Last updated: April 1, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,10 @@ original/ported software.
 
 
 == Changelog ==
+
+April 1, 2008
+- Added iDarcNES (zacaj's unmodified, uncleaned-up version
+  for now; iDarcNES really needs to be redone)
 
 March 30, 2008
 - Added SBaGen! On to flite!
