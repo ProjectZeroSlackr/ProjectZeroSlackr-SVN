@@ -1,5 +1,5 @@
 /*
- * Last updated: March 30, 2008
+ * Last updated: April 4, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -26,6 +26,7 @@
 #include <unistd.h>
 
 extern void pz_execv();
+extern void pz_set_backlight_timer(int sec);
 extern int check_file_ext();
 extern TWindow *open_directory_title();
 
@@ -54,6 +55,7 @@ static PzWindow *load_file(const char *file)
 		path,
 		(char *const *)cmd
 	);
+	return NULL;
 }
 
 static PzWindow *load_file_handler(ttk_menu_item * item)
