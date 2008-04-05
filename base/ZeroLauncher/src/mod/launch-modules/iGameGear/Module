@@ -1,0 +1,6 @@
+Module: iGameGear
+Display-name: iGameGear
+Description: Sega Master System/Sega Game Gear (SMS) emulator.
+Category: Emulators
+Author: Charles Mac Donald, venox
+Dependencies: browser,browser-ext

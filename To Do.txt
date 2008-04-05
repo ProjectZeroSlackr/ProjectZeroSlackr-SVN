@@ -1,4 +1,4 @@
-Last updated: April 1, 2008
+Last updated: April 4, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -25,7 +25,6 @@ Testing:
 Emulators:
 - ScummVM
 - igpSP
-- iGameGear
 - iGens
 - Atari800
 - Apple iiPod
@@ -56,8 +55,6 @@ Attempt:
 - aalib
 
 To port:
-- PZ0 AVI player (port as PZ2 module)
-- PZ0 TZX emulator (port as PZ2 module)
 - BSD Games
 - Flite
 - dc

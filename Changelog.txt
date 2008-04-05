@@ -1,4 +1,4 @@
-Last updated: April 1, 2008
+Last updated: April 4, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,9 @@ original/ported software.
 
 
 == Changelog ==
+
+April 4, 2008
+- Added iGameGear (venox's unmodified)
 
 April 1, 2008
 - Added iDarcNES (zacaj's unmodified, uncleaned-up version
