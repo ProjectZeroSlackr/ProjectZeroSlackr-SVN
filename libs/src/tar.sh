@@ -3,13 +3,18 @@
 # tar Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 27, 2008
+# Last updated: Apr 5, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
 echo "tar Auto-Compiling Script"
 echo ""
+if [ -e /bin/cygwin1.dll ]; then
+	echo "[tar doesn't seem to compile"
+	echo " nicely on Cygwin - skipping]"
+	exit
+fi
 if [ -d tar ]; then
 	echo "> Removing old tar directory..."
 	rm -rf tar

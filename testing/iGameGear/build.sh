@@ -3,7 +3,7 @@
 # iGameGear Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: April 4, 2008
+# Last updated: April 5, 2008
 #
 echo ""
 echo "==========================================="
@@ -68,20 +68,18 @@ PACK=ZeroSlackr/opt/iGameGear
 cp -rf ../compiled/iGameGear $PACK/
 # Documents
 DOCS=$PACK/Misc/Docs
-cp -rf "../../ReadMe from Keripo.txt" $DOCS/
-cp -rf ../../License.txt $DOCS/
-DOCSORIG=$DOCS/Original
+cp -rf "../../ReadMe from Keripo.txt" $PACK/
+cp -rf ../../License.txt $PACK/
 FILES="license README.TXT ipl/README_SMSSDL.TXT"
 for file in $FILES
 do
-	cp -rf ../compiling/$file $DOCSORIG/
+	cp -rf ../compiling/$file $DOCS/
 done
 # Archive documents
 cd $PACK/Misc
-cd Docs
-tar -cf Original.tar Original
-gzip --best Original.tar
-rm -rf Original
+tar -cf Docs.tar Docs
+gzip --best Docs.tar
+rm -rf Docs
 # Done
 echo ""
 echo "Fin!"

@@ -3,7 +3,7 @@
 # Encyclopodia Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 28, 2008
+# Last updated: Apr 5, 2008
 #
 echo ""
 echo "==========================================="
@@ -73,6 +73,7 @@ echo "> Copying over compiled files..."
 cd ..
 mkdir compiled
 # Spring Cleaning
+# Loop doesn't seem to work here unfortunately
 cp -rf compiling/podzilla compiled/Encyclopodia
 cp -rf compiling/modules compiled/modules
 rm -rf compiled/modules/.mods
@@ -105,36 +106,34 @@ cp -rf ../../src/libraries/ipodlinux-wiki-articles-2008-03-07.epodia $PACK/Libra
 # Documents
 echo "> Copying over documents..."
 DOCS=$PACK/Misc/Docs
-DOCSORIG=$DOCS/Original
 echo "  - Encyclopodia docs"
-cp -rf ../../License.txt $DOCS
-cp -rf ../../"ReadMe from Keripo.txt" $DOCS
-cp -rf ../../src/libraries/Creation-Instructions.txt $DOCS
-cp -rf ../../src/libraries/iPL-Export-List.txt $DOCS
-cp -rf ../../src/libraries/ipodlinux-wiki-articles-YYYY-MM-DD.epodia $DOCS
+cp -rf ../../License.txt $PACK/
+cp -rf ../../"ReadMe from Keripo.txt" $PACK/
+cp -rf ../../src/libraries/Creation-Instructions.txt $DOCS/
+cp -rf ../../src/libraries/iPL-Export-List.txt $DOCS/
+cp -rf ../../src/libraries/ipodlinux-wiki-articles-YYYY-MM-DD.epodia $DOCS/
 cp -rf ../../src/patches $PACK/Misc/Patches
 echo "  - ttk docs"
 TTK=../ttk
-mkdir -p $DOCSORIG/ttk
-cp -rf $TTK/API/API.tex $DOCSORIG/ttk/
-cp -rf $TTK/COPYING $DOCSORIG/ttk/
-cp -rf $TTK/README $DOCSORIG/ttk/
+mkdir -p $DOCS/ttk
+cp -rf $TTK/API/API.tex $DOCS/ttk/
+cp -rf $TTK/COPYING $DOCS/ttk/
+cp -rf $TTK/README $DOCS/ttk/
 echo "  - PZ2 docs"
 OFFSVN=../official-svn
-mkdir -p $DOCSORIG/ucdl
-cp -rf $OFFSVN/contrib/ucdl/README $DOCSORIG/ucdl
-mkdir -p $DOCSORIG/pz2
-cp -rf $OFFSVN/API.tex $DOCSORIG/pz2
-cp -rf $OFFSVN/COPYING $DOCSORIG/pz2
+mkdir -p $DOCS/ucdl
+cp -rf $OFFSVN/contrib/ucdl/README $DOCS/ucdl/
+mkdir -p $DOCS/pz2
+cp -rf $OFFSVN/API.tex $DOCS/pz2/
+cp -rf $OFFSVN/COPYING $DOCS/pz2/
 # Archive documents
 cd $PACK/Misc
 tar -cf Patches.tar Patches
 gzip --best Patches.tar
 rm -rf Patches
-cd Docs
-tar -cf Original.tar Original
-gzip --best Original.tar
-rm -rf Original
+tar -cf Docs.tar Docs
+gzip --best Docs.tar
+rm -rf Docs
 # Done
 echo ""
 echo "Fin!"

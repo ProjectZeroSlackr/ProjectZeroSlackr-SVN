@@ -3,7 +3,7 @@
 # Podzilla0-SVN Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 28, 2008
+# Last updated: Apr 5, 2008
 #
 echo ""
 echo "==========================================="
@@ -64,26 +64,24 @@ PACK=ZeroSlackr/opt/Podzilla0-SVN
 cp -rf ../compiled/Podzilla0-SVN $PACK/
 # Documents
 DOCS=$PACK/Misc/Docs
-cp -rf "../../ReadMe from Keripo.txt" $DOCS/
-cp -rf ../../License.txt $DOCS/
+cp -rf "../../ReadMe from Keripo.txt" $PACK/
+cp -rf ../../License.txt $PACK/
 cp -rf ../../src/patches $PACK/Misc/Patches
-DOCSORIG=$DOCS/Original
-cp -rf ../compiling/ChangeLog $DOCSORIG/
-cp -rf ../compiling/README $DOCSORIG/
-mkdir $DOCSORIG/tuxchess
-cp -rf ../compiling/tuxchess/README $DOCSORIG/tuxchess/
-cp -rf ../compiling/tuxchess/README.chess $DOCSORIG/tuxchess/
-cp -rf ../compiling/tuxchess/README.license $DOCSORIG/tuxchess/
-cp -rf ../compiling/tuxchess/TODO $DOCSORIG/tuxchess/
+cp -rf ../compiling/ChangeLog $DOCS/
+cp -rf ../compiling/README $DOCS/
+mkdir $DOCS/tuxchess
+cp -rf ../compiling/tuxchess/README $DOCS/tuxchess/
+cp -rf ../compiling/tuxchess/README.chess $DOCS/tuxchess/
+cp -rf ../compiling/tuxchess/README.license $DOCS/tuxchess/
+cp -rf ../compiling/tuxchess/TODO $DOCS/tuxchess/
 # Archive documents
 cd $PACK/Misc
 tar -cf Patches.tar Patches
 gzip --best Patches.tar
 rm -rf Patches
-cd Docs
-tar -cf Original.tar Original
-gzip --best Original.tar
-rm -rf Original
+tar -cf Docs.tar Docs
+gzip --best Docs.tar
+rm -rf Docs
 # Done
 echo ""
 echo "Fin!"

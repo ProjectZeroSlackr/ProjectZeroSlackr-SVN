@@ -3,7 +3,7 @@
 # SBaGen Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 30, 2008
+# Last updated: Apr 5, 2008
 #
 echo ""
 echo "==========================================="
@@ -51,20 +51,18 @@ cp -rf ../compiled/SBaGen $PACK/
 cp -rf ../compiling/examples/* $PACK/Beats/
 # Documents
 DOCS=$PACK/Misc/Docs
-cp -rf "../../ReadMe from Keripo.txt" $DOCS/
-cp -rf ../../License.txt $DOCS/
-DOCSORIG=$DOCS/Original
+cp -rf "../../ReadMe from Keripo.txt" $PACK/
+cp -rf ../../License.txt $PACK/
 FILES="ChangeLog.txt COPYING.txt focus.txt holosync.txt README.txt SBAGEN.txt wave.txt"
 for file in $FILES
 do
-	cp -rf ../compiling/$file $DOCSORIG/
+	cp -rf ../compiling/$file $DOCS/
 done
 # Archive documents
 cd $PACK/Misc
-cd Docs
-tar -cf Original.tar Original
-gzip --best Original.tar
-rm -rf Original
+tar -cf Docs.tar Docs
+gzip --best Docs.tar
+rm -rf Docs
 # Done
 echo ""
 echo "Fin!"
