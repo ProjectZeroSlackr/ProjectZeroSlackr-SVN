@@ -1,0 +1,62 @@
+--- ipl/saves.c	2006-12-24 15:42:09.000000000 -0500
++++ ipl/saves.c	2008-04-04 18:00:17.765625000 -0400
+@@ -146,13 +146,28 @@
+   return load_rom_normal(filename);
+ }
+ 
++// For save files
++// ~Keripo
++const char *get_filename(const char *file)
++{
++	char *c = strrchr(file, '/');
++	if (c != NULL) {
++		static char ret[256];
++		sprintf(ret, "%s", c+1);
++		return ret;
++	} else {
++		return file;
++	}
++}
++
+ 
+ /* Load SRAM data */
+ void load_sram(const char* game_name)
+ {
+   char name[0x100];
+   FILE *fd;
+-  strcpy(name, game_name);
++  strcpy(name, "/opt/iGameGear/Saves/");
++  strcat(name, get_filename(game_name));
+   strcpy(strrchr(name, '.'), ".sav");
+   fd = fopen(name, "rb");
+   if(fd) {
+@@ -168,7 +183,8 @@
+     if(sms.save) {
+         char name[0x100];
+         FILE *fd = NULL;
+-        strcpy(name, game_name);
++		strcpy(name, "/opt/iGameGear/Saves/");
++        strcat(name, get_filename(game_name));
+         strcpy(strrchr(name, '.'), ".sav");
+         fd = fopen(name, "wb");
+         if(fd) {
+@@ -184,7 +200,8 @@
+ {
+     char name[0x100];
+     FILE *fd = NULL;
+-    strcpy(name, game_name);
++	strcpy(name, "/opt/iGameGear/Saves/");
++    strcat(name, get_filename(game_name));
+     sprintf(strrchr(name, '.'), ".st%d", state_slot);
+     fd = fopen(name, "rb");
+     if(!fd) return (0);
+@@ -199,7 +216,8 @@
+ {
+     char name[0x100];
+     FILE *fd = NULL;
+-    strcpy(name, game_name);
++	strcpy(name, "/opt/iGameGear/Saves/");
++    strcat(name, get_filename(game_name));
+     sprintf(strrchr(name, '.'), ".st%d", state_slot);
+     fd = fopen(name, "wb");
+     if(!fd) return (0);
