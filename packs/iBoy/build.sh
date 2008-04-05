@@ -3,7 +3,7 @@
 # iBoy Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 28, 2008
+# Last updated: Apr 5, 2008
 #
 echo ""
 echo "==========================================="
@@ -53,24 +53,22 @@ PACK=ZeroSlackr/opt/iBoy
 cp -rf ../compiled/iBoy $PACK/
 # Documents
 DOCS=$PACK/Misc/Docs
-cp -rf "../../ReadMe from Keripo.txt" $DOCS/
-cp -rf ../../License.txt $DOCS/
+cp -rf "../../ReadMe from Keripo.txt" $PACK/
+cp -rf ../../License.txt $PACK/
 cp -rf ../../src/patches $PACK/Misc/Patches
-DOCSORIG=$DOCS/Original
 IBOY=iboy-0.7.5-4/iboy0754_bin
-cp -rf ../compiling/doc/liberty $DOCSORIG/
-cp -rf ../$IBOY/license $DOCSORIG/
-cp -rf ../$IBOY/readme.txt $DOCSORIG/
-cp -rf ../$IBOY/version_history.txt $DOCSORIG/
+cp -rf ../compiling/doc/liberty $DOCS/
+cp -rf ../$IBOY/license $DOCS/
+cp -rf ../$IBOY/readme.txt $DOCS/
+cp -rf ../$IBOY/version_history.txt $DOCS/
 # Archive documents
 cd $PACK/Misc
 tar -cf Patches.tar Patches
 gzip --best Patches.tar
 rm -rf Patches
-cd Docs
-tar -cf Original.tar Original
-gzip --best Original.tar
-rm -rf Original
+tar -cf Docs.tar Docs
+gzip --best Docs.tar
+rm -rf Docs
 # Done
 echo ""
 echo "Fin!"

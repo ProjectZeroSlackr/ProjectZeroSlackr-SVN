@@ -1,10 +1,10 @@
-Last updated: March 28, 2008
+Last updated: Apr 5, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
 GNU GPL - see License.txt. For the licensing of the
 software/application, refer to the documents found in
-Docs/Original or the license that comes with the
+Misc/Docs.tar.gz or the license that comes with the
 original/ported software.
 
 

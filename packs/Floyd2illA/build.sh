@@ -3,7 +3,7 @@
 # Floyd2illA Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 29, 2008
+# Last updated: Apr 5, 2008
 #
 echo ""
 echo "==========================================="
@@ -69,9 +69,9 @@ cd release
 PACK=ZeroSlackr/opt/Floyd2illA
 cp -rf ../compiled/Floyd2illA $PACK/
 # Documents
-DOCS=$PACK/Misc/Docs
-cp -rf "../../ReadMe from Keripo.txt" $DOCS/
-cp -rf ../../License.txt $DOCS/
+# Too many original docs; done by hand
+cp -rf "../../ReadMe from Keripo.txt" $PACK/
+cp -rf ../../License.txt $PACK/
 cp -rf ../../src/patches $PACK/Misc/Patches
 cp -rf ../../src/mod $PACK/Misc/Mod
 # Archive documents
@@ -82,10 +82,9 @@ rm -rf Patches
 tar -cf Mod.tar Mod
 gzip --best Mod.tar
 rm -rf Mod
-cd Docs
-tar -cf Original.tar Original
-gzip --best Original.tar
-rm -rf Original
+tar -cf Docs.tar Docs
+gzip --best Docs.tar
+rm -rf Docs
 # Done
 echo ""
 echo "Fin!"

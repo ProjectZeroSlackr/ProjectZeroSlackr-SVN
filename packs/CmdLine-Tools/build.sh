@@ -3,7 +3,7 @@
 # CmdLine-Tools Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 28, 2008
+# Last updated: Apr 5, 2008
 #
 echo ""
 echo "==========================================="
@@ -52,10 +52,16 @@ cd gzip
 make >> ../gzip.log 2>&1
 cd ..
 echo "  - diffutils"
-cd diffutils-2.8.1
-./configure CC=arm-elf-gcc LDFLAGS=-elf2flt --host=arm-elf  >> ../diffutils.log 2>&1
-make >> ../diffutils.log 2>&1
-cd ..
+if [ -e /bin/cygwin1.dll ]
+then
+	echo "    Note: diffutils doesn't seem to"
+	echo "    compile nicely on Cygwin - skipping"
+else
+	cd diffutils-2.8.1
+	./configure CC=arm-elf-gcc LDFLAGS=-elf2flt --host=arm-elf >> ../diffutils.log 2>&1
+	make >> ../diffutils.log 2>&1
+	cd ..
+fi
 echo "  - zip"
 cd zip
 cp -rf ../../src/mod/zip-Makefile Makefile
@@ -74,10 +80,16 @@ cd ..
 # Copy over compiled file
 echo "> Copying over compiled files..."
 mkdir compiled
-cp -rf diffutils-2.8.1/src/cmp compiled/
-cp -rf diffutils-2.8.1/src/diff compiled/
-cp -rf diffutils-2.8.1/src/diff3 compiled/
-cp -rf diffutils-2.8.1/src/sdiff compiled/
+if [ -e /bin/cygwin1.dll ]
+then
+	echo "  Note: skipping diffutils and tar"
+else
+	cp -rf diffutils-2.8.1/src/cmp compiled/
+	cp -rf diffutils-2.8.1/src/diff compiled/
+	cp -rf diffutils-2.8.1/src/diff3 compiled/
+	cp -rf diffutils-2.8.1/src/sdiff compiled/
+	cp -rf tar/src/tar compiled/
+fi
 cp -rf gawk/gawk compiled/
 cp -rf grep/grep compiled/
 cp -rf sed/sed compiled/
@@ -95,7 +107,6 @@ cp -rf zip/zip compiled/
 cp -rf zip/zipcloak compiled/
 cp -rf zip/zipnote compiled/
 cp -rf zip/zipsplit compiled/
-cp -rf tar/src/tar compiled/
 cp -rf bzip2/bzip2 compiled/
 cp -rf bzip2/bzip2recover compiled/
 # Creating release
@@ -107,15 +118,14 @@ PACK=ZeroSlackr/opt/CmdLine-Tools
 USRBIN=ZeroSlackr/usr/bin
 cp -rf ../compiled/* $USRBIN/
 # Documents
-DOCS=$PACK/Misc/Docs
-cp -rf "../../ReadMe from Keripo.txt" $DOCS/
-cp -rf ../../License.txt $DOCS/
+# Too many original docs; done by hand
+cp -rf "../../ReadMe from Keripo.txt" $PACK/
+cp -rf ../../License.txt $PACK/
 # Archive documents
 cd $PACK/Misc
-cd Docs
-tar -cf Original.tar Original
-gzip --best Original.tar
-rm -rf Original
+tar -cf Docs.tar Docs
+gzip --best Docs.tar
+rm -rf Docs
 # Done
 echo ""
 echo "Fin!"

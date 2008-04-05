@@ -3,7 +3,7 @@
 # PiCalc Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 28, 2008
+# Last updated: Apr 5, 2008
 #
 echo ""
 echo "==========================================="
@@ -51,22 +51,22 @@ PACK=ZeroSlackr/opt/PiCalc
 cp -rf ../compiled/PiCalc $PACK/
 # Documents
 DOCS=$PACK/Misc/Docs
-cp -rf "../../ReadMe from Keripo.txt" $DOCS/
-cp -rf ../../License.txt $DOCS/
+cp -rf "../../ReadMe from Keripo.txt" $PACK/
+cp -rf ../../License.txt $PACK/
 cp -rf ../../src/patches $PACK/Misc/Patches
-DOCSORIG=$DOCS/Original
-cp -rf ../compiling/docs $DOCSORIG/
-cp -rf ../compiling/features.txt $DOCSORIG/
-cp -rf ../compiling/src/fftstuff/hartley/version.txt $DOCSORIG/
+FILES="docs features.txt src/fftstuff/hartley/version.txt"
+for file in $FILES
+do
+	cp -rf ../compiling/$file $DOCS/
+done
 # Archive documents
 cd $PACK/Misc
 tar -cf Patches.tar Patches
 gzip --best Patches.tar
 rm -rf Patches
-cd Docs
-tar -cf Original.tar Original
-gzip --best Original.tar
-rm -rf Original
+tar -cf Docs.tar Docs
+gzip --best Docs.tar
+rm -rf Docs
 # Done
 echo ""
 echo "Fin!"

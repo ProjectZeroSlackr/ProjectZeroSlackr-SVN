@@ -3,7 +3,7 @@
 # iPodMAME Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 28, 2008
+# Last updated: Apr 5, 2008
 #
 echo ""
 echo "==========================================="
@@ -69,14 +69,13 @@ cp -rf ../compiling/roms/matrxpac/* $PACK/Roms/matrxpac/
 unzip -o -q ../../src/orig/aa.zip -d $PACK/Roms/aarmada/
 # Documents
 DOCS=$PACK/Misc/Docs
-cp -rf "../../ReadMe from Keripo.txt" $DOCS/
-cp -rf ../../License.txt $DOCS/
+cp -rf "../../ReadMe from Keripo.txt" $PACK/
+cp -rf ../../License.txt $PACK/
 cp -rf ../../src/patches $PACK/Misc/Patches
-DOCSORIG=$DOCS/Original
 FILES="READ_ME.TXT readme.ipl.txt readme.txt README.UNIX romlist.ipl.txt whatsnew.txt"
 for file in $FILES
 do
-	cp -rf ../compiling/$file $DOCSORIG/
+	cp -rf ../compiling/$file $DOCS/
 done
 mkdir $DOCSORIG/roms
 cp -rf ../compiling/roms/readme.txt $DOCSORIG/roms/
@@ -86,10 +85,9 @@ cd $PACK/Misc
 tar -cf Patches.tar Patches
 gzip --best Patches.tar
 rm -rf Patches
-cd Docs
-tar -cf Original.tar Original
-gzip --best Original.tar
-rm -rf Original
+tar -cf Docs.tar Docs
+gzip --best Docs.tar
+rm -rf Docs
 # Done
 echo ""
 echo "Fin!"

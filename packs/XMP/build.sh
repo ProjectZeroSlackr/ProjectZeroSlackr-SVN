@@ -3,7 +3,7 @@
 # XMP Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 29, 2008
+# Last updated: Apr 5, 2008
 #
 echo ""
 echo "==========================================="
@@ -62,17 +62,20 @@ cp -rf ../compiled/XMP $PACK/
 cp -rf ../compiled/anticipation.mod $PACK/Mods/
 # Documents
 DOCS=$PACK/Misc/Docs
-cp -rf "../../ReadMe from Keripo.txt" $DOCS/
-cp -rf ../../License.txt $DOCS/
+cp -rf "../../ReadMe from Keripo.txt" $PACK/
+cp -rf ../../License.txt $PACK/
 cp -rf ../../src/patches $PACK/Misc/Patches
 cp -rf ../../src/mod $PACK/Misc/Mod
-DOCSORIG=$DOCS/Original
-cp -rf ../compiling/docs/* $DOCSORIG/
-rm -rf $DOCSORIG/Makefile
-rm -rf $DOCSORIG/README.os2
-rm -rf $DOCSORIG/CVS
-rm -rf $DOCSORIG/formats/CVS
-cp -rf ../compiling/README $DOCSORIG/
+FILES="docs/* README"
+for file in $FILES
+do
+	cp -rf ../compiling/$file $DOCS/
+done
+DEL="Makefile README.os2 CVS formats/CVS"
+for file in $DEL
+do
+	rm -rf $DOCS/$file
+done
 # Archive documents
 cd $PACK/Misc
 tar -cf Patches.tar Patches
@@ -81,10 +84,9 @@ rm -rf Patches
 tar -cf Mod.tar Mod
 gzip --best Mod.tar
 rm -rf Mod
-cd Docs
-tar -cf Original.tar Original
-gzip --best Original.tar
-rm -rf Original
+tar -cf Docs.tar Docs
+gzip --best Docs.tar
+rm -rf Docs
 # Done
 echo ""
 echo "Fin!"

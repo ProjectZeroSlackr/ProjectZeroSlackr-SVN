@@ -3,7 +3,7 @@
 # ToeNailClipper Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 28, 2008
+# Last updated: Apr 5, 2008
 #
 echo ""
 echo "==========================================="
@@ -41,9 +41,8 @@ cd release
 PACK=ZeroSlackr/opt/ToeNailClipper
 cp -rf ../compiled/ToeNailClipper $PACK/
 # Documents
-DOCS=$PACK/Misc/Docs
-cp -rf "../../ReadMe from Keripo.txt" $DOCS/
-cp -rf ../../License.txt $DOCS/
+cp -rf "../../ReadMe from Keripo.txt" $PACK/
+cp -rf ../../License.txt $PACK/
 # Done
 echo ""
 echo "Fin!"
