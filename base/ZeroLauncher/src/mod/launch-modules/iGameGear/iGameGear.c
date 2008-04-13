@@ -1,5 +1,5 @@
 /*
- * Last updated: April 4, 2008
+ * Last updated: April 13, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -30,7 +30,7 @@ extern int check_file_ext();
 extern TWindow *open_directory_title();
 
 #define FRAMESKIP	1
-#define LOCALE		2
+#define LANG		2
 #define SCALING		3
 
 static PzModule *module;
@@ -52,7 +52,7 @@ static PzWindow *load_file(const char *file)
 	char frameskip[4];
 	snprintf(frameskip, 4, "%i", pz_get_int_setting(config, FRAMESKIP));
 	char locale[8];
-	if (pz_get_int_setting(config, LOCALE)==1) {
+	if (pz_get_int_setting(config, LANG)==1) {
 		snprintf(locale, 8, "--japan");
 	} else {
 		locale[0] = '\0';
@@ -111,14 +111,14 @@ static void init_launch()
 	
 	config = pz_load_config(pz_module_get_datapath(module,"Conf/Launch.conf"));
 	if (!pz_get_setting(config, FRAMESKIP)) pz_set_int_setting (config, FRAMESKIP, 5);
-	if (!pz_get_setting(config, LOCALE)) pz_set_int_setting (config, LOCALE, 0);
+	if (!pz_get_setting(config, LANG)) pz_set_int_setting (config, LANG, 0);
 	if (!pz_get_setting(config, SCALING)) pz_set_int_setting (config, SCALING, 0);
 	
 	pz_menu_add_stub_group("/Emulators/iGameGear", "Handheld");
 	pz_menu_add_action_group("/Emulators/iGameGear/FastLaunch", "Launching", fastlaunch);
 	pz_menu_add_action_group("/Emulators/iGameGear/Roms", "Launching", browse_roms);
 	pz_menu_add_setting_group("/Emulators/iGameGear/Frameskip", "~Settings", FRAMESKIP, config, frameskip_options);
-	pz_menu_add_setting_group("/Emulators/iGameGear/Locale", "~Settings", LOCALE, config, locale_options);
+	pz_menu_add_setting_group("/Emulators/iGameGear/Locale", "~Settings", LANG, config, locale_options);
 	pz_menu_add_setting_group("/Emulators/iGameGear/Scaling", "~Settings", SCALING, config, scaling_options);
 	pz_menu_sort("/Emulators/iGameGear");
 	
