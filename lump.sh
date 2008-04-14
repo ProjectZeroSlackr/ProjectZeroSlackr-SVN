@@ -3,7 +3,7 @@
 # Auto-Lumping Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 31, 2008
+# Last updated: Apr 14, 2008
 #
 echo ""
 echo "==========================================="
@@ -30,53 +30,64 @@ echo ""
 echo "==========================================="
 echo "==========================================="
 echo ""
-# release
-DIR=$(pwd)
-LUMP="_lump"
+# lump
+SVNROOT=$(pwd)
+LUMP=$SVNROOT"_lump"
+echo "> Creating "$LUMP" folder..."
 if [ -d $LUMP ]; then
 	rm -rf $LUMP
 fi
 mkdir $LUMP
 # libs
+echo "> Building libs..."
+cd $SVNROOT
 cd libs
 ./build.sh
-cd ..
 # base
-# Note: building the kernel takes too long ; P
-#for folder in base/*
-if [ ! -d base/Kernel/build/release ]; then
-	cd base/Kernel
-	./build.sh
-	mv build/release release
-	rm -rf build
-	mkdir build
-	mv release build/
-	cd ../..
-fi
-cp -rf base/Kernel/build/release/* $LUMP/
-BASE="base/Loader2 base/Userland base/ZeroLauncher"
-for folder in $BASE
+echo "> Building base..."
+cd $SVNROOT
+cd base
+for folder in ./*
 do
 	cd $folder
-	./build.sh
-	# I need to find a better way of doing this;
-	# can't seem to get it working with "mv"
-	cp -rf build/release/* ../../$LUMP/
-	rm -rf build
-	cd ../..
+	if [ -e SKIP.txt ]; then
+		echo "  - Skipping building of "$folder"..."
+		cp -rf build/release/* $LUMP/
+	else
+		./build.sh
+		cp -rf build/release/* $LUMP/
+		rm -rf build
+	fi
+	cd ..
 done
 # packs
-for folder in packs/*
+echo "> Building packs..."
+cd $SVNROOT
+cd packs
+for folder in ./*
 do
+	echo "  - Building packs in "$folder"..."
 	cd $folder
-	./build.sh
-	cp -rf build/release/* ../../$LUMP/
-	rm -rf build
-	cd ../..
+	for pack in ./*
+	do
+		cd $pack
+		if [ -e SKIP.txt ]; then
+			echo "  - Skipping building of "$pack"/"$folder"..."
+			cp -rf build/release/* $LUMP/
+		else
+			./build.sh
+			cp -rf build/release/* $LUMP/
+			rm -rf build
+		fi
+		cd ..
+	done
+	cd ..
 done
-# cleanup
-cd $DIR/$LUMP
+# .svn cleanup
+echo "> Cleaning up .svn files..."
+cd $LUMP
 sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
+cd $SVNROOT
 # done
 echo ""
 echo ""
@@ -90,7 +101,7 @@ echo "    the '_lump' folder to your iPod, run"
 echo "    the 'patch.bat' or 'patch.sh' file,"
 echo "    and everything will be 'installed' ; )"
 echo ""
-echo "         AutoLump script by Keripo"
+echo "       Auto-Lumping Script by Keripo"
 echo ""
 echo "==========================================="
 echo "==========================================="

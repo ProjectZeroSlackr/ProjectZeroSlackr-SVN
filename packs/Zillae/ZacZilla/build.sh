@@ -1,14 +1,14 @@
 #!/bin/sh
 #
-# iGameGear Auto-Building Script
+# ZacZilla Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: April 5, 2008
+# Last updated: Apr 14, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
-echo "iGameGear Auto-Building Script"
+echo "ZacZilla Auto-Building Script"
 echo ""
 # Cleanup
 if [ -d build ]; then
@@ -19,24 +19,24 @@ fi
 echo "> Setting up build directory..."
 mkdir build
 cd build
-# Extract source
-echo "> Extracting source..."
 mkdir compiling
-cd compiling
-tar -xf ../../src/orig/igamegearsrc-20070117.tgz
+# Copying full source
+echo "> Copying over source..."
+cp -r ../src/full/* compiling/
+# Symlink the libraries
+echo "> Compiling libraries..."
 cd ..
-# Apply ZeroSlackr custom patches
-echo "> Applying ZeroSlackr patches..."
-cd compiling
-for file in ../../src/patches/*; do
-	patch -p0 -t -i $file >> ../build.log
-done
+cp -r src/libs build/
+cd build
+cd libs
+sh AutoCompile.sh
+rm -rf AutoCompile.sh
 cd ..
 # Symlink the libraries
 echo "> Symlinking libraries..."
 DIR=$(pwd)
-LIBSDIR=../../../libs
-LIBS="hotdog"
+LIBSDIR=../../../../libs
+LIBS="ttk"
 for lib in $LIBS
 do
 	if [ ! -d $LIBSDIR/$lib ]; then
@@ -49,32 +49,27 @@ do
 done
 # Compiling
 echo "> Compiling..."
+echo "  Note: All warnings/errors here will"
+echo "  be logged to the 'build.log' file."
+echo "  If building fails, check the log file."
 cd compiling
-cd ipl
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
-make CC=arm-elf-gcc NAME=iGameGear >> ../../build.log 2>&1
-cd ..
+make IPOD=1 SDL=1 >> ../build.log 2>&1
 # Copy over compiled file
 echo "> Copying over compiled files..."
 cd ..
 mkdir compiled
-cp -rf compiling/ipl/iGameGear compiled/
+cp -rf compiling/ZacZilla compiled/
 # Creating release
 echo "> Creating 'release' folder..."
 tar -xf ../src/release.tar.gz
 cd release
 # Files
-PACK=ZeroSlackr/opt/iGameGear
-cp -rf ../compiled/iGameGear $PACK/
+PACK=ZeroSlackr/opt/ZacZilla
+cp -rf ../compiled/ZacZilla $PACK/ZacZilla
 # Documents
-DOCS=$PACK/Misc/Docs
 cp -rf "../../ReadMe from Keripo.txt" $PACK/
 cp -rf ../../License.txt $PACK/
-FILES="license README.TXT ipl/README_SMSSDL.TXT"
-for file in $FILES
-do
-	cp -rf ../compiling/$file $DOCS/
-done
 # Archive documents
 cd $PACK/Misc
 tar -cf Docs.tar Docs

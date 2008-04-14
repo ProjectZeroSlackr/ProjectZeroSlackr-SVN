@@ -1,14 +1,14 @@
 #!/bin/sh
 #
-# Podzilla0-SVN Auto-Building Script
+# Floyd2illA Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 5, 2008
+# Last updated: Apr 14, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
-echo "Podzilla0-SVN Auto-Building Script"
+echo "Floyd2illA Auto-Building Script"
 echo ""
 # Cleanup
 if [ -d build ]; then
@@ -20,12 +20,15 @@ echo "> Setting up build directory..."
 mkdir build
 cd build
 mkdir compiling
-# Update with SVN
-echo "> Updating SVN..."
-svn co --quiet https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/legacy/podzilla official-svn
-cp -r official-svn/* compiling/
+# Extract source
+# Repackaged source files; original no longer available
+echo "> Extracting source..."
+cd compiling
+tar zxf ../../src/repack/src_orig_repacked.tar.gz
+cd ..
 # Apply ZeroSlackr custom patches
 echo "> Applying ZeroSlackr patches..."
+cp -r ../src/mod/* compiling/
 cd compiling
 for file in ../../src/patches/*; do
 	patch -p0 -t -i $file >> ../build.log
@@ -33,52 +36,52 @@ done
 # Symlink the libraries
 echo "> Symlinking libraries..."
 cd ..
-for library in ../../../libs/pz0/libs/*
+for library in ../../../../libs/pz0/libs/*
 do
 	ln -s $library ./
 done
 # Compiling
 echo "> Compiling..."
+echo "  Note: All warnings/errors here will"
+echo "  be logged to the 'build.log' file."
+echo "  If building fails, check the log file."
 cd compiling
 export PATH=/usr/local/bin:$PATH
 #Note: if you want to compile with MikMod suppot, see the
 #"ReadMe from Keripo.txt" in the "mikmod" library folder
 # in "/libs/pz0/libs" and compile with:
 #make IPOD=1 MPDC=1 MIKMOD=1 >> ../build.log
-make IPOD=1 MPDC=1 >> ../build.log
+make IPOD=1 MPDC=1 >> ../build.log 2>&1
 # Copy over compiled file
 echo "> Copying over compiled files..."
 cd ..
 mkdir compiled
-if [ -e compiling/podzilla.elf.bflt ]; then
-	cp -rf compiling/podzilla.elf.bflt compiled/Podzilla0-SVN
+if [ -e compiling/Floyd2illA.elf.bflt ]; then
+	cp -rf compiling/Floyd2illA.elf.bflt compiled/Floyd2illA
 else
-	cp -rf compiling/podzilla compiled/Podzilla0-SVN
+	cp -rf compiling/Floyd2illA compiled/Floyd2illA
 fi
 # Creating release
 echo "> Creating 'release' folder..."
 tar -xf ../src/release.tar.gz
 cd release
 # Files
-PACK=ZeroSlackr/opt/Podzilla0-SVN
-cp -rf ../compiled/Podzilla0-SVN $PACK/
+PACK=ZeroSlackr/opt/Floyd2illA
+cp -rf ../compiled/Floyd2illA $PACK/
 # Documents
-DOCS=$PACK/Misc/Docs
+# Too many original docs; done by hand
 cp -rf "../../ReadMe from Keripo.txt" $PACK/
 cp -rf ../../License.txt $PACK/
 cp -rf ../../src/patches $PACK/Misc/Patches
-cp -rf ../compiling/ChangeLog $DOCS/
-cp -rf ../compiling/README $DOCS/
-mkdir $DOCS/tuxchess
-cp -rf ../compiling/tuxchess/README $DOCS/tuxchess/
-cp -rf ../compiling/tuxchess/README.chess $DOCS/tuxchess/
-cp -rf ../compiling/tuxchess/README.license $DOCS/tuxchess/
-cp -rf ../compiling/tuxchess/TODO $DOCS/tuxchess/
+cp -rf ../../src/mod $PACK/Misc/Mod
 # Archive documents
 cd $PACK/Misc
 tar -cf Patches.tar Patches
 gzip --best Patches.tar
 rm -rf Patches
+tar -cf Mod.tar Mod
+gzip --best Mod.tar
+rm -rf Mod
 tar -cf Docs.tar Docs
 gzip --best Docs.tar
 rm -rf Docs
