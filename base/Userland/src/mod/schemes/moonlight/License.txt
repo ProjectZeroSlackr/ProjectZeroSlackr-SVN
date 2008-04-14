@@ -1,14 +1,15 @@
 The background image for the scheme is a modified
 copy of an artwork that I (Keripo) commissioned from
-TheNork a few years ago. The character copywrite is
-owned by me (Keripo) and thus usage of the original
-or any modified version (including this scheme's) is
-not allowed without my explicit permission (though I
-will probably grant it).
+TheNork a few years ago. The image is licensed under
+Creative Commons Attribution-Noncommercial-Share Alike
+3.0 (CC-BY-NC-SA v3.0). The license can be found here:
+http://creativecommons.org/licenses/by-nc-sa/3.0/
 The original artwork can be found here:
-http://s22.photobucket.com/albums/b334/Keripo/shortytss/?action=view&current=TheNork-shortytssamazingfull.jpg
+http://s22.photobucket.com/albums/b334/Keripo/shortytss/
+ ?action=view&current=TheNork-shortytssamazingfull.jpg
 The original commission can be found here:
-http://forums.kingdomofloathing.com:8080/vb/showthread.php?t=116511
+http://forums.kingdomofloathing.com:8080/vb/
+ showthread.php?t=116511
 
 The titlebar image was generated using the AmitySource
 Userbar Generator program and comes with whatever
