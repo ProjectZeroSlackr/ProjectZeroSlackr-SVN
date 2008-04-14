@@ -1,4 +1,4 @@
-Last updated: April 4, 2008
+Last updated: April 14, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,9 @@ original/ported software.
 
 
 == Changelog ==
+
+April 14, 2008
+- Mass resorting!
 
 April 4, 2008
 - Added iGameGear (venox's unmodified)
@@ -54,3 +57,4 @@ March 22, 2008
 	- viPodzilla
 	- XMP
 	- ZacZilla 
+- Unstable: iPodMAME, TimeWalk

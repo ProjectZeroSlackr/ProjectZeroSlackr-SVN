@@ -1,14 +1,14 @@
 #!/bin/sh
 #
-# Floyd2illA Auto-Building Script
+# Podzilla0-Lite Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 5, 2008
+# Last updated:Apr 14, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
-echo "Floyd2illA Auto-Building Script"
+echo "Podzilla0-Lite Auto-Building Script"
 echo ""
 # Cleanup
 if [ -d build ]; then
@@ -20,12 +20,10 @@ echo "> Setting up build directory..."
 mkdir build
 cd build
 mkdir compiling
-# Extract source
-# Repackaged source files; original no longer available
-echo "> Extracting source..."
-cd compiling
-tar zxf ../../src/repack/src_orig_repacked.tar.gz
-cd ..
+# Update with SVN
+echo "> Updating SVN..."
+svn co --quiet https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/legacy/podzilla official-svn
+cp -r official-svn/* compiling/
 # Apply ZeroSlackr custom patches
 echo "> Applying ZeroSlackr patches..."
 cp -r ../src/mod/* compiling/
@@ -36,7 +34,7 @@ done
 # Symlink the libraries
 echo "> Symlinking libraries..."
 cd ..
-for library in ../../../libs/pz0/libs/*
+for library in ../../../../libs/pz0/libs/*
 do
 	ln -s $library ./
 done
@@ -56,24 +54,26 @@ make IPOD=1 MPDC=1 >> ../build.log 2>&1
 echo "> Copying over compiled files..."
 cd ..
 mkdir compiled
-if [ -e compiling/Floyd2illA.elf.bflt ]; then
-	cp -rf compiling/Floyd2illA.elf.bflt compiled/Floyd2illA
+if [ -e compiling/Podzilla0-Lite.elf.bflt ]; then
+	cp -rf compiling/Podzilla0-Lite.elf.bflt compiled/Podzilla0-Lite
 else
-	cp -rf compiling/Floyd2illA compiled/Floyd2illA
+	cp -rf compiling/Podzilla0-Lite compiled/Podzilla0-Lite
 fi
 # Creating release
 echo "> Creating 'release' folder..."
 tar -xf ../src/release.tar.gz
 cd release
 # Files
-PACK=ZeroSlackr/opt/Floyd2illA
-cp -rf ../compiled/Floyd2illA $PACK/
+PACK=ZeroSlackr/opt/Podzilla0-Lite
+cp -rf ../compiled/Podzilla0-Lite $PACK/
 # Documents
-# Too many original docs; done by hand
+DOCS=$PACK/Misc/Docs
 cp -rf "../../ReadMe from Keripo.txt" $PACK/
 cp -rf ../../License.txt $PACK/
 cp -rf ../../src/patches $PACK/Misc/Patches
 cp -rf ../../src/mod $PACK/Misc/Mod
+cp -rf ../compiling/ChangeLog $DOCS/
+cp -rf ../compiling/README $DOCS/
 # Archive documents
 cd $PACK/Misc
 tar -cf Patches.tar Patches

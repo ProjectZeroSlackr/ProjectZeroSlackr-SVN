@@ -3,7 +3,7 @@
 # Podzilla2-SVN Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 5, 2008
+# Last updated: Apr 14, 2008
 #
 echo ""
 echo "==========================================="
@@ -36,7 +36,7 @@ cd ..
 # Symlink the libraries
 echo "> Symlinking libraries..."
 DIR=$(pwd)
-LIBSDIR=../../../libs
+LIBSDIR=../../../../libs
 LIBS="ttk"
 for lib in $LIBS
 do

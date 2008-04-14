@@ -1,14 +1,14 @@
 #!/bin/sh
 #
-# iDarcNES Auto-Building Script
+# iGameGear Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: April 5, 2008
+# Last updated: April 14, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
-echo "iDarcNES Auto-Building Script"
+echo "iGameGear Auto-Building Script"
 echo ""
 # Cleanup
 if [ -d build ]; then
@@ -19,14 +19,23 @@ fi
 echo "> Setting up build directory..."
 mkdir build
 cd build
+# Extract source
+echo "> Extracting source..."
 mkdir compiling
-# Copying full source
-echo "> Copying over source..."
-cp -r ../src/full/* compiling/
+cd compiling
+tar -xf ../../src/orig/igamegearsrc-20070117.tgz
+cd ..
+# Apply ZeroSlackr custom patches
+echo "> Applying ZeroSlackr patches..."
+cd compiling
+for file in ../../src/patches/*; do
+	patch -p0 -t -i $file >> ../build.log
+done
+cd ..
 # Symlink the libraries
 echo "> Symlinking libraries..."
 DIR=$(pwd)
-LIBSDIR=../../../libs
+LIBSDIR=../../../../libs
 LIBS="hotdog"
 for lib in $LIBS
 do
@@ -40,30 +49,32 @@ do
 done
 # Compiling
 echo "> Compiling..."
-echo "  Note: iDarcNES is EXTREMELY buggy"
-echo "  and the code is very messy. If you're"
-echo "  willing to try to rewrite it, etc.,"
-echo "  please do!"
 cd compiling
+cd ipl
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
-make >> ../build.log 2>&1
+make CC=arm-elf-gcc NAME=iGameGear >> ../../build.log 2>&1
+cd ..
 # Copy over compiled file
 echo "> Copying over compiled files..."
 cd ..
 mkdir compiled
-cp -rf compiling/iDarcNES compiled/
+cp -rf compiling/ipl/iGameGear compiled/
 # Creating release
 echo "> Creating 'release' folder..."
 tar -xf ../src/release.tar.gz
 cd release
 # Files
-PACK=ZeroSlackr/opt/iDarcNES
-cp -rf ../compiled/iDarcNES $PACK/
+PACK=ZeroSlackr/opt/iGameGear
+cp -rf ../compiled/iGameGear $PACK/
 # Documents
 DOCS=$PACK/Misc/Docs
 cp -rf "../../ReadMe from Keripo.txt" $PACK/
 cp -rf ../../License.txt $PACK/
-cp -rf ../compiling/readme $DOCS/
+FILES="license README.TXT ipl/README_SMSSDL.TXT"
+for file in $FILES
+do
+	cp -rf ../compiling/$file $DOCS/
+done
 # Archive documents
 cd $PACK/Misc
 tar -cf Docs.tar Docs

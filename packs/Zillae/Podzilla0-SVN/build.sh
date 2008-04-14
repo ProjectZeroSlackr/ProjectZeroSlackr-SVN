@@ -1,14 +1,14 @@
 #!/bin/sh
 #
-# iPodMAME Auto-Building Script
+# Podzilla0-SVN Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 5, 2008
+# Last updated: Apr 14, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
-echo "iPodMAME Auto-Building Script"
+echo "Podzilla0-SVN Auto-Building Script"
 echo ""
 # Cleanup
 if [ -d build ]; then
@@ -22,7 +22,7 @@ cd build
 mkdir compiling
 # Update with SVN
 echo "> Updating SVN..."
-svn co --quiet http://opensvn.csie.org/ipodmame/ official-svn
+svn co --quiet https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/legacy/podzilla official-svn
 cp -r official-svn/* compiling/
 # Apply ZeroSlackr custom patches
 echo "> Applying ZeroSlackr patches..."
@@ -30,56 +30,50 @@ cd compiling
 for file in ../../src/patches/*; do
 	patch -p0 -t -i $file >> ../build.log
 done
-cd ..
 # Symlink the libraries
 echo "> Symlinking libraries..."
-DIR=$(pwd)
-LIBSDIR=../../../libs
-LIBS="hotdog"
-for lib in $LIBS
+cd ..
+for library in ../../../../libs/pz0/libs/*
 do
-	if [ ! -d $LIBSDIR/$lib ]; then
-		cd $LIBSDIR
-		echo "  - Building "$lib"..."
-		./src/$lib.sh
-		cd $DIR
-	fi
-	ln -s $LIBSDIR/$lib ./
+	ln -s $library ./
 done
 # Compiling
 echo "> Compiling..."
 cd compiling
-export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
-make IPOD=1 >> ../build.log
+export PATH=/usr/local/bin:$PATH
+#Note: if you want to compile with MikMod suppot, see the
+#"ReadMe from Keripo.txt" in the "mikmod" library folder
+# in "/libs/pz0/libs" and compile with:
+#make IPOD=1 MPDC=1 MIKMOD=1 >> ../build.log
+make IPOD=1 MPDC=1 >> ../build.log
 # Copy over compiled file
 echo "> Copying over compiled files..."
 cd ..
 mkdir compiled
-cp -rf compiling/mame compiled/iPodMAME
+if [ -e compiling/podzilla.elf.bflt ]; then
+	cp -rf compiling/podzilla.elf.bflt compiled/Podzilla0-SVN
+else
+	cp -rf compiling/podzilla compiled/Podzilla0-SVN
+fi
 # Creating release
 echo "> Creating 'release' folder..."
 tar -xf ../src/release.tar.gz
 cd release
 # Files
-PACK=ZeroSlackr/opt/iPodMAME
-cp -rf ../compiled/iPodMAME $PACK/
-cp -rf ../compiling/ipodmame.ini $PACK/Conf/
-cp -rf ../compiling/roms/hellopac/* $PACK/Roms/hellopac/
-cp -rf ../compiling/roms/matrxpac/* $PACK/Roms/matrxpac/
-unzip -o -q ../../src/orig/aa.zip -d $PACK/Roms/aarmada/
+PACK=ZeroSlackr/opt/Podzilla0-SVN
+cp -rf ../compiled/Podzilla0-SVN $PACK/
 # Documents
 DOCS=$PACK/Misc/Docs
 cp -rf "../../ReadMe from Keripo.txt" $PACK/
 cp -rf ../../License.txt $PACK/
 cp -rf ../../src/patches $PACK/Misc/Patches
-FILES="READ_ME.TXT readme.ipl.txt readme.txt README.UNIX romlist.ipl.txt whatsnew.txt"
-for file in $FILES
-do
-	cp -rf ../compiling/$file $DOCS/
-done
-mkdir $DOCSORIG/roms
-cp -rf ../compiling/roms/readme.txt $DOCSORIG/roms/
-cp -rf ../compiling/romlist.ipl.txt $PACK/Roms/
+cp -rf ../compiling/ChangeLog $DOCS/
+cp -rf ../compiling/README $DOCS/
+mkdir $DOCS/tuxchess
+cp -rf ../compiling/tuxchess/README $DOCS/tuxchess/
+cp -rf ../compiling/tuxchess/README.chess $DOCS/tuxchess/
+cp -rf ../compiling/tuxchess/README.license $DOCS/tuxchess/
+cp -rf ../compiling/tuxchess/TODO $DOCS/tuxchess/
 # Archive documents
 cd $PACK/Misc
 tar -cf Patches.tar Patches

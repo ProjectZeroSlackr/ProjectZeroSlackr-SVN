@@ -3,7 +3,7 @@
 # Auto-Cleaning Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 28, 2008
+# Last updated: Apr 14, 2008
 #
 echo ""
 echo "==========================================="
@@ -13,41 +13,50 @@ echo "      Full ZeroSlackr Cleaning Script"
 echo "         [ because I'm lazy ; ) ]"
 echo ""
 # lump
-LUMP="_lump"
+SVNROOT=$(pwd)
+LUMP=$SVNROOT"_lump"
 if [ -d $LUMP ]; then
-	echo "> Removing $LUMP..."
+	echo "> Removing "$LUMP"..."
 	rm -rf $LUMP
 fi
 # libs
 echo "> Cleaning libs..."
+cd $SVNROOT
 cd libs
 ./clean.sh
-cd ..
 # base
 echo "> Cleaning base..."
-# Note: building the kernel takes too long ; P
-if [ -d base/Kernel/build/release ]; then
-	echo "  - Keeping kernel..."
-	mv base/Kernel/build/release base/Kernel/release
-	mv base/Kernel/build/.svn base/Kernel/.svn-release
-	rm -rf base/Kernel/build
-	mkdir base/Kernel/build
-	mv base/Kernel/release base/Kernel/build/
-	mv base/Kernel/.svn-release base/Kernel/build/.svn
-else
-	rm -rf base/Kernel/build
-fi
-#for folder in base/*
-BASE="base/Loader2 base/Userland base/ZeroLauncher"
-for folder in $BASE
+cd $SVNROOT
+cd base
+for folder in ./*
 do
-	rm -rf $folder/build
+	cd $folder
+	if [ -e SKIP.txt ]; then
+		echo "  - Skipping cleaning of "$folder"..."
+	else
+		rm -rf build
+	fi
+	cd ..
 done
 # packs
 echo "> Cleaning packs..."
-for folder in packs/*
+cd $SVNROOT
+cd packs
+for folder in ./*
 do
-	rm -rf $folder/build
+	echo "  - Cleaning packs in "$folder"..."
+	cd $folder
+	for pack in ./*
+	do
+		cd $pack
+		if [ -e SKIP.txt ]; then
+			echo "  - Skipping cleaning of "$pack"/"$folder"..."
+		else
+			rm -rf build
+		fi
+		cd ..
+	done
+	cd ..
 done
 # backups
 ./rm-backups.sh
@@ -55,7 +64,7 @@ done
 echo ""
 echo "                   Fin!"
 echo ""
-echo "         AutoClean script by Keripo"
+echo "      Auto-Cleaning Script by Keripo"
 echo ""
 echo "==========================================="
 echo "==========================================="

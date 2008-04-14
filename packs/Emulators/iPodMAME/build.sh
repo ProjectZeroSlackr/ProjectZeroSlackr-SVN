@@ -1,14 +1,14 @@
 #!/bin/sh
 #
-# ZacZilla Auto-Building Script
+# iPodMAME Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 5, 2008
+# Last updated: Apr 14, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
-echo "ZacZilla Auto-Building Script"
+echo "iPodMAME Auto-Building Script"
 echo ""
 # Cleanup
 if [ -d build ]; then
@@ -20,23 +20,22 @@ echo "> Setting up build directory..."
 mkdir build
 cd build
 mkdir compiling
-# Copying full source
-echo "> Copying over source..."
-cp -r ../src/full/* compiling/
-# Symlink the libraries
-echo "> Compiling libraries..."
-cd ..
-cp -r src/libs build/
-cd build
-cd libs
-sh AutoCompile.sh
-rm -rf AutoCompile.sh
+# Update with SVN
+echo "> Updating SVN..."
+svn co --quiet http://opensvn.csie.org/ipodmame/ official-svn
+cp -r official-svn/* compiling/
+# Apply ZeroSlackr custom patches
+echo "> Applying ZeroSlackr patches..."
+cd compiling
+for file in ../../src/patches/*; do
+	patch -p0 -t -i $file >> ../build.log
+done
 cd ..
 # Symlink the libraries
 echo "> Symlinking libraries..."
 DIR=$(pwd)
-LIBSDIR=../../../libs
-LIBS="ttk"
+LIBSDIR=../../../../libs
+LIBS="hotdog"
 for lib in $LIBS
 do
 	if [ ! -d $LIBSDIR/$lib ]; then
@@ -49,29 +48,43 @@ do
 done
 # Compiling
 echo "> Compiling..."
-echo "  Note: All warnings/errors here will"
-echo "  be logged to the 'build.log' file."
-echo "  If building fails, check the log file."
 cd compiling
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
-make IPOD=1 SDL=1 >> ../build.log 2>&1
+make IPOD=1 >> ../build.log
 # Copy over compiled file
 echo "> Copying over compiled files..."
 cd ..
 mkdir compiled
-cp -rf compiling/ZacZilla compiled/
+cp -rf compiling/mame compiled/iPodMAME
 # Creating release
 echo "> Creating 'release' folder..."
 tar -xf ../src/release.tar.gz
 cd release
 # Files
-PACK=ZeroSlackr/opt/ZacZilla
-cp -rf ../compiled/ZacZilla $PACK/ZacZilla
+PACK=ZeroSlackr/opt/iPodMAME
+cp -rf ../compiled/iPodMAME $PACK/
+cp -rf ../compiling/ipodmame.ini $PACK/Conf/
+cp -rf ../compiling/roms/hellopac/* $PACK/Roms/hellopac/
+cp -rf ../compiling/roms/matrxpac/* $PACK/Roms/matrxpac/
+unzip -o -q ../../src/orig/aa.zip -d $PACK/Roms/aarmada/
 # Documents
+DOCS=$PACK/Misc/Docs
 cp -rf "../../ReadMe from Keripo.txt" $PACK/
 cp -rf ../../License.txt $PACK/
+cp -rf ../../src/patches $PACK/Misc/Patches
+FILES="READ_ME.TXT readme.ipl.txt readme.txt README.UNIX romlist.ipl.txt whatsnew.txt"
+for file in $FILES
+do
+	cp -rf ../compiling/$file $DOCS/
+done
+mkdir $DOCSORIG/roms
+cp -rf ../compiling/roms/readme.txt $DOCSORIG/roms/
+cp -rf ../compiling/romlist.ipl.txt $PACK/Roms/
 # Archive documents
 cd $PACK/Misc
+tar -cf Patches.tar Patches
+gzip --best Patches.tar
+rm -rf Patches
 tar -cf Docs.tar Docs
 gzip --best Docs.tar
 rm -rf Docs
