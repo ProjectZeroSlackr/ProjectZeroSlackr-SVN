@@ -32,7 +32,7 @@ echo "==========================================="
 echo ""
 # lump
 SVNROOT=$(pwd)
-LUMP=$SVNROOT"_lump"
+LUMP=$SVNROOT"/_lump"
 echo "> Creating "$LUMP" folder..."
 if [ -d $LUMP ]; then
 	rm -rf $LUMP

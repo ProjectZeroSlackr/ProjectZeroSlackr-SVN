@@ -1,4 +1,4 @@
-Last updated: March 27, 2008
+Last updated: Apr 15, 2008
 ~Keripo
 
 Build individual libraries running
@@ -36,3 +36,11 @@ itunesdb and mikmod libraries are
 depreciated and do not work but they're
 only used by PZ0 and for historical
 purposes.
+
+The "launch" library is just shared files
+(consisting of a stripped-down PZ2 makefile
+and the "pz.h" file) used by all packs for
+compiling the pack's launch module outside
+of PZ2. All packs symlink the "launch" and
+"ttk" libraries for this.
+

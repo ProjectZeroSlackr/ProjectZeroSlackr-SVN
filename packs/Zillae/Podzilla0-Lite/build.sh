@@ -3,7 +3,7 @@
 # Podzilla0-Lite Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated:Apr 14, 2008
+# Last updated:Apr 15, 2008
 #
 echo ""
 echo "==========================================="
@@ -38,6 +38,19 @@ for library in ../../../../libs/pz0/libs/*
 do
 	ln -s $library ./
 done
+DIR=$(pwd)
+LIBSDIR=../../../../libs
+LIBS="ttk launch"
+for lib in $LIBS
+do
+	if [ ! -d $LIBSDIR/$lib ]; then
+		cd $LIBSDIR
+		echo "  - Building "$lib"..."
+		./src/$lib.sh
+		cd $DIR
+	fi
+	ln -s $LIBSDIR/$lib ./
+done
 # Compiling
 echo "> Compiling..."
 echo "  Note: All warnings/errors here will"
@@ -59,6 +72,13 @@ if [ -e compiling/Podzilla0-Lite.elf.bflt ]; then
 else
 	cp -rf compiling/Podzilla0-Lite compiled/Podzilla0-Lite
 fi
+# Launch module
+echo "> Building ZeroLauncher launch module..."
+cp -rf ../src/launcher ./
+cd launcher
+export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
+make -f ../launch/launch.mk >> ../build.log
+cd ..
 # Creating release
 echo "> Creating 'release' folder..."
 tar -xf ../src/release.tar.gz
@@ -66,6 +86,7 @@ cd release
 # Files
 PACK=ZeroSlackr/opt/Podzilla0-Lite
 cp -rf ../compiled/Podzilla0-Lite $PACK/
+cp -rf ../launcher/* $PACK/
 # Documents
 DOCS=$PACK/Misc/Docs
 cp -rf "../../ReadMe from Keripo.txt" $PACK/

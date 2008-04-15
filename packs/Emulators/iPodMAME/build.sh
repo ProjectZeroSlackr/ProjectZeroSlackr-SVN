@@ -3,7 +3,7 @@
 # iPodMAME Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 14, 2008
+# Last updated: Apr 15, 2008
 #
 echo ""
 echo "==========================================="
@@ -35,7 +35,7 @@ cd ..
 echo "> Symlinking libraries..."
 DIR=$(pwd)
 LIBSDIR=../../../../libs
-LIBS="hotdog"
+LIBS="hotdog ttk launch"
 for lib in $LIBS
 do
 	if [ ! -d $LIBSDIR/$lib ]; then
@@ -56,6 +56,13 @@ echo "> Copying over compiled files..."
 cd ..
 mkdir compiled
 cp -rf compiling/mame compiled/iPodMAME
+# Launch module
+echo "> Building ZeroLauncher launch module..."
+cp -rf ../src/launcher ./
+cd launcher
+export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
+make -f ../launch/launch.mk >> ../build.log
+cd ..
 # Creating release
 echo "> Creating 'release' folder..."
 tar -xf ../src/release.tar.gz
@@ -67,6 +74,7 @@ cp -rf ../compiling/ipodmame.ini $PACK/Conf/
 cp -rf ../compiling/roms/hellopac/* $PACK/Roms/hellopac/
 cp -rf ../compiling/roms/matrxpac/* $PACK/Roms/matrxpac/
 unzip -o -q ../../src/orig/aa.zip -d $PACK/Roms/aarmada/
+cp -rf ../launcher/* $PACK/
 # Documents
 DOCS=$PACK/Misc/Docs
 cp -rf "../../ReadMe from Keripo.txt" $PACK/
@@ -77,8 +85,7 @@ for file in $FILES
 do
 	cp -rf ../compiling/$file $DOCS/
 done
-mkdir $DOCSORIG/roms
-cp -rf ../compiling/roms/readme.txt $DOCSORIG/roms/
+cp -rf ../compiling/roms/readme.txt $DOCS/readme-roms.txt
 cp -rf ../compiling/romlist.ipl.txt $PACK/Roms/
 # Archive documents
 cd $PACK/Misc

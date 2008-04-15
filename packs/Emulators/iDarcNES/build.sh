@@ -3,7 +3,7 @@
 # iDarcNES Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: April 14, 2008
+# Last updated: April 15, 2008
 #
 echo ""
 echo "==========================================="
@@ -27,7 +27,7 @@ cp -r ../src/full/* compiling/
 echo "> Symlinking libraries..."
 DIR=$(pwd)
 LIBSDIR=../../../../libs
-LIBS="hotdog"
+LIBS="hotdog ttk launch"
 for lib in $LIBS
 do
 	if [ ! -d $LIBSDIR/$lib ]; then
@@ -52,6 +52,13 @@ echo "> Copying over compiled files..."
 cd ..
 mkdir compiled
 cp -rf compiling/iDarcNES compiled/
+# Launch module
+echo "> Building ZeroLauncher launch module..."
+cp -rf ../src/launcher ./
+cd launcher
+export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
+make -f ../launch/launch.mk >> ../build.log
+cd ..
 # Creating release
 echo "> Creating 'release' folder..."
 tar -xf ../src/release.tar.gz
@@ -59,6 +66,7 @@ cd release
 # Files
 PACK=ZeroSlackr/opt/iDarcNES
 cp -rf ../compiled/iDarcNES $PACK/
+cp -rf ../launcher/* $PACK/
 # Documents
 DOCS=$PACK/Misc/Docs
 cp -rf "../../ReadMe from Keripo.txt" $PACK/

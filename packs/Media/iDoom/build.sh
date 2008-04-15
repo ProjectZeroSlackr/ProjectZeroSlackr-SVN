@@ -3,7 +3,7 @@
 # iDoom Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 5, 2008
+# Last updated: Apr 15, 2008
 #
 echo ""
 echo "==========================================="
@@ -28,6 +28,21 @@ echo "> Applying ZeroSlackr patches..."
 cd compiling
 patch -p0 -t -i ../../src/patches/iDoom-All.patch >> ../build.log
 cd ..
+# Symlink the libraries
+echo "> Symlinking libraries..."
+DIR=$(pwd)
+LIBSDIR=../../../../libs
+LIBS="ttk launch"
+for lib in $LIBS
+do
+	if [ ! -d $LIBSDIR/$lib ]; then
+		cd $LIBSDIR
+		echo "  - Building "$lib"..."
+		./src/$lib.sh
+		cd $DIR
+	fi
+	ln -s $LIBSDIR/$lib ./
+done
 # Compiling
 echo "> Compiling..."
 echo "  Note: All warnings/errors here will"
@@ -47,6 +62,13 @@ cd ..
 mkdir compiled
 cp -rf compiling/iDoom compiled/
 cp -rf compiling/iFreeDoom compiled/
+# Launch module
+echo "> Building ZeroLauncher launch module..."
+cp -rf ../src/launcher ./
+cd launcher
+export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
+make -f ../launch/launch.mk >> ../build.log
+cd ..
 # Creating release
 echo "> Creating 'release' folder..."
 unzip -q ../src/orig/iDoom1_3.zip
@@ -60,6 +82,7 @@ cp -rf ../compiled/iFreeDoom $PACK/
 cp -rf ../iDoom/doom1.wad $PACK/IWADs/
 cp -rf ../iDoom/keys.key $PACK/Conf/
 mv -f ../freedm-0.6/freedm.wad $PACK/IWADs/
+cp -rf ../launcher/* $PACK/
 # Documents
 DOCS=$PACK/Misc/Docs
 cp -rf "../../ReadMe from Keripo.txt" $PACK/

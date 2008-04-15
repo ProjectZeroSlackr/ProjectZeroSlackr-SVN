@@ -1,4 +1,4 @@
-Last updated: April 4, 2008
+Last updated: April 15, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -10,8 +10,12 @@ original/ported software.
 
 == To do ==
 
+Misc:
+- Add a "Known Issues" section to "ReadMe from Keripo.txt"s
+- Port DSLinux stuff
+- Add RSVP to ZeroLauncher
+
 Fixes:
-- Add a "Known Issues" section (but not yet)
 - Encyclopodia module (waiting for Robert Bamler)
 - iDarcNES complete redo!!! (too many bugs to care about)
 
@@ -55,7 +59,9 @@ Attempt:
 - aalib
 
 To port:
+- DSLinux apps
 - BSD Games
 - Flite
 - dc
 - John the Ripper
+- Rockbox's UISimulator???

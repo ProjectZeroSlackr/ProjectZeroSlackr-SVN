@@ -3,7 +3,7 @@
 # ZeroLauncher Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 5, 2008
+# Last updated: Apr 14, 2008
 #
 echo ""
 echo "==========================================="
@@ -33,11 +33,8 @@ do
 	cp -rf compiling/modules/$module compiling/add-ons/
 done
 mv compiling/modules/Makefile compiling/add-ons/
-rm -rf compiling/modules/*
-mv compiling/launch-modules/* compiling/modules/
-mv compiling/add-ons/* compiling/modules/
-rm -rf compiling/launch-modules
-rm -rf compiling/add-ons
+rm -rf compiling/modules
+mv compiling/add-ons compiling/modules
 # Apply ZeroSlackr custom patches
 echo "> Applying ZeroSlackr patches..."
 cd compiling

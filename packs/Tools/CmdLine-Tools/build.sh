@@ -3,7 +3,7 @@
 # CmdLine-Tools Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 14, 2008
+# Last updated: Apr 15, 2008
 #
 echo ""
 echo "==========================================="
@@ -33,7 +33,7 @@ unzip -q ../src/orig/zip232.zip -d zip
 echo "> Symlinking libraries..."
 DIR=$(pwd)
 LIBSDIR=../../../../libs
-LIBS="bzip2 tar"
+LIBS="bzip2 tar launch"
 for lib in $LIBS
 do
 	if [ ! -d $LIBSDIR/$lib ]; then
@@ -109,6 +109,13 @@ cp -rf zip/zipnote compiled/
 cp -rf zip/zipsplit compiled/
 cp -rf bzip2/bzip2 compiled/
 cp -rf bzip2/bzip2recover compiled/
+# Launch module
+echo "> Building ZeroLauncher launch module..."
+cp -rf ../src/launcher ./
+cd launcher
+export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
+make -f ../launch/launch.mk >> ../build.log
+cd ..
 # Creating release
 echo "> Creating 'release' folder..."
 tar -xf ../src/release.tar.gz
@@ -117,6 +124,7 @@ cd release
 PACK=ZeroSlackr/opt/CmdLine-Tools
 USRBIN=ZeroSlackr/usr/bin
 cp -rf ../compiled/* $USRBIN/
+cp -rf ../launcher/* $PACK/
 # Documents
 # Too many original docs; done by hand
 cp -rf "../../ReadMe from Keripo.txt" $PACK/

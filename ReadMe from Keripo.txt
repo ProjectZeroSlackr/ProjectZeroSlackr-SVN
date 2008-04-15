@@ -1,4 +1,4 @@
-Last updated: Apr 5, 2008
+Last updated: Apr 15, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -64,7 +64,7 @@ or the sort, but if you that nice, feel free to via
 ZeroSlackr's SourceForge page. I myself have been working
 on this through my 2gb iPod nano (for which I also rely on
 soley for music as well) but I don't plan on buying a new
-iPod.
+iPod nor iPhone/iPod Touch.
 
 Either way, I hope you enjoy using ZeroSlackr and remember
 to leave a word of thanks somewhere or, better yet, help
@@ -85,24 +85,13 @@ Cygwin for Windows) and a bit of knowledge/common sense.
 
 Each pack will have a "build.sh" script. To compile the pack,
 all you need to "cd" to that directory and type "./build.sh"
-and sit back. Some packs also require ttk/hotdog libraries
-so make sure to also have those downloaded and compiled.
+and sit back. All packs also symlink the "ttk" and "launch"
+libraries for compiling the launch modules outside PZ2.
 If compiling goes smoothly and the echo'd output is all
 nice and smooth, you will find the compiled files in the new
 "build/release" folder already set up and ready to be added
 to the ZeroSlackr Framework. If there are issues, look at
 the "build/build.log" file.
-
-These scripts only compile the application itself, however.
-For a pack to be launchable from ZeroLauncher, a launch
-module is needed. Launch modules are special podzilla2 modules
-built for ZeroLauncher and all launch modules can be found in
-the ZeroLauncher src/mod folder. Thus, a ZeroSlackr pack
-requires that both the application and ZeroLauncher be built,
-then the application and launcher to be placed together as a
-pack (e.g. copy the content of ZeroLauncher's "build/release/
-ZeroSlackr/opt/$PACK" to the applications' "build/release/
-ZeroSlackr/opt/$PACK").
 
 For convenience I've also written "lump.sh", "clean.sh",
 "chmod-all.sh", and "rm-backups.sh" scripts. They can be
@@ -123,6 +112,5 @@ the "build.log" file). The "clean.sh" script, on the other
 hand, recursively enters each folder and removes the "build"
 folder. The exception to both of these scripts are the
 podzilla0 libraries (for which I have forgotten how to build
-and thus just have precompiled libraries) and the kernel
-(which will rarely need updating but takes a very long time
-to build).
+and thus just have precompiled libraries), the "launch"
+library, and packs that have the "SKIP.txt" file.

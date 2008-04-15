@@ -1,4 +1,4 @@
-Last updated: April 14, 2008
+Last updated: April 15, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,10 @@ original/ported software.
 
 
 == Changelog ==
+
+April 15, 2008
+- Launch modules compiled along with pack
+  instead of relying on ZeroLauncher
 
 April 14, 2008
 - Mass resorting!
