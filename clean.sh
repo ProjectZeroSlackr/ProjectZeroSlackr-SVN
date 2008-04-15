@@ -3,7 +3,7 @@
 # Auto-Cleaning Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 14, 2008
+# Last updated: Apr 15, 2008
 #
 echo ""
 echo "==========================================="
@@ -14,7 +14,7 @@ echo "         [ because I'm lazy ; ) ]"
 echo ""
 # lump
 SVNROOT=$(pwd)
-LUMP=$SVNROOT"_lump"
+LUMP=$SVNROOT"/_lump"
 if [ -d $LUMP ]; then
 	echo "> Removing "$LUMP"..."
 	rm -rf $LUMP
@@ -59,6 +59,7 @@ do
 	cd ..
 done
 # backups
+cd $SVNROOT
 ./rm-backups.sh
 # done
 echo ""

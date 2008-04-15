@@ -3,7 +3,7 @@
 # SBaGen Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 5, 2008
+# Last updated: Apr 15, 2008
 #
 echo ""
 echo "==========================================="
@@ -26,6 +26,21 @@ mv sbagen-1.4.4 compiling
 # Apply ZeroSlackr custom patches
 echo "> Applying ZeroSlackr patches..."
 cp -rf ../src/mod/* compiling/
+# Symlink the libraries
+echo "> Symlinking libraries..."
+DIR=$(pwd)
+LIBSDIR=../../../../libs
+LIBS="ttk launch"
+for lib in $LIBS
+do
+	if [ ! -d $LIBSDIR/$lib ]; then
+		cd $LIBSDIR
+		echo "  - Building "$lib"..."
+		./src/$lib.sh
+		cd $DIR
+	fi
+	ln -s $LIBSDIR/$lib ./
+done
 # Compiling
 echo "> Compiling..."
 cd compiling
@@ -41,6 +56,13 @@ if [ -e compiling/sbagen.elf.bflt ]; then
 else
 	cp -rf compiling/sbagen compiled/SBaGen
 fi
+# Launch module
+echo "> Building ZeroLauncher launch module..."
+cp -rf ../src/launcher ./
+cd launcher
+export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
+make -f ../launch/launch.mk >> ../build.log
+cd ..
 # Creating release
 echo "> Creating 'release' folder..."
 tar -xf ../src/release.tar.gz
@@ -49,6 +71,7 @@ cd release
 PACK=ZeroSlackr/opt/SBaGen
 cp -rf ../compiled/SBaGen $PACK/
 cp -rf ../compiling/examples/* $PACK/Beats/
+cp -rf ../launcher/* $PACK/
 # Documents
 DOCS=$PACK/Misc/Docs
 cp -rf "../../ReadMe from Keripo.txt" $PACK/

@@ -3,7 +3,7 @@
 # Encyclopodia Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 14, 2008
+# Last updated: Apr 15, 2008
 #
 echo ""
 echo "==========================================="
@@ -49,7 +49,7 @@ cd ..
 echo "> Symlinking libraries..."
 DIR=$(pwd)
 LIBSDIR=../../../../libs
-LIBS="bzip2 ttk"
+LIBS="bzip2 ttk launch"
 for lib in $LIBS
 do
 	if [ ! -d $LIBSDIR/$lib ]; then
@@ -89,6 +89,13 @@ rm -rf compiled/modules/*/.svn
 for file in compiled/modules/*/*.mod; do
 	mv $file $file.o
 done
+# Launch module
+echo "> Building ZeroLauncher launch module..."
+cp -rf ../src/launcher ./
+cd launcher
+export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
+make -f ../launch/launch.mk >> ../build.log
+cd ..
 # Creating release
 echo "> Creating 'release' folder..."
 tar -xf ../src/release.tar.gz
@@ -103,6 +110,7 @@ cp -rf ../compiled/Encyclopodia $PACK/
 cp -rf ../compiled/modules/* $PACK/Modules/
 #cp -rf ../fonts $PACK/Fonts
 cp -rf ../../src/libraries/ipodlinux-wiki-articles-2008-03-07.epodia $PACK/Library/
+cp -rf ../launcher/* $PACK/
 # Documents
 echo "> Copying over documents..."
 DOCS=$PACK/Misc/Docs
