@@ -1,5 +1,5 @@
 /*
- * Last updated: April 13, 2008
+ * Last updated: April 17, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -64,7 +64,7 @@ static PzWindow *load_file(const char *file)
 		case 1: snprintf(scaling, 8, "scale"); break;
 		case 2: snprintf(scaling, 8, "stretch"); break;
 	}
-	const char *const path = pz_module_get_datapath(module, "iGameGear");
+	const char *const path = pz_module_get_datapath(module, "../iGameGear");
 	const char *const cmd[] = {
 		"iGameGear", file,
 		"--fskip", frameskip,
@@ -88,7 +88,7 @@ static PzWindow *load_file_handler(ttk_menu_item * item)
 
 static PzWindow *browse_roms()
 {
-	const char *const path = pz_module_get_datapath(module, "Roms");
+	const char *const path = pz_module_get_datapath(module, "../Roms");
 	chdir(path);
 	return open_directory_title(path, "iGameGear Roms");
 }
@@ -109,7 +109,7 @@ static void init_launch()
 {
 	module = pz_register_module("iGameGear", cleanup);
 	
-	config = pz_load_config(pz_module_get_datapath(module,"Conf/Launch.conf"));
+	config = pz_load_config(pz_module_get_datapath(module,"../Conf/Launch.conf"));
 	if (!pz_get_setting(config, FRAMESKIP)) pz_set_int_setting (config, FRAMESKIP, 5);
 	if (!pz_get_setting(config, LANG)) pz_set_int_setting (config, LANG, 0);
 	if (!pz_get_setting(config, SCALING)) pz_set_int_setting (config, SCALING, 0);

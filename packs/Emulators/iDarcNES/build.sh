@@ -3,7 +3,7 @@
 # iDarcNES Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: April 15, 2008
+# Last updated: April 17, 2008
 #
 echo ""
 echo "==========================================="
@@ -66,7 +66,8 @@ cd release
 # Files
 PACK=ZeroSlackr/opt/iDarcNES
 cp -rf ../compiled/iDarcNES $PACK/
-cp -rf ../launcher/* $PACK/
+mkdir $PACK/Launch
+cp -rf ../launcher/* $PACK/Launch/
 # Documents
 DOCS=$PACK/Misc/Docs
 cp -rf "../../ReadMe from Keripo.txt" $PACK/

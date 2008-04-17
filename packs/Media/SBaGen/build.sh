@@ -3,7 +3,7 @@
 # SBaGen Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 15, 2008
+# Last updated: Apr 17, 2008
 #
 echo ""
 echo "==========================================="
@@ -71,7 +71,8 @@ cd release
 PACK=ZeroSlackr/opt/SBaGen
 cp -rf ../compiled/SBaGen $PACK/
 cp -rf ../compiling/examples/* $PACK/Beats/
-cp -rf ../launcher/* $PACK/
+mkdir $PACK/Launch
+cp -rf ../launcher/* $PACK/Launch/
 # Documents
 DOCS=$PACK/Misc/Docs
 cp -rf "../../ReadMe from Keripo.txt" $PACK/

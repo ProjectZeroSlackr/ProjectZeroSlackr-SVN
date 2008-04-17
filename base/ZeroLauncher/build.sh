@@ -3,7 +3,7 @@
 # ZeroLauncher Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 14, 2008
+# Last updated: Apr 17, 2008
 #
 echo ""
 echo "==========================================="
@@ -102,9 +102,10 @@ for module in $PATCHED
 do
 	cp -rf ../compiling/PATCHED.txt $PACK/Add-ons/$module/
 done
-echo "  Note: For non-default added ZeroLauncher"
-echo "  addons, you need to manually move their"
-echo "  folders to 'ZeroLauncher/Add-ons'."
+mkdir $PACK/Launch
+mv $PACK/ZeroLauncher.zl $PACK/Launch
+mv $PACK/PackInfo $PACK/Launch
+mv $PACK/FastLaunch.sh $PACK/Launch
 # Documents
 echo "> Copying over documents..."
 DOCS=$PACK/Misc/Docs

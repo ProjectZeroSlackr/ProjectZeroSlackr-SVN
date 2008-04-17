@@ -1,5 +1,5 @@
 /*
- * Last updated: March 14, 2008
+ * Last updated: March 17, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -45,7 +45,7 @@ static int check_ext(const char* file)
 
 static PzWindow *load_file_iDoom(const char *file)
 {
-	const char *const path = pz_module_get_datapath(module, "iDoom");
+	const char *const path = pz_module_get_datapath(module, "../iDoom");
 	const char *const cmd[] = {"iDoom", "-file", file, NULL};
 	pz_execv(
 		path,
@@ -56,7 +56,7 @@ static PzWindow *load_file_iDoom(const char *file)
 
 static PzWindow *load_file_iFreeDoom(const char *file)
 {
-	const char *const path = pz_module_get_datapath(module, "iFreeDoom");
+	const char *const path = pz_module_get_datapath(module, "../iFreeDoom");
 	const char *const cmd[] = {"iFreeDoom", "-file", file, NULL};
 	pz_execv(
 		path,
@@ -100,7 +100,7 @@ static PzWindow *load_file_handler_iFreeDoom(ttk_menu_item * item)
 
 static PzWindow *browse_doom_pwads()
 {
-	const char *const path = pz_module_get_datapath(module, "PWADs/Doom");
+	const char *const path = pz_module_get_datapath(module, "../PWADs/Doom");
 	chdir(path);
 	pz_set_int_setting (config, LAUNCHER, 0);
 	return open_directory_title(path, "Doom PWADs");
@@ -108,7 +108,7 @@ static PzWindow *browse_doom_pwads()
 
 static PzWindow *browse_doom2_pwads()
 {
-	const char *const path = pz_module_get_datapath(module, "PWADs/DoomII");
+	const char *const path = pz_module_get_datapath(module, "../PWADs/DoomII");
 	chdir(path);
 	pz_set_int_setting (config, LAUNCHER, 1);
 	return open_directory_title(path, "Doom II PWADs");
@@ -130,7 +130,7 @@ static void init_launch()
 {
 	module = pz_register_module("iDoom", cleanup);
 
-	config = pz_load_config(pz_module_get_datapath(module, "Conf/Launcher.conf"));
+	config = pz_load_config(pz_module_get_datapath(module, "../Conf/Launcher.conf"));
 	if (!pz_get_setting(config, LAUNCHER))
 		pz_set_int_setting (config, LAUNCHER, 0);
 

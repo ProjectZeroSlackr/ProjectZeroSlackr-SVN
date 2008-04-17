@@ -3,7 +3,7 @@
 # iDoom Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 15, 2008
+# Last updated: Apr 17, 2008
 #
 echo ""
 echo "==========================================="
@@ -82,7 +82,8 @@ cp -rf ../compiled/iFreeDoom $PACK/
 cp -rf ../iDoom/doom1.wad $PACK/IWADs/
 cp -rf ../iDoom/keys.key $PACK/Conf/
 mv -f ../freedm-0.6/freedm.wad $PACK/IWADs/
-cp -rf ../launcher/* $PACK/
+mkdir $PACK/Launch
+cp -rf ../launcher/* $PACK/Launch/
 # Documents
 DOCS=$PACK/Misc/Docs
 cp -rf "../../ReadMe from Keripo.txt" $PACK/

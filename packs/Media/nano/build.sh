@@ -3,7 +3,7 @@
 # nano Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 15, 2008
+# Last updated: Apr 17, 2008
 #
 echo ""
 echo "==========================================="
@@ -53,7 +53,8 @@ PACK=ZeroSlackr/opt/nano
 cp -rf ../../src/hex/nano $PACK/
 cp -rf ../../src/mod/nano-soundtrack.mp3 $PACK/Misc/
 cp -rf ../nano/data $PACK/Data
-cp -rf ../launcher/* $PACK/
+mkdir $PACK/Launch
+cp -rf ../launcher/* $PACK/Launch/
 # Documents
 DOCS=$PACK/Misc/Docs
 cp -rf "../../ReadMe from Keripo.txt" $PACK/

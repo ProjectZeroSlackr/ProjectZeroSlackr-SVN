@@ -1,5 +1,5 @@
 /*
- * Last updated: April 1, 2008
+ * Last updated: April 17, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -62,7 +62,7 @@ static int check_ext_all(const char* file)
 
 static PzWindow *load_file(const char *file)
 {
-	const char *const path = pz_module_get_datapath(module, "iDarcNES");
+	const char *const path = pz_module_get_datapath(module, "../iDarcNES");
 	if (sound == 1) {
 		const char *const cmd[] = {"iDarcNES", file, NULL};
 		pz_execv(
@@ -88,7 +88,7 @@ static PzWindow *load_file_handler(ttk_menu_item * item)
 
 static PzWindow *browse_roms()
 {
-	const char *const path = pz_module_get_datapath(module, "Roms");
+	const char *const path = pz_module_get_datapath(module, "../Roms");
 	chdir(path);
 	return open_directory_title(path, "iDarcNES Roms");
 }

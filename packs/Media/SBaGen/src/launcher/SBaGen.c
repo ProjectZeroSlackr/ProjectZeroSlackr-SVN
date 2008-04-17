@@ -1,5 +1,5 @@
 /*
- * Last updated: April 4, 2008
+ * Last updated: April 17, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -48,7 +48,7 @@ static void warning()
 static PzWindow *load_file(const char *file)
 {
 	warning();
-	const char *const path = pz_module_get_datapath(module, "SBaGen");
+	const char *const path = pz_module_get_datapath(module, "../SBaGen");
 	const char *const cmd[] = {"SBaGen", file, NULL};
 	pz_set_backlight_timer(-2); // Save batteries
 	pz_execv(
@@ -66,7 +66,7 @@ static PzWindow *load_file_handler(ttk_menu_item * item)
 
 static PzWindow *browse_beats()
 {
-	const char *const path = pz_module_get_datapath(module, "Beats");
+	const char *const path = pz_module_get_datapath(module, "../Beats");
 	chdir(path);
 	return open_directory_title(path, "Binaural Beats");
 }

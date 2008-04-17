@@ -3,7 +3,7 @@
 # CmdLine-Tools Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 15, 2008
+# Last updated: Apr 17, 2008
 #
 echo ""
 echo "==========================================="
@@ -33,7 +33,7 @@ unzip -q ../src/orig/zip232.zip -d zip
 echo "> Symlinking libraries..."
 DIR=$(pwd)
 LIBSDIR=../../../../libs
-LIBS="bzip2 tar launch"
+LIBS="bzip2 tar ttk launch"
 for lib in $LIBS
 do
 	if [ ! -d $LIBSDIR/$lib ]; then
@@ -122,9 +122,10 @@ tar -xf ../src/release.tar.gz
 cd release
 # Files
 PACK=ZeroSlackr/opt/CmdLine-Tools
-USRBIN=ZeroSlackr/usr/bin
-cp -rf ../compiled/* $USRBIN/
-cp -rf ../launcher/* $PACK/
+mkdir $PACK/Bin
+cp -rf ../compiled/* $PACK/Bin/
+mkdir $PACK/Launch
+cp -rf ../launcher/* $PACK/Launch/
 # Documents
 # Too many original docs; done by hand
 cp -rf "../../ReadMe from Keripo.txt" $PACK/

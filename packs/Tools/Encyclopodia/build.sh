@@ -3,7 +3,7 @@
 # Encyclopodia Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 15, 2008
+# Last updated: Apr 17, 2008
 #
 echo ""
 echo "==========================================="
@@ -110,7 +110,8 @@ cp -rf ../compiled/Encyclopodia $PACK/
 cp -rf ../compiled/modules/* $PACK/Modules/
 #cp -rf ../fonts $PACK/Fonts
 cp -rf ../../src/libraries/ipodlinux-wiki-articles-2008-03-07.epodia $PACK/Library/
-cp -rf ../launcher/* $PACK/
+mkdir $PACK/Launch
+cp -rf ../launcher/* $PACK/Launch/
 # Documents
 echo "> Copying over documents..."
 DOCS=$PACK/Misc/Docs

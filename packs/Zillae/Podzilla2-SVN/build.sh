@@ -3,7 +3,7 @@
 # Podzilla2-SVN Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 15, 2008
+# Last updated: Apr 17, 2008
 #
 echo ""
 echo "==========================================="
@@ -132,7 +132,8 @@ for module in $TOOLS
 do
 	mv $USRLIB/Unsorted/$module $USRLIB/Tools/
 done
-cp -rf ../launcher/* $PACK/
+mkdir $PACK/Launch
+cp -rf ../launcher/* $PACK/Launch/
 # Documents
 echo "> Copying over documents..."
 DOCS=$PACK/Misc/Docs
