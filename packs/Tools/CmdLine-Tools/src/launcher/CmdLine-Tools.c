@@ -1,5 +1,5 @@
 /*
- * Last updated: March 28, 2008
+ * Last updated: Apr 17, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -24,6 +24,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 extern void pz_execv();
 extern int check_file_ext();
@@ -74,7 +75,10 @@ static PzWindow *zip(const char *file)
 	char archive[strlen(f)+5];
 	sprintf(archive, "%s.zip", f);
 	const char *const cmd[] = {"zip", "-r", archive, f, NULL};
-	pz_execv("/usr/bin/zip", (char *const *)cmd);
+	pz_execv(
+		pz_module_get_datapath(module, "../Bin/zip"),
+		(char *const *)cmd
+		);
 	return NULL;
 }
 static PzWindow *load_file_handler_zip(ttk_menu_item * item)
@@ -88,7 +92,10 @@ static PzWindow *unzip(const char *file)
 	const char *d = get_dirname(file);
 	chdir(d);
 	const char *const cmd[] = {"unzip", "-o", f, NULL};
-	pz_execv("/usr/bin/unzip", (char *const *)cmd);
+	pz_execv(
+		pz_module_get_datapath(module, "../Bin/unzip"),
+		(char *const *)cmd
+		);
 	return NULL;
 }
 static PzWindow *load_file_handler_unzip(ttk_menu_item * item)
@@ -102,7 +109,10 @@ static PzWindow *unrar(const char *file)
 	const char *d = get_dirname(file);
 	chdir(d);
 	const char *const cmd[] = {"unrar", "x", "-o+", "-y", f, NULL};
-	pz_execv("/usr/bin/unrar", (char *const *)cmd);
+	pz_execv(
+		pz_module_get_datapath(module, "../Bin/unrar"),
+		(char *const *)cmd
+		);
 	return NULL;
 }
 static PzWindow *load_file_handler_unrar(ttk_menu_item * item)
@@ -118,7 +128,10 @@ static PzWindow *tar_c(const char *file)
 	char archive[strlen(f)+5];
 	sprintf(archive,"%s.tar", f);
 	const char *const cmd[] = {"tar", "-cf", archive, f, NULL};
-	pz_execv("/usr/bin/tar", (char *const *)cmd);
+	pz_execv(
+		pz_module_get_datapath(module, "../Bin/tar"),
+		(char *const *)cmd
+		);
 	return NULL;
 }
 static PzWindow *load_file_handler_tar_c(ttk_menu_item * item)
@@ -132,7 +145,10 @@ static PzWindow *tar_d(const char *file)
 	const char *d = get_dirname(file);
 	chdir(d);
 	const char *const cmd[] = {"tar", "-xf", f, NULL};
-	pz_execv("/usr/bin/tar", (char *const *)cmd);
+	pz_execv(
+		pz_module_get_datapath(module, "../Bin/tar"),
+		(char *const *)cmd
+		);
 	return NULL;
 }
 static PzWindow *load_file_handler_tar_d(ttk_menu_item * item)
@@ -146,7 +162,10 @@ static PzWindow *bzip2_c(const char *file)
 	const char *d = get_dirname(file);
 	chdir(d);
 	const char *const cmd[] = {"bzip2", "-vz9", f, NULL};
-	pz_execv("/usr/bin/bzip2", (char *const *)cmd);
+	pz_execv(
+		pz_module_get_datapath(module, "../Bin/bzip2"),
+		(char *const *)cmd
+		);
 	return NULL;
 }
 static PzWindow *load_file_handler_bzip2_c(ttk_menu_item * item)
@@ -160,7 +179,10 @@ static PzWindow *bzip2_d(const char *file)
 	const char *d = get_dirname(file);
 	chdir(d);
 	const char *const cmd[] = {"bzip2", "-vd", f, NULL};
-	pz_execv("/usr/bin/bzip2", (char *const *)cmd);
+	pz_execv(
+		pz_module_get_datapath(module, "../Bin/bzip2"),
+		(char *const *)cmd
+		);
 	return NULL;
 }
 static PzWindow *load_file_handler_bzip2_d(ttk_menu_item * item)
@@ -174,7 +196,10 @@ static PzWindow *gzip_c(const char *file)
 	const char *d = get_dirname(file);
 	chdir(d);
 	const char *const cmd[] = {"gzip", "-v9", f, NULL};
-	pz_execv("/usr/bin/gzip", (char *const *)cmd);
+	pz_execv(
+		pz_module_get_datapath(module, "../Bin/gzip"),
+		(char *const *)cmd
+		);
 	return NULL;
 }
 static PzWindow *load_file_handler_gzip_c(ttk_menu_item * item)
@@ -188,7 +213,10 @@ static PzWindow *gzip_d(const char *file)
 	const char *d = get_dirname(file);
 	chdir(d);
 	const char *const cmd[] = {"gzip", "-vd", f, NULL};
-	pz_execv("/usr/bin/gzip", (char *const *)cmd);
+	pz_execv(
+		pz_module_get_datapath(module, "../Bin/gzip"),
+		(char *const *)cmd
+		);
 	return NULL;
 }
 static PzWindow *load_file_handler_gzip_d(ttk_menu_item * item)
@@ -199,6 +227,14 @@ static PzWindow *load_file_handler_gzip_d(ttk_menu_item * item)
 static void init_launch()
 {
 	module = pz_register_module("CmdLine-Tools", 0);
+	
+	char path[256];
+	sprintf(
+		path, "%s:%s",
+		getenv("PATH"),
+		pz_module_get_datapath(module, "../Bin")
+		);	
+	setenv("PATH", path, 1);
 	
 	browser_extension_zip.name = N_("Compress (zip)");
 	browser_extension_zip.makesub = load_file_handler_zip;

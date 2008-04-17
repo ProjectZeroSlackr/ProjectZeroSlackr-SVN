@@ -1,5 +1,5 @@
 /*
- * Last updated: March 14, 2008
+ * Last updated: March 17, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -60,7 +60,7 @@ static int check_ext(const char* file)
 
 static PzWindow *load_file(const char *file)
 {
-	const char *const path = pz_module_get_datapath(module, "XMP");
+	const char *const path = pz_module_get_datapath(module, "../XMP");
 	const char *const cmd[] = {"XMP", file, NULL};
 	pz_execv(
 		path,
@@ -77,7 +77,7 @@ static PzWindow *load_file_handler(ttk_menu_item *item)
 
 static PzWindow *browse_mods()
 {
-	const char *const path = pz_module_get_datapath(module, "Mods");
+	const char *const path = pz_module_get_datapath(module, "../Mods");
 	chdir(path);
 	return open_directory_title(path, "XMP Modules");
 }

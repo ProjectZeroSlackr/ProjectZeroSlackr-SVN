@@ -1,5 +1,5 @@
 /*
- * Last updated: March 30, 2008
+ * Last updated: Apr 17, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -39,7 +39,7 @@ static int check_ext(const char* file)
 
 static PzWindow *load_file(const char *file)
 {
-	const char *const path = pz_module_get_datapath(module, "MV_Player-CLI");
+	const char *const path = pz_module_get_datapath(module, "../MV_Player-CLI");
 	const char *const cmd[] = {"MV_Player-CLI", file, NULL};
 	pz_execv(
 		path,
@@ -56,7 +56,7 @@ static PzWindow *load_file_handler(ttk_menu_item * item)
 
 static PzWindow *browse_vids()
 {
-	const char *const path = pz_module_get_datapath(module, "Videos");
+	const char *const path = pz_module_get_datapath(module, "../Videos");
 	chdir(path);
 	return open_directory_title(path, "MV Player Videos");
 }

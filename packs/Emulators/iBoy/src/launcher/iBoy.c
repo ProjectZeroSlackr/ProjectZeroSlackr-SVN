@@ -1,5 +1,5 @@
 /*
- * Last updated: March 14, 2008
+ * Last updated: March 17, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -52,7 +52,7 @@ static PzWindow *load_file(const char *file)
 	const char *f = get_filename(file);
 	const char *d = get_dirname(file);
 	chdir(d);
-	const char *const path = pz_module_get_datapath(module, "iBoy");
+	const char *const path = pz_module_get_datapath(module, "../iBoy");
 	const char *const cmd[] = {"iBoy", f, d, NULL};
 	pz_execv(
 		path,
@@ -69,7 +69,7 @@ static PzWindow *load_file_handler(ttk_menu_item * item)
 
 static PzWindow *browse_roms()
 {
-	const char *const path = pz_module_get_datapath(module, "Roms");
+	const char *const path = pz_module_get_datapath(module, "../Roms");
 	chdir(path);
 	return open_directory_title(path, "iBoy Roms");
 }

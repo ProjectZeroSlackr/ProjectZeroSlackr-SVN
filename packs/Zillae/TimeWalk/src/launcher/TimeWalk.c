@@ -1,5 +1,5 @@
 /*
- * Last updated: March 14, 2008
+ * Last updated: March 17, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -38,9 +38,10 @@ static char path[256];
 
 static PzWindow *exec_zilla(const char *folder, const char *binary)
 {
-	chdir(pz_module_get_datapath(module, folder));
-	sprintf(path, "%s/%s", folder, binary);
-	pz_exec(pz_module_get_datapath(module, path));
+	snprintf(path, 256, "%s../%s/", pz_module_get_datapath(module, ""), folder);
+	chdir(path);
+	strcat(path, binary);
+	pz_exec(path);
 	return NULL;
 }
 

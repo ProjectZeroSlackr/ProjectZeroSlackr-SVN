@@ -1,5 +1,5 @@
 /*
- * Last updated: March 14, 2008
+ * Last updated: March 17, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -44,7 +44,7 @@ static PzWindow *load_romset(const char *romset, const char *files[], int num)
 		}
 	}
 	chdir((const char *)pz_module_get_datapath(module, ""));
-	const char *const path = pz_module_get_datapath(module, "iPodMAME");
+	const char *const path = pz_module_get_datapath(module, "../iPodMAME");
 	const char *const cmd[] = {"iPodMAME", romset, NULL};
 	pz_execv(
 		path,
@@ -315,7 +315,7 @@ static void init_launch()
 {
 	module = pz_register_module("iPodMAME", 0);
 
-	sprintf(romdir, "%s", pz_module_get_datapath(module, "Roms"));
+	sprintf(romdir, "%s", pz_module_get_datapath(module, "../Roms"));
 	
 	pz_menu_add_stub_group("/Emulators/iPodMAME", "Arcade");
 	pz_menu_add_action_group("/Emulators/iPodMAME/FastLaunch", "Launching", fastlaunch);

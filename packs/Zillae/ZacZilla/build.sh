@@ -3,7 +3,7 @@
 # ZacZilla Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 15, 2008
+# Last updated: Apr 17, 2008
 #
 echo ""
 echo "==========================================="
@@ -73,7 +73,8 @@ cd release
 # Files
 PACK=ZeroSlackr/opt/ZacZilla
 cp -rf ../compiled/ZacZilla $PACK/ZacZilla
-cp -rf ../launcher/* $PACK/
+mkdir $PACK/Launch
+cp -rf ../launcher/* $PACK/Launch/
 # Documents
 cp -rf "../../ReadMe from Keripo.txt" $PACK/
 cp -rf ../../License.txt $PACK/

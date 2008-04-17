@@ -3,7 +3,7 @@
 # iPodMAME Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 15, 2008
+# Last updated: Apr 17, 2008
 #
 echo ""
 echo "==========================================="
@@ -74,7 +74,8 @@ cp -rf ../compiling/ipodmame.ini $PACK/Conf/
 cp -rf ../compiling/roms/hellopac/* $PACK/Roms/hellopac/
 cp -rf ../compiling/roms/matrxpac/* $PACK/Roms/matrxpac/
 unzip -o -q ../../src/orig/aa.zip -d $PACK/Roms/aarmada/
-cp -rf ../launcher/* $PACK/
+mkdir $PACK/Launch
+cp -rf ../launcher/* $PACK/Launch/
 # Documents
 DOCS=$PACK/Misc/Docs
 cp -rf "../../ReadMe from Keripo.txt" $PACK/

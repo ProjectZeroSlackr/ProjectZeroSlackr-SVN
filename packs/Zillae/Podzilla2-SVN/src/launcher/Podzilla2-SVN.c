@@ -1,5 +1,5 @@
 /*
- * Last updated: March 14, 2008
+ * Last updated: Apr 17, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -85,7 +85,7 @@ static void init_launch()
 {
 	module = pz_register_module ("Podzilla2-SVN", cleanup);
 
-	config = pz_load_config(pz_module_get_datapath(module, "Conf/Hide.conf"));
+	config = pz_load_config(pz_module_get_datapath(module, "../Conf/Hide.conf"));
 	if (!pz_get_setting(config, HIDE_ALL)) pz_set_int_setting (config, HIDE_ALL, 0);
 	if (!pz_get_setting(config, HIDE_ARCADE)) pz_set_int_setting (config, HIDE_ARCADE, 0);
 	if (!pz_get_setting(config, HIDE_DEV)) pz_set_int_setting (config, HIDE_DEV, 0);
