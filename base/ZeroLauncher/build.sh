@@ -102,10 +102,6 @@ for module in $PATCHED
 do
 	cp -rf ../compiling/PATCHED.txt $PACK/Add-ons/$module/
 done
-mkdir $PACK/Launch
-mv $PACK/ZeroLauncher.zl $PACK/Launch
-mv $PACK/PackInfo $PACK/Launch
-mv $PACK/FastLaunch.sh $PACK/Launch
 # Documents
 echo "> Copying over documents..."
 DOCS=$PACK/Misc/Docs

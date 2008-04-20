@@ -46,6 +46,7 @@ echo "> Compiling..."
 cd compiling
 export PATH=/usr/local/bin:$PATH
 rm -rf sbagen
+chmod ugo+rwx ./mk-ipod
 ./mk-ipod >> ../build.log
 # Copy over compiled file
 echo "> Copying over compiled files..."

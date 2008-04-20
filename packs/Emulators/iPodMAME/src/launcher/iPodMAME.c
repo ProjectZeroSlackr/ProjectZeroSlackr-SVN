@@ -1,5 +1,5 @@
 /*
- * Last updated: March 17, 2008
+ * Last updated: March 18, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -43,7 +43,7 @@ static PzWindow *load_romset(const char *romset, const char *files[], int num)
 			return NULL;
 		}
 	}
-	chdir((const char *)pz_module_get_datapath(module, ""));
+	chdir((const char *)pz_module_get_datapath(module, "../"));
 	const char *const path = pz_module_get_datapath(module, "../iPodMAME");
 	const char *const cmd[] = {"iPodMAME", romset, NULL};
 	pz_execv(

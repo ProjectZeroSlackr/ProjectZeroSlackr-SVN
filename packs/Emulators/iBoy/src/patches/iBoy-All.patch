@@ -33,11 +33,6 @@ diff -ur menu/menu.c menu/menu.c
  	c = malloc(strlen(d) + strlen(r) + 2);
  	strcpy(c, d);
  	strcat(c, r);
--
-+	
- 	strcpy(c + strlen(c) - (3+(r[strlen(r)-1] == 'c')), ".cfg");
- 	config_save(c);
- 	free(c);
 @@ -204,7 +202,7 @@
  
  	config_set_s("romfile", p);
@@ -55,3 +50,14 @@ diff -ur menu/menu.c menu/menu.c
  	strcpy(c, d);
  	strcat(c, p);
  	strcpy(c + strlen(c) - (3+(p[strlen(p)-1] == 'c')), ".cfg");
+@@ -226,7 +224,8 @@
+ void do_reset()
+ {
+ 	if(config_isempty_s("romfile")) return;
+-	emu_reload();
++	emu_reset();
+ 	ireturn = 1;
++	cop_begin();
+ }
+ 
+ 

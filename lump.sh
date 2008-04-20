@@ -1,9 +1,10 @@
 #!/bin/sh
+./chmod-all.sh >> /dev/null 2>&1
 #
 # Auto-Lumping Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 14, 2008
+# Last updated: Apr 17, 2008
 #
 echo ""
 echo "==========================================="
@@ -83,12 +84,21 @@ do
 	done
 	cd ..
 done
+# libs cleanup
+echo "> Cleaning up lib..."
+cd $SVNROOT
+cd libs
+./clean.sh
 # .svn cleanup
 echo "> Cleaning up .svn files..."
 cd $LUMP
 sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
+# permissions
+echo "> Setting all permissions..."
 cd $SVNROOT
+chmod -fR ugo+rwx $LUMP/*
 # done
+cd $SVNROOT
 echo ""
 echo ""
 echo "==========================================="
