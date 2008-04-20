@@ -3,7 +3,7 @@
 # Loader2 & iPodPatcher Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 31, 2008
+# Last updated: Apr 17, 2008
 #
 echo ""
 echo "==========================================="
@@ -81,8 +81,10 @@ cd ..
 tar -xf ../src/release.tar.gz
 cd release
 # Files
+cp -rf ../../src/mod/* ./
 cp -rf ../loader2/compiled/* ./
 cp -rf ../ipodpatcher/compiled/* ./
+chmod -fR ugo+rwx ./*
 # Documents
 DOCS=boot/docs/loader2
 cp -rf "../../ReadMe from Keripo.txt" "$DOCS/ReadMe from Keripo.txt"

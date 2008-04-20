@@ -37,6 +37,19 @@ for library in ../../../../libs/pz0/libs/*
 do
 	ln -s $library ./
 done
+DIR=$(pwd)
+LIBSDIR=../../../../libs
+LIBS="ttk launch"
+for lib in $LIBS
+do
+	if [ ! -d $LIBSDIR/$lib ]; then
+		cd $LIBSDIR
+		echo "  - Building "$lib"..."
+		./src/$lib.sh
+		cd $DIR
+	fi
+	ln -s $LIBSDIR/$lib ./
+done
 # Compiling
 echo "> Compiling..."
 cd compiling
@@ -55,6 +68,13 @@ if [ -e compiling/podzilla.elf.bflt ]; then
 else
 	cp -rf compiling/podzilla compiled/Podzilla0-SVN
 fi
+# Launch module
+echo "> Building ZeroLauncher launch module..."
+cp -rf ../src/launcher ./
+cd launcher
+export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
+make -f ../launch/launch.mk >> ../build.log
+cd ..
 # Creating release
 echo "> Creating 'release' folder..."
 tar -xf ../src/release.tar.gz
