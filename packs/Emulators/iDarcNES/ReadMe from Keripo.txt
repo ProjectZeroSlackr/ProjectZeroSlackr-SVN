@@ -1,4 +1,4 @@
-Last updated: April 1, 2008
+Last updated: Apr 23, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -49,13 +49,13 @@ Original:
 - Source: Wiki upload
 - Link:
   http://ipodlinux.org/Image:Darcnes.zip
-- Date: March 18, 2008
+- Date: Mar 18, 2008
 - Version: ????
 
 ZS Version:
 - Modder: Keripo
 - Type: ZS Mod and Recompile
-- Date: April 1, 2008
+- Date: Apr 23, 2008
 - Version: B X.X
 
 Modifications:

@@ -1,8 +1,8 @@
 /*
- * Last updated: March 14, 2008
+ * Last updated: Apr 27, 2008
  * ~Keripo
  *  
- * Copyright (C) 2007 Keripo
+ * Copyright (C) 2008 Keripo
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,16 +19,17 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "pz.h"
-
-extern PzWindow *new_terminal_window_with();
+#include "browser-ext.h"
 
 static PzModule *module;
 
 static PzWindow *new_picalc_window(void)
 {
 	const char *const cmd[] = {"Terminal.sh", NULL};
-	return new_terminal_window_with(pz_module_get_datapath(module, "Terminal.sh"), (char *const *)cmd);
+	return new_terminal_window_with(
+		"/opt/Tools/PiCalc/Launch/Terminal.sh",
+		(char *const *)cmd
+	);
 }
 
 static void init_launch() 

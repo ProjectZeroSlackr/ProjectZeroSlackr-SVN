@@ -1,4 +1,4 @@
-Last updated: Apr 5, 2008
+Last updated: Apr 27, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -26,14 +26,22 @@ Usage:
 - Since ZeroSlackr uses a userland image instead of a
   partition, the actual, full Linux partition is not
   easily accessible.
-- Since /usr is symlinked, any binaries placed in /usr/bin
-  will also be accessible just like binaries in /bin.
 - Symlinks were made such that modification of the userland
-  is not needed; if you do need to modify/access the userland
-  however, you can do so via the old, depreciated "start" file
-  method (see http://ipodlinux.org/Start_File) or
-  loop-mounting the image on Linux/Mac OS X (see
+  is not needed. All directories under the "/ZeroSlackr"
+  folder are symlinked to their counterparts (with the
+  exception of "/etc" as only "/etc/rc.d" is symlinked rather
+  than all of "/etc").
+- If you do need to modify/access the userland however, you
+  can do so via the old, depreciated "start" file method
+  (see http://ipodlinux.org/Start_File) or loop-mounting
+  the image on Linux/Mac OS X (see
   "/boot/docs/userland/Loop-mount Instructions.txt").
+- Since "/usr" is symlinked, any binaries placed in "/usr/bin"
+  will also be accessible just like binaries in "/bin".
+- New schemes should be placed into "/usr/share/schemes" and
+  new fonts should be placed into "/usr/share/fonts".
+- For path length reasons, all PZ2 module configurations are
+  saved in "/usr/local/etc".
 
 
 Original:
@@ -42,13 +50,13 @@ Original:
 - Link:
   http://ipodlinux.org/forums/viewtopic.php?t=23450 (thread)
   http://winxblog.com/iPodLinuxManagerbeta.zip
-- Date: March 11, 2007?
+- Date: Mar 11, 2007?
 - Version: 1.1
 
 ZS Version:
 - Modder: Keripo
 - Type: Recreated (except busybox binary)
-- Date: March 19, 2008
+- Date: Apr 27, 2008
 - Version: B X.X
 
 Modifications:
@@ -57,18 +65,24 @@ Modifications:
   - busybox binary from DataGhost
   - modified "pre-rc" file
 - modified loop-mount userland:
-  (see changes applied by /src/mod/*)
+  (see /boot/docs/userland/Mod/*)
   - modified rc file 
   - getLoader2AutoExec
   - modified Podzilla0-Lite
   - symlinked podzilla, zerolauncher and mpd binaries
   - symlinks:
+	/bin/mpd -> /opt/Base/MPD/MPD-ke
+	/bin/podzilla -> /bin/zerolauncher
+	/bin/zerolauncher
+	  -> /opt/Base/ZeroLauncher/ZeroLauncher
 	/root -> /mnt/ZeroSlackr
 	/opt -> /root/opt
 	/usr -> /root/usr
 	/etc/rc.d -> /root/etc/rc.d
   - added fonts:
     (separate "font.lst" file for PZ0 based zillae)
+	- Encyclopodia:
+	  http://sourceforge.net/project/showfiles.php?group_id=146648
     - Snap: http://www.dansfloyd.com/floydzilla.html
     - other fonts from wiki scheme downloads
   - added schemes:
@@ -77,10 +91,6 @@ Modifications:
     - Halloween by Keripo (won't fix)
     - schemes still on scheme page (has version #s)
     - schemes uploaded to wiki (has no version #, some repacked)
-
-Modifying the Userland:
-- see src/images/Loop-mount Instructions.txt
-  for creation and modification instructions.
 
 To do:
 - fix up own schemes / make more

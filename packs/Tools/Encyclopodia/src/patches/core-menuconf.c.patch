@@ -7,7 +7,7 @@ Index: core/menuconf.c
  
  #ifdef IPOD
 -#define MENUCONF_CONFIG_FILE "/etc/podzilla/menu.conf"
-+#define MENUCONF_CONFIG_FILE "/opt/Encyclopodia/Conf/menu.conf"
++#define MENUCONF_CONFIG_FILE "/opt/Tools/Encyclopodia/Conf/menu.conf"
  #else
  #define MENUCONF_CONFIG_FILE "config/menu.conf"
  #endif

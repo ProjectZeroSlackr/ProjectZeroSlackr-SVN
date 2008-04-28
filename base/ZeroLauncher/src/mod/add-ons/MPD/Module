@@ -1,5 +1,6 @@
 Module: MPD
 Display-name: MPD
 Description: Default music player, modified for ZeroSlackr.
-Category: Music
-Author: Courtney Cavin, Keripo
+Category: Base
+Author: Keripo, courtc
+Dependencies: browser-ext

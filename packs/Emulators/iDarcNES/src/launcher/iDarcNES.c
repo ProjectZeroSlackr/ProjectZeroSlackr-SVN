@@ -1,5 +1,5 @@
 /*
- * Last updated: April 17, 2008
+ * Last updated: Apr 27, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -19,24 +19,16 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "pz.h"
-#include <stdio.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <unistd.h>
-
-extern void pz_execv();
-extern int check_file_ext();
-extern TWindow *open_directory_title();
+#include "browser-ext.h"
 
 static PzModule *module;
 static ttk_menu_item browser_extension;
-
 static int sound = 0;
+static const char *path, *dir;
 
 // For now, iDarcNES only handles NES roms by default since
 // iGameGear has better SMS emulation
-static int check_ext(const char* file)
+static int check_ext(const char *file)
 {
 	if (check_file_ext(file, ".nes") == 1) {
 		sound = 1;
@@ -46,7 +38,7 @@ static int check_ext(const char* file)
 		return 0;
 	}
 }
-static int check_ext_all(const char* file)
+static int check_ext_all(const char *file)
 {
 	if (check_file_ext(file, ".nes") == 1) {
 		sound = 1;
@@ -62,15 +54,14 @@ static int check_ext_all(const char* file)
 
 static PzWindow *load_file(const char *file)
 {
-	const char *const path = pz_module_get_datapath(module, "../iDarcNES");
 	if (sound == 1) {
-		const char *const cmd[] = {"iDarcNES", file, NULL};
+		const char *const cmd[] = {"Launch.sh", file, NULL};
 		pz_execv(
 			path,
 			(char *const *)cmd
 		);
 	} else {
-		const char *const cmd[] = {"iDarcNES", file, "--nosound", NULL};
+		const char *const cmd[] = {"Launch.sh", file, "--nosound", NULL};
 		pz_execv(
 			path,
 			(char *const *)cmd
@@ -80,7 +71,7 @@ static PzWindow *load_file(const char *file)
 	return NULL;
 }
 
-static PzWindow *load_file_handler(ttk_menu_item * item)
+static PzWindow *load_file_handler(ttk_menu_item *item)
 {
 	load_file(item->data);
 	return 0;
@@ -88,14 +79,13 @@ static PzWindow *load_file_handler(ttk_menu_item * item)
 
 static PzWindow *browse_roms()
 {
-	const char *const path = pz_module_get_datapath(module, "../Roms");
-	chdir(path);
-	return open_directory_title(path, "iDarcNES Roms");
+	chdir(dir);
+	return open_directory_title(dir, "iDarcNES Roms");
 }
 
 static PzWindow *fastlaunch()
 {
-	pz_exec(pz_module_get_datapath(module, "FastLaunch.sh"));
+	pz_exec(path);
 	return NULL;
 }
 
@@ -107,10 +97,12 @@ static void cleanup()
 static void init_launch() 
 {
 	module = pz_register_module("iDarcNES", cleanup);
+	path = "/opt/Emulators/iDarcNES/Launch/Launch.sh";
+	dir = "/opt/Emulators/iDarcNES/Roms";
 	
 	pz_menu_add_stub_group("/Emulators/iDarcNES", "Console");
-	pz_menu_add_action_group("/Emulators/iDarcNES/FastLaunch", "Launching", fastlaunch);
-	pz_menu_add_action_group("/Emulators/iDarcNES/Roms", "Launching", browse_roms);
+	pz_menu_add_action_group("/Emulators/iDarcNES/#FastLaunch", "#FastLaunch", fastlaunch);
+	pz_menu_add_action_group("/Emulators/iDarcNES/Roms", "Browse", browse_roms);
 	pz_menu_sort("/Emulators/iDarcNES");
 	
 	browser_extension.name = N_("Open with iDarcNES");

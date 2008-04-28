@@ -329,7 +329,7 @@ void titup_init()
 		titup_init_settings();
 		ti_register(titup_create, titup_create, N_("Transparant User guided Prediction"), 25);
 		titup_build_numlog();
-		titup_predict_load("/opt/ZacZilla/Data/predict.txt");
+		titup_predict_load("/opt/Zillae/ZacZilla/Data/predict.txt");
 		int i;
 		double r;
 		ttk_get_screensize(&i, NULL, NULL);

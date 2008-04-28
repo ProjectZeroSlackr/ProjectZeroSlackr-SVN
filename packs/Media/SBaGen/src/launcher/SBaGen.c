@@ -1,5 +1,5 @@
 /*
- * Last updated: April 17, 2008
+ * Last updated: Apr 27, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -7,7 +7,7 @@
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * (at your option) any later version.7
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -19,21 +19,13 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "pz.h"
-#include <stdio.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <unistd.h>
-
-extern void pz_execv();
-extern void pz_set_backlight_timer(int sec);
-extern int check_file_ext();
-extern TWindow *open_directory_title();
+#include "browser-ext.h"
 
 static PzModule *module;
 static ttk_menu_item browser_extension;
+static const char *path, *dir;
 
-static int check_ext(const char* file)
+static int check_ext(const char *file)
 {
 	return check_file_ext(file, ".sbg");
 }
@@ -48,9 +40,7 @@ static void warning()
 static PzWindow *load_file(const char *file)
 {
 	warning();
-	const char *const path = pz_module_get_datapath(module, "../SBaGen");
-	const char *const cmd[] = {"SBaGen", file, NULL};
-	pz_set_backlight_timer(-2); // Save batteries
+	const char *const cmd[] = {"Launch.sh", file, NULL};
 	pz_execv(
 		path,
 		(char *const *)cmd
@@ -58,7 +48,7 @@ static PzWindow *load_file(const char *file)
 	return NULL;
 }
 
-static PzWindow *load_file_handler(ttk_menu_item * item)
+static PzWindow *load_file_handler(ttk_menu_item *item)
 {
 	load_file(item->data);
 	return 0;
@@ -66,15 +56,14 @@ static PzWindow *load_file_handler(ttk_menu_item * item)
 
 static PzWindow *browse_beats()
 {
-	const char *const path = pz_module_get_datapath(module, "../Beats");
-	chdir(path);
-	return open_directory_title(path, "Binaural Beats");
+	chdir(dir);
+	return open_directory_title(dir, "Binaural Beats");
 }
 
 static PzWindow *fastlaunch()
 {
 	warning();
-	pz_exec(pz_module_get_datapath(module, "FastLaunch.sh"));
+	pz_exec(path);
 	return NULL;
 }
 
@@ -86,10 +75,13 @@ static void cleanup()
 static void init_launch() 
 {
 	module = pz_register_module("SBaGen", cleanup);
+	path = "/opt/Media/SBaGen/Launch/Launch.sh";
+	dir = "/opt/Media/SBaGen/Beats";
 	
 	pz_menu_add_stub_group("/Media/SBaGen", "Music");
-	pz_menu_add_action_group("/Media/SBaGen/#FastLaunch", "Launching", fastlaunch);
-	pz_menu_add_action_group("/Media/SBaGen/Beats", "Launching", browse_beats);
+	pz_menu_add_action_group("/Media/SBaGen/#FastLaunch", "#FastLaunch", fastlaunch);
+	pz_menu_add_action_group("/Media/SBaGen/Beats", "Browse", browse_beats);
+	pz_menu_add_action_group("/Media/SBaGen/Toggle Backlight", "~Settings", toggle_backlight_window);
 	pz_menu_sort("/Media/SBaGen");
 	
 	browser_extension.name = N_("Open with SBaGen");

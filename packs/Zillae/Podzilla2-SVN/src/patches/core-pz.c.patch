@@ -7,7 +7,7 @@ Index: core/pz.c
  
  	/* find the last modified time of the settings file */
 -	stat( "/etc/podzilla/podzilla.conf", &statbuf );
-+	stat( "/opt/Podzilla2-SVN/Conf/podzilla2-svn.conf", &statbuf );
++	stat( "/opt/Zillae/Podzilla2-SVN/Conf/podzilla2-svn.conf", &statbuf );
  
  	/* convert timespec to timeval */
  	tv_s.tv_sec  = statbuf.st_mtime;
@@ -16,7 +16,7 @@ Index: core/pz.c
  {
  #ifdef IPOD
 -	close (open ("/etc/podzilla/podzilla.conf", O_WRONLY));
-+	close (open ("/opt/Podzilla2-SVN/Conf/podzilla2-svn.conf", O_WRONLY));
++	close (open ("/opt/Zillae/Podzilla2-SVN/Conf/podzilla2-svn.conf", O_WRONLY));
  #endif
  }
  
@@ -25,7 +25,7 @@ Index: core/pz.c
      const char *modfile = "Unknown";
      int i;
 -    FILE *f = fopen ("podzilla.oops", "w");
-+    FILE *f = fopen ("/opt/Podzilla2-SVN/Misc/podzilla2-svn.oops", "w");
++    FILE *f = fopen ("/opt/Zillae/Podzilla2-SVN/Misc/podzilla2-svn.oops", "w");
  
      asm ("mov %0, r11" : "=r" (FP) : );
  
@@ -34,7 +34,7 @@ Index: core/pz.c
  
  #ifdef IPOD
 -#define CONFIG_FILE "/etc/podzilla/podzilla.conf"
-+#define CONFIG_FILE "/opt/Podzilla2-SVN/Conf/podzilla2-svn.conf"
++#define CONFIG_FILE "/opt/Zillae/Podzilla2-SVN/Conf/podzilla2-svn.conf"
  #else
  #define CONFIG_FILE "config/podzilla.conf"
  #endif

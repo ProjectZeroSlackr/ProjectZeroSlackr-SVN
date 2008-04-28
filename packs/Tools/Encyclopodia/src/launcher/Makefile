@@ -1,3 +1,3 @@
 MODULE = Encyclopodia
-DATA = FastLaunch.sh
+DATA = Launch.sh
 obj-m = Encyclopodia.o

@@ -238,7 +238,7 @@ void ssave(void);
 void keyc(char z,unsigned int *y);
 void ssave()
 {
-  FILE*fp=fopen("/opt/iDarcNES/Conf/iDarcNES.cfg","w");
+  FILE*fp=fopen("/opt/Emulators/iDarcNES/Conf/iDarcNES.cfg","w");
   int i;
   for(i=0;i<=7;i++)
   fprintf(fp,"kb%i=%c\n",i,kbc[i]);
@@ -1112,7 +1112,7 @@ void doMenu()
 	switch(whereinmenu)
 	{
 		case MAINMENU:
-			totalentries=5;		
+			totalentries=2;		
 			printMenu("CONFIG","",selected==0);
 			printMenu("LOAD ROM","",selected==1);
 			// All defunct at the moment
@@ -1159,7 +1159,7 @@ void doMenu()
 			break;
 		case ROMSMENU: 
 			if (doRomMenu("Roms")==0)
-				doRomMenu("/opt/iDarcNES/Roms");
+				doRomMenu("/opt/Emulators/iDarcNES/Roms");
 			break;
 		case KEYSMENU:
 			totalentries=12;		

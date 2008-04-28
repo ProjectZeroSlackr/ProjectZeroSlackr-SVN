@@ -3,3 +3,4 @@ Display-name: iPodMAME
 Description: Port of MAME (Multiple Arcade Machine Emulator) to iPodLinux.
 Category: Emulators
 Author: imphasing, Yorgle, Nicola Salmoria et al.
+Dependencies: browser-ext

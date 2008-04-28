@@ -3,7 +3,7 @@
 # iPodMAME Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 17, 2008
+# Last updated: Apr 26, 2008
 #
 echo ""
 echo "==========================================="
@@ -61,20 +61,21 @@ echo "> Building ZeroLauncher launch module..."
 cp -rf ../src/launcher ./
 cd launcher
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
-make -f ../launch/launch.mk >> ../build.log
+make -f ../launch/launch.mk
 cd ..
 # Creating release
 echo "> Creating 'release' folder..."
-tar -xf ../src/release.tar.gz
+cp -rf ../src/release ./
 cd release
 # Files
-PACK=ZeroSlackr/opt/iPodMAME
+PACK=ZeroSlackr/opt/Emulators/iPodMAME
 cp -rf ../compiled/iPodMAME $PACK/
 cp -rf ../compiling/ipodmame.ini $PACK/Conf/
+mkdir $PACK/Roms/hellopac
 cp -rf ../compiling/roms/hellopac/* $PACK/Roms/hellopac/
+mkdir $PACK/Roms/matrxpac
 cp -rf ../compiling/roms/matrxpac/* $PACK/Roms/matrxpac/
 unzip -o -q ../../src/orig/aa.zip -d $PACK/Roms/aarmada/
-mkdir $PACK/Launch
 cp -rf ../launcher/* $PACK/Launch/
 # Documents
 DOCS=$PACK/Misc/Docs
@@ -88,6 +89,7 @@ do
 done
 cp -rf ../compiling/roms/readme.txt $DOCS/readme-roms.txt
 cp -rf ../compiling/romlist.ipl.txt $PACK/Roms/
+sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $PACK/Misc
 tar -cf Patches.tar Patches

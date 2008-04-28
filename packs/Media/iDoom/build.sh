@@ -3,7 +3,7 @@
 # iDoom Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 17, 2008
+# Last updated: Apr 26, 2008
 #
 echo ""
 echo "==========================================="
@@ -67,22 +67,21 @@ echo "> Building ZeroLauncher launch module..."
 cp -rf ../src/launcher ./
 cd launcher
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
-make -f ../launch/launch.mk >> ../build.log
+make -f ../launch/launch.mk
 cd ..
 # Creating release
 echo "> Creating 'release' folder..."
 unzip -q ../src/orig/iDoom1_3.zip
 unzip -q ../src/orig/freedm-0.6.zip
-tar -xf ../src/release.tar.gz
+cp -rf ../src/release ./
 cd release
 # Files
-PACK=ZeroSlackr/opt/iDoom
+PACK=ZeroSlackr/opt/Media/iDoom
 cp -rf ../compiled/iDoom $PACK/
 cp -rf ../compiled/iFreeDoom $PACK/
 cp -rf ../iDoom/doom1.wad $PACK/IWADs/
 cp -rf ../iDoom/keys.key $PACK/Conf/
 mv -f ../freedm-0.6/freedm.wad $PACK/IWADs/
-mkdir $PACK/Launch
 cp -rf ../launcher/* $PACK/Launch/
 # Documents
 DOCS=$PACK/Misc/Docs
@@ -90,8 +89,8 @@ cp -rf "../../ReadMe from Keripo.txt" $PACK/
 cp -rf ../../License.txt $PACK/
 cp -rf ../../src/patches $PACK/Misc/Patches
 cp -rf ../iDoom/readme.txt $DOCS/
-mkdir $DOCS/FreeDoom
 mv -f ../freedm-0.6/* $DOCS/FreeDoom/
+sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $PACK/Misc
 tar -cf Patches.tar Patches

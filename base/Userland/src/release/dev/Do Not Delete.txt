@@ -1,0 +1,3 @@
+If you installed iPodLinux through the "loop-mount"
+method, do NOT delete the "dev" folder or else
+ZeroSlackr/iPodLinux will not boot.

@@ -137,7 +137,7 @@ void displaystatus()
 {
   printf("\nstatus:\n\n");
   printf("left  right\n");
-  printf("12345 54321\n");
+  printf("abcde edcba\n");
   printf("%s ", leftfoot);
   printf("%s", rightfoot);
   printf("\n\n");
@@ -194,23 +194,23 @@ int whichtoe(char foot)
     do
     {
       printf("\nwhich toenail?\n");
-      printf("[1,2,3,4,5]: ");
+      printf("[a,b,c,d,e]: ");
       scanf(" %c", &toe); 
       switch(toe)
       {
-        case '1':
+        case 'a':
         whichtoe = 1;
         break;
-        case '2':
+        case 'b':
         whichtoe = 2;
         break;
-        case '3':
+        case 'c':
         whichtoe = 3;
         break;
-        case '4':
+        case 'd':
         whichtoe = 4;
         break;
-        case '5':
+        case 'e':
         whichtoe = 5;
         break;
         default:
@@ -226,23 +226,23 @@ int whichtoe(char foot)
     do
     {
       printf("\nwhich toenail?\n");
-      printf("[5,4,3,2,1]: ");
+      printf("[e,d,c,b,a]: ");
       scanf(" %c", &toe);
       switch(toe)
       {
-        case '5':
+        case 'e':
         whichtoe = 1;
         break;
-        case '4':
+        case 'd':
         whichtoe = 2;
         break;
-        case '3':
+        case 'c':
         whichtoe = 3;
         break;
-        case '2':
+        case 'b':
         whichtoe = 4;
         break;
-        case '1':
+        case 'a':
         whichtoe = 5;
         break;
         default:

@@ -1,5 +1,5 @@
 /*
- * Last updated: March 14, 2008
+ * Last updated: Apr 23, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -32,11 +32,11 @@
 #define TOGGLE_UPDATE 2
 
 extern void pz_ipod_reboot();
-extern void pz_set_backlight_timer(int sec);
+extern void toggle_backlight();
 
 static PzModule *module;
 static PzConfig *config;
-static char path[256], conf[256], pack[256];
+static const char *path, *conf;
 static const char *on_off_options[] = {"Off", "On", 0};
 
 static int send_command(char *str)
@@ -80,22 +80,20 @@ static void init_conf()
 	
 	if (!(access(conf, F_OK) == 0)) {
 		FILE *fconf = fopen(conf, "w");
-		// Hardcoded for the same reason in init()
 		fprintf(fconf,
 			"port                            \"6600\"\n"
 			"music_directory                 \"/mnt\"\n"
-			"playlist_directory              \"%sPlaylists\"\n"
-			"log_file                        \"%sMisc/mpd.log\"\n"
-			"error_file                      \"%sMisc/mpd.error\"\n"
+			"playlist_directory              \"/opt/Base/MPD/Playlists\"\n"
+			"log_file                        \"/opt/Base/MPD/Misc/mpd.log\"\n"
+			"error_file                      \"/opt/Base/MPD/Misc/mpd.error\"\n"
 			"filesystem_charset              \"ISO-8859-1\"\n"
-			"db_file                         \"%sData/mpd.db\"\n"
-			"state_file                      \"%sData/mpdstate\"\n"
+			"db_file                         \"/opt/Base/MPD/Data/mpd.db\"\n"
+			"state_file                      \"/opt/Base/MPD/Data/mpdstate\"\n"
 			"mixer_control                   \"PCM\"\n"
 			"audio_output {\n"
 			"        type                    \"oss\"\n"
 			"        name                    \"oss\"\n"
-			"}\n",
-			pack, pack, pack, pack, pack
+			"}\n"
 			);
 		fclose(fconf);
 	}
@@ -119,8 +117,8 @@ static void init_db()
 {
 	
 	if (pz_get_int_setting(config, TOGGLE_UPDATE) == 1) {
-		pz_message("MPD will now update its database. Please be patient; you will be notified once the update is done.");
-		pz_set_backlight_timer(-2); // Save batteries
+		pz_message("MPD will now update its dataBase. Please be patient; you will be notified once the update is done.");
+		toggle_backlight(); // Turn backlight off to save batteries
 		pid_t pid;
 		switch (pid = vfork()) {
 			case 0:
@@ -135,7 +133,7 @@ static void init_db()
 		while (!(kill(pid, 0)));
 		pz_set_int_setting(config, TOGGLE_UPDATE, 0);
 		pz_save_config(config);
-		pz_set_backlight_timer(2); // So you can read the message
+		toggle_backlight(); // Turn backlight back on to read message
 		pz_message("MPD has finished updating. Your iPod will now reboot.");
 		pz_ipod_reboot();
 	}
@@ -180,28 +178,19 @@ static PzWindow *toggle_update()
 
 static void init()
 {
-	// Due to some wierd pointer logic which I don't
-	// understand, "pz_module_get_datapath" can only
-	// be used once or else the pointers screw up.
-	// As a result, all paths here are hardcoded.
-	
 	module = pz_register_module("mpd", cleanup_mpd);
 	
-	config = pz_load_config(pz_module_get_datapath(module, "Conf/podzilla2-svn.conf"));
+	config = pz_load_config("/opt/Base/MPD/Conf/podzilla2-svn.conf");
 	if (!pz_get_setting(config, ENABLE_MPD))
 		pz_set_int_setting(config, ENABLE_MPD, 0);
 	if (!pz_get_setting(config, TOGGLE_UPDATE))
 		pz_set_int_setting(config, TOGGLE_UPDATE, 1);
-	
 	pz_menu_add_setting_group("/Music/Enable MPD", "Settings", ENABLE_MPD, config, on_off_options);
 	
-	if (pz_get_int_setting(config, ENABLE_MPD) == 1) {
-		
+	if (pz_get_int_setting(config, ENABLE_MPD) == 1) {	
 		pz_menu_add_action_group("/Music/Toggle Update", "Settings", toggle_update);
-		
-		sprintf(pack, "%s", pz_module_get_datapath(module, ""));
-		sprintf(path, "%sMPD-ke", pack);
-		sprintf(conf, "%sConf/mpd.conf", pack);
+		path = "/opt/Base/MPD/MPD-ke";
+		conf = "/opt/Base/MPD/Conf/mpd.conf";
 		init_loopback();
 		init_conf();
 		init_db();

@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 17, 2008
+ * Last updated: Apr 27, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -19,61 +19,110 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "pz.h"
+#include "browser-ext.h"
 
-extern void pz_exec();
-
-#define HIDE_ALL 1
-#define HIDE_ARCADE 2
-#define HIDE_DEV 3
-#define HIDE_MEDIA 4
-#define HIDE_MISC 5
-#define HIDE_TOOLS 6
-#define HIDE_UNSORTED 7
+#define HIDE_ALL		1
+#define HIDE_ARCADE		2
+#define HIDE_DEV		3
+#define HIDE_MEDIA		4
+#define HIDE_MISC		5
+#define HIDE_TOOLS		6
+#define HIDE_UNSORTED	7
 
 static PzModule *module;
 static PzConfig *config;
+static const char *path;
 static const char *on_off_options[] = {"Off", "On", 0};
 
 static PzWindow *fastlaunch()
 {
-	pz_exec(pz_module_get_datapath(module, "FastLaunch.sh"));
+	pz_exec(path);
 	return NULL;
 }
 static PzWindow *launch_all()
 {
-	pz_exec(pz_module_get_datapath(module, "Launch/All.sh"));
+	const char *const cmd[] = {
+		"Launch.sh",
+		"/usr/lib",
+		NULL
+	};
+	pz_execv(
+		path,
+		(char *const *)cmd
+	);
 	return NULL;
 }
 static PzWindow *launch_arcade()
 {
-	pz_exec(pz_module_get_datapath(module, "Launch/Arcade.sh"));
-	return NULL;
+	const char *const cmd[] = {
+		"Launch.sh",
+		"/usr/lib/All:/usr/lib/Arcade",
+		NULL
+	};
+	pz_execv(
+		path,
+		(char *const *)cmd
+	);
 }
 static PzWindow *launch_dev()
 {
-	pz_exec(pz_module_get_datapath(module, "Launch/Dev.sh"));
-	return NULL;
+	const char *const cmd[] = {
+		"Launch.sh",
+		"/usr/lib/All:/usr/lib/Dev",
+		NULL
+	};
+	pz_execv(
+		path,
+		(char *const *)cmd
+	);
 }
 static PzWindow *launch_media()
 {
-	pz_exec(pz_module_get_datapath(module, "Launch/Media.sh"));
-	return NULL;
+	const char *const cmd[] = {
+		"Launch.sh",
+		"/usr/lib/All:/usr/lib/Media",
+		NULL
+	};
+	pz_execv(
+		path,
+		(char *const *)cmd
+	);
 }
 static PzWindow *launch_misc()
 {
-	pz_exec(pz_module_get_datapath(module, "Launch/Misc.sh"));
-	return NULL;
+	const char *const cmd[] = {
+		"Launch.sh",
+		"/usr/lib/All:/usr/lib/Misc",
+		NULL
+	};
+	pz_execv(
+		path,
+		(char *const *)cmd
+	);
 }
 static PzWindow *launch_tools()
 {
-	pz_exec(pz_module_get_datapath(module, "Launch/Tools.sh"));
-	return NULL;
+	const char *const cmd[] = {
+		"Launch.sh",
+		"/usr/lib/All:/usr/lib/Tools",
+		NULL
+	};
+	pz_execv(
+		path,
+		(char *const *)cmd
+	);
 }
 static PzWindow *launch_unsorted()
 {
-	pz_exec(pz_module_get_datapath(module, "Launch/Unsorted.sh"));
-	return NULL;
+	const char *const cmd[] = {
+		"Launch.sh",
+		"/usr/lib/All:/usr/lib/Unsorted",
+		NULL
+	};
+	pz_execv(
+		path,
+		(char *const *)cmd
+	);
 }
 
 static void cleanup()
@@ -84,8 +133,9 @@ static void cleanup()
 static void init_launch() 
 {
 	module = pz_register_module ("Podzilla2-SVN", cleanup);
+	path = "/opt/Zillae/Podzilla2-SVN/Launch/Launch.sh";
 
-	config = pz_load_config(pz_module_get_datapath(module, "../Conf/Hide.conf"));
+	config = pz_load_config("/opt/Zillae/Podzilla2-SVN/Conf/Hide.conf");
 	if (!pz_get_setting(config, HIDE_ALL)) pz_set_int_setting (config, HIDE_ALL, 0);
 	if (!pz_get_setting(config, HIDE_ARCADE)) pz_set_int_setting (config, HIDE_ARCADE, 0);
 	if (!pz_get_setting(config, HIDE_DEV)) pz_set_int_setting (config, HIDE_DEV, 0);
@@ -99,27 +149,26 @@ static void init_launch()
 	if (pz_get_int_setting(config, HIDE_ALL) == 0)
 		pz_menu_add_action_group ("/Zillae/Podzilla2-SVN/All Modules",	"#Normal", launch_all);
 	if (pz_get_int_setting(config, HIDE_ARCADE) == 0)
-		pz_menu_add_action_group ("/Zillae/Podzilla2-SVN/Arcade Only",	"Lite", launch_arcade);
+		pz_menu_add_action_group ("/Zillae/Podzilla2-SVN/Arcade",	"Lite", launch_arcade);
 	if (pz_get_int_setting(config, HIDE_DEV) == 0)
-		pz_menu_add_action_group ("/Zillae/Podzilla2-SVN/Dev Only",	"Lite", launch_dev);
+		pz_menu_add_action_group ("/Zillae/Podzilla2-SVN/Dev",	"Lite", launch_dev);
 	if (pz_get_int_setting(config, HIDE_MEDIA) == 0)
-		pz_menu_add_action_group ("/Zillae/Podzilla2-SVN/Media Only",	"Lite", launch_media);
+		pz_menu_add_action_group ("/Zillae/Podzilla2-SVN/Media",	"Lite", launch_media);
 	if (pz_get_int_setting(config, HIDE_MISC) == 0)
-		pz_menu_add_action_group ("/Zillae/Podzilla2-SVN/Misc Only",	"Lite", launch_misc);
+		pz_menu_add_action_group ("/Zillae/Podzilla2-SVN/Misc",	"Lite", launch_misc);
 	if (pz_get_int_setting(config, HIDE_TOOLS) == 0)
-		pz_menu_add_action_group ("/Zillae/Podzilla2-SVN/Tools Only",	"Lite", launch_tools);
+		pz_menu_add_action_group ("/Zillae/Podzilla2-SVN/Tools",	"Lite", launch_tools);
 	if (pz_get_int_setting(config, HIDE_UNSORTED) == 0)
-		pz_menu_add_action_group ("/Zillae/Podzilla2-SVN/Unsorted Only","Lite", launch_unsorted);
+		pz_menu_add_action_group ("/Zillae/Podzilla2-SVN/Unsorted","Lite", launch_unsorted);
 	
-	pz_menu_add_stub_group ("/Zillae/Podzilla2-SVN/Settings", "Settings");
-	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Settings/Hide All Modules",	"Normal", HIDE_ALL, config, on_off_options);
-	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Settings/Hide Arcade Only",	"Lite", HIDE_ARCADE, config, on_off_options);
-	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Settings/Hide Dev Only",	"Lite", HIDE_DEV, config, on_off_options);
-	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Settings/Hide Media Only",	"Lite", HIDE_MEDIA, config, on_off_options);
-	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Settings/Hide Misc Only",	"Lite", HIDE_MISC, config, on_off_options);
-	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Settings/Hide Tools Only",	"Lite", HIDE_TOOLS, config, on_off_options);
-	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Settings/Hide Unsorted Only",	"Lite", HIDE_UNSORTED, config, on_off_options);
-	
+	pz_menu_add_stub_group ("/Zillae/Podzilla2-SVN/Settings", "~Settings");
+	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Settings/Hide All Modules",	"#Normal", HIDE_ALL, config, on_off_options);
+	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Settings/Hide Arcade",	"Lite", HIDE_ARCADE, config, on_off_options);
+	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Settings/Hide Dev",	"Lite", HIDE_DEV, config, on_off_options);
+	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Settings/Hide Media",	"Lite", HIDE_MEDIA, config, on_off_options);
+	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Settings/Hide Misc",	"Lite", HIDE_MISC, config, on_off_options);
+	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Settings/Hide Tools",	"Lite", HIDE_TOOLS, config, on_off_options);
+	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Settings/Hide Unsorted",	"Lite", HIDE_UNSORTED, config, on_off_options);
 	pz_menu_sort ("/Zillae/Podzilla2-SVN");
 }
 

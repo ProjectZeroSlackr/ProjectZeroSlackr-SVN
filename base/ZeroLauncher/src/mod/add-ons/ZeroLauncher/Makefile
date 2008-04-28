@@ -1,3 +1,3 @@
 MODULE = ZeroLauncher
-DATA = FastLaunch.sh
+DATA = Launch.sh
 obj-m = ZeroLauncher.o

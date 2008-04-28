@@ -3,18 +3,24 @@
 # ttk Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 25, 2008
+# Last updated: Apr 27, 2008
 #
 # Requires hotdog
 if [ ! -d hotdog ]; then
+	echo ""
 	echo "[ttk requires hotdog]"
 	./src/hotdog.sh
+	echo ""
 fi
 echo ""
 echo "==========================================="
 echo ""
 echo "ttk Auto-Compiling Script"
 echo ""
+# Cygwin check
+if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
+	CYGWIN="yes"
+fi
 # Cleanup
 if [ -d ttk ]; then
 	echo "> Removing old ttk directory..."
@@ -25,7 +31,7 @@ echo "> Updating SVN..."
 svn co --quiet https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/libs/ttk/ ttk
 # Compiling
 cd ttk
-if [ -e /bin/cygwin1.dll ]; then
+if [ "${CYGWIN}" ]; then
 	echo "> Reverting rev 2383..."
 	echo "  (which breaks Cygwin compiling)"
 	patch -p0 -t -i ../src/ttk/ttk-cygwin-compile.patch >> build.log

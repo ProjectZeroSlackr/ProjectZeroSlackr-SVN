@@ -3,7 +3,7 @@
 # SBaGen Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 17, 2008
+# Last updated: Apr 26, 2008
 #
 echo ""
 echo "==========================================="
@@ -62,17 +62,16 @@ echo "> Building ZeroLauncher launch module..."
 cp -rf ../src/launcher ./
 cd launcher
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
-make -f ../launch/launch.mk >> ../build.log
+make -f ../launch/launch.mk
 cd ..
 # Creating release
 echo "> Creating 'release' folder..."
-tar -xf ../src/release.tar.gz
+cp -rf ../src/release ./
 cd release
 # Files
-PACK=ZeroSlackr/opt/SBaGen
+PACK=ZeroSlackr/opt/Media/SBaGen
 cp -rf ../compiled/SBaGen $PACK/
 cp -rf ../compiling/examples/* $PACK/Beats/
-mkdir $PACK/Launch
 cp -rf ../launcher/* $PACK/Launch/
 # Documents
 DOCS=$PACK/Misc/Docs
@@ -83,6 +82,7 @@ for file in $FILES
 do
 	cp -rf ../compiling/$file $DOCS/
 done
+sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $PACK/Misc
 tar -cf Docs.tar Docs

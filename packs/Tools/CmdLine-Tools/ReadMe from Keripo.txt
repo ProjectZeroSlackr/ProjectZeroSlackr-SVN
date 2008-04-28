@@ -1,4 +1,4 @@
-Last updated: March 28, 2008
+Last updated: Apr 23, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -18,10 +18,10 @@ CmdLine-Tools
   respective links below.
 
 Usage:
-- Since all the command-line tools are placed in
-  "/usr/bin", they are accessible to the shell and
-  terminal. Thus they can be used in shell scripts
-  or via the terminal module.
+- Since the "Bin" has been added to $PATH, all
+  binaries are accessible to the shell and terminal.
+  Thus they can be used in shell scripts or via the
+  terminal module.
 - The CmdLine-Tools launch module adds file handlers
   for usage of the archiving tools; hold the centre/
   select button on an item in the file browser to
@@ -73,7 +73,7 @@ Original:
 ZS Version:
 - Modder: Keripo
 - Type: ZS Recompile / Repack
-- Date: March 27, 2008
+- Date: Apr 23, 2008
 - Version: B X.X
 
 Modifications:
@@ -81,7 +81,8 @@ Modifications:
 
 Launch Module:
 - file handler for zip, unzip, unrar, tar, bzip2 and gzip
-- other binaries are in /usr/bin and so can be used by terminal
+- "/opt/Tools/CmdLine-Tools/Bin" added to $PATH for access
+  by the shell
 
 To do:
 - port more command line tools!!!

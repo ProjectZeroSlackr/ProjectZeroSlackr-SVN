@@ -1,4 +1,4 @@
-Last updated: March 28, 2008
+Last updated: Apr 27, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -41,17 +41,18 @@ Original:
 ZS Version:
 - Modder: Keripo
 - Type: Mod and ZS Recompile
-- Date: March 21, 2008
+- Date: Apr 27, 2008
 - Version: B X.X
 
 Modifications:
 - fixed settings saving problem
 - changed scheme load/saving to avoid symlink
-- replaced all "/mnt/aj/" and "/hp/aj/" with "/opt/ZacZilla/Data/"
+- replaced all "/mnt/aj/" and "/hp/aj/" with "/opt/Zillae/ZacZilla/Data/"
 - finished a few more application path modifications (ie legacy savegame files)
 - some customizations
 - removed some non-functional items (too many to list; if they have a .c file
   but don't exist in the Makefile, they're probably removed)
+- removed iconui (won't work with ZacZilla)
 
 Launch Module:
 - FastLaunches ZacZilla

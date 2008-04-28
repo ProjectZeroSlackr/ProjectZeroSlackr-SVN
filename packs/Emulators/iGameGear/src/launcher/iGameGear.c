@@ -1,5 +1,5 @@
 /*
- * Last updated: April 17, 2008
+ * Last updated: Apr 27, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -19,15 +19,7 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "pz.h"
-#include <stdio.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <unistd.h>
-
-extern void pz_execv();
-extern int check_file_ext();
-extern TWindow *open_directory_title();
+#include "browser-ext.h"
 
 #define FRAMESKIP	1
 #define LANG		2
@@ -36,11 +28,12 @@ extern TWindow *open_directory_title();
 static PzModule *module;
 static PzConfig *config;
 static ttk_menu_item browser_extension;
+static const char *path, *dir;
 static const char *frameskip_options[] = {"None", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", 0};
 static const char *locale_options[] = {"Overseas", "Japan", 0};
 static const char *scaling_options[] = {"Centre", "Scale", "Stretch", 0};
 
-static int check_ext(const char* file)
+static int check_ext(const char *file)
 {
 	return (check_file_ext(file, ".sms") ||
 			check_file_ext(file, ".gg")
@@ -50,7 +43,8 @@ static int check_ext(const char* file)
 static PzWindow *load_file(const char *file)
 {
 	char frameskip[4];
-	snprintf(frameskip, 4, "%i", pz_get_int_setting(config, FRAMESKIP));
+	snprintf(frameskip, 4, "%i",
+		pz_get_int_setting(config, FRAMESKIP));
 	char locale[8];
 	if (pz_get_int_setting(config, LANG)==1) {
 		snprintf(locale, 8, "--japan");
@@ -64,11 +58,11 @@ static PzWindow *load_file(const char *file)
 		case 1: snprintf(scaling, 8, "scale"); break;
 		case 2: snprintf(scaling, 8, "stretch"); break;
 	}
-	const char *const path = pz_module_get_datapath(module, "../iGameGear");
 	const char *const cmd[] = {
-		"iGameGear", file,
-		"--fskip", frameskip,
-		"--display", scaling,
+		"iGameGear",
+		file,
+		frameskip,
+		scaling,
 		locale,
 		NULL
 	};
@@ -80,7 +74,7 @@ static PzWindow *load_file(const char *file)
 	return NULL;
 }
 
-static PzWindow *load_file_handler(ttk_menu_item * item)
+static PzWindow *load_file_handler(ttk_menu_item *item)
 {
 	load_file(item->data);
 	return 0;
@@ -88,14 +82,13 @@ static PzWindow *load_file_handler(ttk_menu_item * item)
 
 static PzWindow *browse_roms()
 {
-	const char *const path = pz_module_get_datapath(module, "../Roms");
-	chdir(path);
-	return open_directory_title(path, "iGameGear Roms");
+	chdir(dir);
+	return open_directory_title(dir, "iGameGear Roms");
 }
 
 static PzWindow *fastlaunch()
 {
-	pz_exec(pz_module_get_datapath(module, "FastLaunch.sh"));
+	pz_exec(path);
 	return NULL;
 }
 
@@ -108,15 +101,17 @@ static void cleanup()
 static void init_launch() 
 {
 	module = pz_register_module("iGameGear", cleanup);
+	path = "/opt/Emulators/iGameGear/Launch/Launch.sh";
+	dir = "/opt/Emulators/iGameGear/Roms";
 	
-	config = pz_load_config(pz_module_get_datapath(module,"../Conf/Launch.conf"));
+	config = pz_load_config("/opt/Emulators/iGameGear/Conf/Launch.conf");
 	if (!pz_get_setting(config, FRAMESKIP)) pz_set_int_setting (config, FRAMESKIP, 5);
 	if (!pz_get_setting(config, LANG)) pz_set_int_setting (config, LANG, 0);
 	if (!pz_get_setting(config, SCALING)) pz_set_int_setting (config, SCALING, 0);
 	
 	pz_menu_add_stub_group("/Emulators/iGameGear", "Handheld");
-	pz_menu_add_action_group("/Emulators/iGameGear/FastLaunch", "Launching", fastlaunch);
-	pz_menu_add_action_group("/Emulators/iGameGear/Roms", "Launching", browse_roms);
+	pz_menu_add_action_group("/Emulators/iGameGear/#FastLaunch", "#FastLaunch", fastlaunch);
+	pz_menu_add_action_group("/Emulators/iGameGear/Roms", "#FastLaunch", browse_roms);
 	pz_menu_add_setting_group("/Emulators/iGameGear/Frameskip", "~Settings", FRAMESKIP, config, frameskip_options);
 	pz_menu_add_setting_group("/Emulators/iGameGear/Locale", "~Settings", LANG, config, locale_options);
 	pz_menu_add_setting_group("/Emulators/iGameGear/Scaling", "~Settings", SCALING, config, scaling_options);

@@ -1,4 +1,4 @@
-Last updated: March 28, 2008
+Last updated: Apr 27, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -25,20 +25,22 @@ For more information, see:
 Usage:
 - The ZeroSlackr userland launches ZeroLauncher by default
   in an endless loop (or rather as long as
-  "/opt/ZeroLauncher/Fastlaunch.sh" exists)
+  "/opt/Base/ZeroLauncher/Launch/Launch.sh" exists)
   until the user chooses the "Power off" or "Reboot" option
   from the ZeroLauncher menu (or until iPodLinux freezes,
   in which the user should manually reboot by holding the
   correct key combinations for force rebooting their iPod
   (see http://ipodlinux.org/Key_combinations).
-- ZeroLauncher loads special podzilla2 modules from both
-  "/opt" and "/opt/ZeroLauncher/Add-ons".
+- ZeroLauncher loads special podzilla2 modules from
+  folders in "/opt" and "/opt/Base/ZeroLauncher/Add-ons".
 - To add normal podzilla2 modules to ZeroLauncher, rename
-  the *.mod.o file to *.zl and rename "Module" to "PackInfo"
-  and place the module folder into "/opt/ZeroLauncher/Add-ons"
+  the "*.mod.o" file to "*.zl" and rename "Module" to
+  "PackInfo" and place the module folder into
+  "/opt/Base/ZeroLauncher/Add-ons"
   (it is recommended that normal modules be used by
-  Podzilla2-SVN instead of ZeroLauncher as ZeroLauncher should
-  be limited to only what is necessary for launching other apps).
+  Podzilla2-SVN instead of ZeroLauncher as ZeroLauncher
+  should be limited to only what is necessary for
+  launching other apps).
 - ZeroLauncher can also be FastLaunch'd through
   "Zillae > ZeroLauncher" but such is pretty pointless.
 
@@ -48,13 +50,13 @@ Original:
 - Source: SVN
 - Link:
   https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/apps/ipod/podzilla2
-- Date: March 16, 2008
-- Version: Revision 2403
+- Date: Apr 27, 2008
+- Version: Revision 2418
 
 ZS Version:
 - Modder: Keripo
 - Type: Mod and ZS Recompile
-- Date: March 19, 2008
+- Date: Apr 27, 2008
 - Version: B X.X
 
 Modifications:
@@ -63,7 +65,8 @@ Modifications:
 - custom default settings
 - ZeroSlackr sub-menus
 - loads modules with ".zl" extension and "PackInfo" file
-- loads modules from "/opt:/opt/ZeroLauncher/Add-ons"
+- loads modules from predefined locations
+  (see "Launch/Launch.sh")
 - browser module modified
   > added open_directory_title function
 - mpdc module modified
@@ -77,20 +80,28 @@ Launch Module:
 Add-ons:
 (note that modules modified here also
  have a variant/copy for Podzilla2-SVN)
-- Official modules:
-  > about browser mpdc podwrite terminal textinput tidial tiwidgets tixtensions
+- official modules:
+  > about browser mpdc podwrite terminal
+    textinput tidial tiwidgets tixtensions
 - browser-ext:
-  > various ZeroLauncher functions (checks and get_filename/dirname)
+  > various ZeroLauncher functions (checks and
+    get_filename/dirname)
+  > backlight toggle option
   > script and binary exec handler (just like from PZ0)
+  > modified mini-browser for specialty launching
 - MPD:
   > rewritten based on courtc's code
   > fully functional and ZeroSlackr-friendly
   > "Enable MPD", and "Toggle Update" settings
-  > source: http://so2.sys-techs.com/ipod/mpdmodule-src-0.4.tar.gz
+  > source:
+    http://so2.sys-techs.com/ipod/mpdmodule-src-0.4.tar.gz
 
 To do:
-- disable scheme rendering during scheme selection (too much slowdown)
+- disable scheme rendering during scheme selection
+ (too much slowdown)
 - use stripped down TTK library to reduce footprint (?)
+- specialized module searching for faster boot-up
+- replace with Insune (hopefully)
 
 Changelog:
 [keep untouched till beta release]

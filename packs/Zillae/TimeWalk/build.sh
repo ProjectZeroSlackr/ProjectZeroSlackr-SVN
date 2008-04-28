@@ -3,7 +3,7 @@
 # TimeWalk Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 17, 2008
+# Last updated: Apr 26, 2008
 #
 echo ""
 echo "==========================================="
@@ -39,26 +39,26 @@ echo "> Building ZeroLauncher launch module..."
 cp -rf ../src/launcher ./
 cd launcher
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
-make -f ../launch/launch.mk >> ../build.log
+make -f ../launch/launch.mk
 cd ..
 # Creating release
 echo "> Creating 'release' folder..."
-tar -xf ../src/release.tar.gz
+cp -rf ../src/release ./
 cd release
 # Files
-PACK=ZeroSlackr/opt/TimeWalk
+PACK=ZeroSlackr/opt/Zillae/TimeWalk
+DIR=$(pwd)
 cd $PACK
-for archive in ../../../../../src/hex/*.tar.gz
+for archive in $DIR/../../src/hex/*.tar.gz
 do
 	tar -xf $archive
 done
-cd ../../..
-mkdir $PACK/Launch
+cd $DIR
 cp -rf ../launcher/* $PACK/Launch/
 # Documents
 cp -rf "../../ReadMe from Keripo.txt" $PACK/
 cp -rf ../../License.txt $PACK/
-cp -rf ../../src/hex/Hex-edits.txt $PACK/
+sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Done
 echo ""
 echo "Fin!"

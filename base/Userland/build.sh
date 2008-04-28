@@ -3,7 +3,7 @@
 # Userland Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 28, 2008
+# Last updated: Apr 27, 2008
 #
 echo ""
 echo "==========================================="
@@ -19,7 +19,7 @@ fi
 echo "> Setting up build directory..."
 mkdir build
 cd build
-tar -xf ../src/release.tar.gz
+cp -rf ../src/release ./
 # Update SVN
 echo "> Updating scheme files..."
 svn co --quiet https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/libs/ttk/schemes release/ZeroSlackr/usr/share/schemes
@@ -51,6 +51,11 @@ cp -rf "../src/images/Loop-mount Instructions.txt" $DOCS/
 mkdir $DOCS/Mod
 cp -rf ../src/mod/loop-mount.sh $DOCS/Mod/
 cp -rf ../src/mod/zeroslackr-userland-mod.tar.gz $DOCS/Mod/
+cp -rf ../../../Changelog.txt $DOCS/../
+cp -rf ../../../License.txt $DOCS/../
+cp -rf "../../../ReadMe from Keripo.txt" $DOCS/../
+cp -rf "../../../To Do.txt" $DOCS/../
+sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $DOCS
 tar -cf Mod.tar Mod

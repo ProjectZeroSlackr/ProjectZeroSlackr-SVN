@@ -633,12 +633,12 @@ TWindow *new_invaders2_window()
 	Module_Starfield_init();
 	
 	/* load graphics */
-	aliens_gfx = ttk_load_image ("/opt/ZacZilla/Data/invaders2/alien.png");
-	player_gfx = ttk_load_image ("/opt/ZacZilla/Data/invaders2/player.png");
-	die_gfx[0] = ttk_load_image ("/opt/ZacZilla/Data/invaders2/die0.png");
-	die_gfx[1] = ttk_load_image ("/opt/ZacZilla/Data/invaders2/die1.png");
-	die_gfx[2] = ttk_load_image ("/opt/ZacZilla/Data/invaders2/die2.png");
-	die_gfx[3] = ttk_load_image ("/opt/ZacZilla/Data/invaders2/die3.png");
+	aliens_gfx = ttk_load_image ("/opt/Zillae/ZacZilla/Data/invaders2/alien.png");
+	player_gfx = ttk_load_image ("/opt/Zillae/ZacZilla/Data/invaders2/player.png");
+	die_gfx[0] = ttk_load_image ("/opt/Zillae/ZacZilla/Data/invaders2/die0.png");
+	die_gfx[1] = ttk_load_image ("/opt/Zillae/ZacZilla/Data/invaders2/die1.png");
+	die_gfx[2] = ttk_load_image ("/opt/Zillae/ZacZilla/Data/invaders2/die2.png");
+	die_gfx[3] = ttk_load_image ("/opt/Zillae/ZacZilla/Data/invaders2/die3.png");
 
 	
 	if (!aliens_gfx || !player_gfx || !die_gfx[0] 

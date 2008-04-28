@@ -1,10 +1,9 @@
-# Last updated: March 9, 2008
+# Last updated: Apr 27, 2008
 # ~Keripo
 #
-# Edited list to include some user-generated fonts.
-# SVN fonts are unlikely to change.
 # This is for podzilla-legacy (PZ0) based zillae
 #
+# SVN fonts
 [Apple_II_40_Column.fnt] (Apple II 40 Column) <9>
 [Apple_II_80_Column.fnt] (Apple II 80 Column) <18>
 [CFuturo-15.fnt] (C-Futuro) <15>
@@ -44,7 +43,9 @@
 [Commodore_topaz2_8_dbl.fnt] (Topaz Sans Doubled) <16> {+1}
 [Twiggy.fnt] (Twiggy) <12>
 [Unifont.fnt] (Unifont) <12>
+# User-generated fonts
 [1979.fnt] (1979) <12>
+[BitStreamVeraMono.fnt] (Vera Mono) <16>
 [burton.fnt] (Burton) <12>
 [Familyguy.fnt] (FamilyGuy) <12>
 [gishhand.fnt] (Gish Handwriting) <12>
@@ -55,3 +56,62 @@
 [SixteenSegments.fnt] (Segments) <12>
 [tonight.fnt] (Tonight) <12>
 [zero.fnt] (Zero) <12>
+# Encyclopodia Fonts
+[epodia0size4style0.fnt] (epodia0size4style0) <4>
+[epodia0size4style1.fnt] (epodia0size4style1) <4>
+[epodia0size4style2.fnt] (epodia0size4style2) <4>
+[epodia0size4style3.fnt] (epodia0size4style3) <4>
+[epodia0size5style0.fnt] (epodia0size5style0) <5>
+[epodia0size5style1.fnt] (epodia0size5style1) <5>
+[epodia0size5style2.fnt] (epodia0size5style2) <5>
+[epodia0size5style3.fnt] (epodia0size5style3) <5>
+[epodia0size6style0.fnt] (epodia0size6style0) <6>
+[epodia0size6style1.fnt] (epodia0size6style1) <6>
+[epodia0size6style2.fnt] (epodia0size6style2) <6>
+[epodia0size6style3.fnt] (epodia0size6style3) <6>
+[epodia0size7style0.fnt] (epodia0size7style0) <7>
+[epodia0size7style1.fnt] (epodia0size7style1) <7>
+[epodia0size7style2.fnt] (epodia0size7style2) <7>
+[epodia0size7style3.fnt] (epodia0size7style3) <7>
+[epodia0size8style0.fnt] (epodia0size8style0) <8>
+[epodia0size8style1.fnt] (epodia0size8style1) <8>
+[epodia0size8style2.fnt] (epodia0size8style2) <8>
+[epodia0size8style3.fnt] (epodia0size8style3) <8>
+[epodia0size9style0.fnt] (epodia0size9style0) <9>
+[epodia0size9style1.fnt] (epodia0size9style1) <9>
+[epodia0size9style2.fnt] (epodia0size9style2) <9>
+[epodia0size9style3.fnt] (epodia0size9style3) <9>
+[epodia0size10style0.fnt] (epodia0size10style0) <10>
+[epodia0size10style1.fnt] (epodia0size10style1) <10>
+[epodia0size10style2.fnt] (epodia0size10style2) <10>
+[epodia0size10style3.fnt] (epodia0size10style3) <10>
+[epodia0size11style0.fnt] (epodia0size11style0) <11>
+[epodia0size11style1.fnt] (epodia0size11style1) <11>
+[epodia0size11style2.fnt] (epodia0size11style2) <11>
+[epodia0size11style3.fnt] (epodia0size11style3) <11>
+[epodia0size12style0.fnt] (epodia0size12style0) <12>
+[epodia0size12style1.fnt] (epodia0size12style1) <12>
+[epodia0size12style2.fnt] (epodia0size12style2) <12>
+[epodia0size12style3.fnt] (epodia0size12style3) <12>
+[epodia0size13style0.fnt] (epodia0size13style0) <13>
+[epodia0size13style1.fnt] (epodia0size13style1) <13>
+[epodia0size13style2.fnt] (epodia0size13style2) <13>
+[epodia0size13style3.fnt] (epodia0size13style3) <13>
+[epodia0size14style0.fnt] (epodia0size14style0) <14>
+[epodia0size14style1.fnt] (epodia0size14style1) <14>
+[epodia0size14style2.fnt] (epodia0size14style2) <14>
+[epodia0size14style3.fnt] (epodia0size14style3) <14>
+[epodia0size15style0.fnt] (epodia0size15style0) <15>
+[epodia0size15style1.fnt] (epodia0size15style1) <15>
+[epodia0size15style2.fnt] (epodia0size15style2) <15>
+[epodia0size15style3.fnt] (epodia0size15style3) <15>
+[epodia0size16style0.fnt] (epodia0size16style0) <16>
+[epodia0size16style1.fnt] (epodia0size16style1) <16>
+[epodia0size16style2.fnt] (epodia0size16style2) <16>
+[epodia0size16style3.fnt] (epodia0size16style3) <16>
+[epodia0size17style0.fnt] (epodia0size17style0) <17>
+[epodia0size17style1.fnt] (epodia0size17style1) <17>
+[epodia0size17style2.fnt] (epodia0size17style2) <17>
+[epodia0size17style3.fnt] (epodia0size17style3) <17>
+[large.fnt] (large) <12>
+[tmp.fnt] (tmp) <12>

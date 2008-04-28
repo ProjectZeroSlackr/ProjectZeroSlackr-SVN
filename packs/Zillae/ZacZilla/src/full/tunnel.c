@@ -39,7 +39,7 @@ static GR_WINDOW_ID temp_pixmap;
 //#define SAVEFILE "/home/.tunnel"
 //#else
 //#define SAVEFILE ".tunnel"
-#define SAVEFILE "/opt/ZacZilla/Data/tunnel.txt"
+#define SAVEFILE "/opt/Zillae/ZacZilla/Data/tunnel.txt"
 #endif
 
 // Timer stuff

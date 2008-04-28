@@ -1,7 +1,7 @@
 \name Moonlight-Lite
 # Default scheme for ZeroLauncher, Moonlight scheme sans background
 # by Keripo
-# Last updated: March 30, 2008
+# Last updated: Mar 30, 2008
 
 \def clear	#FF00FF
 \def black	#000

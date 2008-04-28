@@ -1,4 +1,4 @@
-Last updated: April 15, 2008
+Last updated: Apr 26, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -13,15 +13,13 @@ original/ported software.
 Misc:
 - Add a "Known Issues" section to "ReadMe from Keripo.txt"s
 - Port DSLinux stuff
-- Add RSVP to ZeroLauncher
+- Use Insune instead of PZ2 for ZeroLauncher
 
 Fixes:
-- Encyclopodia module (waiting for Robert Bamler)
 - iDarcNES complete redo!!! (too many bugs to care about)
 
 Testing: 
 - TimeWalk: test with old monochrome iPods, complete zillae list
-- iPodMAME launch: browser-type launcher
 
 
 == To add ==
@@ -33,10 +31,6 @@ Emulators:
 - Atari800
 - Apple iiPod
 
-Zillae:
-- PalmZilla
-- iZilla
-
 Tools:
 - LET Basic
 - Python
@@ -44,12 +38,21 @@ Tools:
 - iPod Toolchain
 - Lua
 
-Misc:
+Media:
+- Flite
 - sidplay
 - iPod Midi Player
 - iRoids
+- hotdog demos
+
+Zillae:
+- PalmZilla
+- iZilla
+
+Misc:
 - Bootsplash
 - iLoadz
+- Morphun's iPDL
 
 Attempt:
 - iNeoGeo
@@ -61,7 +64,6 @@ Attempt:
 To port:
 - DSLinux apps
 - BSD Games
-- Flite
 - dc
 - John the Ripper
 - Rockbox's UISimulator???

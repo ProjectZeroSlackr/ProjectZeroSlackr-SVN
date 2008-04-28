@@ -1,3 +1,3 @@
 MODULE = iPodMAME
-data = Fastlaunch.sh
+data = Launch.sh
 obj-m = iPodMAME.o

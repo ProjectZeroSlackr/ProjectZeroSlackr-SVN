@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# ZeroSlackr Framework's Loop-Mount Script
+# Last updated: Apr 23, 2008
+# ~Keripo
+#
+# Note: This file must be saved in UNIX format.
+# Advanced text editors like Notepad++, KWrite
+# and even Podwrite work. Do NOT use Notepad!
+# To disable a line, place a "#" infront of it.
+# IF YOU ARE ON LINUX, DO NOT FORGET TO CHECK
+# THIS FILE'S PERMISSIONS! To make sure, use:
+# "chmod ugo+rwx rc" (modified accordingly)
+
+# Loop-mount ZeroSlackr userland
+busybox mount -t ext3 -o loop,rw /boot/userland.ext3 /boot/mount
+
+# Swap roots
+cd /boot/mount/
+busybox pivot_root . mnt
+
+# Execute normal rc file
+sh /etc/rc

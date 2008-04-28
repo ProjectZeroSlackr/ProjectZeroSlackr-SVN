@@ -101,7 +101,7 @@ extern TWindow *new_reflex_window(void);
 extern TWindow *new_ouch_window(void);
 extern TWindow *new_deal_window(void);
 extern TWindow *wumpus_new_game(void);
-extern TWindow *iconui_new_menu_window(void);
+//extern TWindow *iconui_new_menu_window(void);
 extern TWindow *new_izilla_window(void);
 extern TWindow *new_usvsthem_window(void);
 extern TWindow *new_piezomaker(void);
@@ -429,7 +429,7 @@ static ttk_menu_item main_menu[] = {
 	{0}
 };
 extern ttk_menu_item empty_menu[];
-TWindow *(*pz_new_menu_window)(TWidget *) = iconui_new_menu_window;
+//TWindow *(*pz_new_menu_window)(TWidget *) = iconui_new_menu_window;
 void new_menu_window()
 {
     

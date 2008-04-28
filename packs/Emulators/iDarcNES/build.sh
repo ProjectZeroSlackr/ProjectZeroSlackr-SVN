@@ -3,7 +3,7 @@
 # iDarcNES Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: April 17, 2008
+# Last updated: Apr 26, 2008
 #
 echo ""
 echo "==========================================="
@@ -57,22 +57,22 @@ echo "> Building ZeroLauncher launch module..."
 cp -rf ../src/launcher ./
 cd launcher
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
-make -f ../launch/launch.mk >> ../build.log
+make -f ../launch/launch.mk
 cd ..
 # Creating release
 echo "> Creating 'release' folder..."
-tar -xf ../src/release.tar.gz
+cp -rf ../src/release ./
 cd release
 # Files
-PACK=ZeroSlackr/opt/iDarcNES
+PACK=ZeroSlackr/opt/Emulators/iDarcNES
 cp -rf ../compiled/iDarcNES $PACK/
-mkdir $PACK/Launch
 cp -rf ../launcher/* $PACK/Launch/
 # Documents
 DOCS=$PACK/Misc/Docs
 cp -rf "../../ReadMe from Keripo.txt" $PACK/
 cp -rf ../../License.txt $PACK/
 cp -rf ../compiling/readme $DOCS/
+sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $PACK/Misc
 tar -cf Docs.tar Docs

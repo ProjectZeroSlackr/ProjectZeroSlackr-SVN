@@ -1,3 +1,3 @@
 MODULE = viPodzilla
-DATA = FastLaunch.sh
+DATA = Launch.sh
 obj-m = viPodzilla.o

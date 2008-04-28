@@ -251,10 +251,10 @@ Index: fonts.c
  
  #ifdef IPOD
 -#define IPOD_SETTINGS_FILE	"/etc/podzilla.conf"
-+#define IPOD_SETTINGS_FILE	"/opt/Podzilla0-Lite/Conf/podzilla0-lite.conf"
++#define IPOD_SETTINGS_FILE	"/opt/Zillae/Podzilla0-Lite/Conf/podzilla0-lite.conf"
  #else
 -#define IPOD_SETTINGS_FILE	"podzilla.conf"
-+#define IPOD_SETTINGS_FILE	"/opt/Podzilla0-Lite/Conf/podzilla0-lite.conf"
++#define IPOD_SETTINGS_FILE	"/opt/Zillae/Podzilla0-Lite/Conf/podzilla0-lite.conf"
  #endif
  
  /* DISPLAY SETINGS 0 - 9 */

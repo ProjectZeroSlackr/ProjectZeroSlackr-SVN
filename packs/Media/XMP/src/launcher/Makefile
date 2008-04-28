@@ -1,3 +1,3 @@
 MODULE = XMP
-data = Fastlaunch.sh
+data = Launch.sh
 obj-m = XMP.o

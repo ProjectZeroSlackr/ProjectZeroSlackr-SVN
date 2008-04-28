@@ -1,3 +1,3 @@
 MODULE = Podzilla2-SVN
-DATA = FastLaunch.sh
+DATA = Launch.sh
 obj-m = Podzilla2-SVN.o

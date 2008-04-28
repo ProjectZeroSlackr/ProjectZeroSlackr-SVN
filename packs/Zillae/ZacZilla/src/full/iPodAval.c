@@ -230,13 +230,13 @@ TWindow *new_avalanche_window()
     
     ttk_add_widget(window, wid);
     ttk_widget_set_timer(wid, mil);
-    	player_image = ttk_load_image("/opt/ZacZilla/Data/Alal/player.PNG");
+    	player_image = ttk_load_image("/opt/Zillae/ZacZilla/Data/Alal/player.PNG");
 //	ttk_surface_get_dimen (player_image, &imgw, &imgh);
 		
-	spike_image = ttk_load_image ("/opt/ZacZilla/Data/Alal/spike.png");
+	spike_image = ttk_load_image ("/opt/Zillae/ZacZilla/Data/Alal/spike.png");
 	//ttk_surface_get_dimen (spike_image, &imgw, &imgh);
 	
-	ball_image = ttk_load_image ("/opt/ZacZilla/Data/Alal/ball.png");
+	ball_image = ttk_load_image ("/opt/Zillae/ZacZilla/Data/Alal/ball.png");
 //	ttk_surface_get_dimen (ball_image, &imgw, &imgh);
 	ttk_show_window(window);
     return 0;

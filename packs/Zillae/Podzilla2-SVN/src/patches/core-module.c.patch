@@ -14,8 +14,8 @@ Index: core/module.c
  #ifdef IPOD
 -    char *confdir = "/etc/podzilla";
 -    char *moddir = "/etc/podzilla/modules";
-+    char *confdir = "/opt/Podzilla2-SVN/Conf";
-+    char *moddir = "/opt/Podzilla2-SVN/Conf/Mods";
++    char *confdir = "/usr/local";
++    char *moddir = "/usr/local/etc";
  #else
      char *confdir = malloc( MAXPATHLEN + 10 );
      char *moddir = malloc( MAXPATHLEN + 20 );

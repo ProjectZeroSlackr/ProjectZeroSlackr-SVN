@@ -184,7 +184,7 @@ static int load_level (int lev)
 	 char filename[25];
 	 FILE *fp;
 	 
-	 snprintf(filename, sizeof(filename), "/opt/ZacZilla/Data/levels/%d.lev", lev);
+	 snprintf(filename, sizeof(filename), "/opt/Zillae/ZacZilla/Data/levels/%d.lev", lev);
    if((fp = fopen(filename, "r")) == NULL) {
 	 	  printf("Could not load level!");
 	 	  
@@ -209,7 +209,7 @@ static int save_score()
 {
 	 FILE *file;
 	 
-	 file = fopen("/opt/ZacZilla/Data/brickscore.conf", "w");
+	 file = fopen("/opt/Zillae/ZacZilla/Data/brickscore.conf", "w");
 	 if(file == NULL) {
 	 	  pz_error("Couldn't save score!");
 	 	  return 0;
@@ -226,7 +226,7 @@ static int load_score()
 {
 	 FILE *file;
 	 
-	 file = fopen("/opt/ZacZilla/Data/brickscore.conf", "a+");
+	 file = fopen("/opt/Zillae/ZacZilla/Data/brickscore.conf", "a+");
 	 if(file == NULL) {
 	 	  pz_error("Couldn't load score!");
 	 	  return 0;
@@ -905,14 +905,14 @@ static void brickm_start()
 	    STRINGPOS_flipsides = 150;
 	    
 	    brickm_srf = ttk_new_surface (LCD_WIDTH, LCD_HEIGHT, ttk_screen->bpp);
-	    brickmania_powerups = ttk_load_image("/opt/ZacZilla/Data/images/brickmania_powerups.gif");
-	    brickmania_ball = ttk_load_image("/opt/ZacZilla/Data/images/brickmania_ball.gif");
-	    brickmania_break = ttk_load_image("/opt/ZacZilla/Data/images/brickmania_break.gif");
-	    brickmania_bricks = ttk_load_image("/opt/ZacZilla/Data/images/brickmania_bricks.gif");
-	    brickmania_gameover = ttk_load_image("/opt/ZacZilla/Data/images/brickmania_gameover.gif");
-	    brickmania_menu_bg = ttk_load_image("/opt/ZacZilla/Data/images/brickmania_menu_bg.gif");
-	    brickmania_menu_items = ttk_load_image("/opt/ZacZilla/Data/images/brickmania_menu_items.gif");
-	    brickmania_pads = ttk_load_image("/opt/ZacZilla/Data/images/brickmania_pads.gif");
+	    brickmania_powerups = ttk_load_image("/opt/Zillae/ZacZilla/Data/images/brickmania_powerups.gif");
+	    brickmania_ball = ttk_load_image("/opt/Zillae/ZacZilla/Data/images/brickmania_ball.gif");
+	    brickmania_break = ttk_load_image("/opt/Zillae/ZacZilla/Data/images/brickmania_break.gif");
+	    brickmania_bricks = ttk_load_image("/opt/Zillae/ZacZilla/Data/images/brickmania_bricks.gif");
+	    brickmania_gameover = ttk_load_image("/opt/Zillae/ZacZilla/Data/images/brickmania_gameover.gif");
+	    brickmania_menu_bg = ttk_load_image("/opt/Zillae/ZacZilla/Data/images/brickmania_menu_bg.gif");
+	    brickmania_menu_items = ttk_load_image("/opt/Zillae/ZacZilla/Data/images/brickmania_menu_items.gif");
+	    brickmania_pads = ttk_load_image("/opt/Zillae/ZacZilla/Data/images/brickmania_pads.gif");
 	 }
 	 else {
 	 	  LCD_WIDTH = ttk_screen->w;
@@ -941,14 +941,14 @@ static void brickm_start()
 	    STRINGPOS_flipsides = 100;
 	    
 	    brickm_srf = ttk_new_surface (LCD_WIDTH, LCD_HEIGHT, ttk_screen->bpp);
-	    brickmania_powerups = ttk_load_image("/opt/ZacZilla/Data/images/brickmania_powerups1.gif");
-	    brickmania_ball = ttk_load_image("/opt/ZacZilla/Data/images/brickmania_ball.gif");
-	    brickmania_break = ttk_load_image("/opt/ZacZilla/Data/images/brickmania_break1.gif");
-	    brickmania_bricks = ttk_load_image("/opt/ZacZilla/Data/images/brickmania_bricks1.gif");
-	    brickmania_gameover = ttk_load_image("/opt/ZacZilla/Data/images/brickmania_gameover1.gif");
-	    brickmania_menu_bg = ttk_load_image("/opt/ZacZilla/Data/images/brickmania_menu_bg1.gif");
-	    brickmania_menu_items = ttk_load_image("/opt/ZacZilla/Data/images/brickmania_menu_items1.gif");
-	    brickmania_pads = ttk_load_image("/opt/ZacZilla/Data/images/brickmania_pads1.gif");
+	    brickmania_powerups = ttk_load_image("/opt/Zillae/ZacZilla/Data/images/brickmania_powerups1.gif");
+	    brickmania_ball = ttk_load_image("/opt/Zillae/ZacZilla/Data/images/brickmania_ball.gif");
+	    brickmania_break = ttk_load_image("/opt/Zillae/ZacZilla/Data/images/brickmania_break1.gif");
+	    brickmania_bricks = ttk_load_image("/opt/Zillae/ZacZilla/Data/images/brickmania_bricks1.gif");
+	    brickmania_gameover = ttk_load_image("/opt/Zillae/ZacZilla/Data/images/brickmania_gameover1.gif");
+	    brickmania_menu_bg = ttk_load_image("/opt/Zillae/ZacZilla/Data/images/brickmania_menu_bg1.gif");
+	    brickmania_menu_items = ttk_load_image("/opt/Zillae/ZacZilla/Data/images/brickmania_menu_items1.gif");
+	    brickmania_pads = ttk_load_image("/opt/Zillae/ZacZilla/Data/images/brickmania_pads1.gif");
 	 }
 	  
 	 load_score();

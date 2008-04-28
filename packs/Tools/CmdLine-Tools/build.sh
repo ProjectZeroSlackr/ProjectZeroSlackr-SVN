@@ -3,13 +3,17 @@
 # CmdLine-Tools Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 17, 2008
+# Last updated: Apr 27, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
 echo "CmdLine-Tools Auto-Building Script"
 echo ""
+# Cygwin check
+if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
+	CYGWIN="yes"
+fi
 # Cleanup
 if [ -d build ]; then
 	echo "> Removing old build directory..."
@@ -52,8 +56,7 @@ cd gzip
 make >> ../gzip.log 2>&1
 cd ..
 echo "  - diffutils"
-if [ -e /bin/cygwin1.dll ]
-then
+if [ "${CYGWIN}" ]; then
 	echo "    Note: diffutils doesn't seem to"
 	echo "    compile nicely on Cygwin - skipping"
 else
@@ -80,8 +83,7 @@ cd ..
 # Copy over compiled file
 echo "> Copying over compiled files..."
 mkdir compiled
-if [ -e /bin/cygwin1.dll ]
-then
+if [ "${CYGWIN}" ]; then
 	echo "  Note: skipping diffutils and tar"
 else
 	cp -rf diffutils-2.8.1/src/cmp compiled/
@@ -114,27 +116,26 @@ echo "> Building ZeroLauncher launch module..."
 cp -rf ../src/launcher ./
 cd launcher
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
-make -f ../launch/launch.mk >> ../build.log
+make -f ../launch/launch.mk
 cd ..
 # Creating release
 echo "> Creating 'release' folder..."
-tar -xf ../src/release.tar.gz
+cp -rf ../src/release ./
 cd release
 # Files
-PACK=ZeroSlackr/opt/CmdLine-Tools
-mkdir $PACK/Bin
+PACK=ZeroSlackr/opt/Tools/CmdLine-Tools
 cp -rf ../compiled/* $PACK/Bin/
-mkdir $PACK/Launch
 cp -rf ../launcher/* $PACK/Launch/
 # Documents
 # Too many original docs; done by hand
 cp -rf "../../ReadMe from Keripo.txt" $PACK/
 cp -rf ../../License.txt $PACK/
+sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
-cd $PACK/Misc
-tar -cf Docs.tar Docs
-gzip --best Docs.tar
-rm -rf Docs
+#cd $PACK/Misc
+#tar -cf Docs.tar Docs
+#gzip --best Docs.tar
+#rm -rf Docs
 # Done
 echo ""
 echo "Fin!"

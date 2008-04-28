@@ -163,14 +163,6 @@ OBJS=\
 	reflex.o \
 	ouch.o \
 	ideal.o \
-	iconui/iconui.o \
-	iconui/iconmenu.o \
-	iconui/bigiconmenu.o \
-	iconui/icon2menu.o \
-	iconui/bigicon2menu.o \
-	iconui/dockmenu.o \
-	iconui/smdockmenu.o \
-	iconui/mdockmenu.o \
 	usvsthem.o \
 	textinput.o \
 	tim/tidial.o \

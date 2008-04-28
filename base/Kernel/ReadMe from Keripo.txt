@@ -1,4 +1,4 @@
-Last updated: Apr 5, 2008
+Last updated: Apr 27, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -24,7 +24,7 @@ Usage:
 - It can be loaded by Loader2 with kernel arguments.
 - For the proper loader.cfg lines, see 
   "/boot/loader.cfg" and
-  "/boot/docs/kernel/Original/kernel-parameters.txt"
+  "/boot/docs/kernel/kernel-parameters.txt"
 
 
 Vanilla Linux:
@@ -49,15 +49,15 @@ iPodLinux Patches:
 - Link:
   http://www.so2.sys-techs.com/ipod/linux/
   https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/linux/2.4
-- Date: March 31, 2008
-- Version: Revision 2408
+- Date: Apr 27, 2008
+- Version: Revision 2418
 
 ZS Version:
 - Modder: Keripo
 - Type: Mod and Recompile
 - Link:
   http://ipodlinux.org/images/8/81/Iboy_kernel_patches.zip (iBoy patches)
-- Date: March 31, 2008
+- Date: Apr 27, 2008
 - Version: B X.X
 
 Modifications:

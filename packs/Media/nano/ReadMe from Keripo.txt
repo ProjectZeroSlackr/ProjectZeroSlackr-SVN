@@ -1,4 +1,4 @@
-Last updated: March 28, 2008
+Last updated: Apr 23, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -44,7 +44,7 @@ Original:
 ZS Version:
 - Modder: Keripo
 - Type: Hex edit
-- Date: March 1, 2008
+- Date: Apr 23, 2008
 - Version: B X.X
 
 Modifications:

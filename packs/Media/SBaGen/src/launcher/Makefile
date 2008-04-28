@@ -1,3 +1,3 @@
 MODULE = SBaGen
-DATA = FastLaunch.sh
+DATA = Launch.sh
 obj-m = SBaGen.o

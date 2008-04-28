@@ -1,5 +1,5 @@
 /*
- * Last updated: March 14, 2008
+ * Last updated: Apr 27, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -19,15 +19,13 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "pz.h"
-
-extern void pz_exec();
+#include "browser-ext.h"
 
 static PzModule *module;
 
 static PzWindow *fastlaunch()
 {
-	pz_exec(pz_module_get_datapath(module, "FastLaunch.sh"));
+	pz_exec("/opt/Zillae/ZacZilla/Launch/Launch.sh");
 	return NULL;
 }
 

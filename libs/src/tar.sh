@@ -3,16 +3,20 @@
 # tar Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 5, 2008
+# Last updated: Apr 27, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
 echo "tar Auto-Compiling Script"
 echo ""
-if [ -e /bin/cygwin1.dll ]; then
+# Cygwin check
+if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
 	echo "[tar doesn't seem to compile"
 	echo " nicely on Cygwin - skipping]"
+	echo ""
+	echo "==========================================="
+	echo ""
 	exit
 fi
 if [ -d tar ]; then
@@ -26,7 +30,7 @@ mv tar-1.16.2-20070123 tar
 # Compiling
 cd tar
 echo "> Compiling..."
-if [ -e /bin/cygwin1.dll ]; then
+if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
 	echo "  Note: tar building on Cygwin is a pain;"
 	echo "  expect lots of problems and it to fail."
 fi

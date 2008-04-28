@@ -1,3 +1,3 @@
 MODULE = Floyd2illA
-DATA = FastLaunch.sh
+DATA = Launch.sh
 obj-m = Floyd2illA.o

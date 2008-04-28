@@ -4,7 +4,7 @@
 # Auto-Lumping Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 17, 2008
+# Last updated: Apr 27, 2008
 #
 echo ""
 echo "==========================================="
@@ -17,7 +17,11 @@ echo "    This script will compile everything"
 echo "    and stick it in a convenient '_lump'"
 echo "    folder that can be copied directly"
 echo "    to your iPod."
-if [ -e /bin/cygwin1.dll ]; then
+# Cygwin check
+if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
+	CYGWIN="yes"
+fi
+if [ "${CYGWIN}" ]; then
 	echo ""
 	echo "    Building is recommended to be done on"
 	echo "    Linux. If you are using Cygwin and"
@@ -45,6 +49,7 @@ cd $SVNROOT
 cd libs
 ./build.sh
 # base
+echo ""
 echo "> Building base..."
 cd $SVNROOT
 cd base
@@ -62,11 +67,13 @@ do
 	cd ..
 done
 # packs
+echo ""
 echo "> Building packs..."
 cd $SVNROOT
 cd packs
 for folder in ./*
 do
+	echo ""
 	echo "  - Building packs in "$folder"..."
 	cd $folder
 	for pack in ./*
@@ -85,6 +92,7 @@ do
 	cd ..
 done
 # libs cleanup
+echo ""
 echo "> Cleaning up lib..."
 cd $SVNROOT
 cd libs

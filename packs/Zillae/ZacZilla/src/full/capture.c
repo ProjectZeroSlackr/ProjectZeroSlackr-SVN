@@ -176,7 +176,7 @@ static int capture_timer(TWidget *this)
 #ifdef IPOD
 		// KERIPO MOD
         //sprintf(buffer, "/hp/%d", (int)tv.tv_sec);
-		sprintf(buffer, "/opt/ZacZilla/Data/Capture/%d", (int)tv.tv_sec);
+		sprintf(buffer, "/opt/Zillae/ZacZilla/Data/Capture/%d", (int)tv.tv_sec);
         if(capture_save(buffer) == 1)
         {
             sprintf(buffer, "/%d", (int)tv.tv_sec);

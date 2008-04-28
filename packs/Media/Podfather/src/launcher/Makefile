@@ -1,3 +1,3 @@
 MODULE = Podfather
-DATA = FastLaunch.sh
+DATA = Launch.sh
 obj-m = Podfather.o

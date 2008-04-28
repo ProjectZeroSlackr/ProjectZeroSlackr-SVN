@@ -3,7 +3,7 @@
 # Encyclopodia Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 17, 2008
+# Last updated: Apr 26, 2008
 #
 echo ""
 echo "==========================================="
@@ -94,23 +94,17 @@ echo "> Building ZeroLauncher launch module..."
 cp -rf ../src/launcher ./
 cd launcher
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
-make -f ../launch/launch.mk >> ../build.log
+make -f ../launch/launch.mk
 cd ..
 # Creating release
 echo "> Creating 'release' folder..."
-tar -xf ../src/release.tar.gz
-# Disable for now - seems like font choosing
-# doesn't work with the PZ2 module (article.cc)
-# Maybe I'll look furthur into it later
-#tar -xf compiling/fonts.tar.gz
+cp -rf ../src/release ./
 cd release
 # Files
-PACK=ZeroSlackr/opt/Encyclopodia
+PACK=ZeroSlackr/opt/Tools/Encyclopodia
 cp -rf ../compiled/Encyclopodia $PACK/
 cp -rf ../compiled/modules/* $PACK/Modules/
-#cp -rf ../fonts $PACK/Fonts
 cp -rf ../../src/libraries/ipodlinux-wiki-articles-2008-03-07.epodia $PACK/Library/
-mkdir $PACK/Launch
 cp -rf ../launcher/* $PACK/Launch/
 # Documents
 echo "> Copying over documents..."
@@ -135,6 +129,7 @@ cp -rf $OFFSVN/contrib/ucdl/README $DOCS/ucdl/
 mkdir -p $DOCS/pz2
 cp -rf $OFFSVN/API.tex $DOCS/pz2/
 cp -rf $OFFSVN/COPYING $DOCS/pz2/
+sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $PACK/Misc
 tar -cf Patches.tar Patches

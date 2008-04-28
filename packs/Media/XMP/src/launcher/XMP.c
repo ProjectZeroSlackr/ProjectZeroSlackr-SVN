@@ -1,5 +1,5 @@
 /*
- * Last updated: March 17, 2008
+ * Last updated: Apr 27, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -19,18 +19,11 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "pz.h"
-#include <stdio.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <unistd.h>
-
-extern void pz_execv();
-extern int check_file_ext();
-extern TWindow *open_directory_title();
+#include "browser-ext.h"
 
 static PzModule *module;
 static ttk_menu_item browser_extension;
+static const char *path, *dir;
 
 /* Supported formats. 82 in total. */
 static const char *formats[] = { 
@@ -49,7 +42,7 @@ static const char *formats[] = {
 	".p41", ".p60a",".np1", ".np2", ".np3", ".zen", 
 	".crb", ".tdd", ".gmc", ".gdm" };
 
-static int check_ext(const char* file)
+static int check_ext(const char *file)
 {
 	int i;
 	for (i = 0; i < 82; i++) {
@@ -60,8 +53,7 @@ static int check_ext(const char* file)
 
 static PzWindow *load_file(const char *file)
 {
-	const char *const path = pz_module_get_datapath(module, "../XMP");
-	const char *const cmd[] = {"XMP", file, NULL};
+	const char *const cmd[] = {"Launch.sh", file, NULL};
 	pz_execv(
 		path,
 		(char *const *)cmd
@@ -77,14 +69,13 @@ static PzWindow *load_file_handler(ttk_menu_item *item)
 
 static PzWindow *browse_mods()
 {
-	const char *const path = pz_module_get_datapath(module, "../Mods");
-	chdir(path);
-	return open_directory_title(path, "XMP Modules");
+	chdir(dir);
+	return open_directory_title(dir, "XMP Modules");
 }
 
 static PzWindow *fastlaunch()
 {
-	pz_exec(pz_module_get_datapath(module, "FastLaunch.sh"));
+	pz_exec(path);
 	return NULL;
 }
 
@@ -96,10 +87,13 @@ static void cleanup()
 static void init_launch() 
 {
 	module = pz_register_module("XMP", cleanup);
+	path = "/opt/Media/XMP/Launch/Launch.sh";
+	dir = "/opt/Media/XMP/Mods";
 	
 	pz_menu_add_stub_group("/Media/XMP", "Music");
-	pz_menu_add_action_group("/Media/XMP/FastLaunch", "Launching", fastlaunch);
-	pz_menu_add_action_group("/Media/XMP/Modules", "Launching", browse_mods);
+	pz_menu_add_action_group("/Media/XMP/#FastLaunch", "#FastLaunch", fastlaunch);
+	pz_menu_add_action_group("/Media/XMP/Modules", "Browse", browse_mods);
+	pz_menu_add_action_group("/Media/XMP/Toggle Backlight", "~Settings", toggle_backlight_window);
 	pz_menu_sort("/Media/XMP");
 
 	browser_extension.name = N_("Open with XMP");

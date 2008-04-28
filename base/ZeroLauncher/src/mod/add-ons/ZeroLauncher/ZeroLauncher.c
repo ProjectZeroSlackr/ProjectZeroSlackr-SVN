@@ -1,5 +1,5 @@
 /*
- * Last updated: March 14, 2008
+ * Last updated: Apr 26, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -21,19 +21,19 @@
 
 #include "pz.h"
 
-extern void pz_exec();
-
 static PzModule *module;
+static const char *path;
 
 static PzWindow *fastlaunch()
 {
-	pz_exec(pz_module_get_datapath(module, "FastLaunch.sh"));
+	pz_exec(path);
 	return NULL;
 }
 
 static void init_launch() 
 {
 	module = pz_register_module ("ZeroLauncher", 0);
+	path = "/opt/Base/ZeroLauncher/Launch/Launch.sh";
 	pz_menu_add_action_group ("/Zillae/ZeroLauncher", "#PZ2 Based", fastlaunch);
 }
 

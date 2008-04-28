@@ -844,7 +844,7 @@ void pz_set_time_from_file(void)
 
 #ifdef IPOD
 #define SCHEMESDIR "/usr/share/schemes/"
-#define SCHEMECONF "/opt/ZacZilla/Conf/scheme.conf"
+#define SCHEMECONF "/opt/Zillae/ZacZilla/Conf/scheme.conf"
 #else
 #define SCHEMESDIR "schemes/"
 #define SCHEMECONF "scheme.conf"
@@ -923,7 +923,7 @@ int main(int argc, char **argv)
 	//fprintf(fp,"header");
 	//fclose(fp);
  //fp=//fopen("/mnt/debug.txt","w");
-	iconui_init();
+	//iconui_init();
 ti_init();
 //fprintf(fp,"tiinit");
 //fclose(fp);

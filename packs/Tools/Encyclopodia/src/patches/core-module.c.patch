@@ -14,8 +14,8 @@ Index: core/module.c
  #ifdef IPOD
 -    char *confdir = "/etc/podzilla";
 -    char *moddir = "/etc/podzilla/modules";
-+    char *confdir = "/opt/Encyclopodia/Conf";
-+    char *moddir = "/opt/Encyclopodia/Conf/Mods";
++    char *confdir = "/usr/local";
++    char *moddir = "/usr/local/etc";
  #else
      char *confdir = malloc( MAXPATHLEN + 10 );
      char *moddir = malloc( MAXPATHLEN + 20 );
@@ -24,7 +24,7 @@ Index: core/module.c
  {
  #ifdef IPOD
 -#define MODULEDIR "/usr/lib"
-+#define MODULEDIR "/opt/Encyclopodia/Modules"
++#define MODULEDIR "/opt/Tools/Encyclopodia/Modules"
  #else
  #define MODULEDIR "modules"
  #endif
