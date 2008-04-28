@@ -1905,10 +1905,10 @@ void TextLink::calculateSize(GR_GC_ID &gc, MarkupState &ms, uint1 &curCellWidth)
 void setFontFromMS(GR_GC_ID &gc, MarkupState &ms)
 {
 
-	static char fontname[64];
+	static char fontname[256];
 	
 	sprintf(
-		fontname, "/opt/Encyclopodia/Fonts/epodia%dsize%dstyle%d.fnt",
+		fontname, "epodia%dsize%dstyle%d",
 		ms.fontFamily, ms.fontSize, ms.fontStyle & (MarkupState::fsBold|MarkupState::fsItalic)
 	);
 	

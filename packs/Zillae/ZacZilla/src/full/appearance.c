@@ -81,7 +81,7 @@
 
 #ifdef IPOD
 #define SCHEMESDIR "/usr/share/schemes/"
-#define SCHEMECONF "/opt/ZacZilla/Conf/scheme.conf"
+#define SCHEMECONF "/opt/Zillae/ZacZilla/Conf/scheme.conf"
 #else
 #define SCHEMESDIR "schemes/"
 #define SCHEMECONF "scheme.conf"

@@ -14,8 +14,8 @@ Index: core/module.c
  #ifdef IPOD
 -    char *confdir = "/etc/podzilla";
 -    char *moddir = "/etc/podzilla/modules";
-+    char *confdir = "/opt/ZeroLauncher/Conf";
-+    char *moddir = "/opt/ZeroLauncher/Conf/Packs";
++    char *confdir = "/usr/local";
++    char *moddir = "/usr/local/etc";
  #else
      char *confdir = malloc( MAXPATHLEN + 10 );
      char *moddir = malloc( MAXPATHLEN + 20 );
@@ -33,7 +33,7 @@ Index: core/module.c
  {
  #ifdef IPOD
 -#define MODULEDIR "/usr/lib"
-+#define MODULEDIR "/opt:/opt/ZeroLauncher/Add-ons"
++#define MODULEDIR "/opt/Base:/opt/Emulators:/opt/Media:/opt/Tools:/opt/Zillae"
  #else
  #define MODULEDIR "modules"
  #endif

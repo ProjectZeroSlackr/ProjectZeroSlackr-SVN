@@ -63,10 +63,13 @@ readhook_t nes_bank4_read_hook;
 readhook_t nes_bank6_read_hook;
 writehook_t nes_bank4_write_hook;
 writehook_t nes_bank6_write_hook;
+// They don't work
+// ~Keripo
+/*
 void saves()
 {
   char save[256];
-  snprintf(save, 256, "/opt/iDarcNES/Saves/%s.sav", filename);
+  snprintf(save, 256, "/opt/Emulators/iDarcNES/Saves/%s.sav", filename);
   FILE *fp=fopen(save,"w");
   fprintf(fp,"%s\n%s\n%s\n%s\n%s\n%s\n%s\n",vromimage,bank_0,bank_6,bank_8,bank_A,bank_C,bank_E);
   fclose(fp);
@@ -74,11 +77,12 @@ void saves()
 void loads()
 {
   char save[256];
-  snprintf(save, 256, "/opt/iDarcNES/Saves/%s.sav", filename);
+  snprintf(save, 256, "/opt/Emulators/iDarcNES/Saves/%s.sav", filename);
   FILE *fp=fopen(save,"r");
   fscanf(fp,"%s\n%s\n%s\n%s\n%s\n%s\n%s\n",&vromimage,&bank_0,&bank_6,&bank_8,&bank_A,&bank_C,&bank_E);
   fclose(fp);
 }
+*/
 unsigned char mask_bank_addr(unsigned char bank)
 {
     unsigned char i;

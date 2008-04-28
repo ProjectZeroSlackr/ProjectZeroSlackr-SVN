@@ -6,7 +6,7 @@ diff -ur ipod.h ipod.h
  
  #ifdef IPOD
 -#define IPOD_SETTINGS_FILE	"/etc/podzilla.conf"
-+#define IPOD_SETTINGS_FILE	"/opt/Podzilla0-SVN/Conf/podzilla0-svn.conf"
++#define IPOD_SETTINGS_FILE	"/opt/Zillae/Podzilla0-SVN/Conf/podzilla0-svn.conf"
  #else
  #define IPOD_SETTINGS_FILE	"podzilla.conf"
  #endif
@@ -23,7 +23,7 @@ diff -ur poddraw.c poddraw.c
  	t = time( NULL );
  	current_time = localtime( &t );
 -	strftime( buf, 64, "%Y-%m-%d_%H%M.ppm", current_time );
-+	strftime( buf, 64, "/opt/Podzilla0-Lite/Data/%Y-%m-%d_%H%M.ppm", current_time );
++	strftime( buf, 64, "/opt/Zillae/Podzilla0-Lite/Data/%Y-%m-%d_%H%M.ppm", current_time );
  
  	fp = fopen( buf, "w" );
  	if( !fp ) return;
@@ -35,7 +35,7 @@ diff -ur tunnel.c tunnel.c
  
  #ifdef IPOD
 -#define SAVEFILE "/home/.tunnel"
-+#define SAVEFILE "/opt/Podzilla0-Lite/Data/tunnel.txt"
++#define SAVEFILE "/opt/Zillae/Podzilla0-Lite/Data/tunnel.txt"
  #else
  #define SAVEFILE ".tunnel"
  #endif
@@ -47,7 +47,7 @@ diff -ur tuxchess/main.c tuxchess/main.c
  #include "../pz.h"
  
 -#define LASTGAME ".tuxchess"
-+#define LASTGAME "/opt/Podzilla0-SVN/Data/tuxchess.save"
++#define LASTGAME "/opt/Zillae/Podzilla0-SVN/Data/tuxchess.save"
  
  #define MWINCLUDECOLORS
  #include "nano-X.h"
@@ -59,7 +59,7 @@ diff -ur bluecube/main.c bluecube/main.c
  #include "../pz.h"
  
 -#define HIGHSCORE ".bluecube"
-+#define HIGHSCORE "/opt/Podzilla0-SVN/Data/bluecube.txt"
++#define HIGHSCORE "/opt/Zillae/Podzilla0-SVN/Data/bluecube.txt"
  
  static void tetris_do_draw(void);
  static int tetris_do_keystroke(GR_EVENT *);

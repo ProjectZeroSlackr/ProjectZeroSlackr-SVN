@@ -3,7 +3,7 @@
 # Userland Image Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 3, 2008
+# Last updated: Apr 26, 2008
 #
 echo ""
 echo "==========================================="

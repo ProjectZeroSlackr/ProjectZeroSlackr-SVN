@@ -1,4 +1,4 @@
-Last updated: March 28, 2008
+Last updated: Apr 23, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -54,7 +54,7 @@ though most of their descriptions can be found here:
 
 Usage:
 - Launch the different zillae through the "TimeWalk"
-  menu.
+  menu (not under "Zillae >" since so many).
 - Remember that none of the zillae are guaranteed to
   work on your specific iPod model so don't cry "Wolf!"
   if it doesn't work for you.
@@ -207,18 +207,25 @@ http://so2.sytes.net/ipod/podzilla
 ZS Version:
 - Modder: Keripo
 - Type: Hex edit
-- Date: March 21, 2008
+- Date: Apr 23, 2008
 - Version: B X.X
 
 Modifications:
-(see src/hex/Hex-edits.txt)
 - hex edited all (important) paths to be relative
   to be ZS friendly
+  /bin -> bin
+  /sbin -> sbin
+  /etc -> etc
+  /home -> home
+  /usr -> usr
+- Extras such as viP that does not contribute to
+  the zilla/application's specialty are neither
+  hexed nor included (otherwise too much)
 
 Launch Module:
 - information windows
 - launches each zillae
-- special script for iPod-Desktop
+- special script for iPod-Desktop and OwenOS
 
 To do:
 - find and add more zillae

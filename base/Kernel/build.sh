@@ -3,7 +3,7 @@
 # Kernel Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 28, 2008
+# Last updated: Apr 26, 2008
 #
 echo ""
 echo "==========================================="
@@ -61,7 +61,7 @@ mkdir compiled
 cp -rf compiling/linux-2.4.32-ipod2/arch/armnommu/boot/Image compiled/vmlinux
 # Create release folder
 echo "> Creating 'release' folder..."
-tar -xf ../src/release.tar.gz
+cp -rf ../src/release ./
 cd release
 # Files
 cp -r ../compiled/vmlinux boot/
@@ -80,7 +80,8 @@ cp -rf $COMPILING/README $DOCSORIG/
 cp -rf $COMPILING/REPORTING-BUGS $DOCSORIG/
 # Too much and really not needed
 #cp -rf $COMPILING/Documentation $DOCSORIG/
-cp -rf $COMPILING/Documentation/kernel-parameters.txt $DOCSORIG/
+cp -rf $COMPILING/Documentation/kernel-parameters.txt $DOCS/
+sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd boot/docs/kernel
 tar -cf Patches.tar Patches

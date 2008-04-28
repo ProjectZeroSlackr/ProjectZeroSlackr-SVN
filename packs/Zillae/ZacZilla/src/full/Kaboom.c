@@ -390,9 +390,9 @@ void new_kaboom_window (void)
   bomb_caught = 0; /*counter for how many caught bombs*/
   bucket[0].width = bucket[1].width = bucket[2].width = screen_info.cols/10; /*bucket width*/
   bucket[0].height = bucket[1].height = bucket[2].height = screen_info.cols/30; /*bucket height*/
-  man_buffer = GrLoadImageFromFile("/opt/ZacZilla/Data/man.bmp", 0);
-  bucket_buffer = GrLoadImageFromFile("/opt/ZacZilla/Data/bucket.bmp", 0);
-  bomb_buffer = GrLoadImageFromFile("/opt/ZacZilla/Data/bomb.bmp", 0);
+  man_buffer = GrLoadImageFromFile("/opt/Zillae/ZacZilla/Data/man.bmp", 0);
+  bucket_buffer = GrLoadImageFromFile("/opt/Zillae/ZacZilla/Data/bucket.bmp", 0);
+  bomb_buffer = GrLoadImageFromFile("/opt/Zillae/ZacZilla/Data/bomb.bmp", 0);
   bombdrop = 1000;
   bomb_size = ((man_width * 75)/100);
   buckets_alive = 3;

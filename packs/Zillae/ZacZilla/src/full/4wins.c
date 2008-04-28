@@ -299,41 +299,41 @@ void set_fonts(ttk_surface srf)
 {
 	if(ttk_screen->w == 176 || ttk_screen->w == 160) 
 	{
-		image_stone[0]=ttk_load_image("/opt/ZacZilla/Data/0s.png");
-	  if (!(image_stone[1]=ttk_load_image("/opt/ZacZilla/Data/1s.png")))
+		image_stone[0]=ttk_load_image("/opt/Zillae/ZacZilla/Data/0s.png");
+	  if (!(image_stone[1]=ttk_load_image("/opt/Zillae/ZacZilla/Data/1s.png")))
 	  {
 		  error_message(srf, "Load failed");
 		}
-	  image_stone[2]=ttk_load_image("/opt/ZacZilla/Data/2s.png");
-	  image_pfeil=ttk_load_image("/opt/ZacZilla/Data/pfeil_s.png");
-	  image_turn[1]=ttk_load_image("/opt/ZacZilla/Data/turn_1.png");
-	  image_turn[2]=ttk_load_image("/opt/ZacZilla/Data/turn_2.png");
+	  image_stone[2]=ttk_load_image("/opt/Zillae/ZacZilla/Data/2s.png");
+	  image_pfeil=ttk_load_image("/opt/Zillae/ZacZilla/Data/pfeil_s.png");
+	  image_turn[1]=ttk_load_image("/opt/Zillae/ZacZilla/Data/turn_1.png");
+	  image_turn[2]=ttk_load_image("/opt/Zillae/ZacZilla/Data/turn_2.png");
 	}
 	  
 	else if(ttk_screen->w == 138)
 	{
-		image_stone[0]=ttk_load_image("/opt/ZacZilla/Data/0m.png");
-	  if (!(image_stone[1]=ttk_load_image("/opt/ZacZilla/Data/1m.png")))
+		image_stone[0]=ttk_load_image("/opt/Zillae/ZacZilla/Data/0m.png");
+	  if (!(image_stone[1]=ttk_load_image("/opt/Zillae/ZacZilla/Data/1m.png")))
 	  {
 		  error_message(srf, "Load failed");
 		}
-	  image_stone[2]=ttk_load_image("/opt/ZacZilla/Data/2m.png");
-	  image_pfeil=ttk_load_image("/opt/ZacZilla/Data/pfeil_m.png");
-	  image_turn[1]=ttk_load_image("/opt/ZacZilla/Data/turn_1.png");
-	  image_turn[2]=ttk_load_image("/opt/ZacZilla/Data/turn_2.png");
+	  image_stone[2]=ttk_load_image("/opt/Zillae/ZacZilla/Data/2m.png");
+	  image_pfeil=ttk_load_image("/opt/Zillae/ZacZilla/Data/pfeil_m.png");
+	  image_turn[1]=ttk_load_image("/opt/Zillae/ZacZilla/Data/turn_1.png");
+	  image_turn[2]=ttk_load_image("/opt/Zillae/ZacZilla/Data/turn_2.png");
 	}
 	
 	else
 	{
-		image_stone[0]=ttk_load_image("/opt/ZacZilla/Data/0.png");
-	  if (!(image_stone[1]=ttk_load_image("/opt/ZacZilla/Data/1.png")))
+		image_stone[0]=ttk_load_image("/opt/Zillae/ZacZilla/Data/0.png");
+	  if (!(image_stone[1]=ttk_load_image("/opt/Zillae/ZacZilla/Data/1.png")))
 	  {
 		  error_message(srf, "Load failed");
 		}
-	  image_stone[2]=ttk_load_image("/opt/ZacZilla/Data/2.png");
-	  image_pfeil=ttk_load_image("/opt/ZacZilla/Data/pfeil.png");
-	  image_turn[1]=ttk_load_image("/opt/ZacZilla/Data/turn_1.png");
-	  image_turn[2]=ttk_load_image("/opt/ZacZilla/Data/turn_2.png");
+	  image_stone[2]=ttk_load_image("/opt/Zillae/ZacZilla/Data/2.png");
+	  image_pfeil=ttk_load_image("/opt/Zillae/ZacZilla/Data/pfeil.png");
+	  image_turn[1]=ttk_load_image("/opt/Zillae/ZacZilla/Data/turn_1.png");
+	  image_turn[2]=ttk_load_image("/opt/Zillae/ZacZilla/Data/turn_2.png");
 	}
 }
 

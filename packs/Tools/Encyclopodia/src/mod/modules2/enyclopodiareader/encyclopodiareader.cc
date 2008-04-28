@@ -38,7 +38,7 @@
 #include <sys/stat.h>
 
 #ifdef IPOD
-        static const char *LIBPATH = "/opt/Encyclopodia/Library/";
+        static const char *LIBPATH = "/opt/Tools/Encyclopodia/Library/";
 #else
         //PLACE YOUR FILE-PATHS HERE
         static const char *LIBPATH = "/home/jsha/src/ipod/ep-files/library/";

@@ -31,7 +31,7 @@
 
 // KERIPO MOD
 //#define HIGHSCORE ".bluecube"
-#define HIGHSCORE "/opt/ZacZilla/Data/bluecube.txt"
+#define HIGHSCORE "/opt/Zillae/ZacZilla/Data/bluecube.txt"
 
 static void tetris_do_draw(void);
 static int tetris_do_keystroke(GR_EVENT *);

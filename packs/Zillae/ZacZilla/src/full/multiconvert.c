@@ -43,7 +43,7 @@ extern void new_message_window(char * message);
 
 // KERIPO MOD
 //const char * multiconvert_file = "/etc/MultiConvert.tabl";
-const char * multiconvert_file = "/opt/ZacZilla/Data/MultiConvert.tabl"; /* feel free to change this to whatever you want */
+const char * multiconvert_file = "/opt/Zillae/ZacZilla/Data/MultiConvert.tabl"; /* feel free to change this to whatever you want */
 
 int                      multiconvert_num_unit_types = 0;
 multiconvert_unit_type * multiconvert_unit_types;

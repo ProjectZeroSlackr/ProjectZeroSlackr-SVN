@@ -83,134 +83,134 @@ static int craps_do_draw (TWidget *wid, ttk_surface srf)
 	   	 sprintf(str, "You rolled %d", roll);
 	   	 ttk_text(srf, ttk_menufont, 5, 10, ttk_ap_getx("window.fg")->color, str);
 	   	 if (ttk_screen->bpp != 16) { 
-           /*sprintf(picDieOne, "/opt/ZacZilla/Data/craps/%dbw.png", DieOne);
-           sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/%dbw.png", DieTwo);*/
+           /*sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/%dbw.png", DieOne);
+           sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/%dbw.png", DieTwo);*/
            switch(DieOne) {
            case 1: 
-           sprintf(picDieOne, "/opt/ZacZilla/Data/craps/1bw.png");
+           sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/1bw.png");
           break;
           case 2:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/2bw.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/2bw.png");
           break;
           case 3:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/3bw.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/3bw.png");
           break;
           case 4:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/4bw.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/4bw.png");
           break;
           case 5:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/5bw.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/5bw.png");
           break;
           case 6:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/6bw.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/6bw.png");
           break;
           }
           switch(DieTwo) {
            case 1: 
-           sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/1bw.png");
+           sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/1bw.png");
           break;
           case 2:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/2bw.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/2bw.png");
           break;
           case 3:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/3bw.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/3bw.png");
           break;
           case 4:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/4bw.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/4bw.png");
           break;
           case 5:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/5bw.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/5bw.png");
           break;
           case 6:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/6bw.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/6bw.png");
           break;
           }
            imgw=64, imgh=64;  }
 	     else if (ttk_screen->w < 220) { 
-           /*sprintf(picDieOne, "/opt/ZacZilla/Data/craps/%ds.png", DieOne);
-           sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/%ds.png", DieTwo);*/
+           /*sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/%ds.png", DieOne);
+           sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/%ds.png", DieTwo);*/
                      switch(DieOne) {
            case 1: 
-           sprintf(picDieOne, "/opt/ZacZilla/Data/craps/1s.png");
+           sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/1s.png");
           break;
           case 2:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/2s.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/2s.png");
           break;
           case 3:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/3s.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/3s.png");
           break;
           case 4:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/4s.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/4s.png");
           break;
           case 5:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/5s.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/5s.png");
           break;
           case 6:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/6s.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/6s.png");
           break;
           }
           switch(DieTwo) {
            case 1: 
-           sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/1s.png");
+           sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/1s.png");
           break;
           case 2:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/2s.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/2s.png");
           break;
           case 3:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/3s.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/3s.png");
           break;
           case 4:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/4s.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/4s.png");
           break;
           case 5:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/5s.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/5s.png");
           break;
           case 6:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/6s.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/6s.png");
           break;
           }
            imgw=64, imgh=64; }
 	     else if (ttk_screen->w >= 220) { 
-           /*sprintf(picDieOne, "/opt/ZacZilla/Data/craps/%d.png", DieOne);
-           sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/%d.png", DieTwo);*/
+           /*sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/%d.png", DieOne);
+           sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/%d.png", DieTwo);*/
                      switch(DieOne) {
            case 1: 
-           sprintf(picDieOne, "/opt/ZacZilla/Data/craps/1.png");
+           sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/1.png");
           break;
           case 2:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/2.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/2.png");
           break;
           case 3:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/3.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/3.png");
           break;
           case 4:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/4.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/4.png");
           break;
           case 5:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/5.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/5.png");
           break;
           case 6:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/6.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/6.png");
           break;
           }
           switch(DieTwo) {
            case 1: 
-           sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/1.png");
+           sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/1.png");
           break;
           case 2:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/2.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/2.png");
           break;
           case 3:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/3.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/3.png");
           break;
           case 4:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/4.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/4.png");
           break;
           case 5:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/5.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/5.png");
           break;
           case 6:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/6.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/6.png");
           break;
           }
            imgw=80, imgh=80; }
@@ -264,134 +264,134 @@ static int craps_do_draw (TWidget *wid, ttk_surface srf)
 	   	 width = ttk_text_width(ttk_menufont, str);
 	   	 ttk_text(srf, ttk_menufont, (ttk_screen->w/2)-(width/2), 10, ttk_ap_getx("window.fg")->color, str);
 	 if (ttk_screen->bpp != 16) { 
-           /*sprintf(picDieOne, "/opt/ZacZilla/Data/craps/%dbw.png", DieOne);
-           sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/%dbw.png", DieTwo);*/
+           /*sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/%dbw.png", DieOne);
+           sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/%dbw.png", DieTwo);*/
            switch(DieOne) {
            case 1: 
-           sprintf(picDieOne, "/opt/ZacZilla/Data/craps/1bw.png");
+           sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/1bw.png");
           break;
           case 2:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/2bw.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/2bw.png");
           break;
           case 3:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/3bw.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/3bw.png");
           break;
           case 4:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/4bw.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/4bw.png");
           break;
           case 5:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/5bw.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/5bw.png");
           break;
           case 6:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/6bw.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/6bw.png");
           break;
           }
           switch(DieTwo) {
            case 1: 
-           sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/1bw.png");
+           sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/1bw.png");
           break;
           case 2:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/2bw.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/2bw.png");
           break;
           case 3:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/3bw.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/3bw.png");
           break;
           case 4:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/4bw.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/4bw.png");
           break;
           case 5:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/5bw.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/5bw.png");
           break;
           case 6:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/6bw.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/6bw.png");
           break;
           }
            imgw=64, imgh=64;  }
 	     else if (ttk_screen->w < 220) { 
-           /*sprintf(picDieOne, "/opt/ZacZilla/Data/craps/%ds.png", DieOne);
-           sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/%ds.png", DieTwo);*/
+           /*sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/%ds.png", DieOne);
+           sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/%ds.png", DieTwo);*/
                      switch(DieOne) {
            case 1: 
-           sprintf(picDieOne, "/opt/ZacZilla/Data/craps/1s.png");
+           sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/1s.png");
           break;
           case 2:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/2s.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/2s.png");
           break;
           case 3:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/3s.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/3s.png");
           break;
           case 4:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/4s.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/4s.png");
           break;
           case 5:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/5s.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/5s.png");
           break;
           case 6:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/6s.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/6s.png");
           break;
           }
           switch(DieTwo) {
            case 1: 
-           sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/1s.png");
+           sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/1s.png");
           break;
           case 2:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/2s.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/2s.png");
           break;
           case 3:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/3s.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/3s.png");
           break;
           case 4:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/4s.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/4s.png");
           break;
           case 5:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/5s.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/5s.png");
           break;
           case 6:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/6s.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/6s.png");
           break;
           }
            imgw=64, imgh=64; }
 	     else if (ttk_screen->w >= 220) { 
-           /*sprintf(picDieOne, "/opt/ZacZilla/Data/craps/%d.png", DieOne);
-           sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/%d.png", DieTwo);*/
+           /*sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/%d.png", DieOne);
+           sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/%d.png", DieTwo);*/
                      switch(DieOne) {
            case 1: 
-           sprintf(picDieOne, "/opt/ZacZilla/Data/craps/1.png");
+           sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/1.png");
           break;
           case 2:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/2.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/2.png");
           break;
           case 3:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/3.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/3.png");
           break;
           case 4:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/4.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/4.png");
           break;
           case 5:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/5.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/5.png");
           break;
           case 6:
-          sprintf(picDieOne, "/opt/ZacZilla/Data/craps/6.png");
+          sprintf(picDieOne, "/opt/Zillae/ZacZilla/Data/craps/6.png");
           break;
           }
           switch(DieTwo) {
            case 1: 
-           sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/1.png");
+           sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/1.png");
           break;
           case 2:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/2.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/2.png");
           break;
           case 3:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/3.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/3.png");
           break;
           case 4:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/4.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/4.png");
           break;
           case 5:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/5.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/5.png");
           break;
           case 6:
-          sprintf(picDieTwo, "/opt/ZacZilla/Data/craps/6.png");
+          sprintf(picDieTwo, "/opt/Zillae/ZacZilla/Data/craps/6.png");
           break;
           }
            imgw=80, imgh=80; }

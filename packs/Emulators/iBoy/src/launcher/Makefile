@@ -1,3 +1,3 @@
 MODULE = iBoy
-DATA = FastLaunch.sh
+DATA = Launch.sh
 obj-m = iBoy.o

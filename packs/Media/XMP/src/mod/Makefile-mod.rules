@@ -1,4 +1,4 @@
-# Last updated: Feb 16, 2008
+# Last updated: Apr 22, 2008
 # ~Keripo
 
 # Extended Module Player Makefile.rules.in
@@ -16,11 +16,11 @@ LIBDIR		= ${exec_prefix}
 MANDIR		= ${prefix}/Misc/Docs/Original
 SYSCONFDIR	= /opt/XMP/Conf
 
-CC		= arm-elf-gcc
+CC		= arm-uclinux-elf-gcc
 CFLAGS		= -c -g -O2 -Wall -finline-functions -DHAVE_CONFIG_H  #-D_DEBUG
-LD		= arm-elf-gcc
+LD		= arm-uclinux-elf-gcc
 LDFLAGS		= -o $@ -elf2flt
-RANLIB		= arm-elf-ranlib
+RANLIB		= arm-uclinux-elf-ranlib
 INSTALL		= /usr/bin/install -c
 
 PLUGINS		= 

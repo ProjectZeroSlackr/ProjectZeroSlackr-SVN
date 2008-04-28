@@ -1,4 +1,4 @@
-Last updated: March 28, 2008
+Last updated: Apr 27, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -32,9 +32,15 @@ Usage:
   or visit the official Encyclopodia website (where you can also
   download a preconverted Wikipedia dump) and place the .epodia
   file in the "Library" folder.
+- Note that you can only have ONE .epodia file in the
+  "Library" folder; if there is more than one, Encyclopodia
+  will probably crash.
 - Encyclopodia contains only the bare minimum in modules;
   if you really want to add more PZ2 modules, place them
   in the "Modules" folder.
+- Since this Encyclopodia version uses PZ2, there are often
+  memory issues and you will sometimes get "bzip2" errors.
+  If this happens, just reboot and try again.
 
 
 Original:
@@ -43,23 +49,23 @@ Original:
 - Link:
   http://encyclopodia.sourceforge.net/
   http://newview.org/jsha/hacks/encyclopodiareader-module.tar.gz
-  http://newview.org/jsha/hacks/bzip-dirs.tar.gz
   http://ipodlinux.org/forums/viewtopic.php?p=64392#64392
   https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/apps/ipod/podzilla2
-- Date: Jan 30, 2006, March 15, 2006, March 16, 2008 
-- Version: 0.9, 0.1, Revision 2403
+- Date: Jan 30, 2006, Mar 15, 2006, Apr 27, 2008 
+- Version: 0.9, 0.1, Revision 2418
 
 ZS Version:
 - Modder: Keripo
 - Type: Mod and ZS Recompile
-- Date: March 19, 2008
+- Date: Apr 27, 2008
 - Version: B X.X
 
 Modifications:
 (see patch files of source for details)
 - modified podzilla2 with jsha's encyclopodiareader PZ2 module
-- uses minimal modules;
-  still needs to be launched from Loader2 due to lack of memory
+- fixed font displaying issues
+- uses minimal modules; still needs to be launched from
+  Loader2 due to lack of memory
 - comes with iPodLinux wiki dump (dumped by Keripo March 7, 2008)
 - made ZS friendly
 
@@ -67,7 +73,7 @@ Launch Module:
 - FastLaunches Encyclopodia (better done from Loader2)
 
 To do:
-- fix font reading/loading (contacted Robert Bamler; wait first)
+- none
 
 Changelog:
 [keep untouched till beta release]

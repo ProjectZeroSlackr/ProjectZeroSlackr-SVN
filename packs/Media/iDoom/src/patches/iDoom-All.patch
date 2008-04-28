@@ -6,7 +6,7 @@ diff -ur d_main.c d_main.c
      doomwaddir = getenv("DOOMWADDIR");
      if (!doomwaddir)
 -	doomwaddir = ".";
-+	doomwaddir = "/opt/iDoom/IWADs";
++	doomwaddir = "/opt/Media/iDoom/IWADs";
  
      // Commercial.
      doom2wad = malloc(strlen(doomwaddir)+1+9+1);
@@ -19,7 +19,7 @@ diff -ur d_main.c d_main.c
 -	home = ".";
 -//      I_Error("Please set $HOME to your home directory");
 -    sprintf(basedefault, "%s/.doomrc", home);
-+    home = "/opt/iDoom/Conf";
++    home = "/opt/Media/iDoom/Conf";
 +    sprintf(basedefault, "%s/doom.rc", home);
  #endif
  
@@ -198,7 +198,7 @@ diff -ur dstrings.h dstrings.h
  
  // Misc. other strings.
 -#define SAVEGAMENAME	"doomsav"
-+#define SAVEGAMENAME	"/opt/iDoom/Saves/doomsav"
++#define SAVEGAMENAME	"/opt/Media/iDoom/Saves/doomsav"
  
  
  //
@@ -219,7 +219,7 @@ diff -ur i_video.c i_video.c
 +	char *home;
 +	home = getenv("HOME");
 +	if (!home)
-+		home = "/opt/iDoom/Conf";
++		home = "/opt/Media/iDoom/Conf";
 +	sprintf(keys, "%s/keys.key", home);
 +	parseKeyMapFile(keys);
  	

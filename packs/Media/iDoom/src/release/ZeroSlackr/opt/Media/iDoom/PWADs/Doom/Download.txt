@@ -1,0 +1,11 @@
+Doom wads can be freely downloaded from any of the following websites:
+
+http://www.doomwadstation.com/main/tc.html
+http://www.doomworld.com/idgames/index.php?dir=levels/doom/
+http://www.doomworld.com/idgames/index.php?dir=levels/doom2/
+
+Downloaded .wad files should be placed in either the PWADs/Doom
+folder or PWADs/DoomII folder. You will have to test the wad to
+see which folder/launcher the wad should be used with. Note that
+not all wads will be compatible and dehacked wads or wads meant
+for other Doom engines (e.g. Boom, etc.) will probably not work.

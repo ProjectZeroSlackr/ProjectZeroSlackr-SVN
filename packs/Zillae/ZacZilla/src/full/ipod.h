@@ -26,7 +26,7 @@
 //#define IPOD_SETTINGS_FILE	"Data/zaczilla.conf"
 //#else
 //#define IPOD_SETTINGS_FILE	"podzilla.conf"
-#define IPOD_SETTINGS_FILE	"/opt/ZacZilla/Conf/zaczilla.conf"
+#define IPOD_SETTINGS_FILE	"/opt/Zillae/ZacZilla/Conf/zaczilla.conf"
 #endif
 
 /* DISPLAY SETINGS 0 - 9 */

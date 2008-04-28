@@ -25,7 +25,7 @@
    char name[0x100];
    FILE *fd;
 -  strcpy(name, game_name);
-+  strcpy(name, "/opt/iGameGear/Saves/");
++  strcpy(name, "/opt/Emulators/iGameGear/Saves/");
 +  strcat(name, get_filename(game_name));
    strcpy(strrchr(name, '.'), ".sav");
    fd = fopen(name, "rb");
@@ -35,7 +35,7 @@
          char name[0x100];
          FILE *fd = NULL;
 -        strcpy(name, game_name);
-+		strcpy(name, "/opt/iGameGear/Saves/");
++		strcpy(name, "/opt/Emulators/iGameGear/Saves/");
 +        strcat(name, get_filename(game_name));
          strcpy(strrchr(name, '.'), ".sav");
          fd = fopen(name, "wb");
@@ -45,7 +45,7 @@
      char name[0x100];
      FILE *fd = NULL;
 -    strcpy(name, game_name);
-+	strcpy(name, "/opt/iGameGear/Saves/");
++	strcpy(name, "/opt/Emulators/iGameGear/Saves/");
 +    strcat(name, get_filename(game_name));
      sprintf(strrchr(name, '.'), ".st%d", state_slot);
      fd = fopen(name, "rb");
@@ -55,7 +55,7 @@
      char name[0x100];
      FILE *fd = NULL;
 -    strcpy(name, game_name);
-+	strcpy(name, "/opt/iGameGear/Saves/");
++	strcpy(name, "/opt/Emulators/iGameGear/Saves/");
 +    strcat(name, get_filename(game_name));
      sprintf(strrchr(name, '.'), ".st%d", state_slot);
      fd = fopen(name, "wb");

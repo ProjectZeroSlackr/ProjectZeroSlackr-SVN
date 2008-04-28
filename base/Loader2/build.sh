@@ -3,7 +3,7 @@
 # Loader2 & iPodPatcher Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 17, 2008
+# Last updated: Apr 26, 2008
 #
 echo ""
 echo "==========================================="
@@ -78,7 +78,7 @@ fi
 cd ..
 cd ..
 # Make release
-tar -xf ../src/release.tar.gz
+cp -rf ../src/release ./
 cd release
 # Files
 cp -rf ../../src/mod/* ./
@@ -90,6 +90,7 @@ DOCS=boot/docs/loader2
 cp -rf "../../ReadMe from Keripo.txt" "$DOCS/ReadMe from Keripo.txt"
 cp -rf ../../License.txt $DOCS/License.txt
 cp -rf ../../src/patches $DOCS/Patches
+sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $DOCS
 tar -cf Patches.tar Patches

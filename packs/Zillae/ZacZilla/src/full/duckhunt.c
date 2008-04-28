@@ -480,51 +480,51 @@ static void duckhunt_setup()
 	/* for(i=0;i<8;i++) { sprintf (file, "Data/duckhunt/dog%d.gif", i+1); dogw[i] = ttk_load_image (file); }
 	 for(i=0;i<3;i++) { sprintf (file, "Data/duckhunt/duck%d.gif", i+1); duck[i] = ttk_load_image (file); }
 	*///new_message_window("BIBI");
-	sprintf (file, "/opt/ZacZilla/Data/duckhunt/dog1.gif"); 
+	sprintf (file, "/opt/Zillae/ZacZilla/Data/duckhunt/dog1.gif"); 
 	dogw[0] = ttk_load_image (file);
-	sprintf (file, "/opt/ZacZilla/Data/duckhunt/dog2.gif"); 
+	sprintf (file, "/opt/Zillae/ZacZilla/Data/duckhunt/dog2.gif"); 
 	dogw[1] = ttk_load_image (file);
-	sprintf (file, "/opt/ZacZilla/Data/duckhunt/dog3.gif"); 
+	sprintf (file, "/opt/Zillae/ZacZilla/Data/duckhunt/dog3.gif"); 
 	dogw[2] = ttk_load_image (file);
-	sprintf (file, "/opt/ZacZilla/Data/duckhunt/dog4.gif"); 
+	sprintf (file, "/opt/Zillae/ZacZilla/Data/duckhunt/dog4.gif"); 
 	dogw[3] = ttk_load_image (file);
-	sprintf (file, "/opt/ZacZilla/Data/duckhunt/dog5.gif"); 
+	sprintf (file, "/opt/Zillae/ZacZilla/Data/duckhunt/dog5.gif"); 
 	dogw[4] = ttk_load_image (file);
-	sprintf (file, "/opt/ZacZilla/Data/duckhunt/dog6.gif"); 
+	sprintf (file, "/opt/Zillae/ZacZilla/Data/duckhunt/dog6.gif"); 
 	dogw[5] = ttk_load_image (file);
-	sprintf (file, "/opt/ZacZilla/Data/duckhunt/dog7.gif"); 
+	sprintf (file, "/opt/Zillae/ZacZilla/Data/duckhunt/dog7.gif"); 
 	dogw[6] = ttk_load_image (file);
-	sprintf (file, "/opt/ZacZilla/Data/duckhunt/dog8.gif"); 
+	sprintf (file, "/opt/Zillae/ZacZilla/Data/duckhunt/dog8.gif"); 
 	dogw[7] = ttk_load_image (file);
 	
 	
-	sprintf (file, "/opt/ZacZilla/Data/duckhunt/duck1.gif"); 
+	sprintf (file, "/opt/Zillae/ZacZilla/Data/duckhunt/duck1.gif"); 
 	duck[0] = ttk_load_image (file);
-	sprintf (file, "/opt/ZacZilla/Data/duckhunt/duck2.gif"); 
+	sprintf (file, "/opt/Zillae/ZacZilla/Data/duckhunt/duck2.gif"); 
 	duck[1] = ttk_load_image (file);
-	sprintf (file, "/opt/ZacZilla/Data/duckhunt/duck3.gif"); 
+	sprintf (file, "/opt/Zillae/ZacZilla/Data/duckhunt/duck3.gif"); 
 	duck[2] = ttk_load_image (file);
-	sprintf (file, "/opt/ZacZilla/Data/duckhunt/duck4.gif"); 
+	sprintf (file, "/opt/Zillae/ZacZilla/Data/duckhunt/duck4.gif"); 
 	duck[3] = ttk_load_image (file);
-	sprintf (file, "/opt/ZacZilla/Data/duckhunt/duck5.gif"); 
+	sprintf (file, "/opt/Zillae/ZacZilla/Data/duckhunt/duck5.gif"); 
 	duck[4] = ttk_load_image (file);
-	sprintf (file, "/opt/ZacZilla/Data/duckhunt/duck6.gif"); 
+	sprintf (file, "/opt/Zillae/ZacZilla/Data/duckhunt/duck6.gif"); 
 	duck[5] = ttk_load_image (file);
-	sprintf (file, "/opt/ZacZilla/Data/duckhunt/duck7.gif"); 
+	sprintf (file, "/opt/Zillae/ZacZilla/Data/duckhunt/duck7.gif"); 
 	duck[6] = ttk_load_image (file);
-	sprintf (file, "/opt/ZacZilla/Data/duckhunt/duck8.gif"); 
+	sprintf (file, "/opt/Zillae/ZacZilla/Data/duckhunt/duck8.gif"); 
 	duck[7] = ttk_load_image (file);
-	 duckhunt_lose_bg = ttk_load_image ("/opt/ZacZilla/Data/duckhunt/duckhunt_lose_bg.gif");
-	 dog_laugh[0] = ttk_load_image ("/opt/ZacZilla/Data/duckhunt/dog_laugh1.gif");
-	 dog_laugh[1] = ttk_load_image ("/opt/ZacZilla/Data/duckhunt/dog_laugh2.gif");
-	 duckhunt_ss = ttk_load_image ("/opt/ZacZilla/Data/duckhunt/duckhunt_ss.gif");
-	 duckhunt_bg = ttk_load_image ("/opt/ZacZilla/Data/duckhunt/duckhunt_bg.gif");
-	 dead_duck = ttk_load_image ("/opt/ZacZilla/Data/duckhunt/dead_duck.gif");
-	 dog_duck = ttk_load_image ("/opt/ZacZilla/Data/duckhunt/dog_duck.gif");
-	 dd_fall = ttk_load_image ("/opt/ZacZilla/Data/duckhunt/dd_fall.gif");
+	 duckhunt_lose_bg = ttk_load_image ("/opt/Zillae/ZacZilla/Data/duckhunt/duckhunt_lose_bg.gif");
+	 dog_laugh[0] = ttk_load_image ("/opt/Zillae/ZacZilla/Data/duckhunt/dog_laugh1.gif");
+	 dog_laugh[1] = ttk_load_image ("/opt/Zillae/ZacZilla/Data/duckhunt/dog_laugh2.gif");
+	 duckhunt_ss = ttk_load_image ("/opt/Zillae/ZacZilla/Data/duckhunt/duckhunt_ss.gif");
+	 duckhunt_bg = ttk_load_image ("/opt/Zillae/ZacZilla/Data/duckhunt/duckhunt_bg.gif");
+	 dead_duck = ttk_load_image ("/opt/Zillae/ZacZilla/Data/duckhunt/dead_duck.gif");
+	 dog_duck = ttk_load_image ("/opt/Zillae/ZacZilla/Data/duckhunt/dog_duck.gif");
+	 dd_fall = ttk_load_image ("/opt/Zillae/ZacZilla/Data/duckhunt/dd_fall.gif");
 	// new_message_window("HI");
-	 s_ducks[0] = ttk_load_image ("/opt/ZacZilla/Data/duckhunt/s_duckw.gif");
-	 s_ducks[1] = ttk_load_image ("/opt/ZacZilla/Data/duckhunt/s_duckr.gif");
+	 s_ducks[0] = ttk_load_image ("/opt/Zillae/ZacZilla/Data/duckhunt/s_duckw.gif");
+	 s_ducks[1] = ttk_load_image ("/opt/Zillae/ZacZilla/Data/duckhunt/s_duckr.gif");
 	//  new_message_window("HIHI");
 	 if(ttk_screen->w <= 220) {
 	    duckhunt_lose_bg = ttk_scale_surface(duckhunt_lose_bg,dim);
@@ -611,7 +611,7 @@ static int draw_duckhunt_highscore (TWidget *wid, ttk_surface srf)
 	int length;
 	char str[30];
 	
-	sprintf (str, "High Score = %d", readHighScore("/opt/ZacZilla/Data/duckhunt/hs"));
+	sprintf (str, "High Score = %d", readHighScore("/opt/Zillae/ZacZilla/Data/duckhunt/hs"));
 	length = ttk_text_width (ttk_menufont, str);
 	ttk_fillrect (srf, 0, 0, ttk_screen->w, ttk_screen->h, ttk_makecol(WHITE));
   ttk_text (srf, ttk_menufont, (ttk_screen->w/2)-(length/2), (ttk_screen->h-HEADER)/2, ttk_makecol(BLACK), str);
@@ -621,7 +621,7 @@ static int draw_duckhunt_highscore (TWidget *wid, ttk_surface srf)
 static int event_duckhunt_highscore (TWidget *this,int button) 
 {
     if ((button == TTK_BUTTON_MENU) || (button == TTK_BUTTON_HOLD)) { pz_close_window(this->win); }
-    if (button == TTK_BUTTON_NEXT) { writeHighScore("/opt/ZacZilla/Data/duckhunt/hs",0); this->dirty = 1;}
+    if (button == TTK_BUTTON_NEXT) { writeHighScore("/opt/Zillae/ZacZilla/Data/duckhunt/hs",0); this->dirty = 1;}
     return 0;
 }
 
@@ -634,8 +634,8 @@ static int down_duckhunt(TWidget *this,int button)
          break;
          
       case TTK_BUTTON_HOLD:
-      	 if ( score > readHighScore("/opt/ZacZilla/Data/duckhunt/hs") )
-      	  writeHighScore("/opt/ZacZilla/Data/duckhunt/hs",score); 
+      	 if ( score > readHighScore("/opt/Zillae/ZacZilla/Data/duckhunt/hs") )
+      	  writeHighScore("/opt/Zillae/ZacZilla/Data/duckhunt/hs",score); 
       	 pz_close_window(this->win);
          break;
          

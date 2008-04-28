@@ -1,7 +1,7 @@
 \name Moonlight
-# Based of Black Glass, with custom background.
+# Based off Black Glass, with custom background.
 # by Keripo
-# Last updated: March 30, 2008
+# Last updated: Mar 30, 2008
 
 \def clear	#FF00FF
 \def black	#000

@@ -6,7 +6,7 @@ diff -ur src/common/bigint.c src/common/bigint.c
    if (ReadCfgItem(PI_CFG_FILE,"Files","SaveFile",
                    SaveFileName,Cfg_String,MAX_FILENAME)==0)
 -     strcpy(SaveFileName,"piceb.sav");
-+     strcpy(SaveFileName,"/opt/PiCalc/Output/piceb.sav");
++     strcpy(SaveFileName,"/opt/Tools/PiCalc/Output/piceb.sav");
  
    InitFFT(Len);
    InitFFTMul(Len);
@@ -15,7 +15,7 @@ diff -ur src/common/bigint.c src/common/bigint.c
    if (ReadCfgItem(PI_CFG_FILE,"DiskNumbers",Str,
                    vp->FileName,Cfg_String,MAX_FILENAME)==0)
 -     sprintf(vp->FileName,"pivar%ld.tmp",VarsAllocated+1);
-+     sprintf(vp->FileName,"/opt/PiCalc/Output/pivar%ld.tmp",VarsAllocated+1);
++     sprintf(vp->FileName,"/opt/Tools/PiCalc/Output/pivar%ld.tmp",VarsAllocated+1);
  
    vp->fp=fopen(vp->FileName,"wb+");
    if (vp->fp==NULL)
@@ -24,7 +24,7 @@ diff -ur src/common/bigint.c src/common/bigint.c
      if (ReadCfgItem(PI_CFG_FILE,"Files","Pi_Outfile_Mask",
                      Mask,Cfg_String,MAX_FILENAME)==0)
 -       strcpy(Mask,"pi%s.txt");
-+       strcpy(Mask,"/opt/PiCalc/Output/pi%s.txt");
++       strcpy(Mask,"/opt/Tools/PiCalc/Output/pi%s.txt");
  
       sprintf(str,Mask,Num2Str(Len*RawIntDigits));
       OutPutFile=fopen(str,"wb");
@@ -33,7 +33,7 @@ diff -ur src/common/bigint.c src/common/bigint.c
      if (ReadCfgItem(PI_CFG_FILE,"Files","Pi_Outfile_Mask",
                      Mask,Cfg_String,MAX_FILENAME)==0)
 -       strcpy(Mask,"pi%s.txt");
-+       strcpy(Mask,"/opt/PiCalc/Output/pi%s.txt");
++       strcpy(Mask,"/opt/Tools/PiCalc/Output/pi%s.txt");
  
       sprintf(str,Mask,Num2Str(Len*RawIntDigits));
       OutPutFile=fopen(str,"w");
@@ -45,7 +45,7 @@ diff -ur src/common/cache.c src/common/cache.c
  if (ReadCfgItem(PI_CFG_FILE,"Files","Convolution",FFTCash[0].Name,
                 Cfg_String,MAX_FILENAME)==0)
 -   strcpy(FFTCash[0].Name,"piconvl.tmp");
-+   strcpy(FFTCash[0].Name,"/opt/PiCalc/Output/piconvl.tmp");
++   strcpy(FFTCash[0].Name,"/opt/Tools/PiCalc/Output/piconvl.tmp");
  
  for (x=1;x<MaxFFTCacheLines;x++)
    {
@@ -53,7 +53,7 @@ diff -ur src/common/cache.c src/common/cache.c
     if (ReadCfgItem(PI_CFG_FILE,"FFT-Cache",Str,FFTCash[x].Name,
                    Cfg_String,MAX_FILENAME)==0)
 -      sprintf(FFTCash[x].Name,"cache%d.tmp",x);
-+      sprintf(FFTCash[x].Name,"/opt/PiCalc/Output/cache%d.tmp",x);
++      sprintf(FFTCash[x].Name,"/opt/Tools/PiCalc/Output/cache%d.tmp",x);
    }
  
  for (x=0;x<MaxFFTCacheLines;x++)
@@ -65,7 +65,7 @@ diff -ur src/common/ini.c src/common/ini.c
   int tries=0;
  
 -strcpy(TempFileName,"tempfile.tmp");
-+strcpy(TempFileName,"/opt/PiCalc/Output/tempfile.tmp");
++strcpy(TempFileName,"/opt/Tools/PiCalc/Output/tempfile.tmp");
  
  do {
      srand((unsigned int)time(NULL)+tries);

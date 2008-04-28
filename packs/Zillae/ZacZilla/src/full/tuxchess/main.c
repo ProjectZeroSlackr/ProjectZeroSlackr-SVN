@@ -18,7 +18,7 @@
 
 // KERIPO MOD
 //#define LASTGAME ".tuxchess"
-#define LASTGAME "/opt/ZacZilla/Data/tuxchess.txt"
+#define LASTGAME "/opt/Zillae/ZacZilla/Data/tuxchess.txt"
 
 #define TITLE 		"TuxChess"
 #define SCANCODES	64

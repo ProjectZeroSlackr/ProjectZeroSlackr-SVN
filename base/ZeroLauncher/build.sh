@@ -3,7 +3,7 @@
 # ZeroLauncher Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 17, 2008
+# Last updated: Apr 26, 2008
 #
 echo ""
 echo "==========================================="
@@ -86,22 +86,19 @@ rm -rf compiled/modules/*/.svn
 rm -rf compiled/modules/*/*/.svn
 # Creating release
 echo "> Creating 'release' folder..."
-tar -xf ../src/release.tar.gz
+cp -rf ../src/release ./
 cd release
 # Files
-PACK=ZeroSlackr/opt/ZeroLauncher
+PACK=ZeroSlackr/opt/Base/ZeroLauncher
 cp -rf ../compiled/ZeroLauncher $PACK/
-cp -rf ../compiled/modules/* ZeroSlackr/opt/
-ADDONS="browser-ext "$KEEP
-for module in $ADDONS
-do
-	mv ZeroSlackr/opt/$module $PACK/Add-ons/
-done
+cp -rf ../compiled/modules/* $PACK/Add-ons
 PATCHED="browser mpdc podwrite"
 for module in $PATCHED
 do
 	cp -rf ../compiling/PATCHED.txt $PACK/Add-ons/$module/
 done
+mv -f $PACK/Add-ons/ZeroLauncher $PACK/Launch
+mv -f $PACK/Add-ons/MPD $PACK/../MPD/Launch
 # Documents
 echo "> Copying over documents..."
 DOCS=$PACK/Misc/Docs
@@ -122,6 +119,7 @@ cp -rf $OFFSVN/contrib/ucdl/README $DOCS/ucdl
 mkdir -p $DOCS/pz2
 cp -rf $OFFSVN/API.tex $DOCS/pz2
 cp -rf $OFFSVN/COPYING $DOCS/pz2
+sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $PACK/Misc
 tar -cf Patches.tar Patches

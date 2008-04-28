@@ -16,7 +16,7 @@ diff -ur d_main.c d_main.c
 +++ d_main.c	2008-02-17 16:42:51.500000000 -0500
 @@ -591,9 +591,9 @@
      if (!doomwaddir)
- 	doomwaddir = "/opt/iDoom/IWADs";
+ 	doomwaddir = "/opt/Media/iDoom/IWADs";
  
 -    // Commercial.
 -    doom2wad = malloc(strlen(doomwaddir)+1+9+1);

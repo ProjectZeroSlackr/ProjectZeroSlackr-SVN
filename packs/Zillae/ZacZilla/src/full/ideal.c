@@ -1354,12 +1354,12 @@ TWindow *new_deal_window()
 
     for (i = 0; i <= 10; i++)
       {
-	  sprintf(file, "/opt/ZacZilla/Data/ideal/%d.gif", i);
+	  sprintf(file, "/opt/Zillae/ZacZilla/Data/ideal/%d.gif", i);
 	  image[i] = ttk_load_image(file);
       }
     for (i = 0; i <= 3; i++)
       {
-	  sprintf(file, "/opt/ZacZilla/Data/ideal/0%d.gif", i);
+	  sprintf(file, "/opt/Zillae/ZacZilla/Data/ideal/0%d.gif", i);
 	  intro[i] = ttk_load_image(file);
       }
     window = ttk_new_window("iDeal or No Deal");

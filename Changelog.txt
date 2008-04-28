@@ -1,4 +1,4 @@
-Last updated: April 15, 2008
+Last updated: Apr 27, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -10,30 +10,42 @@ original/ported software.
 
 == Changelog ==
 
-April 15, 2008
+Apr 27, 2008
+- Resort /opt into categories
+- Rewrite launch modules to use scripts
+- Added modified browser launcher to browser-ext
+- Use modified browser launcher for iPodMAME
+- Fixed iDarcNES menu
+- Fixed Encyclopodia font displaying
+- Redirect all PZ2 module configurations to
+  /usr/local/etc
+- Cleaned up build.sh scripts
+- dos2unix all .txt files
+
+Apr 15, 2008
 - Launch modules compiled along with pack
   instead of relying on ZeroLauncher
 
-April 14, 2008
+Apr 14, 2008
 - Mass resorting!
 
-April 4, 2008
+Apr 4, 2008
 - Added iGameGear (venox's unmodified)
 
-April 1, 2008
+Apr 1, 2008
 - Added iDarcNES (zacaj's unmodified, uncleaned-up version
   for now; iDarcNES really needs to be redone)
 
-March 30, 2008
+Mar 30, 2008
 - Added SBaGen! On to flite!
   (All un-mass-tested packs will remain in "/testing")
 
-March 29, 2008
+Mar 29, 2008
 - More patches for the kernel
 - Added CmdLine-Tools
 - Finished all documentation
 
-March 22, 2008
+Mar 22, 2008
 - Stable Snapshot pre-release
 - First proper SVN upload
 - Contains:

@@ -41,7 +41,7 @@
 	//#define SAVEFILE "/home/.blackjack"
 //#else
 	//#define SAVEFILE ".blackjack"
-#define SAVEFILE "/opt/ZacZilla/Data/blackjack.txt"
+#define SAVEFILE "/opt/Zillae/ZacZilla/Data/blackjack.txt"
 #endif
 
 //Defines

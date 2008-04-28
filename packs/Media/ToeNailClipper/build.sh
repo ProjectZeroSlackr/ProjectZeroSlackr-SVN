@@ -3,7 +3,7 @@
 # ToeNailClipper Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 17, 2008
+# Last updated: Apr 26, 2008
 #
 echo ""
 echo "==========================================="
@@ -42,7 +42,7 @@ done
 echo "> Compiling..."
 cd compiling
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
-arm-elf-gcc toenailclipper-mod.c -o ToeNailClipper -elf2flt >> ../build.log
+arm-uclinux-elf-gcc toenailclipper-mod.c -o ToeNailClipper -elf2flt >> ../build.log
 cd ..
 # Copy over compiled file
 echo "> Copying over compiled files..."
@@ -53,20 +53,20 @@ echo "> Building ZeroLauncher launch module..."
 cp -rf ../src/launcher ./
 cd launcher
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
-make -f ../launch/launch.mk >> ../build.log
+make -f ../launch/launch.mk
 cd ..
 # Creating release
 echo "> Creating 'release' folder..."
-tar -xf ../src/release.tar.gz
+cp -rf ../src/release ./
 cd release
 # Files
-PACK=ZeroSlackr/opt/ToeNailClipper
+PACK=ZeroSlackr/opt/Media/ToeNailClipper
 cp -rf ../compiled/ToeNailClipper $PACK/
-mkdir $PACK/Launch
 cp -rf ../launcher/* $PACK/Launch/
 # Documents
 cp -rf "../../ReadMe from Keripo.txt" $PACK/
 cp -rf ../../License.txt $PACK/
+sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Done
 echo ""
 echo "Fin!"

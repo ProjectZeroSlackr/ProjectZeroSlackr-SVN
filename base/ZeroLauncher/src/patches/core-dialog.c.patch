@@ -7,7 +7,7 @@ Index: core/dialog.c
  {
  #ifdef IPOD
 -    FILE *fp = fopen ("msg.inf", "a");
-+    FILE *fp = fopen ("/opt/ZeroLauncher/Misc/msg.inf", "a");
++    FILE *fp = fopen ("/opt/Base/ZeroLauncher/Misc/msg.inf", "a");
      fprintf (fp, "I- %%%p \"%s\" len %ld\n", text, text, strlen (text));
      fclose (fp);
  #endif

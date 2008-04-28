@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 17, 2008
+ * Last updated: Apr 27, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -19,20 +19,7 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "pz.h"
-#include <stdio.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <stdlib.h>
-
-extern void pz_execv();
-extern int check_file_ext();
-extern int check_is_file();
-extern int check_is_dir();
-extern int check_nothing();
-extern const char *get_filename();
-extern const char *get_dirname();
+#include "browser-ext.h"
 
 static PzModule *module;
 static ttk_menu_item
@@ -76,12 +63,12 @@ static PzWindow *zip(const char *file)
 	sprintf(archive, "%s.zip", f);
 	const char *const cmd[] = {"zip", "-r", archive, f, NULL};
 	pz_execv(
-		pz_module_get_datapath(module, "../Bin/zip"),
+		"/opt/Tools/CmdLine-Tools/Bin/zip",
 		(char *const *)cmd
 		);
-	return NULL;
+	return TTK_MENU_UPONE;
 }
-static PzWindow *load_file_handler_zip(ttk_menu_item * item)
+static PzWindow *load_file_handler_zip(ttk_menu_item *item)
 {
 	return zip(item->data);
 }
@@ -93,12 +80,12 @@ static PzWindow *unzip(const char *file)
 	chdir(d);
 	const char *const cmd[] = {"unzip", "-o", f, NULL};
 	pz_execv(
-		pz_module_get_datapath(module, "../Bin/unzip"),
+		"/opt/Tools/CmdLine-Tools/Bin/unzip",
 		(char *const *)cmd
 		);
-	return NULL;
+	return TTK_MENU_UPONE;
 }
-static PzWindow *load_file_handler_unzip(ttk_menu_item * item)
+static PzWindow *load_file_handler_unzip(ttk_menu_item *item)
 {
 	return unzip(item->data);
 }
@@ -110,12 +97,12 @@ static PzWindow *unrar(const char *file)
 	chdir(d);
 	const char *const cmd[] = {"unrar", "x", "-o+", "-y", f, NULL};
 	pz_execv(
-		pz_module_get_datapath(module, "../Bin/unrar"),
+		"/opt/Tools/CmdLine-Tools/Bin/unrar",
 		(char *const *)cmd
 		);
-	return NULL;
+	return TTK_MENU_UPONE;
 }
-static PzWindow *load_file_handler_unrar(ttk_menu_item * item)
+static PzWindow *load_file_handler_unrar(ttk_menu_item *item)
 {
 	return unrar(item->data);
 }
@@ -129,12 +116,12 @@ static PzWindow *tar_c(const char *file)
 	sprintf(archive,"%s.tar", f);
 	const char *const cmd[] = {"tar", "-cf", archive, f, NULL};
 	pz_execv(
-		pz_module_get_datapath(module, "../Bin/tar"),
+		"/opt/Tools/CmdLine-Tools/Bin/tar",
 		(char *const *)cmd
 		);
-	return NULL;
+	return TTK_MENU_UPONE;
 }
-static PzWindow *load_file_handler_tar_c(ttk_menu_item * item)
+static PzWindow *load_file_handler_tar_c(ttk_menu_item *item)
 {
 	return tar_c(item->data);
 }
@@ -146,12 +133,12 @@ static PzWindow *tar_d(const char *file)
 	chdir(d);
 	const char *const cmd[] = {"tar", "-xf", f, NULL};
 	pz_execv(
-		pz_module_get_datapath(module, "../Bin/tar"),
+		"/opt/Tools/CmdLine-Tools/Bin/tar",
 		(char *const *)cmd
 		);
-	return NULL;
+	return TTK_MENU_UPONE;
 }
-static PzWindow *load_file_handler_tar_d(ttk_menu_item * item)
+static PzWindow *load_file_handler_tar_d(ttk_menu_item *item)
 {
 	return tar_d(item->data);
 }
@@ -163,12 +150,12 @@ static PzWindow *bzip2_c(const char *file)
 	chdir(d);
 	const char *const cmd[] = {"bzip2", "-vz9", f, NULL};
 	pz_execv(
-		pz_module_get_datapath(module, "../Bin/bzip2"),
+		"/opt/Tools/CmdLine-Tools/Bin/bzip2",
 		(char *const *)cmd
 		);
-	return NULL;
+	return TTK_MENU_UPONE;
 }
-static PzWindow *load_file_handler_bzip2_c(ttk_menu_item * item)
+static PzWindow *load_file_handler_bzip2_c(ttk_menu_item *item)
 {
 	return bzip2_c(item->data);
 }
@@ -180,12 +167,12 @@ static PzWindow *bzip2_d(const char *file)
 	chdir(d);
 	const char *const cmd[] = {"bzip2", "-vd", f, NULL};
 	pz_execv(
-		pz_module_get_datapath(module, "../Bin/bzip2"),
+		"/opt/Tools/CmdLine-Tools/Bin/bzip2",
 		(char *const *)cmd
 		);
-	return NULL;
+	return TTK_MENU_UPONE;
 }
-static PzWindow *load_file_handler_bzip2_d(ttk_menu_item * item)
+static PzWindow *load_file_handler_bzip2_d(ttk_menu_item *item)
 {
 	return bzip2_d(item->data);
 }
@@ -197,12 +184,12 @@ static PzWindow *gzip_c(const char *file)
 	chdir(d);
 	const char *const cmd[] = {"gzip", "-v9", f, NULL};
 	pz_execv(
-		pz_module_get_datapath(module, "../Bin/gzip"),
+		"/opt/Tools/CmdLine-Tools/Bin/gzip",
 		(char *const *)cmd
 		);
-	return NULL;
+	return TTK_MENU_UPONE;
 }
-static PzWindow *load_file_handler_gzip_c(ttk_menu_item * item)
+static PzWindow *load_file_handler_gzip_c(ttk_menu_item *item)
 {
 	return gzip_c(item->data);
 }
@@ -214,14 +201,25 @@ static PzWindow *gzip_d(const char *file)
 	chdir(d);
 	const char *const cmd[] = {"gzip", "-vd", f, NULL};
 	pz_execv(
-		pz_module_get_datapath(module, "../Bin/gzip"),
+		"/opt/Tools/CmdLine-Tools/Bin/gzip",
 		(char *const *)cmd
 		);
-	return NULL;
+	return TTK_MENU_UPONE;
 }
-static PzWindow *load_file_handler_gzip_d(ttk_menu_item * item)
+static PzWindow *load_file_handler_gzip_d(ttk_menu_item *item)
 {
 	return gzip_d(item->data);
+}
+
+static void cleanup()
+{
+	pz_browser_remove_handler(check_is_file);
+	pz_browser_remove_handler(check_nothing);
+	pz_browser_remove_handler(check_ext_zip);
+	pz_browser_remove_handler(check_ext_rar);
+	pz_browser_remove_handler(check_ext_tar);
+	pz_browser_remove_handler(check_ext_bz2);
+	pz_browser_remove_handler(check_ext_gz);
 }
 
 static void init_launch()
@@ -232,7 +230,7 @@ static void init_launch()
 	sprintf(
 		path, "%s:%s",
 		getenv("PATH"),
-		pz_module_get_datapath(module, "../Bin")
+		"/opt/Tools/CmdLine-Tools/Bin"
 		);	
 	setenv("PATH", path, 1);
 	

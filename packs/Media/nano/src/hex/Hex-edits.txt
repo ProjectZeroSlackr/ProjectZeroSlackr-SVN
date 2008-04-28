@@ -1,4 +1,0 @@
-Last updated: March 7, 2008
-~Keripo
-
-data/* -> Data/*

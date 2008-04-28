@@ -1,3 +1,3 @@
 MODULE = iDarcNES
-DATA = FastLaunch.sh
+DATA = Launch.sh
 obj-m = iDarcNES.o

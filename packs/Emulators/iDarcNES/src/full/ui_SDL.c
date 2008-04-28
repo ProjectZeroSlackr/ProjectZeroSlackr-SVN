@@ -240,15 +240,15 @@ int main(int argc, char *argv[])
     *kb[6]=&tjoy_left;
     *kb[7]=&tjoy_b;
 
-   if(!fexists("/opt/iDarcNES/Conf/iDarcNES.cfg")) {
+   if(!fexists("/opt/Emulators/iDarcNES/Conf/iDarcNES.cfg")) {
 
     FILE *fp;
  
 
 
- fp=fopen("/opt/iDarcNES/Conf/iDarcNES.cfg","w");
+ fp=fopen("/opt/Emulators/iDarcNES/Conf/iDarcNES.cfg","w");
  fclose(fp);
- fp=fopen("/opt/iDarcNES/Conf/iDarcNES.cfg","w");
+ fp=fopen("/opt/Emulators/iDarcNES/Conf/iDarcNES.cfg","w");
     fprintf(fp,"kb0=U\n");
     fprintf(fp,"kb1=A\n");
     fprintf(fp,"kb2=R\n");
@@ -296,7 +296,7 @@ int main(int argc, char *argv[])
     *kb[7]=&tjoy_b;
     
     }
-    FILE *f=fopen("/opt/iDarcNES/Conf/iDarcNES.cfg","r");
+    FILE *f=fopen("/opt/Emulators/iDarcNES/Conf/iDarcNES.cfg","r");
  
   /*  kb[0]=0;
     kb[1]=0;

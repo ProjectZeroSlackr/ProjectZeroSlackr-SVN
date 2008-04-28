@@ -1,5 +1,5 @@
 /*
- * Last updated: March 17, 2008
+ * Last updated: Apr 27, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -19,196 +19,160 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "pz.h"
-#include <stdio.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <libgen.h>
-
-extern void pz_exec();
-extern PzWindow *new_terminal_window_with();
+#include "browser-ext.h"
 
 #define DEFAULT "podzilla"
 
 static PzModule *module;
-static char path[256];
+static const char *path;
 
 // Common
-
 static PzWindow *exec_zilla(const char *folder, const char *binary)
 {
-	snprintf(path, 256, "%s../%s/", pz_module_get_datapath(module, ""), folder);
-	chdir(path);
-	strcat(path, binary);
-	pz_exec(path);
+	const char *const cmd[] = {
+		"Launch.sh",
+		folder,
+		binary,
+		NULL
+	};
+	pz_execv(
+		path,
+		(char *const *)cmd
+	);
 	return NULL;
 }
 
-
 // Non-standards
-
 static PzWindow *iPod_Desktop()
 {
 	// Special since it needs nano-X started
-	pz_exec(pz_module_get_datapath(module, "iPod-Desktop.sh"));
+	pz_exec("/opt/Zillae/TimeWalk/Launch/iPod-Desktop.sh");
 	return NULL;
 }
-
 static PzWindow *Owen_OS()
 {
-	const char *const cmd[] = {"owenipod", NULL};
-	return new_terminal_window_with("/opt/TimeWalk/Owen-OS/owenipod", (char *const *)cmd);
+	const char *const cmd[] = {"Owen-OS.sh", NULL};
+	return new_terminal_window_with(
+		"/opt/Zillae/TimeWalk/Launch/Owen-OS.sh",
+		(char *const *)cmd
+	);
 }
-
 static PzWindow *Margarelon()
 {
 	return exec_zilla("Margarelon", "margarelon");
 }
 
-
 // PZ0 Specials
-
 static PzWindow *iTanks()
 {
 	return exec_zilla("iTanks", DEFAULT);
 }
-
 static PzWindow *MikModPodzilla()
 {
 	return exec_zilla("MikModPodzilla", "mikpodzilla");
 }
-
 static PzWindow *pdPod()
 {
 	return exec_zilla("pdPod", DEFAULT);
 }
 
-
 // PZ0 Features
-
 static PzWindow *Keyman_pz0()
 {
 	return exec_zilla("Keyman", DEFAULT);
 }
-
 static PzWindow *Keyman_floyd()
 {
 	return exec_zilla("Keyman", "floydzilla");
 }
-
 static PzWindow *NXSnake()
 {
 	return exec_zilla("NXSnake", DEFAULT);
 }
-
 static PzWindow *Othello()
 {
 	return exec_zilla("Othello", DEFAULT);
 }
-
 static PzWindow *Sudoku()
 {
 	return exec_zilla("Sudoku", DEFAULT);
 }
-
 static PzWindow *Tuxchess()
 {
 	return exec_zilla("Tuxchess", DEFAULT);
 }
-
 static PzWindow *Video_podzilla()
 {
 	return exec_zilla("Video-podzilla", DEFAULT);
 }
 
-
 // PZ0 Jonrelays
-
 static PzWindow *podzilla_fbk()
 {
 	return exec_zilla("podzilla-jonrelay", "podzilla-fbk");
 }
-
 static PzWindow *podzilla_mc()
 {
 	return exec_zilla("podzilla-jonrelay", "podzilla-mc");
 }
-
 static PzWindow *podzilla_ti()
 {
 	return exec_zilla("podzilla-jonrelay", "podzilla-ti");
 }
-
 static PzWindow *podzilla_ti2()
 {
 	return exec_zilla("podzilla-jonrelay", "podzilla-ti2");
 }
-
 static PzWindow *podzilla_ti3()
 {
 	return exec_zilla("podzilla-jonrelay", "podzilla-ti3");
 }
-
 static PzWindow *podzilla_ti4()
 {
 	return exec_zilla("podzilla-jonrelay", "podzilla-ti4");
 }
-
 static PzWindow *podzilla_ti5()
 {
 	return exec_zilla("podzilla-jonrelay", "podzilla-ti5");
 }
-
 static PzWindow *podzilla_ti6()
 {
 	return exec_zilla("podzilla-jonrelay", "podzilla-ti6");
 }
-
 static PzWindow *podzilla_ti7()
 {
 	return exec_zilla("podzilla-jonrelay", "podzilla-ti7");
 }
-
 static PzWindow *podzilla_ti8()
 {
 	return exec_zilla("podzilla-jonrelay", "podzilla-ti8");
 }
-
 static PzWindow *relayzilla()
 {
 	return exec_zilla("podzilla-jonrelay", "relayzilla");
 }
 
-
 // PZ0 Translates
-
 static PzWindow *podzilla_Dutch()
 {
 	return exec_zilla("podzilla-Dutch", "podzilla_dutch");
 }
-
 static PzWindow *Jpodzilla()
 {
 	return exec_zilla("Jpodzilla", DEFAULT);
 }
 
-
 // PZ0 Custom Builds
-
 static PzWindow *Funzilla()
 {
 	return exec_zilla("Funzilla", "Funzilla");
 }
-
 static PzWindow *Yankeezilla()
 {
 	return exec_zilla("Yankeezilla", DEFAULT);
 }
 
-
 // Info
-
 static PzWindow *welcome()
 {
 	pz_message_title(
@@ -253,7 +217,6 @@ static PzWindow *welcome()
 		);
 	return NULL;
 }
-
 static PzWindow *missing()
 {
 	pz_message_title(
@@ -293,10 +256,10 @@ static PzWindow *missing()
 }
 
 // Init!!!
-
 static void init_launch() 
 {
 	module = pz_register_module ("TimeWalk", 0);
+	path = "/opt/Zillae/TimeWalk/Launch/Launch.sh";
 	
 	// Group!
 	pz_menu_add_stub_group ("/~TimeWalk", "#ZeroSlackr");

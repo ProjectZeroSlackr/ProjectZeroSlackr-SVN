@@ -693,7 +693,7 @@ void new_exec_window(char *filename)
 
 	// KERIPO MOD
 	//FILE *bdbg = fopen ("/etc/browser.dbg", "w");
-	FILE *bdbg = fopen ("/opt/ZacZilla/Misc/browser.dbg", "w");
+	FILE *bdbg = fopen ("/opt/Zillae/ZacZilla/Misc/browser.dbg", "w");
 	setbuf (bdbg, 0);
 	fprintf (bdbg, "\nnew_exec_window()\n");
 	int bdbgfd = fileno (bdbg);

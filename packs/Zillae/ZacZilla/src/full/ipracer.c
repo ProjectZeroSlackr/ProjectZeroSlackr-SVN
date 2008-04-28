@@ -160,7 +160,7 @@ static void find_dir()
 
 	// KERIPO MOD
 	//sprintf(direc, "/hp/aj/iracer_maps/");
-	sprintf(direc, "/opt/ZacZilla/Data/iracer_maps/");
+	sprintf(direc, "/opt/Zillae/ZacZilla/Data/iracer_maps/");
 
 	if(!(fp = fopen(direc, "r"))) {
     		sprintf(direc, "/mnt/iracer_maps/");
@@ -333,9 +333,9 @@ static void load_car()
 
 static void load_images()
 {
-	 menu_bg = ttk_load_image ("/opt/ZacZilla/Data/bg.gif");
-	 menu_sbg = ttk_load_image ("/opt/ZacZilla/Data/sbg.gif");
-	 menu_wheel = ttk_load_image ("/opt/ZacZilla/Data/wheel.gif");
+	 menu_bg = ttk_load_image ("/opt/Zillae/ZacZilla/Data/bg.gif");
+	 menu_sbg = ttk_load_image ("/opt/Zillae/ZacZilla/Data/sbg.gif");
+	 menu_wheel = ttk_load_image ("/opt/Zillae/ZacZilla/Data/wheel.gif");
 	 	 
 }
 

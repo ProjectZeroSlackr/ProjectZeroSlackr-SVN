@@ -1,3 +1,3 @@
 MODULE = ZacZilla
-DATA = FastLaunch.sh
+DATA = Launch.sh
 obj-m = ZacZilla.o

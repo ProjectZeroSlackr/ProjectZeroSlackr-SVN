@@ -1,4 +1,4 @@
-Last updated: March 28, 2008
+Last updated: Apr 23, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -43,11 +43,37 @@ Original:
 ZS Version:
 - Modder: Keripo
 - Type: Hex edit
-- Date: March 7, 2008
+- Date: Apr 23, 2008
 - Version: B X.X
 
 Modifications:
-- Lots of hex editing - see "Hex-edits.txt" in "src/hex"
+- Lots of hex editing:
+  /etc/ -> Data/
+  /home/ -> Data/
+  /hp/vipodzilla/ -> Data/
+  hp/images/ -> Data/
+  /etc/podzilla.conf -> Conf/podzilla.conf
+  /bin/viP -> Data/viP
+  /etc/viP.conf -> Data/viP.conf
+  /root/.vip_dict -> Data/.vip_dict
+  /sbin/pd -> Data/pd
+  /PureData -> Data/PdPod
+  /hp/vipodzilla/doom/iDoom -> Data/doom/iDoom.sh
+  /etc/KMData/ -> Data/KMData/
+  /usr/share/musictools/ -> Data/
+  /hp/connect4/ -> Data/connect4/
+  nxsnake/boot_image.gif -> Data/boot_image.gif
+  nxsnake/banner_image.gif -> Data/banner_image.gif
+  map.bmp -> Data/mn
+  bucket.bmp -> Data/buckt
+  bomb.bmp -> Data/bmb
+  /Notes/ -> /mnt/
+  /usr/share/dict/ptextwords -> Data/dict/ptextwords
+  .tuxchess -> Data/chess
+  /metallo.dwi -> Data/ddr.dwi
+  worm_highscore -> Data/worm.txt
+  simplesnake_highscore -> Data/simplesnake.txt
+  %Y-%m-%d_%H%M.ppm -> Data/%m%d%H%M.ppm
 
 Launch Module:
 - FastLaunches viPodzilla

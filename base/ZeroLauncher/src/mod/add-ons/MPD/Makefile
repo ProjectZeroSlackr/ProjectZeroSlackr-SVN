@@ -1,3 +1,3 @@
 MODULE = MPD
-DATA = MPD-ke,Initiate.sh
+DATA = Initiate.sh,Kill.sh,Update.sh
 obj-m = MPD.o
