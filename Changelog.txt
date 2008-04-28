@@ -1,4 +1,4 @@
-Last updated: Apr 27, 2008
+Last updated: Apr 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,55 @@ original/ported software.
 
 
 == Changelog ==
+
+Apr 28, 2008
+- Second stable snapshot pre-release
+- Contains:
+	Base:
+	- Loader2 from SVN
+	- 2.4.32 kernel (loop-mount & iBoy patches)
+	- Modified, loop-mount userland
+	- User-generated schemes and fonts
+	- ZeroLauncher
+	- MPD (for ZeroLauncher and PZ2-SVN)
+
+	Emulators:
+	- iBoy
+	- iDarcNES
+	- iGameGear
+	- iPodMAME
+	
+	Media:
+	- iDoom
+	- MV Player
+	- nano
+	- Podfather
+	- SBaGen
+	- ToeNailClipper
+	- XMP
+	
+	Tools:
+	- CmdLine-Tools
+	- Encyclopodia
+	- PiCalc
+	
+	Zillae:
+	- Floyd2illA
+	- Podzilla0-Lite
+	- Podzilla0-SVN
+	- Podzilla2-SVN
+	- TimeWalk
+	- viPodzilla
+	- ZacZilla
+	
+- In development:
+  - Flite
+  - iGens
+  - igpSP
+  - Sidplay
+  - ScummVM
+  - Sidplay/Tinysid
+  - DSLinux apps
 
 Apr 27, 2008
 - Resort /opt into categories
@@ -46,7 +95,7 @@ Mar 29, 2008
 - Finished all documentation
 
 Mar 22, 2008
-- Stable Snapshot pre-release
+- Stable snapshot pre-release
 - First proper SVN upload
 - Contains:
 	Base:
