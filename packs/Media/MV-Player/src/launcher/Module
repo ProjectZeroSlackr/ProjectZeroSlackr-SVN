@@ -1,0 +1,6 @@
+Module: MV-Player
+Display-name: MV Player
+Description: Compressed video player for specially converted format. 
+Category: Media
+Author: Gaspode
+Dependencies: browser,browser-ext
