@@ -61,7 +61,7 @@ Index: core/pz.c
  	/* NOTE: we should probably do something if these fail! */
  	pz_load_font (&ttk_textfont, "Espy Sans", TEXT_FONT, pz_global_config);
 -	pz_load_font (&ttk_menufont, "Chicago",   MENU_FONT, pz_global_config);
-+	pz_load_font (&ttk_menufont, "Podium Sans",   MENU_FONT, pz_global_config);
++	pz_load_font (&ttk_menufont, "epodia0size12style1",   MENU_FONT, pz_global_config);
  
  	/* set up the menus and initialize the modules */
  	pz_menu_init();

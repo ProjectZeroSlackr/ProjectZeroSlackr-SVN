@@ -1,4 +1,4 @@
-Last updated: Apr 27, 2008
+Last updated: Apr 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -39,7 +39,7 @@ Usage:
   if you really want to add more PZ2 modules, place them
   in the "Modules" folder.
 - Since this Encyclopodia version uses PZ2, there are often
-  memory issues and you will sometimes get "bzip2" errors.
+  memory issues and you will sometimes get "Bzip error:"s.
   If this happens, just reboot and try again.
 
 
