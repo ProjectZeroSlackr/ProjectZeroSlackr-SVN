@@ -1,4 +1,4 @@
-Last updated: Apr 30, 2008
+Last updated: May 1, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,9 @@ original/ported software.
 
 
 == Changelog ==
+
+May 1, 2008
+- Added John the Ripper to CmdLine-Tools
 
 Apr 30, 2008
 - Added podread
