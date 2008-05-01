@@ -1,0 +1,158 @@
+Index: bolly.cpp
+===================================================================
+--- bolly.cpp	(revision 157)
++++ bolly.cpp	(working copy)
+@@ -10,6 +10,7 @@
+ 	case KEY_DOWN:
+ 		switch (e->key.value) {
+ 		case KEY_MENU:
++			HD_LCD_Quit();
+ 			_exit(0);
+ 		default:break;
+ 		}
+Index: bouncy.cpp
+===================================================================
+--- bouncy.cpp	(revision 157)
++++ bouncy.cpp	(working copy)
+@@ -189,6 +189,7 @@
+ 			ball->stimulate();
+ 			break;
+ 		case KEY_MENU:
++			HD_LCD_Quit();
+ 			_exit(0);
+ 		default:break;
+ 		}
+Index: cair.cpp
+===================================================================
+--- cair.cpp	(revision 157)
++++ cair.cpp	(working copy)
+@@ -116,6 +116,7 @@
+ 	case KEY_DOWN:
+ 		switch (e->key.value) {
+ 		case KEY_MENU:
++			HD_LCD_Quit();
+ 			_exit(0);
+ 		case KEY_ACTION:
+ 			Run = !Run;
+@@ -970,7 +971,7 @@
+ 
+ 	CAIRCanvas img(argv[0]);
+ 	CAIRCanvas ovr(img.width(), img.height());
+-	Engine e(img.width(), img.height());
++	Engine e;
+ 
+ 	/* FIXME:XXX:HACK: dynamically size me! */
+ 	int16 *mag = (int16 *)malloc(img.width() * img.height() * sizeof(int16) * 4);
+Index: imagebits.cpp
+===================================================================
+--- imagebits.cpp	(revision 157)
++++ imagebits.cpp	(working copy)
+@@ -11,6 +11,7 @@
+ 	case KEY_DOWN:
+ 		switch (e->key.value) {
+ 		case KEY_MENU:
++			HD_LCD_Quit();
+ 			_exit(0);
+ 		default:break;
+ 		}
+@@ -32,7 +33,7 @@
+ #else
+ 	Engine e(img.width()*2, img.height()*2);
+ #endif
+-	uint32 mul = (img.width() * img.height()) / 387;
++	uint32 mul = (e.width() * e.height()) / 387;
+ 	Canvas c(e.width(), e.height());
+ 	FilledCircle pix(c.surface(), 0, 0, 3, 0);
+ 
+Index: Makefile
+===================================================================
+--- Makefile	(revision 157)
++++ Makefile	(working copy)
+@@ -26,7 +26,7 @@
+ %.o:%.pde
+ 	$(CXX) -x cpp -o $@ $< $(CFLAGS)
+ 
+-all: bolly bouncy imagebits spinner cair
++all: bolly bouncy osx imagebits spinner cair
+ 
+ bolly: $(OBJS) bolly.o
+ 	$(CXX) -o $@ $^ $(LDFLAGS)
+@@ -50,4 +50,4 @@
+ 	$(CXX) -o $@ $^ $(LDFLAGS)
+ 
+ clean:
+-	$(RM) $(PROG) $(OBJS)  *.o *.gdb bolly imagebits spinner osx
++	$(RM) $(PROG) $(OBJS)  *.o *.gdb bolly bouncy cair imagebits spinner osx
+Index: osx.cpp
+===================================================================
+--- osx.cpp	(revision 157)
++++ osx.cpp	(working copy)
+@@ -14,6 +14,7 @@
+ 	case KEY_DOWN:
+ 		switch (e->key.value) {
+ 		case KEY_MENU:
++			HD_LCD_Quit();
+ 			_exit(0);
+ 		case KEY_FFORWARD:
+ 			if(rot == 1) rot = 2; break;
+@@ -40,7 +41,7 @@
+ 
+ int main(int argc, char **argv)
+ {
+-	FILE *debug = fopen("/osx_debug.log", "w");
++	FILE *debug = fopen("osx_debug.log", "w");
+ 	
+ 	ufprintf(debug, "Started!\n");
+ 	
+@@ -52,7 +53,7 @@
+ 	e.add(c.object());
+ 	c.setBackground(0x00000000);
+ 
+-	Canvas imgloading("/hd/imgloading.png");
++	Canvas imgloading("osx-imgs/imgloading.png");
+ 	imgloading.move(133,114);
+ 	e.add(imgloading.object());
+ 	e.render();
+@@ -60,18 +61,18 @@
+ 	
+ 	ufprintf(debug, "Creating images...\n");
+ 	
+-	Canvas images0("/hd/osx-b2.png");ufprintf(debug, "b2\n");
+-	Canvas images1("/hd/osx-b3.png");ufprintf(debug, "b3\n");
+-	Canvas images2("/hd/osx-b4.png");ufprintf(debug, "b4\n");
+-	Canvas images3("/hd/osx-b5.png");ufprintf(debug, "b5\n");
+-	Canvas images4("/hd/osx-b6.png");ufprintf(debug, "b6\n");
+-	Canvas images5("/hd/osx-b7.png");ufprintf(debug, "b7\n");
+-	Canvas images6("/hd/osx-b8.png");ufprintf(debug, "b8\n");
+-	Canvas images7("/hd/osx-b9.png");ufprintf(debug, "b9\n");
+-	Canvas images8("/hd/osx-uibutton.png");ufprintf(debug, "uibutton\n");
+-	Canvas bottom("/hd/osx-bottomthing.png");ufprintf(debug, "bottomthing\n");
+-	Canvas top("/hd/osx-topthingy.png");ufprintf(debug, "topthingy\n");
+-	Canvas sidebar("/hd/osx-sidebar.png");ufprintf(debug, "sidebar\n");
++	Canvas images0("osx-imgs/osx-b2.png");ufprintf(debug, "b2\n");
++	Canvas images1("osx-imgs/osx-b3.png");ufprintf(debug, "b3\n");
++	Canvas images2("osx-imgs/osx-b4.png");ufprintf(debug, "b4\n");
++	Canvas images3("osx-imgs/osx-b5.png");ufprintf(debug, "b5\n");
++	Canvas images4("osx-imgs/osx-b6.png");ufprintf(debug, "b6\n");
++	Canvas images5("osx-imgs/osx-b7.png");ufprintf(debug, "b7\n");
++	Canvas images6("osx-imgs/osx-b8.png");ufprintf(debug, "b8\n");
++	Canvas images7("osx-imgs/osx-b9.png");ufprintf(debug, "b9\n");
++	Canvas images8("osx-imgs/osx-uibutton.png");ufprintf(debug, "uibutton\n");
++	Canvas bottom("osx-imgs/osx-bottomthing.png");ufprintf(debug, "bottomthing\n");
++	Canvas top("osx-imgs/osx-topthingy.png");ufprintf(debug, "topthingy\n");
++	Canvas sidebar("osx-imgs/osx-sidebar.png");ufprintf(debug, "sidebar\n");
+ 	
+ 	ufprintf(debug, "Moving images...\n");
+ 
+Index: spinner.cpp
+===================================================================
+--- spinner.cpp	(revision 157)
++++ spinner.cpp	(working copy)
+@@ -11,6 +11,7 @@
+ 	case KEY_DOWN:
+ 		switch (e->key.value) {
+ 		case KEY_MENU:
++			HD_LCD_Quit();
+ 			_exit(0);
+ 		default:break;
+ 		}

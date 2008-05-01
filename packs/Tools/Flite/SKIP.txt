@@ -1,0 +1,4 @@
+The re-building of this pack takes a very
+long time and is thus skipped by the lump.sh
+and clean.sh scripts. Pre-compiled files are
+used instead.

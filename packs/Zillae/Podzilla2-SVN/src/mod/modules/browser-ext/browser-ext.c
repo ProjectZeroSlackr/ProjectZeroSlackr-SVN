@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 27, 2008
+ * Last updated: Apr 30, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -19,19 +19,7 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "pz.h"
-#include <dirent.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/param.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-
-extern void pz_set_backlight_timer();
-extern PzWindow *new_terminal_window_with();
+#include "../../launch/browser-ext.h"
 
 static PzModule *module;
 static ttk_menu_item browser_extension;
@@ -165,6 +153,9 @@ typedef struct _Entry_mod
 	char *name;
 	mode_t mode;
 } Entry_mod;
+#ifndef MAXPATHLEN
+#define MAXPATHLEN 512
+#endif
 TWidget *read_directory_mod(const char *dirname,
 	int check(const char *file),TWindow *handler(ttk_menu_item *item))
 {
@@ -194,9 +185,11 @@ TWidget *read_directory_mod(const char *dirname,
 			entry = (Entry_mod *)malloc(sizeof(Entry_mod));
 			entry->name = (char *)strdup(subdir->d_name);
 			entry->mode = st.st_mode;
-
+			
 			item->name = (char *)entry->name;
-			item->data = (void *)entry;
+			char path[MAXPATHLEN];
+			snprintf(path, MAXPATHLEN-1, "%s/%s", dirname, item->name);
+			item->data = (char *)strdup(path);
 			item->free_data = 1;
 			item->free_name = 1;
 			item->makesub = handler;
@@ -220,7 +213,7 @@ TWindow *open_directory_title_mod(const char *filename, const char *title,
 	chdir(filename);
 	ret = pz_new_window(_(title), PZ_WINDOW_NORMAL);
 
-	menu = read_directory_mod("./", check, handler);
+	menu = read_directory_mod(filename, check, handler);
 	menu->data2 = malloc(sizeof(int));
 	*(int *)menu->data2 = lwd;
 	ttk_add_widget(ret, menu);

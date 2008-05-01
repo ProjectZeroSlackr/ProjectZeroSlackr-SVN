@@ -42,6 +42,7 @@ do
 		cd $LIBSDIR
 		echo "  - Building "$lib"..."
 		./src/$lib.sh
+		echo ""
 		cd $DIR
 	fi
 	ln -s $LIBSDIR/$lib ./

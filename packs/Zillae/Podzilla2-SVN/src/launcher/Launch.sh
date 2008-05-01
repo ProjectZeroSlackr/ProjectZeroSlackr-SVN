@@ -3,7 +3,7 @@
 exec >> /opt/Zillae/Podzilla2-SVN/Misc/Launch.log 2>&1
 
 # Format: $binary -l $module_dirs
-if [ -z $1 ]; then
+if [ -z "$1" ]; then
 	cd /opt/Zillae/Podzilla2-SVN
 	# Since module loading is recursive, just using "/usr/lib" is fine
 	# Podzilla2-SVN already has "/usr/lib" built-in so no arguments are needed

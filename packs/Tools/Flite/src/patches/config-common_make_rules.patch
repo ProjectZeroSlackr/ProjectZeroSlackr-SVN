@@ -1,0 +1,11 @@
+--- config/common_make_rules	2004-12-19 22:20:43.000000000 +0000
++++ config/common_make_rules	2008-03-27 18:15:54.000000000 +0000
+@@ -67,7 +67,7 @@
+ BUILDDIRS=$(OBJDIR) $(BINDIR) $(LIBDIR)
+ 
+ FLITELIBS = $(BUILDDIR)/lib/libflite.a
+-LDFLAGS += -L$(BUILDDIR)/lib -lflite -lm $(AUDIOLIBS) $(OTHERLIBS)
++LDFLAGS += -L$(BUILDDIR)/lib -lflite -lm $(AUDIOLIBS) $(OTHERLIBS) -elf2flt
+ 
+ FULLOBJS = $(OBJS:%=$(OBJDIR)/%)
+ ifdef SHFLAGS

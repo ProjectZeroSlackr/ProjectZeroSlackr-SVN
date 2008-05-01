@@ -13,7 +13,7 @@
 # of files can follow the "-file" switch.
 
 # Format: $binary -file $pwad_path
-if [ -z $1 ]; then
+if [ -z "$1" ]; then
 	cd /opt/Media/iDoom
 	exec /opt/Media/iDoom/iDoom
 else

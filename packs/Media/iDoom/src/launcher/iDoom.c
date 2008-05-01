@@ -67,14 +67,12 @@ static PzWindow *load_file(const char *file)
 
 static PzWindow *load_file_handler_iDoom(ttk_menu_item *item)
 {
-	load_file_iDoom(item->data);
-	return 0;
+	return load_file_iDoom(item->data);
 }
 
 static PzWindow *load_file_handler_iFreeDoom(ttk_menu_item *item)
 {
-	load_file_iFreeDoom(item->data);
-	return 0;
+	return load_file_iFreeDoom(item->data);
 }
 
 

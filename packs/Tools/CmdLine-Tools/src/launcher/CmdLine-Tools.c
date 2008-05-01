@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 27, 2008
+ * Last updated: Apr 28, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -20,6 +20,8 @@
  */
 
 #include "browser-ext.h"
+
+#define PATH PATH "/opt/Tools/CmdLine-Tools/Bin/"
 
 static PzModule *module;
 static ttk_menu_item
@@ -63,7 +65,7 @@ static PzWindow *zip(const char *file)
 	sprintf(archive, "%s.zip", f);
 	const char *const cmd[] = {"zip", "-r", archive, f, NULL};
 	pz_execv(
-		"/opt/Tools/CmdLine-Tools/Bin/zip",
+		PATH "zip",
 		(char *const *)cmd
 		);
 	return TTK_MENU_UPONE;
@@ -80,7 +82,7 @@ static PzWindow *unzip(const char *file)
 	chdir(d);
 	const char *const cmd[] = {"unzip", "-o", f, NULL};
 	pz_execv(
-		"/opt/Tools/CmdLine-Tools/Bin/unzip",
+		PATH "unzip",
 		(char *const *)cmd
 		);
 	return TTK_MENU_UPONE;
@@ -97,7 +99,7 @@ static PzWindow *unrar(const char *file)
 	chdir(d);
 	const char *const cmd[] = {"unrar", "x", "-o+", "-y", f, NULL};
 	pz_execv(
-		"/opt/Tools/CmdLine-Tools/Bin/unrar",
+		PATH "unrar",
 		(char *const *)cmd
 		);
 	return TTK_MENU_UPONE;
@@ -116,7 +118,7 @@ static PzWindow *tar_c(const char *file)
 	sprintf(archive,"%s.tar", f);
 	const char *const cmd[] = {"tar", "-cf", archive, f, NULL};
 	pz_execv(
-		"/opt/Tools/CmdLine-Tools/Bin/tar",
+		PATH "tar",
 		(char *const *)cmd
 		);
 	return TTK_MENU_UPONE;
@@ -133,7 +135,7 @@ static PzWindow *tar_d(const char *file)
 	chdir(d);
 	const char *const cmd[] = {"tar", "-xf", f, NULL};
 	pz_execv(
-		"/opt/Tools/CmdLine-Tools/Bin/tar",
+		PATH "tar",
 		(char *const *)cmd
 		);
 	return TTK_MENU_UPONE;
@@ -150,7 +152,7 @@ static PzWindow *bzip2_c(const char *file)
 	chdir(d);
 	const char *const cmd[] = {"bzip2", "-vz9", f, NULL};
 	pz_execv(
-		"/opt/Tools/CmdLine-Tools/Bin/bzip2",
+		PATH "bzip2",
 		(char *const *)cmd
 		);
 	return TTK_MENU_UPONE;
@@ -167,7 +169,7 @@ static PzWindow *bzip2_d(const char *file)
 	chdir(d);
 	const char *const cmd[] = {"bzip2", "-vd", f, NULL};
 	pz_execv(
-		"/opt/Tools/CmdLine-Tools/Bin/bzip2",
+		PATH "bzip2",
 		(char *const *)cmd
 		);
 	return TTK_MENU_UPONE;
@@ -184,7 +186,7 @@ static PzWindow *gzip_c(const char *file)
 	chdir(d);
 	const char *const cmd[] = {"gzip", "-v9", f, NULL};
 	pz_execv(
-		"/opt/Tools/CmdLine-Tools/Bin/gzip",
+		PATH "gzip",
 		(char *const *)cmd
 		);
 	return TTK_MENU_UPONE;
@@ -201,7 +203,7 @@ static PzWindow *gzip_d(const char *file)
 	chdir(d);
 	const char *const cmd[] = {"gzip", "-vd", f, NULL};
 	pz_execv(
-		"/opt/Tools/CmdLine-Tools/Bin/gzip",
+		PATH "gzip",
 		(char *const *)cmd
 		);
 	return TTK_MENU_UPONE;
@@ -230,7 +232,7 @@ static void init_launch()
 	sprintf(
 		path, "%s:%s",
 		getenv("PATH"),
-		"/opt/Tools/CmdLine-Tools/Bin"
+		PATH
 		);	
 	setenv("PATH", path, 1);
 	
