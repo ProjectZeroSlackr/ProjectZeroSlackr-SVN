@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 28, 2008
+ * Last updated: May 1, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -21,7 +21,8 @@
 
 #include "browser-ext.h"
 
-#define PATH PATH "/opt/Tools/CmdLine-Tools/Bin/"
+#define PATH "/opt/Tools/CmdLine-Tools/Bin/"
+#define JOHN "/opt/Tools/CmdLine-Tools/John"
 
 static PzModule *module;
 static ttk_menu_item
@@ -226,7 +227,7 @@ static void cleanup()
 
 static void init_launch()
 {
-	module = pz_register_module("CmdLine-Tools", 0);
+	module = pz_register_module("CmdLine-Tools", cleanup);
 	
 	char path[256];
 	sprintf(
@@ -235,6 +236,7 @@ static void init_launch()
 		PATH
 		);	
 	setenv("PATH", path, 1);
+	setenv("JOHN", JOHN, 1);
 	
 	browser_extension_zip.name = N_("Compress (zip)");
 	browser_extension_zip.makesub = load_file_handler_zip;

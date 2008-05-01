@@ -3,7 +3,7 @@
 # CmdLine-Tools Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 30, 2008
+# Last updated: May 1, 2008
 #
 echo ""
 echo "==========================================="
@@ -30,6 +30,7 @@ tar zxf ../src/orig/Ipodgawk.tar.gz
 tar zxf ../src/orig/Ipodgrep.tar.gz
 tar zxf ../src/orig/Ipodsed.tar.gz
 tar zxf ../src/orig/diffutils-2.8.1.tar.gz
+tar zxf ../src/orig/john-1.7.2.tar.gz
 tar zxf ../src/repack/unrar_repacked.tar.gz
 tar zxf ../src/repack/unzip_repacked.tar.gz
 unzip -q ../src/orig/zip232.zip -d zip
@@ -81,6 +82,14 @@ cd ..
 cd cmdlineutils
 make IPOD=1 >> ../cmdlineutils.log 2>&1
 cd ..
+echo "  - John the Ripper"
+cd john-1.7.2
+patch -p0 -t -i ../../src/patches/john-the-ripper-arm.patch >> ../john.log
+cd src
+export PATH=/usr/local/bin:$PATH
+make linux-arm >> ../../john.log 2>&1
+cd ..
+cd ..
 # Copy over compiled file
 echo "> Copying over compiled files..."
 mkdir compiled
@@ -112,6 +121,11 @@ cp -rf zip/zipnote compiled/
 cp -rf zip/zipsplit compiled/
 cp -rf bzip2/bzip2 compiled/
 cp -rf bzip2/bzip2recover compiled/
+if [ -e john-1.7.2/run/john.elf.bflt ]; then
+	cp -rf john-1.7.2/run/john.elf.bflt compiled/john
+else
+	cp -rf john-1.7.2/run/john compiled/
+fi
 # Launch module
 echo "> Building ZeroLauncher launch module..."
 cp -rf ../src/launcher ./
@@ -126,6 +140,9 @@ cd release
 # Files
 PACK=ZeroSlackr/opt/Tools/CmdLine-Tools
 cp -rf ../compiled/* $PACK/Bin/
+cp -rf ../john-1.7.2/run/*.chr $PACK/John/
+cp -rf ../john-1.7.2/run/john.conf $PACK/John/
+cp -rf ../john-1.7.2/run/password.lst $PACK/John/
 cp -rf ../launcher/* $PACK/Launch/
 # Documents
 # Too many original docs; done by hand

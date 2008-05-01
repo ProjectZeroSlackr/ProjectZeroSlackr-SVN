@@ -1,4 +1,4 @@
-Last updated: Apr 23, 2008
+Last updated: May 1, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -70,10 +70,16 @@ Original:
   Keripo, March 12, 2008
   http://sourceforge.net/project/showfiles.php?group_id=118012&package_id=128993
 
+  John the Ripper
+  coob, Mar 14, 2005
+  http://ipodlinux.org/forums/viewtopic.php?t=1324
+  http://www.openwall.com/john/f/john-1.7.2.tar.gz
+  http://web.archive.org/web/20050404001647/http://booc.coob.org/john-1.6.37-arm.diff
+  
 ZS Version:
 - Modder: Keripo
 - Type: ZS Recompile / Repack
-- Date: Apr 23, 2008
+- Date: May 1, 2008
 - Version: B X.X
 
 Modifications:
@@ -83,6 +89,8 @@ Launch Module:
 - file handler for zip, unzip, unrar, tar, bzip2 and gzip
 - "/opt/Tools/CmdLine-Tools/Bin" added to $PATH for access
   by the shell
+- "/opt/Tools/CmdLine-Tools/John" is set to $JOHN for John
+  the ripper
 
 To do:
 - port more command line tools!!!

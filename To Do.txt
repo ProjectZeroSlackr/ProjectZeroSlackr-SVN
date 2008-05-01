@@ -1,4 +1,4 @@
-Last updated: Apr 30, 2008
+Last updated: May 1, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -63,5 +63,4 @@ To port:
 - DSLinux apps
 - BSD Games
 - dc
-- John the Ripper
 - Rockbox's UISimulator???

@@ -1,0 +1,76 @@
+diff -urN src/Makefile src/Makefile
+--- src/Makefile	2006-05-15 12:38:00.000000000 -0400
++++ src/Makefile	2008-05-01 17:15:04.421875000 -0400
+@@ -83,6 +83,7 @@
+ #	@echo "linux-x86-64-32-sse2     Linux, AMD x86-64, 32-bit with SSE2"
+ #	@echo "linux-x86-64-32-mmx      Linux, AMD x86-64, 32-bit with MMX"
+ 	@echo "linux-alpha              Linux, Alpha"
++	@echo "linux-arm                Linux, Arm"
+ 	@echo "linux-sparc              Linux, SPARC 32-bit"
+ 	@echo "linux-ppc32-altivec      Linux, PowerPC w/AltiVec (best)"
+ 	@echo "linux-ppc32              Linux, PowerPC 32-bit"
+@@ -194,6 +195,12 @@
+ 		OPT_NORMAL="-fast" \
+ 		OPT_INLINE="-O2 -arch host"
+ 
++linux-arm:
++	$(LN) arm.h arch.h
++	$(MAKE) $(PROJ) \
++		CPP=arm-elf-gcc CC=arm-elf-gcc AS=arm-elf-gcc LD=arm-elf-gcc \
++		LDFLAGS="$(LDFLAGS) -elf2flt"
++
+ linux-sparc:
+ 	$(LN) sparc32.h arch.h
+ 	$(MAKE) $(PROJ)
+diff -urN src/arm.h src/arm.h
+--- src/arm.h	1969-12-31 19:00:00.000000000 -0500
++++ src/arm.h	2008-05-01 17:16:09.250000000 -0400
+@@ -0,0 +1,48 @@
++/*
++ * This file is part of John the Ripper password cracker,
++ * Copyright (c) 1996-2001 by Solar Designer
++ */
++
++/*
++ * Architecture specific parameters for ARM.
++ */
++
++#ifndef _JOHN_ARCH_H
++#define _JOHN_ARCH_H
++
++#define ARCH_WORD				long
++#define ARCH_SIZE				4
++#define ARCH_BITS				32
++#define ARCH_BITS_LOG			5
++#define ARCH_BITS_STR			"32"
++#define ARCH_LITTLE_ENDIAN		1
++#define ARCH_INT_GT_32			0
++#define ARCH_ALLOWS_UNALIGNED	0
++#define ARCH_INDEX(x)			((unsigned int)(unsigned char)(x))
++
++#define OS_TIMER				1
++#define OS_FLOCK				1
++
++#define CPU_DETECT				0
++#define CPU_REQ					0
++
++#define DES_ASM					0
++#define DES_128K				0
++#define DES_X2					0
++#define DES_MASK				0
++#define DES_SCALE				0
++#define DES_EXTB				0
++#define DES_COPY				0
++#define DES_BS_ASM				0
++#define DES_BS					0
++#define DES_BS_VECTOR			0
++#define DES_BS_EXPAND			0
++
++#define MD5_ASM					0
++#define MD5_X2					0
++#define MD5_IMM					0
++
++#define BF_ASM					0
++#define BF_SCALE				0
++
++#endif
