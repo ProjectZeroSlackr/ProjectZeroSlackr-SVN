@@ -36,8 +36,7 @@ static PzWindow *load_file(const char *file)
 
 static PzWindow *load_file_handler(ttk_menu_item *item)
 {
-	load_file(item->name); // MAME uses the romset's name as the argument and not path
-	return 0;
+	return load_file(item->name); // MAME uses the romset's name as the argument and not path
 }
 
 static PzWindow *browse_romsets()

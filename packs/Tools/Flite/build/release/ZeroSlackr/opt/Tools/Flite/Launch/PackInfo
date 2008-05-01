@@ -1,0 +1,6 @@
+Module: Flite
+Display-name: Flite
+Description: Light-weight voice synthesizer.
+Category: Tools
+Author: Language Technologies Institute of Carnegie Mellon University
+Dependencies: browser,browser-ext

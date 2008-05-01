@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 22, 2008
+ * Last updated: Apr 30, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -19,20 +19,10 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include <netdb.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-
-#include "pz.h"
+#include "../../launch/browser-ext.h"
 
 #define ENABLE_MPD 1
 #define TOGGLE_UPDATE 2
-
-extern void pz_ipod_reboot();
-extern void toggle_backlight();
 
 static PzModule *module;
 static PzConfig *config;
@@ -77,7 +67,6 @@ static int send_command(char *str)
 
 static void init_conf()
 {
-	
 	if (!(access(conf, F_OK) == 0)) {
 		FILE *fconf = fopen(conf, "w");
 		fprintf(fconf,
@@ -115,7 +104,6 @@ static void init_loopback()
 
 static void init_db()
 {
-	
 	if (pz_get_int_setting(config, TOGGLE_UPDATE) == 1) {
 		pz_message("MPD will now update its dataBase. Please be patient; you will be notified once the update is done.");
 		toggle_backlight(); // Turn backlight off to save batteries
@@ -185,10 +173,10 @@ static void init()
 		pz_set_int_setting(config, ENABLE_MPD, 0);
 	if (!pz_get_setting(config, TOGGLE_UPDATE))
 		pz_set_int_setting(config, TOGGLE_UPDATE, 1);
-	pz_menu_add_setting_group("/Music/Enable MPD", "Settings", ENABLE_MPD, config, on_off_options);
+	pz_menu_add_setting_group("/Music/Enable MPD", "~Settings", ENABLE_MPD, config, on_off_options);
 	
 	if (pz_get_int_setting(config, ENABLE_MPD) == 1) {	
-		pz_menu_add_action_group("/Music/Toggle Update", "Settings", toggle_update);
+		pz_menu_add_action_group("/Music/Toggle Update", "~Settings", toggle_update);
 		path = "/opt/Base/MPD/MPD-ke";
 		conf = "/opt/Base/MPD/Conf/mpd.conf";
 		init_loopback();
@@ -196,6 +184,7 @@ static void init()
 		init_db();
 		init_mpd();
 	}
+	pz_menu_sort("/Music");
 }
 
 PZ_MOD_INIT(init)

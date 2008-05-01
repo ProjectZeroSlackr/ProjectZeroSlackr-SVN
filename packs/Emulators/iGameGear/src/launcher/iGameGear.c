@@ -76,8 +76,7 @@ static PzWindow *load_file(const char *file)
 
 static PzWindow *load_file_handler(ttk_menu_item *item)
 {
-	load_file(item->data);
-	return 0;
+	return load_file(item->data);
 }
 
 static PzWindow *browse_roms()

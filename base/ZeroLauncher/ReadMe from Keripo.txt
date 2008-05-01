@@ -1,4 +1,4 @@
-Last updated: Apr 27, 2008
+Last updated: Apr 30, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -95,6 +95,13 @@ Add-ons:
   > "Enable MPD", and "Toggle Update" settings
   > source:
     http://so2.sys-techs.com/ipod/mpdmodule-src-0.4.tar.gz
+- podread:
+  > ascii file handler
+  > general code cleanup and modifications to
+    make ZeroSlackr friendly
+  > uses check_is_ascii_file
+  > source:
+    http://ipodlinux.org/modules/podread/podread-0.0.1-src.tar.gz
 
 To do:
 - disable scheme rendering during scheme selection

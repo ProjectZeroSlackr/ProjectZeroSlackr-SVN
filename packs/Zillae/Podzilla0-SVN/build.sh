@@ -3,7 +3,7 @@
 # Podzilla0-SVN Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 26, 2008
+# Last updated: Apr 30, 2008
 #
 echo ""
 echo "==========================================="
@@ -46,6 +46,7 @@ do
 		cd $LIBSDIR
 		echo "  - Building "$lib"..."
 		./src/$lib.sh
+		echo ""
 		cd $DIR
 	fi
 	ln -s $LIBSDIR/$lib ./

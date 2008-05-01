@@ -1,4 +1,4 @@
-Last updated: Apr 28, 2008
+Last updated: Apr 30, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,13 @@ original/ported software.
 
 
 == Changelog ==
+
+Apr 30, 2008
+- Added podread
+- Added Flite
+- Added Hotdog-Demos
+- browser-ext mini-browser fixed
+- Various script and launcher cleanups
 
 Apr 28, 2008
 - Second stable snapshot pre-release

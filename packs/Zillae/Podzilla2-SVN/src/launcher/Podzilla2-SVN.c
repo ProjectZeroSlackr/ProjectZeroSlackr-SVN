@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 27, 2008
+ * Last updated: Apr 28, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -161,14 +161,14 @@ static void init_launch()
 	if (pz_get_int_setting(config, HIDE_UNSORTED) == 0)
 		pz_menu_add_action_group ("/Zillae/Podzilla2-SVN/Unsorted","Lite", launch_unsorted);
 	
-	pz_menu_add_stub_group ("/Zillae/Podzilla2-SVN/Settings", "~Settings");
-	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Settings/Hide All Modules",	"#Normal", HIDE_ALL, config, on_off_options);
-	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Settings/Hide Arcade",	"Lite", HIDE_ARCADE, config, on_off_options);
-	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Settings/Hide Dev",	"Lite", HIDE_DEV, config, on_off_options);
-	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Settings/Hide Media",	"Lite", HIDE_MEDIA, config, on_off_options);
-	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Settings/Hide Misc",	"Lite", HIDE_MISC, config, on_off_options);
-	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Settings/Hide Tools",	"Lite", HIDE_TOOLS, config, on_off_options);
-	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Settings/Hide Unsorted",	"Lite", HIDE_UNSORTED, config, on_off_options);
+	pz_menu_add_stub_group ("/Zillae/Podzilla2-SVN/Hide Settings", "~Settings");
+	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Hide Settings/Hide All Modules",	"#Normal", HIDE_ALL, config, on_off_options);
+	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Hide Settings/Hide Arcade",	"Lite", HIDE_ARCADE, config, on_off_options);
+	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Hide Settings/Hide Dev",	"Lite", HIDE_DEV, config, on_off_options);
+	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Hide Settings/Hide Media",	"Lite", HIDE_MEDIA, config, on_off_options);
+	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Hide Settings/Hide Misc",	"Lite", HIDE_MISC, config, on_off_options);
+	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Hide Settings/Hide Tools",	"Lite", HIDE_TOOLS, config, on_off_options);
+	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Hide Settings/Hide Unsorted",	"Lite", HIDE_UNSORTED, config, on_off_options);
 	pz_menu_sort ("/Zillae/Podzilla2-SVN");
 }
 

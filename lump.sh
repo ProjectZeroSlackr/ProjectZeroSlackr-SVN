@@ -53,7 +53,7 @@ echo ""
 echo "> Building base..."
 cd $SVNROOT
 cd base
-for folder in ./*
+for folder in *
 do
 	cd $folder
 	if [ -e SKIP.txt ]; then
@@ -71,16 +71,16 @@ echo ""
 echo "> Building packs..."
 cd $SVNROOT
 cd packs
-for folder in ./*
+for folder in *
 do
 	echo ""
 	echo "  - Building packs in "$folder"..."
 	cd $folder
-	for pack in ./*
+	for pack in *
 	do
 		cd $pack
 		if [ -e SKIP.txt ]; then
-			echo "  - Skipping building of "$pack"/"$folder"..."
+			echo "  - Skipping building of "$folder"/"$pack"..."
 			cp -rf build/release/* $LUMP/
 		else
 			./build.sh

@@ -3,7 +3,7 @@
 # ZeroLauncher Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 26, 2008
+# Last updated: Apr 30, 2008
 #
 echo ""
 echo "==========================================="
@@ -46,13 +46,14 @@ cd ..
 echo "> Symlinking libraries..."
 DIR=$(pwd)
 LIBSDIR=../../../libs
-LIBS="ttk"
+LIBS="ttk launch"
 for lib in $LIBS
 do
 	if [ ! -d $LIBSDIR/$lib ]; then
 		cd $LIBSDIR
 		echo "  - Building "$lib"..."
 		./src/$lib.sh
+		echo ""
 		cd $DIR
 	fi
 	ln -s $LIBSDIR/$lib ./

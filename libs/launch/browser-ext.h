@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 27, 2008
+ * Last updated: Apr 30, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -22,15 +22,21 @@
 #include "pz.h"
 #include <dirent.h>
 #include <fcntl.h>
+#include <netdb.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/param.h>
-#include <sys/types.h>
+#include <sys/socket.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 // PZ2 functions
+extern void pz_ipod_reboot();
+extern void setup_sigchld_handler();
 extern void pz_set_backlight_timer(int sec);
 extern TWindow *open_directory_title(const char *filename, const char *title);
 extern PzWindow * new_terminal_window_with(const char *path, char *const argv[]);
