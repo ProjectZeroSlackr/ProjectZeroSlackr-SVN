@@ -3,7 +3,7 @@
 # nano Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 30, 2008
+# Last updated: May 1, 2008
 #
 echo ""
 echo "==========================================="
@@ -52,7 +52,7 @@ cd release
 # Files
 PACK=ZeroSlackr/opt/Media/nano
 cp -rf ../../src/hex/nano $PACK/
-cp -rf ../../src/mod/nano-soundtrack.mp3 $PACK/Misc/
+cp -rf ../../src/mod/nano-soundtrack.mp3 Music/
 cp -rf ../nano/data $PACK/Data
 cp -rf ../launcher/* $PACK/Launch/
 # Documents

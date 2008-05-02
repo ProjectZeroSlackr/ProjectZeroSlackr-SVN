@@ -123,7 +123,7 @@ static PzWindow *browse_texts()
 		check_is_ascii_file, load_file_handler_read);
 }
 
-static void cleanup_flite()
+static void cleanup()
 {
 	pz_save_config(config);
 	kill_flite();
@@ -131,7 +131,7 @@ static void cleanup_flite()
 
 static void init_launch() 
 {
-	module = pz_register_module("Flite", cleanup_flite);	
+	module = pz_register_module("Flite", cleanup);	
 	config = pz_load_config("/opt/Tools/Flite/Conf/Enable.conf");
 	if (!pz_get_setting(config, ENABLE_FLITE))
 		pz_set_int_setting(config, ENABLE_FLITE, 0);

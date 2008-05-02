@@ -26,6 +26,8 @@ Usage:
   to select a module file to play.
 - Files with a supported module extension have their default
   action set to xmp.
+- Toggle the "Media > XMP > Toggle Backlight" setting
+  to set backlight on/off.
 - Module files should be placed in the "Mods" folder.
   Free modules can be downloaded from The Mod Archive
   (http://modarchive.org/) and other places on the internet.
