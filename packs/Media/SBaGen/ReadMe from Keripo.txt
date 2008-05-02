@@ -41,6 +41,8 @@ Usage:
   use "Media > SBaGen > Beats" to select a beat to play.
 - Files with a ".sbg" extension have their default
   action set to SBaGen.
+- Toggle the "Media > SBaGen > Toggle Backlight" setting
+  to set backlight on/off.
 - Note that SBaGen doesn't have a built-in exit function;
   you will have to exit by rebooting (holding the right
   key combinations to force reboot - see the iPodLinux

@@ -25,8 +25,8 @@ Usage:
 - Place text files in the "Text" folder and use
   "Tools > Flite > Text" to browse them.
 - Hold centre on text files to choose "Convert to .wav" option.
-- Toggle the "Tools > Flite > Reading Backlight" setting to set
-  backlight on/off.
+- Toggle the "Tools > Flite > Toggle Backlight" setting
+  to set backlight on/off.
 - Use "Tools > Flite > Kill Flite" to force stop Flite reading.
 - Note that Flite is unable to read from text files with spaces
   in their names/path. This is an Flite limitation.

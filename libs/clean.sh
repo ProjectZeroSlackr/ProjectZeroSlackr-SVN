@@ -3,10 +3,9 @@
 # Libs Auto-Cleaning Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 27, 2008
+# Last updated: May 2, 2008
 #
-LIBS="bzip2 tar hotdog ttk"
-for lib in $LIBS
+for lib in src/*.sh
 do
-	rm -rf $lib
+	rm -rf `basename $lib .sh`
 done
