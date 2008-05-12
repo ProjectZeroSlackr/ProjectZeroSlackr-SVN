@@ -1,0 +1,2188 @@
+diff -urN gpsp_src_2Xb/common.h gpsp_src_zacaj/common.h
+--- gpsp_src_2Xb/common.h	2007-04-08 21:35:13.000000000 -0400
++++ gpsp_src_zacaj/common.h	2008-03-21 21:27:39.265625000 -0400
+@@ -102,8 +102,8 @@
+   #include <time.h>
+   #include <stdio.h>
+ #else
+-  #include "SDL.h"
+-
++//  #include "SDL.h"
++//I
+ #ifdef ARM_ARCH
+   #define function_cc
+ #else
+@@ -237,7 +237,8 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <stdarg.h>
+-#include "SDL.h"
++//#include "SDL.h"
++//I
+ #include "cpu.h"
+ #include "memory.h"
+ #include "video.h"
+diff -urN gpsp_src_2Xb/cpu.c gpsp_src_zacaj/cpu.c
+--- gpsp_src_2Xb/cpu.c	2007-04-08 21:35:13.000000000 -0400
++++ gpsp_src_zacaj/cpu.c	2008-03-21 21:27:39.250000000 -0400
+@@ -4142,8 +4142,8 @@
+   {
+     u32 key = 0;
+ 
+-    SDL_LockMutex(sound_mutex);
+-    SDL_PauseAudio(1);
++   //I SDL_LockMutex(sound_mutex);
++   //I SDL_PauseAudio(1);
+ 
+     if(output_field >= num_output_fields)
+     {
+@@ -4277,8 +4277,8 @@
+         quit();
+     }
+ 
+-    SDL_PauseAudio(0);
+-    SDL_UnlockMutex(sound_mutex);
++  //I  SDL_PauseAudio(0);
++   //I SDL_UnlockMutex(sound_mutex);
+   }
+ 
+   last_instruction = reg[REG_PC];
+diff -urN gpsp_src_2Xb/cpu_threaded.c gpsp_src_zacaj/cpu_threaded.c
+--- gpsp_src_2Xb/cpu_threaded.c	2007-04-08 21:35:13.000000000 -0400
++++ gpsp_src_zacaj/cpu_threaded.c	2008-03-21 21:27:39.250000000 -0400
+@@ -200,8 +200,8 @@
+ 
+ #else
+ 
+-#include "x86/x86_emit.h"
+-
++//I#include "x86/x86_emit.h"
++#include "gp2x/arm_emit.h"
+ #endif
+ 
+ 
+diff -urN gpsp_src_2Xb/gp2x/Makefile gpsp_src_zacaj/gp2x/Makefile
+--- gpsp_src_2Xb/gp2x/Makefile	2007-04-08 21:39:14.000000000 -0400
++++ gpsp_src_zacaj/gp2x/Makefile	2008-03-21 21:27:38.609375000 -0400
+@@ -4,27 +4,26 @@
+ 
+ # Global definitions
+ 
+-PREFIX  = /opt/open2x/gcc-4.1.1-glibc-2.3.6
+-CC        = $(PREFIX)/bin/arm-open2x-linux-gcc
+-STRIP     = $(PREFIX)/bin/arm-open2x-linux-strip
+-
+-OBJS      = main.o cpu.o memory.u video.o input.o sound.o gp2x.o gui.o        \
+-            cheats.o zip.o cpu_threaded.z cpu_speed.o cpuctrl.o               \
+-            gp2xminilib.o font.o display.o speedtest.o cmdline.o daemon.o     \
+-            arm_stub.o video_blend.o
+-BIN       = gpsp.gpe 
++#PREFIX  = /opt/open2x/gcc-4.1.1-glibc-2.3.6
++CC        = arm-elf-gcc
++#STRIP     = arm-elf-strip
++
++ OBJS      = main.o cpu.o memory.u video.o input.o sound.o  \
++             cheats.o cpu_threaded.z gui.o cop.o \
++             font.o  \
++      	    arm_stub.o
++ BIN       = igpSP
+ 
+ # Platform specific definitions 
+ 
+ VPATH      += ..
+-CFLAGS     += -DARM_ARCH -DGP2X_BUILD
++CFLAGS     += -DARM_ARCH #-DGP2X_BUILD
+ # NOTE: -funroll-loops will slow down compiling considerably
+-CFLAGS     += -O3 -std=c99 -msoft-float -funsigned-char -fno-common           \
++CFLAGS     += -O3 -elf2flt -std=c99 -msoft-float -funsigned-char -fno-common           \
+               -fno-builtin                                                    \
+ 
+-INCLUDES   = `$(PREFIX)/bin/arm-open2x-linux-sdl-config --cflags` 
+-LIBS       = `$(PREFIX)/bin/arm-open2x-linux-sdl-config --libs`               \
+-              -lm -ldl -lpthread -lz -static
++#INCLUDES   = `$(PREFIX)/bin/arm-open2x-linux-sdl-config --cflags` 
++LIBS       = -lm -lpthread -L../../hotdog/ipod -lhotdog -Wl,-elf2flt
+ 
+ # Compilation:
+ 
+@@ -44,7 +43,7 @@
+ 
+ all:	$(OBJS)
+ 	$(CC) $(OBJS) $(LIBS) -o $(BIN)  
+-	$(STRIP) $(BIN)
++	
+ 
+ clean:
+ 	rm -f *.o *.u *.z $(BIN) 
+diff -urN gpsp_src_2Xb/gp2x/cop.c gpsp_src_zacaj/gp2x/cop.c
+--- gpsp_src_2Xb/gp2x/cop.c	1969-12-31 19:00:00.000000000 -0500
++++ gpsp_src_zacaj/gp2x/cop.c	2008-03-21 21:27:38.562500000 -0400
+@@ -0,0 +1,48 @@
++#include "cop.h"
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <fcntl.h>
++#include <sys/ioctl.h>
++#include <sys/soundcard.h>
++
++#define outl(a, b) (*(volatile unsigned int *)(b) = (a))
++#define inl(a) (*(volatile unsigned int *)(a))
++
++int cop_execute(void (*function)())
++{
++		outl((unsigned int)function, COP_HANDLER);
++		outl(0x0, 0x60007004);
++		return 1;	
++}
++extern void  flip_screen_();
++void cop_lcd_test()
++{
++	while (inl(COP_STATUS) & COP_RUNNING)
++	{
++		while ((inl(COP_STATUS) & COP_LINE_REQ)==0); // wait for 1		
++		flip_screen_();
++//		while ((inl(COP_STATUS) & COP_LINE_REQ)!=0) // wait for 0
++			outl(inl(COP_STATUS) &~ COP_LINE_REQ, COP_STATUS); // clear frameready
++	}
++		
++}
++
++#define CACHE_CTL        (*(volatile unsigned long *)(0x6000c000))
++
++#define CACHE_DISABLE    0
++void cop_begin()
++{
++	outl(inl(COP_STATUS) &~ COP_LINE_REQ2, COP_STATUS); // clear frameready
++	cop_execute(cop_lcd_test);	
++	outl(COP_RUNNING, COP_STATUS);
++
++}
++void cop_set(void (*function)())
++{
++}
++
++void cop_end()
++{
++	outl(inl(COP_STATUS) &~ COP_RUNNING, COP_STATUS); // set to 0
++	outl(inl(COP_STATUS) | COP_LINE_REQ, COP_STATUS);
++}
+diff -urN gpsp_src_2Xb/gp2x/cop.h gpsp_src_zacaj/gp2x/cop.h
+--- gpsp_src_2Xb/gp2x/cop.h	1969-12-31 19:00:00.000000000 -0500
++++ gpsp_src_zacaj/gp2x/cop.h	2008-03-21 21:27:38.562500000 -0400
+@@ -0,0 +1,29 @@
++#ifndef __COP_H_
++#define __COP_H_
++/* borrowed from iboy */
++int cop_execute(void (*function)());
++void cop_begin();
++void cop_set(void (*function)());
++void cop_end();
++
++
++#define DMA_BUFFER		0x40000040
++
++
++
++#define COP_HANDLER 	0x4001501C
++#define COP_STATUS 	0x40015020
++
++
++/*
++#define COP_HANDLER     0x40016FF0
++#define COP_STATUS      0x40016FF4
++*/
++
++#define COP_RUNNING	(1 << 0)
++#define COP_LINE_REQ	(1 << 1)
++#define COP_LINE_REQ2	(2 << 1)
++
++
++
++#endif
+Files gpsp_src_2Xb/gp2x/cpu_threaded.z and gpsp_src_zacaj/gp2x/cpu_threaded.z differ
+diff -urN gpsp_src_2Xb/gp2x/readme_gp2x.txt gpsp_src_zacaj/gp2x/readme_gp2x.txt
+--- gpsp_src_2Xb/gp2x/readme_gp2x.txt	2007-04-08 21:36:45.000000000 -0400
++++ gpsp_src_zacaj/gp2x/readme_gp2x.txt	2007-04-02 01:52:10.000000000 -0400
+@@ -12,19 +12,7 @@
+ 
+ Changelog:
+ 
+-0.9-2xb: 
+--- IMPORTANT-- If you're overwriting an old version, be sure to delete the
+-   gpsp.cfg file first, or be prepared to have a bunch of weird button
+-   settings that would require fixing.
+-
+-- Fixed some bugs stunting compatability.
+-- Optimized alpha blends in renderer.
+-- Some more optimizations to dynarec output.
+-- Savestates should work better now.
+-- Cheat/misc menu won't crash the emulator.
+-- Main button config window works (not all buttons are in yet)
+-
+-0.9-2Xa: (Exophase release)
++0.9-2Xa: (Exophase stolen release)
+ - Redid autoframeskip. Should work more reliably.
+ - Rewrote dynamic recompiler from x86 source (arm_emit.h, arm_stub.S).
+   Has some more sophisticated behavior than the last version, more is
+@@ -74,7 +62,7 @@
+ Controls:
+ 
+ How to use gpSP on the GP2X:
+-Buttons are mapped as follows (GBA/ingame buttons can be changed in the menu):
++Buttons are mapped by default as follows:
+ 
+ GP2X--------------------GBA
+ X           ->          A
+@@ -88,8 +76,9 @@
+ 
+ -- IN-GAME --
+ 
++PUSH-STICK + VOL-DOWN     ->        quit gpSP
+ VOL MIDDLE (UP + DOWN)    ->        menu
+-PUSH STICK                ->        fps display toggle (second number is
++L + R + VOL MIDDLE        ->        fps display toggle (second number is
+                                      frames actually drawn)
+ 
+ -- IN-MENU --
+@@ -113,29 +102,8 @@
+ Bust-A-Move and is a remake of the classic game it's named after.
+ 
+ 
+-How to build from source:
+-
+-The makefile included in the source is geared towards the Open2x toolchain.
+-If you use Open2x and installed it in the way recommended then it should
+-work okay, assuming you also have up to date HW-SDL (and have
+-arm-linux-sdl-config installed in the right place). The makefile is in the
+-gp2x directory, so go there first then just type make to build gpsp.gpe.
+-Might need a little tweaking if your setup is different. If you need help
+-you can ask me, but I'll probably nag you about why you want to build it in
+-the first place.
+-
+-
+ GP2X version FAQ:
+ 
+-Q) Help! This game doesn't work. Am I using a bad version of the ROM?
+-
+-A) First, make sure you're using the correct BIOS version. If you aren't
+-   gpSP should tell you. Other than that, there are some games that are
+-   known to not work now (and will probably work later), and perhaps
+-   many more games that I don't know about that don't work. I haven't
+-   launched a full scale compatability test at this version, so it might
+-   take a while before the compatability levels are high.
+-
+ 
+ Q) Why is this version slower than the PSP version?
+ 
+@@ -192,14 +160,6 @@
+    the development of the emulator now.
+ 
+ 
+-Q) Thanks to your blog I heard that you made some improvement. Can I have
+-   a copy of the new code?
+-
+-A) No. Builds in transition often have a lot of problems, and I like for
+-   releases to be relatively substantial. I can probably be bribed out of
+-   them with donations though. :P
+-
+-
+ Q) Why do the menu suck so much? Why do half the options not work or not
+    make any sense?
+ 
+@@ -233,9 +193,7 @@
+    However I won't lie: donating ups the chances of me actually working on the
+    next version (for which I have a lot of ideas, but not necessarily time to
+    dedicate to.. that time might need more incentive to be allotted from other
+-   things). This could change depending on my employment situation, but right
+-   now I feel guilty doing anything that doesn't help guarantee that I'll be
+-   able to buy food a year from now.
++   things).
+ 
+ 
+ Q) Tell me all of your personal information.
+@@ -244,7 +202,7 @@
+    male, 23 years old, current residence Bloomington, IN; straight/single/not
+    actively looking, almost have an MS in Computer Science (do have a BS
+    underneath it), likes PSP more than GP2X, will not write a Nintendo DS
+-   emulator for either, am currently looking for a job for after I graduate.
++   emulator for either, is looking for a job currently.
+ 
+ 
+ Q) You said you're looking for a job.
+@@ -256,7 +214,7 @@
+ 
+ Credits:
+ 
+-Original codebase: Exophase (exophase@gmail.com)
++Original codebase: Exophase
+ Foundation gp2x code: zodttd
+ GP2X dynarec/stubs + current code maintainance: Exophase
+ 
+diff -urN gpsp_src_2Xb/gui.c gpsp_src_zacaj/gui.c
+--- gpsp_src_2Xb/gui.c	2007-04-08 21:35:13.000000000 -0400
++++ gpsp_src_zacaj/gui.c	2008-03-21 21:27:39.234375000 -0400
+@@ -39,10 +39,10 @@
+ #define DIR_LIST_POSITION 260
+ 
+ #else
+-
+-#define FILE_LIST_ROWS 25
++//I
++#define FILE_LIST_ROWS 10
+ #define FILE_LIST_POSITION 5
+-#define DIR_LIST_POSITION 360
++#define DIR_LIST_POSITION 80
+ 
+ #endif
+ 
+@@ -65,9 +65,9 @@
+ #else
+ 
+ #define COLOR_BG            color16(2, 8, 10)
+-
++#define FILE_LIST_ROWS 25
+ #endif
+-
++#define TESTCOLOR_BG            color16(31, 8, 10)
+ #define COLOR_ROM_INFO      color16(22, 36, 26)
+ #define COLOR_ACTIVE_ITEM   color16(31, 63, 31)
+ #define COLOR_INACTIVE_ITEM color16(13, 40, 18)
+@@ -270,8 +270,8 @@
+       print_string("Press X to return to the main menu.",
+        COLOR_HELP_TEXT, COLOR_BG, 20, 220);
+ #else
+-      print_string("Press X to return to the main menu.",
+-       COLOR_HELP_TEXT, COLOR_BG, 20, 260);
++      //print_string("Press X to return to the main menu.",
++    //I   COLOR_HELP_TEXT, COLOR_BG, 20, 260);
+ #endif
+ 
+       for(i = 0, current_file_number = i + current_file_scroll_value;
+@@ -450,7 +450,12 @@
+     free(dir_list);
+   }
+ 
+-  clear_screen(COLOR_BG);
++     clear_screen(TESTCOLOR_BG);
++   char blahstr[200];
++   sprintf(blahstr,"%s",result);
++       print_string(blahstr,
++        COLOR_HELP_TEXT, COLOR_BG, 0, 0);
++       flip_screen();
+ 
+   return return_value;
+ }
+@@ -647,13 +652,16 @@
+ 
+ #endif
+ 
+-
++u32 gamepad_config_line_to_button[] =
++ { 0, 2, 1, 3, 8, 9, 10, 11, 6, 7, 4, 5 };
+ s32 load_game_config_file()
+ {
+   u8 game_config_filename[512];
+   u32 file_loaded = 0;
+   u32 i;
+-  change_ext(gamepak_filename, game_config_filename, ".cfg");
++  // KERIPO MOD
++  //change_ext(gamepak_filename, game_config_filename, ".cfg");
++  change_ext(gamepak_filename, game_config_filename, "/root/Files/igpSP/Conf", ".cfg");
+ 
+   file_open(game_config_file, game_config_filename, read);
+ 
+@@ -699,7 +707,9 @@
+     return 0;
+ 
+   current_frameskip_type = auto_frameskip;
+-  frameskip_value = 4;
++  // KERIPO MOD
++  //frameskip_value = 4;
++  frameskip_value = 7;
+   random_skip = 0;
+   clock_speed = 333;
+ 
+@@ -789,7 +799,9 @@
+   u8 game_config_filename[512];
+   u32 i;
+ 
+-  change_ext(gamepak_filename, game_config_filename, ".cfg");
++  // KERIPO MOD
++  //change_ext(gamepak_filename, game_config_filename, ".cfg");
++  change_ext(gamepak_filename, game_config_filename, "/root/Files/igpSP/Conf", ".cfg");
+ 
+   file_open(game_config_file, game_config_filename, write);
+ 
+@@ -923,7 +935,9 @@
+   u8 savestate_ext[16];
+ 
+   sprintf(savestate_ext, "%d.svs", slot);
+-  change_ext(gamepak_filename, name_buffer, savestate_ext);
++  // KERIPO MOD
++  //change_ext(gamepak_filename, name_buffer, savestate_ext);
++  change_ext(gamepak_filename, name_buffer, "/root/Files/igpSP/Saves", savestate_ext);
+ 
+   get_savestate_snapshot(name_buffer);
+ }
+@@ -933,7 +947,9 @@
+   u8 savestate_ext[16];
+ 
+   sprintf(savestate_ext, "%d.svs", slot);
+-  change_ext(gamepak_filename, name_buffer, savestate_ext);
++  // KERIPO MOD
++  //change_ext(gamepak_filename, name_buffer, savestate_ext);
++  change_ext(gamepak_filename, name_buffer, "/root/Files/igpSP/Saves", savestate_ext);
+ }
+ 
+ #ifdef PSP_BUILD
+@@ -1001,16 +1017,20 @@
+ 
+   void menu_quit()
+   {
+-    clock_speed = (clock_speed_number + 1) * 33;
++    
+     save_config_file();
+     quit();
+   }
+ 
+   void menu_load()
+   {
+-    u8 *file_ext[] = { ".gba", ".bin", ".zip", NULL };
++    u8 *file_ext[] = { ".gba", ".bin", NULL };
+     u8 load_filename[512];
+     save_game_config_file();
++	
++	// KERIPO MOD
++	chdir("/root/Files/igpSP/Roms");
++	
+     if(load_file(file_ext, load_filename) != -1)
+     {
+        if(load_gamepak(load_filename) == -1)
+@@ -1360,7 +1380,28 @@
+   };
+ 
+ #endif
++ menu_option_type gamepad_config_options[] =
++  {
++    gamepad_config_option("D-pad up     ", 0),
++    gamepad_config_option("D-pad down   ", 1),
++    gamepad_config_option("D-pad left   ", 2),
++    gamepad_config_option("D-pad right  ", 3),
++    gamepad_config_option("A            ", 4),
++    gamepad_config_option("B            ", 5),
++    gamepad_config_option("X            ", 6),
++    gamepad_config_option("Y            ", 7),
++    gamepad_config_option("Left Trigger ", 8),
++    gamepad_config_option("Right Trigger", 9),
++    gamepad_config_option("Start        ", 10),
++    gamepad_config_option("Select       ", 11),
++    submenu_option(NULL, "Back", "Return to the main menu.", 13)
++  };
++
+ 
++  menu_option_type analog_config_options[] =
++  {
++    submenu_option(NULL, "Back", "Return to the main menu.", 11)
++  };
+ #ifdef PC_BUILD
+ 
+   menu_option_type gamepad_config_options[] =
+@@ -1380,55 +1421,58 @@
+ 
+   menu_option_type main_options[] =
+   {
+-    submenu_option(&graphics_sound_menu, "Graphics and Sound options",
+-     "Select to set display parameters and frameskip behavior,\n"
+-     "audio on/off, audio buffer size, and audio filtering.", 0),
++    submenu_option(&graphics_sound_menu, "Graphics and Sound options","", 0),
+     numeric_selection_action_option(menu_load_state, NULL,
+      "Load state from slot", &savestate_slot, 10,
+      "Select to load the game state from the current slot for this game,\n"
+      "if it exists (see the extended menu for more information)\n"
+-     "Press left + right to change the current slot.", 2),
++     "Press left + right to change the current slot.", 1),
+     numeric_selection_action_option(menu_save_state, NULL,
+      "Save state to slot", &savestate_slot, 10,
+      "Select to save the game state to the current slot for this game.\n"
+      "See the extended menu for more information.\n"
+-     "Press left + right to change the current slot.", 3),
++     "Press left + right to change the current slot.", 2),
+     submenu_option(&savestate_menu, "Savestate options",
+      "Select to enter a menu for loading, saving, and viewing the\n"
+      "currently active savestate for this game (or to load a savestate\n"
+-     "file from another game)", 4),
++     "file from another game)", 3),
+     submenu_option(&gamepad_config_menu, "Configure gamepad input",
+      "Select to change the in-game behavior of the PSP buttons and d-pad.",
+-     6),
++     4),
+     submenu_option(&analog_config_menu, "Configure analog input",
+-     "Select to change the in-game behavior of the PSP analog nub.", 7),
++     "Select to change the in-game behavior of the PSP analog nub.", 5),
+     submenu_option(&cheats_misc_menu, "Cheats and Miscellaneous options",
+      "Select to manage cheats, set backup behavior, and set device clock\n"
+-     "speed.", 9),
++     "speed.", 6),
+     action_option(menu_load, NULL, "Load new game",
+      "Select to load a new game (will exit a game if currently playing).",
+-     11),
++     7),
+     action_option(menu_restart, NULL, "Restart game",
+-     "Select to reset the GBA with the current game loaded.", 12),
++     "Select to reset the GBA with the current game loaded.", 8),
+     action_option(menu_exit, NULL, "Return to game",
+-     "Select to exit this menu and resume gameplay.", 13),
++     "Select to exit this menu and resume gameplay.", 9),
+     action_option(menu_quit, NULL, "Exit gpSP",
+-     "Select to exit gpSP and return to the PSP XMB/loader.", 15)
++     "Select to exit gpSP and return to the PSP XMB/loader.", 10)
+   };
+ 
+   make_menu(main, submenu_main, NULL);
+ 
+   void choose_menu(menu_type *new_menu)
+   {
+-    if(new_menu == NULL)
+-      new_menu = &main_menu;
++  //  if(new_menu == NULL)
++    //I  new_menu = &main_menu;
+ 
+     clear_screen(COLOR_BG);
+-
++/*
+ #ifndef GP2X_BUILD
+     blit_to_screen(original_screen, 240, 160, 230, 40);
+-#endif
+-
++#endif*/
++     if(new_menu==NULL)
++     {
++ 	   // current_menu=*main_menu;
++     	 //   current_option = (*main_menu)->options;
++     }
++ 
+     current_menu = new_menu;
+     current_option = new_menu->options;
+     current_option_num = 0;
+@@ -1447,12 +1491,12 @@
+   video_resolution_large();
+ 
+ #ifndef GP2X_BUILD
+-  SDL_LockMutex(sound_mutex);
++ //I SDL_LockMutex(sound_mutex);
+ #endif
+-  SDL_PauseAudio(1);
++//I  SDL_PauseAudio(1);
+ 
+ #ifndef GP2X_BUILD
+-  SDL_UnlockMutex(sound_mutex);
++  //ISDL_UnlockMutex(sound_mutex);
+ #endif
+ 
+   if(gamepak_filename[0] == 0)
+@@ -1477,7 +1521,7 @@
+        cheats[i].cheat_name);
+     }
+   }
+-
++clear_screen(0x0000);
+   current_menu->init_function();
+ 
+   while(repeat)
+@@ -1599,7 +1643,7 @@
+     scePowerSetClockFrequency(clock_speed, clock_speed, clock_speed / 2);
+   #endif
+ 
+-  SDL_PauseAudio(0);
++  //ISDL_PauseAudio(0);
+ 
+   return return_value;
+ }
+diff -urN gpsp_src_2Xb/gui.h gpsp_src_zacaj/gui.h
+--- gpsp_src_2Xb/gui.h	2007-04-08 21:35:13.000000000 -0400
++++ gpsp_src_zacaj/gui.h	2008-03-21 21:27:39.250000000 -0400
+@@ -20,7 +20,9 @@
+ #ifndef GUI_H
+ #define GUI_H
+ 
+-#define GPSP_CONFIG_FILENAME "gpsp.cfg"
++// KERIPO MOD
++//#define GPSP_CONFIG_FILENAME "gpsp.cfg"
++#define GPSP_CONFIG_FILENAME "Conf/igpSP.cfg"
+ 
+ s32 load_file(u8 **wildcards, u8 *result);
+ u32 adjust_frameskip(u32 button_id);
+diff -urN gpsp_src_2Xb/input.c gpsp_src_zacaj/input.c
+--- gpsp_src_2Xb/input.c	2007-04-08 21:35:13.000000000 -0400
++++ gpsp_src_zacaj/input.c	2008-03-21 21:27:39.187500000 -0400
+@@ -19,6 +19,10 @@
+ 
+ #include "common.h"
+ 
++#include <sys/ioctl.h>
++#include <fcntl.h>
++#include <termios.h>
++#include <linux/kd.h>
+ // Special thanks to psp298 for the analog->dpad code!
+ 
+ void trigger_key(u32 key)
+@@ -45,6 +49,26 @@
+ 
+ u32 key = 0;
+ 
++u32 gamepad_config_map[16] =
++{
++  BUTTON_ID_MENU,
++  BUTTON_ID_A,
++  BUTTON_ID_B,
++  BUTTON_ID_START,
++  BUTTON_ID_L,
++  BUTTON_ID_R,
++  BUTTON_ID_DOWN,
++  BUTTON_ID_LEFT,
++  BUTTON_ID_UP,
++  BUTTON_ID_RIGHT,
++  BUTTON_ID_SELECT,
++  BUTTON_ID_START,
++  BUTTON_ID_UP,
++  BUTTON_ID_DOWN,
++  BUTTON_ID_LEFT,
++  BUTTON_ID_RIGHT
++};
++
+ u32 global_enable_analog = 1;
+ u32 analog_sensitivity_level = 4;
+ 
+@@ -68,26 +92,6 @@
+ 
+ #ifdef PSP_BUILD
+ 
+-u32 gamepad_config_map[16] =
+-{
+-  BUTTON_ID_MENU,               // Triangle
+-  BUTTON_ID_A,                  // Circle
+-  BUTTON_ID_B,                  // Cross
+-  BUTTON_ID_START,              // Square
+-  BUTTON_ID_L,                  // Ltrigger
+-  BUTTON_ID_R,                  // Rtrigger
+-  BUTTON_ID_DOWN,               // Down
+-  BUTTON_ID_LEFT,               // Left
+-  BUTTON_ID_UP,                 // Up
+-  BUTTON_ID_RIGHT,              // Right
+-  BUTTON_ID_SELECT,             // Select
+-  BUTTON_ID_START,              // Start
+-  BUTTON_ID_UP,                 // Analog up
+-  BUTTON_ID_DOWN,               // Analog down
+-  BUTTON_ID_LEFT,               // Analog left
+-  BUTTON_ID_RIGHT               // Analog right
+-};
+-
+ #define PSP_ALL_BUTTON_MASK 0xFFFF
+ 
+ gui_action_type get_gui_input()
+@@ -347,34 +351,14 @@
+ #endif
+ 
+ 
++extern u32 gp2x_fps_debug;
+ #ifdef GP2X_BUILD
+ 
+-// GP2X SDL requires a user made input method
++/* GP2X SDL requires a user made input method */
+ #include <sys/mman.h>
+ #include <sys/ioctl.h>
+ #include "gp2x/gp2x.h"
+ 
+-u32 gamepad_config_map[16] =
+-{
+-  BUTTON_ID_UP,                 // Up
+-  BUTTON_ID_LEFT,               // Left
+-  BUTTON_ID_DOWN,               // Down
+-  BUTTON_ID_RIGHT,              // Right
+-  BUTTON_ID_START,              // Start
+-  BUTTON_ID_SELECT,             // Select
+-  BUTTON_ID_L,                  // Ltrigger
+-  BUTTON_ID_R,                  // Rtrigger
+-  BUTTON_ID_NONE,               // A
+-  BUTTON_ID_A,                  // B
+-  BUTTON_ID_B,                  // X
+-  BUTTON_ID_NONE,               // Y
+-  BUTTON_ID_VOLDOWN,            // Vol down
+-  BUTTON_ID_VOLUP,              // Vol up
+-  BUTTON_ID_FPS,                // Push
+-  BUTTON_ID_MENU                // Vol middle
+-};
+-
+-extern u32 gp2x_fps_debug;
+ 
+ u32 gpsp_gp2x_joystick_read(void)
+ {
+@@ -393,6 +377,43 @@
+    (gpsp_gp2x_memregs[0x1186 >> 1] << 16));
+ }
+ 
++u32 gp2x_joy_map(u32 buttons)
++{
++  u32 mapped_buttons = BUTTON_NONE;
++
++  if(buttons & GP2X_L)
++    mapped_buttons |= BUTTON_L;
++
++  if(buttons & GP2X_R)
++    mapped_buttons |= BUTTON_R;
++
++  if(buttons & GP2X_START)
++    mapped_buttons |= BUTTON_START;
++
++  if(buttons & GP2X_SELECT)
++    mapped_buttons |= BUTTON_SELECT;
++
++  if(buttons & GP2X_X)
++    mapped_buttons |= BUTTON_B;
++
++  if(buttons & GP2X_B)
++    mapped_buttons |= BUTTON_A;
++
++  if(buttons & GP2X_UP)
++    mapped_buttons |= BUTTON_UP;
++
++  if(buttons & GP2X_DOWN)
++    mapped_buttons |= BUTTON_DOWN;
++
++  if(buttons & GP2X_LEFT)
++    mapped_buttons |= BUTTON_LEFT;
++
++  if(buttons & GP2X_RIGHT)
++    mapped_buttons |= BUTTON_RIGHT;
++
++  return mapped_buttons;
++}
++
+ gui_action_type get_gui_input()
+ {
+   gui_action_type new_button = CURSOR_NONE;
+@@ -469,167 +490,285 @@
+   return new_button;
+ }
+ 
+-#define GP2X_VOL_MIDDLE (1 << 24)
+-
+-u32 button_gp2x_mask_to_config[] =
+-{
+-  GP2X_UP,
+-  GP2X_LEFT,
+-  GP2X_DOWN,
+-  GP2X_RIGHT,
+-  GP2X_START,
+-  GP2X_SELECT,
+-  GP2X_L,
+-  GP2X_R,
+-  GP2X_A,
+-  GP2X_B,
+-  GP2X_X,
+-  GP2X_Y,
+-  GP2X_VOL_DOWN,
+-  GP2X_VOL_UP,
+-  GP2X_PUSH,
+-  GP2X_VOL_MIDDLE
+-};
+-
+-u32 button_id_to_gba_mask[] =
+-{
+-  BUTTON_UP,
+-  BUTTON_DOWN,
+-  BUTTON_LEFT,
+-  BUTTON_RIGHT,
+-  BUTTON_A,
+-  BUTTON_B,
+-  BUTTON_L,
+-  BUTTON_R,
+-  BUTTON_START,
+-  BUTTON_SELECT,
+-  BUTTON_NONE,
+-  BUTTON_NONE,
+-  BUTTON_NONE,
+-  BUTTON_NONE
+-};
+-
+ u32 update_input()
+ {
+-  static u32 rapidfire_flag = 1;
+-  static u32 last_buttons;
+-  u32 non_repeat_buttons;
+-  u32 button_id;
+-  u32 new_key = 0;
+-  u32 buttons = gpsp_gp2x_joystick_read();
+-  u32 i;
++  u32 gp2x_keys = gpsp_gp2x_joystick_read();
+ 
+-  if((buttons & GP2X_VOL_DOWN) && (buttons & GP2X_VOL_UP))
++  if((gp2x_keys & GP2X_L) && (gp2x_keys & GP2X_R) &&
++   (gp2x_keys & GP2X_VOL_DOWN) && (gp2x_keys & GP2X_VOL_UP))
+   {
+-    buttons &= ~(GP2X_VOL_DOWN | GP2X_VOL_UP);
+-    buttons |= GP2X_VOL_MIDDLE;
++    gp2x_fps_debug = !gp2x_fps_debug;
+   }
++  else
+ 
+-  non_repeat_buttons = (last_buttons ^ buttons) & buttons;
+-  last_buttons = buttons;
+-
+-  for(i = 0; i < 16; i++)
++  if((gp2x_keys & GP2X_VOL_DOWN) && (gp2x_keys & GP2X_VOL_UP))
+   {
+-    if(non_repeat_buttons & button_gp2x_mask_to_config[i])
+-      button_id = gamepad_config_map[i];
+-    else
+-      button_id = BUTTON_ID_NONE;
++    u16 *screen_copy = copy_screen();
++    u32 ret_val = menu(screen_copy);
++    free(screen_copy);
+ 
+-    switch(button_id)
+-    {
+-      case BUTTON_ID_MENU:
+-      {
+-        u16 *screen_copy = copy_screen();
+-        u32 ret_val = menu(screen_copy);
+-        free(screen_copy);
++    return ret_val;
++  }
+ 
+-        return ret_val;
+-      }
++  if(gp2x_keys & GP2X_VOL_DOWN)
++    gp2x_sound_volume(0);
+ 
+-      case BUTTON_ID_LOADSTATE:
+-      {
+-        u8 current_savestate_filename[512];
+-        get_savestate_filename_noshot(savestate_slot,
+-         current_savestate_filename);
+-        load_state(current_savestate_filename);
+-        return 1;
+-      }
++  if(gp2x_keys & GP2X_VOL_UP)
++    gp2x_sound_volume(1);
+ 
+-      case BUTTON_ID_SAVESTATE:
+-      {
+-        u8 current_savestate_filename[512];
+-        u16 *current_screen = copy_screen();
+-        get_savestate_filename_noshot(savestate_slot,
+-         current_savestate_filename);
+-        save_state(current_savestate_filename, current_screen);
+-        free(current_screen);
+-        return 0;
+-      }
++  key = gp2x_joy_map(gp2x_keys);
++  trigger_key(key);
+ 
+-      case BUTTON_ID_FASTFORWARD:
+-        print_string("FASTFORWARD", 0xFFFF, 0x0000, 0, 50);
+-        synchronize_flag ^= 1;
+-        return 0;
++  io_registers[REG_P1] = (~key) & 0x3FF;
+ 
+-      case BUTTON_ID_VOLUP:
+-        gp2x_sound_volume(1);
+-        break;
++  return 0;
++}
+ 
+-      case BUTTON_ID_VOLDOWN:
+-        gp2x_sound_volume(0);
+-        break;
++void init_input()
++{
+ 
+-      case BUTTON_ID_FPS:
+-        gp2x_fps_debug ^= 1;
+-        break;
+-    }
++}
+ 
+-    if(buttons & button_gp2x_mask_to_config[i])
+-    {
+-      button_id = gamepad_config_map[i];
+-      if(button_id < BUTTON_ID_MENU)
+-      {
+-        new_key |= button_id_to_gba_mask[button_id];
+-      }
+-      else
++#endif
+ 
+-      if((button_id >= BUTTON_ID_RAPIDFIRE_A) &&
+-       (button_id <= BUTTON_ID_RAPIDFIRE_L))
+-      {
+-        rapidfire_flag ^= 1;
+-        if(rapidfire_flag)
+-        {
+-          new_key |= button_id_to_gba_mask[button_id -
+-           BUTTON_ID_RAPIDFIRE_A + BUTTON_ID_A];
+-        }
+-        else
+-        {
+-          new_key &= ~button_id_to_gba_mask[button_id -
+-           BUTTON_ID_RAPIDFIRE_A + BUTTON_ID_A];
+-        }
+-      }
+-    }
+-  }
++static int consoleFd = -1;
++static struct termios old;
++//char *keynames = {""};
++#define  KEYCODE(a) (a & 0x7f)
++
++#define KH_KEY_MENU    50
++#define KH_KEY_REWIND  17
++#define KH_KEY_PLAY    32
++#define KH_KEY_FORWARD 33
++
++#define KH_KEY_ACTION  28
++#define KH_KEY_HOLD    35
++
++#define KH_WHEEL_L     38
++#define KH_WHEEL_R     19
++int START_INPUT(void)
++{
++	  struct termios new;
++FILE *fp;
++  
++	    if ((consoleFd = open("/dev/console",O_RDONLY | O_NONBLOCK)) < 0)
++		        fprintf(stderr, "Could not open /dev/console");
++
++	      if (tcgetattr(consoleFd, &old) < 0)
++		          fprintf(stderr, "Could not save old termios");
++
++	        new = old;
++
++		  new.c_lflag    &= ~(ICANON | ECHO  | ISIG);
++		    new.c_iflag    &= ~(ISTRIP | IGNCR | ICRNL | INLCR | IXOFF | IXON | BRKINT);
++		      new.c_cc[VMIN]  = 0;
++		        new.c_cc[VTIME] = 0;
+ 
+-  if((new_key | key) != key)
+-    trigger_key(new_key);
++			  if (tcsetattr(consoleFd, TCSAFLUSH, &new) < 0)
++				      exit(0);
+ 
+-  key = new_key;
++			    if (ioctl(consoleFd, KDSKBMODE, K_MEDIUMRAW) < 0)
++				        exit(0);
+ 
+-  io_registers[REG_P1] = (~key) & 0x3FF;
++			      return 0;
++}
+ 
+-  return 0;
++void STOP_INPUT(void)
++{
++	  if (tcsetattr(consoleFd, TCSAFLUSH, &old) < 0)
++		      fprintf(stderr, "Could not reset old termios");
++
++	    if (consoleFd > 2)
++		        if (close(consoleFd) < 0)
++				      fprintf(stderr, "Could not close console");
+ }
+ 
+-void init_input()
++
++int GET_KEY(void)
+ {
++	  int c = 0;
+ 
++	    if (read(consoleFd, &c, 1) != 1)
++		        c = -1;
++
++	      return c;
+ }
++int inputstarted=1;
++u32 mappedbuttons=0;
++u32 update_input() {
++
++	if (inputstarted) { START_INPUT();  inputstarted=0; }
++  u32 mapped_buttons = BUTTON_NONE;
++	u32 k,in,st,key;
++	unsigned char touch,button;
++        in = inl(0x7000C140);
++        st = (in & 0xff000000) >> 24;
++        if(st == 0xc0)
++        {       // touched
++                touch = (in & 0x007F0000 ) >> 16;
++                touch+=6;
++                touch/=12;
++                if(touch>7) touch=0;
++                k=touch;//touch_map[touch]);
++	  switch(k)
++	  {
++		  case 0:
++    			  mapped_buttons |= BUTTON_UP;
++			  break;
++		  case 1:
++    			  mapped_buttons |= BUTTON_A;
++			  break;
++		  case 2:
++    			  mapped_buttons |= BUTTON_RIGHT;
++			  break;
++		  case 3:
++    			  mapped_buttons |= BUTTON_START;
++			  break;
++		  case 4:
++    			  mapped_buttons |= BUTTON_DOWN;
++			  break;
++		  case 5:
++    			  mapped_buttons |= BUTTON_SELECT;
++			  break;
++		  case 6:
++    			  mapped_buttons |= BUTTON_LEFT;
++			  break;
++		  case 7:
++    			  mapped_buttons |= BUTTON_B;
++			  break;
++	  }
++  }
++  k=GET_KEY();
++    while (k!=-1)
++    {
++    int up=k & 0x80;
++    int lk;
++    k=KEYCODE(k);
++//    if (k == KH_KEY_MENU) { STOP_INPUT(); exit(0); }
++    if (up ==0) { 
++          u16 *screen_copy;
++	    switch (k)
++	    {
++		case KH_KEY_MENU: 
++    			  mappedbuttons |= BUTTON_UP;
++    			  mappedbuttons |= BUTTON_B;
++		    break;
++		case KH_KEY_REWIND:
++    			  mappedbuttons |= BUTTON_L;
++				  // KERIPO MOD
++    			  //mappedbuttons |= BUTTON_B;
++		    break;
++		case KH_KEY_ACTION:
++    			  mappedbuttons |= BUTTON_A;
++		    break;
++		case KH_KEY_FORWARD:
++    			  mappedbuttons |= BUTTON_R;
++				  // KERIPO MOD
++    			  //mappedbuttons |= BUTTON_B;
++		    break;
++		case KH_KEY_PLAY:
++    			  mappedbuttons |= BUTTON_DOWN;
++    			  mappedbuttons |= BUTTON_B;
++		    break;
++		case KH_KEY_HOLD:
++          screen_copy = copy_screen();
++          u32 ret_val = menu(screen_copy);
++          free(screen_copy);
++		    break;
++	    }
++	    
++    }
++    else
++    {
++	    switch (k)
++	    {
++		case KH_KEY_MENU: 
++    			  mappedbuttons &=~BUTTON_UP;
++    			  mappedbuttons &=~BUTTON_B;
++		    break;
++		case KH_KEY_REWIND:
++				  // KERIPO MOD
++    			  //mappedbuttons &=~BUTTON_LEFT;
++    			  //mappedbuttons &=~BUTTON_B;
++				  mappedbuttons &=~BUTTON_L;
++		    break;
++		case KH_KEY_ACTION:
++    			  mappedbuttons &=~BUTTON_A;
++				  // KERIPO MOD
++    			  //gp2x_fps_debug = !gp2x_fps_debug;
++		    break;
++		case KH_KEY_FORWARD:
++    			  // KERIPO MOD
++				  //mappedbuttons &=~BUTTON_RIGHT;
++    			  //mappedbuttons &=~BUTTON_B;
++				  mappedbuttons &=~BUTTON_R;
++		    break;
++		case KH_KEY_PLAY:
++    			  mappedbuttons &=~BUTTON_DOWN;
++    			  mappedbuttons &=~BUTTON_B;
++		    break;
++		case KH_KEY_HOLD:
++		    break;
++	    }
++    }
++  k=GET_KEY();
++  
++    }
++  key=mapped_buttons;
++  key|=mappedbuttons;
++  trigger_key(key);
++  io_registers[REG_P1] = (~key) & 0x3FF;
++//            gui_action = CURSOR_EXIT;
++	return 0;
++};
++void init_input() {
++/*  if(buttons & GP2X_L)
++    mapped_buttons |= BUTTON_L;
+ 
+-#endif
++  if(buttons & GP2X_R)
++    mapped_buttons |= BUTTON_R;*/
+ 
++};
+ 
++gui_action_type get_gui_input()
++{
++	if (inputstarted) { START_INPUT();  inputstarted=0; }
++  gui_action_type gui_action = CURSOR_NONE;
++  int k=GET_KEY();
++    if (k!=-1)
++    {
++    int up=k & 0x80;
++    int lk;
++    k=KEYCODE(k);
++//    if (k == KH_KEY_MENU) { STOP_INPUT(); exit(0); }
++    if (up ==0) { 
++	    switch (k)
++	    {
++		case KH_KEY_MENU: 
++            gui_action = CURSOR_UP;
++		    break;
++		case KH_KEY_REWIND:
++            gui_action = CURSOR_LEFT;
++		    break;
++		case KH_KEY_ACTION:
++            gui_action = CURSOR_SELECT;
++		    break;
++		case KH_KEY_FORWARD:
++            gui_action = CURSOR_RIGHT;
++		    break;
++		case KH_KEY_PLAY:
++            gui_action = CURSOR_DOWN;
++		    break;
++		case KH_KEY_HOLD:
++            gui_action = CURSOR_EXIT;
++		    break;
++	    }
+ 
++    }
++    k=GET_KEY(); 
++    }
++    return gui_action;
++}
+ #ifdef PC_BUILD
+ 
+ u32 key_map(SDLKey key_sym)
+@@ -752,6 +891,13 @@
+   return gui_action;
+ }
+ 
++// FIXME: Not implemented properly for x86 version.
++
++gui_action_type get_gui_input_fs_hold(u32 button_id)
++{
++  return get_gui_input();
++}
++
+ u32 update_input()
+ {
+   SDL_Event event;
+diff -urN gpsp_src_2Xb/main.c gpsp_src_zacaj/main.c
+--- gpsp_src_2Xb/main.c	2007-04-08 21:35:13.000000000 -0400
++++ gpsp_src_zacaj/main.c	2008-03-21 21:27:39.234375000 -0400
+@@ -47,12 +47,14 @@
+ 
+ u64 frame_count_initial_timestamp = 0;
+ u64 last_frame_interval_timestamp;
+-u32 gp2x_fps_debug = 0;
++
+ 
+ void gp2x_quit(void);
+ #else
+-
+-u32 frameskip_value = 4;
++ u32 frameskip_value = 2;
++ u64 frame_count_initial_timestamp = 0;
++ u64 last_frame_interval_timestamp;
++u32 gp2x_fps_debug = 0;
+ #endif
+ u32 skip_next_frame = 0;
+ 
+@@ -229,10 +231,14 @@
+ #endif
+ 
+ #ifdef GP2X_BUILD
+-  sprintf(bios_filename, "%s/%s", main_path, "gba_bios.bin");
++// KERIPO MOD
++  //sprintf(bios_filename, "%s/%s", main_path, "gba_bios.bin");
++  sprintf(bios_filename, "%s/%s", "/root/Files/igpSP/Bios", "gba_bios.bin");
+   if(load_bios(bios_filename) == -1)
+ #else
++// KERIPO MOD
+   if(load_bios("gba_bios.bin") == -1)
++  if(load_bios("/root/Files/igpSP/Bios/gba_bios.bin") == -1)
+ #endif
+   {
+     gui_action_type gui_action = CURSOR_NONE;
+@@ -252,11 +258,15 @@
+ 
+     debug_screen_update();
+ 
++	// KERIPO MOD
++	// Remove delay pause
++	/*
+     while(gui_action == CURSOR_NONE)
+     {
+       gui_action = get_gui_input();
+       delay_us(15000);
+     }
++	*/
+ 
+     debug_screen_end();
+ 
+@@ -278,11 +288,15 @@
+ 
+     debug_screen_update();
+ 
++	// KERIPO MOD
++	// Remove delay pause
++	/*
+     while(gui_action == CURSOR_NONE)
+     {
+       gui_action = get_gui_input();
+       delay_us(15000);
+     }
++	*/
+ 
+     debug_screen_end();
+   }
+@@ -298,9 +312,9 @@
+   {
+     if(load_gamepak(argv[1]) == -1)
+     {
+-#ifdef PC_BUILD
++//#ifdef PC_BUILD
+       printf("Failed to load gamepak %s, exiting.\n", load_filename);
+-#endif
++//#endif
+       exit(-1);
+     }
+ 
+@@ -342,16 +356,16 @@
+   execute_arm_translate(execute_cycles);
+ #else
+ 
+-#ifdef GP2X_BUILD
++//#ifdef GP2X_BUILD
+   get_ticks_us(&frame_count_initial_timestamp);
+-#endif
++//I#endif
+ 
+ /*  u8 current_savestate_filename[512];
+   get_savestate_filename_noshot(savestate_slot,
+    current_savestate_filename);
+   load_state(current_savestate_filename); */
+ 
+-  debug_on();
++//I  debug_on();
+ 
+   if(argc > 2)
+   {
+@@ -493,7 +507,7 @@
+   get_ticks_us(benchmark_ticks + event_number);
+   event_number++;
+ }
+-
++extern int cop_execute(void (*function)());
+ u32 update_gba()
+ {
+   irq_type irq_raised = IRQ_NONE;
+@@ -504,12 +518,12 @@
+ 
+     reg[CHANGED_PC_STATUS] = 0;
+ 
+-    if(gbc_sound_update)
+-    {
+-      gbc_update_count++;
+-      update_gbc_sound(cpu_ticks);
+-      gbc_sound_update = 0;
+-    }
++  //  if(gbc_sound_update)
++   // {
++   //   gbc_update_count++;
++  //    update_gbc_sound(cpu_ticks);
++    ///  gbc_sound_update = 0;
++   // }
+ 
+     update_timer(0);
+     update_timer(1);
+@@ -610,7 +624,7 @@
+           update_gbc_sound(cpu_ticks);
+           synchronize();
+ 
+-          update_screen();
++        update_screen();
+ 
+           if(update_backup_flag)
+             update_backup();
+@@ -750,7 +764,7 @@
+ 
+ #endif
+ 
+-#ifdef GP2X_BUILD
++//#ifdef GP2X_BUILD
+ 
+ u32 real_frame_count = 0;
+ u32 virtual_frame_count = 0;
+@@ -769,12 +783,13 @@
+   static u32 fps = 60;
+   static u32 frames_drawn = 60;
+ 
+-  if(gp2x_fps_debug)
+-  {
++	// KERIPO MOD
++	// remove fps counter to annoy zack ; P
++	/*
+     char print_buffer[128];
+     sprintf(print_buffer, "%d (%d)", fps, frames_drawn);
+     print_string(print_buffer, 0xFFFF, 0x000, 0, 0);
+-  }
++	*/
+ 
+   get_ticks_us(&new_ticks);
+   time_delta = new_ticks - last_screen_timestamp;
+@@ -855,7 +870,7 @@
+     print_string("--FF--", 0xFFFF, 0x000, 0, 0);
+ }
+ 
+-#endif
++//#endif
+ 
+ 
+ #ifdef PC_BUILD
+@@ -907,8 +922,8 @@
+         skip_next_frame = 1;
+     }
+   }
+-
+-  if(synchronize_flag == 0)
++//I
++ /* if(synchronize_flag == 0)
+     print_string("--FF--", 0xFFFF, 0x000, 0, 0);
+ 
+   sprintf(char_buffer, "gpSP: %.1fms %.1ffps", us_needed / 1000.0,
+@@ -939,7 +954,7 @@
+ #ifdef PSP_BUILD
+   sceKernelExitGame();
+ #else
+-  SDL_Quit();
++ //I SDL_Quit();
+ 
+ #ifdef GP2X_BUILD
+   gp2x_quit();
+@@ -996,12 +1011,14 @@
+ 
+ void delay_us(u32 us_count)
+ {
+-  SDL_Delay(us_count / 1000);
++ //I SDL_Delay(us_count / 1000);
++usleep(us_count);
+ }
+ 
+ void get_ticks_us(u64 *ticks_return)
+ {
+-  *ticks_return = (SDL_GetTicks() * 1000);
++  //I*ticks_return = (SDL_GetTicks() * 1000);
++*ticks_return =  inl(0x60005010);
+ }
+ 
+ #else
+@@ -1024,14 +1041,52 @@
+ 
+ #endif
+ 
+-void change_ext(u8 *src, u8 *buffer, u8 *extension)
++// KERIPO MOD
++// modified "tv_strrep" function from podread
++static char *tv_strrep(char *str,char repf,char rept){
++	int idx=0;
++	while(1){
++		if(str[idx]=='\0') break;
++		if(str[idx]==repf)str[idx]=rept;
++		idx++;
++	}
++	return str;
++}
++
++// KERIPO MOD
++// First copies over the prefix to the buffer,
++// then copies over the file's name (located after the last "/")
++// then replaces the extension
++/*
++void change_ext(u8 *src, u8 *buffer, u8 *prefix, u8 *extension
+ {
+   u8 *dot_position;
+   strcpy(buffer, src);
+   dot_position = strrchr(buffer, '.');
+-
+-  if(dot_position)
++  if(dot_position) {
++    strcpy(dot_position, extension);
++  }
++*/
++void change_ext(u8 *src, u8 *buffer, u8 *prefix, u8 *extension)
++{
++  strcpy(buffer, prefix);
++  
++  u8 *slash_position;
++  slash_position = strrchr(src, '/');
++  if (slash_position != NULL) {
++	strcat(buffer, slash_position);
++  } else {
++    // This happens when you chose a new rom
++	// since I added a hard-coded "chdir"
++	strcat(buffer, "/");
++    strcat(buffer, src);
++  }
++  
++  u8 *dot_position;
++  dot_position = strrchr(buffer, '.');
++  if(dot_position) {
+     strcpy(dot_position, extension);
++  }  
+ }
+ 
+ #define main_savestate_builder(type)                                          \
+diff -urN gpsp_src_2Xb/main.h gpsp_src_zacaj/main.h
+--- gpsp_src_2Xb/main.h	2007-04-08 21:35:13.000000000 -0400
++++ gpsp_src_zacaj/main.h	2008-03-21 21:27:39.265625000 -0400
+@@ -195,7 +195,9 @@
+   }                                                                           \
+   address16(io_registers, 0x102 + (timer_number * 4)) = value;                \
+ 
+-void change_ext(u8 *src, u8 *buffer, u8 *extension);
++// KERIPO MOD
++//void change_ext(u8 *src, u8 *buffer, u8 *extension);
++void change_ext(u8 *src, u8 *buffer, u8 *prefix, u8 *extension);
+ 
+ #endif
+ 
+diff -urN gpsp_src_2Xb/memory.c gpsp_src_zacaj/memory.c
+--- gpsp_src_2Xb/memory.c	2007-04-08 21:35:13.000000000 -0400
++++ gpsp_src_zacaj/memory.c	2008-03-21 21:27:39.218750000 -0400
+@@ -19,7 +19,7 @@
+ 
+ #include "common.h"
+ 
+-u32 load_file_zip(u8 *filename);
++//Iu32 load_file_zip(u8 *filename);
+ 
+ // This table is configured for sequential access on system defaults
+ 
+@@ -1952,7 +1952,9 @@
+   save_backup(backup_filename);
+ }
+ 
+-#define CONFIG_FILENAME "game_config.txt"
++// KERIPO MOD
++//#define CONFIG_FILENAME "game_config.txt"
++#define CONFIG_FILENAME "Misc/game_config.txt"
+ 
+ u8 *skip_spaces(u8 *line_ptr)
+ {
+@@ -2158,9 +2160,9 @@
+   s32 file_size;
+   u8 cheats_filename[256];
+ 
+-  if(!strcmp(dot_position, ".zip"))
++  /*if(!strcmp(dot_position, ".zip"))
+     file_size = load_file_zip(name);
+-  else
++  else*///I
+     file_size = load_gamepak_raw(name);
+ 
+   // A dumb April fool's joke was here once :o
+@@ -2171,7 +2173,9 @@
+ 
+     strcpy(backup_filename, name);
+     strncpy(gamepak_filename, name, 512);
+-    change_ext(gamepak_filename, backup_filename, ".sav");
++	// KERIPO MOD
++	//change_ext(gamepak_filename, backup_filename, ".sav");
++    change_ext(gamepak_filename, backup_filename, "/root/Files/igpSP/Saves", ".sav");
+ 
+     load_backup(backup_filename);
+ 
+@@ -2185,7 +2189,9 @@
+     load_game_config(gamepak_title, gamepak_code, gamepak_maker);
+     load_game_config_file();
+ 
+-    change_ext(gamepak_filename, cheats_filename, ".cht");
++    // KERIPO MOD
++	//change_ext(gamepak_filename, cheats_filename, ".cht");
++	change_ext(gamepak_filename, cheats_filename, "/root/Files/igpSP/Cheats", ".cht");
+     add_cheats(cheats_filename);
+ 
+     return 0;
+diff -urN gpsp_src_2Xb/readme.txt gpsp_src_zacaj/readme.txt
+--- gpsp_src_2Xb/readme.txt	2007-04-08 21:36:12.000000000 -0400
++++ gpsp_src_zacaj/readme.txt	2006-12-15 08:15:31.000000000 -0500
+@@ -3,20 +3,6 @@
+ 
+ -- Release log --
+ 
+-v0.91 (minor cleanup release)
+-
+-NOTE: I don't usually do minor releases but I rewrote a ton of
+-things in gpSP 0.9, much of it during the last few days, and although
+-I spent a lot of time debugging a few bugs inevitably crept in.
+-
+-# Fixed some issues in the new memory handlers that crept up, hopefully
+-  should fix the problems between 0.8 and 0.9.
+-# Fixed a bug introduced in 0.9 that could cause crashes when selecting
+-  things in the menu (I hope, at least).
+-# Fixed a bug with a certain invalid opcode causing a jump to be scanned
+-  when there isn't one (fixes Sabre Wulf).
+-# Removed 2048 option for audio buffer.
+-
+ v0.9 (yes, it's still beta)
+ 
+ NOTE: As some of you may be aware I'm pretty much tired of these
+@@ -434,8 +420,6 @@
+ Currently, gpSP supports some functionality of Gameshark/Pro Action Replay
+ cheat codes. To use these, you must first make a file with the same name
+ as the ROM you want the cheat code to apply to, but with the extension .cht.
+-Put this file in the same directory as the ROM. To make it use a normal
+-text editor like notepad or wordpad if you're on Windows.
+ 
+ To write a code, write the type of model it is, gameshark_v1, gameshark_v3,
+ PAR_v1, or PAR_v3. gameshark_v1/PAR_v1 and gameshark_v3/PAR_v3 respectively
+diff -urN gpsp_src_2Xb/sound.c gpsp_src_zacaj/sound.c
+--- gpsp_src_2Xb/sound.c	2007-04-08 21:35:13.000000000 -0400
++++ gpsp_src_zacaj/sound.c	2008-03-21 21:27:39.250000000 -0400
+@@ -19,21 +19,24 @@
+ 
+ 
+ #include "common.h"
+-#include <SDL.h>
++ //I#include <SDL.h>
++ #include <sys/soundcard.h>
++ #define SOUND_DEVICE "/dev/dsp"
+ u32 global_enable_audio = 1;
+ 
+ direct_sound_struct direct_sound_channel[2];
+ gbc_sound_struct gbc_sound_channel[4];
+-
++u32 sound_fd;//I
+ #if defined(GP2X_BUILD) || defined(TAVI_BUILD)
+ u32 sound_frequency = 44100;
+ #else
+-u32 sound_frequency = 44100;
++//Iu32 sound_frequency = 44100;
++u32 sound_frequency = 22500;
+ #endif
+ 
+-SDL_AudioSpec sound_settings;
+-SDL_mutex *sound_mutex;
+-SDL_cond *sound_cv;
++//ISDL_AudioSpec sound_settings;
++//SDL_mutex *sound_mutex;
++//SDL_cond *sound_cv;
+ 
+ #ifndef PSP_BUILD
+ u32 audio_buffer_size_number = 7;
+@@ -42,7 +45,7 @@
+ #endif
+ 
+ u32 audio_buffer_size;
+-u32 sound_on = 0;
++u32 sound_on = 1;//I
+ s16 sound_buffer[BUFFER_SIZE];
+ u32 sound_buffer_base = 0;
+ 
+@@ -119,7 +122,7 @@
+   ds->fifo_base = (ds->fifo_base + 1) % 32;
+   next_sample = ds->fifo[ds->fifo_base] << 4;
+ 
+-  if(sound_on == 1)
++  if(0)
+   {
+     if(ds->volume == DIRECT_SOUND_VOLUME_50)
+     {
+@@ -433,13 +436,23 @@
+ 
+ void synchronize_sound()
+ {
+-  SDL_LockMutex(sound_mutex);
++  //ISDL_LockMutex(sound_mutex);
+ 
+-  gbc_sound_synchronize();
++  //gbc_sound_synchronize();
+ 
+-  SDL_UnlockMutex(sound_mutex);
++  //SDL_UnlockMutex(sound_mutex);
+ }
+-
++ extern u64 frame_count_initial_timestamp;
++ extern u64 last_frame_interval_timestamp;
++ extern u32 real_frame_count;
++ extern u32 virtual_frame_count;
++ extern u32 num_skipped_frames;
++ extern u32 interval_skipped_frames;
++ extern u32 frames;
++ 
++ extern u32 skipped_frames;
++ extern u32 ticks_needed_total;
++ void sound_callback(int length);
+ void update_gbc_sound(u32 cpu_ticks)
+ {
+   fixed16_16 buffer_ticks = float_to_fp16_16(((float)(cpu_ticks -
+@@ -466,17 +479,17 @@
+     gbc_sound_partial_ticks &= 0xFFFF;
+   }
+ 
+-  SDL_LockMutex(sound_mutex);
++ //I SDL_LockMutex(sound_mutex);
+   if(synchronize_flag)
+   {
+     if(((gbc_sound_buffer_index - sound_buffer_base) % BUFFER_SIZE) >
+      (audio_buffer_size * 3 / 2))
+     {
+-      while(((gbc_sound_buffer_index - sound_buffer_base) % BUFFER_SIZE) >
++     /* while(((gbc_sound_buffer_index - sound_buffer_base) % BUFFER_SIZE) >
+        (audio_buffer_size * 3 / 2))
+       {
+         SDL_CondWait(sound_cv, sound_mutex);
+-      }
++      }*///I
+ 
+ #ifdef PSP_BUILD
+       if(current_frameskip_type == auto_frameskip)
+@@ -487,10 +500,10 @@
+       }
+ #endif
+ 
+-/*
++
+ 
+ #ifdef GP2X_BUILD
+-      if(current_frameskip_type == auto_frameskip)
++   /*   if(current_frameskip_type == auto_frameskip)
+       {
+         u64 current_ticks;
+         u64 next_ticks;
+@@ -502,13 +515,13 @@
+         get_ticks_us(&frame_count_initial_timestamp);
+         real_frame_count = 0;
+         virtual_frame_count = 0;
+-      }
++      }*/
+ #endif
+ 
+-*/
++
+     }
+   }
+-  if(sound_on == 1)
++  if(0)
+   {
+     gs = gbc_sound_channel + 0;
+     if(gs->active_flag)
+@@ -546,7 +559,7 @@
+     if((gs->active_flag) && (gs->master_enable))
+     {
+       sound_status |= 0x04;
+-      sample_data = wave_samples;
++      cop_execute(sample_data = wave_samples);
+       if(gs->wave_type == 0)
+       {
+         if(gs->wave_bank == 1)
+@@ -579,15 +592,17 @@
+ 
+   address16(io_registers, 0x84) = sound_status;
+ 
+-  SDL_CondSignal(sound_cv);
++  //ISDL_CondSignal(sound_cv);
+ 
+-  SDL_UnlockMutex(sound_mutex);
++  //ISDL_UnlockMutex(sound_mutex);
+ 
+   gbc_sound_last_cpu_ticks = cpu_ticks;
+   gbc_sound_buffer_index =
+-   (gbc_sound_buffer_index + (buffer_ticks * 2)) % BUFFER_SIZE;
++       (gbc_sound_buffer_index + (buffer_ticks << 1)) % BUFFER_SIZE;
++   if  (((gbc_sound_buffer_index - sound_buffer_base) % BUFFER_SIZE) > (audio_buffer_size>>2))
++     sound_callback(audio_buffer_size>>2);//I*/
+ }
+-
++/*
+ #define sound_copy_normal()                                                   \
+   current_sample = source[i]                                                  \
+ 
+@@ -614,24 +629,36 @@
+     stream_base[i] = 0;                                                       \
+     source[i] = 0;                                                            \
+   }                                                                           \
+-
+-
+-void sound_callback(void *userdata, Uint8 *stream, int length)
++*///I
++ #define sound_copy_normal()                                                   \
++   current_sample = source[i]                                                  \
++ 
++#define sound_copy(source_offset, length, render_type)                        \
++   _length = (length) / 2;                                                     \
++   source = (s16 *)(sound_buffer + source_offset);                             \
++   write(sound_fd, source,_length);					      \
++   memset(source,0,_length);
++ #define sound_copy_null(source_offset, length)                               \
++   _length = (length) / 2;                                                     \
++   source = (s16 *)(sound_buffer + source_offset);                             \
++   memset(source,0,_length);
++   u32 mixer;
++void sound_callback(int length)//I
+ {
+   u32 sample_length = length / 2;
+   u32 _length;
+   u32 i;
+-  s16 *stream_base = (s16 *)stream;
++  //Is16 *stream_base = (s16 *)stream;
+   s16 *source;
+   s32 current_sample;
+ 
+-  SDL_LockMutex(sound_mutex);
++ //I SDL_LockMutex(sound_mutex);
+ 
+-  while(((gbc_sound_buffer_index - sound_buffer_base) % BUFFER_SIZE) <
++ /* while(((gbc_sound_buffer_index - sound_buffer_base) % BUFFER_SIZE) <
+    length)
+   {
+     SDL_CondWait(sound_cv, sound_mutex);
+-  }
++  }*/
+ 
+   if(global_enable_audio)
+   {
+@@ -666,9 +693,9 @@
+     }
+   }
+ 
+-  SDL_CondSignal(sound_cv);
++ //I SDL_CondSignal(sound_cv);
+ 
+-  SDL_UnlockMutex(sound_mutex);
++  //ISDL_UnlockMutex(sound_mutex);
+ }
+ 
+ // Special thanks to blarrg for the LSFR frequency used in Meridian, as posted
+@@ -747,8 +774,8 @@
+ {
+   gbc_sound_buffer_index =
+    (sound_buffer_base + audio_buffer_size) % BUFFER_SIZE;
+-  SDL_PauseAudio(1);
+-  SDL_CondSignal(sound_cv);
++//  SDL_PauseAudio(1);
++ //I SDL_CondSignal(sound_cv);
+ }
+ 
+ void init_sound()
+@@ -756,12 +783,44 @@
+ #ifdef PSP_BUILD
+   audio_buffer_size = (audio_buffer_size_number * 1024) + 3072;
+ #elif defined(TAVI_BUILD) || defined(ARM_ARCH)
+-  audio_buffer_size = 16 << audio_buffer_size_number;
+-//  audio_buffer_size = 16384;
++//I  audio_buffer_size = 16 << audio_buffer_size_number;
++  audio_buffer_size = 16384;
+ #else
+   audio_buffer_size = 16384;
+ #endif
+-
++     mixer=open("/dev/mixer", O_RDWR); 
++     u32 volume=100; 
++     u32 vol = volume << 8 | volume;
++    int ret = ioctl(mixer, SOUND_MIXER_WRITE_PCM, &vol);
++     sound_fd = open(SOUND_DEVICE, O_WRONLY);
++    if (sound_fd < 0) {
++ 	perror("failed");
++ 	sound_fd = 0;
++ 	return;
++     } else {
++ 	printf("done.\n");
++     }
++     u32 tmp = 2;
++     u32 result = ioctl(sound_fd, SNDCTL_DSP_CHANNELS, &tmp);
++     if (result < 0) {
++ 	perror("failed");
++ 	close(sound_fd);
++ 	sound_fd = 0;
++ 	return;
++     } else {
++ 	printf("done.\n");
++     }
++     u32 sound_rate = 22500;//sample_rate;
++     printf("setting sound rate to %dHz...", sound_rate);
++    result = ioctl(sound_fd, SNDCTL_DSP_SPEED, &sound_rate);
++     if (result < 0) {
++ 	perror("failed");
++ 	close(sound_fd);
++ 	sound_fd = 0;
++ 	return;
++     } else {
++ 	printf("got %dHz...done.\n", sound_rate);
++     }/*
+   SDL_AudioSpec desired_spec =
+   {
+     sound_frequency,
+@@ -773,7 +832,7 @@
+     0,
+     sound_callback,
+     NULL
+-  };
++  };*///I
+ 
+   gbc_sound_tick_step =
+    float_to_fp16_16(256.0 / sound_frequency);
+@@ -783,11 +842,11 @@
+ 
+   reset_sound();
+ 
+-  SDL_OpenAudio(&desired_spec, &sound_settings);
+-  sound_frequency = sound_settings.freq;
+-  sound_mutex = SDL_CreateMutex();
+-  sound_cv = SDL_CreateCond();
+-  SDL_PauseAudio(0);
++  //ISDL_OpenAudio(&desired_spec, &sound_settings);
++ // sound_frequency = sound_settings.freq;
++ // sound_mutex = SDL_CreateMutex();
++ // sound_cv = SDL_CreateCond();
++ // SDL_PauseAudio(0);
+ }
+ 
+ #define sound_savestate_builder(type)                                       \
+diff -urN gpsp_src_2Xb/sound.h gpsp_src_zacaj/sound.h
+--- gpsp_src_2Xb/sound.h	2007-04-08 21:35:13.000000000 -0400
++++ gpsp_src_zacaj/sound.h	2008-03-21 21:27:39.281250000 -0400
+@@ -117,8 +117,8 @@
+ extern u32 enable_low_pass_filter;
+ extern u32 audio_buffer_size_number;
+ 
+-extern SDL_mutex *sound_mutex;
+-extern SDL_cond *sound_cv;
++//Iextern SDL_mutex *sound_mutex;
++//extern SDL_cond *sound_cv;
+ 
+ void sound_timer_queue8(u32 channel, u8 value);
+ void sound_timer_queue16(u32 channel, u16 value);
+diff -urN gpsp_src_2Xb/video.c gpsp_src_zacaj/video.c
+--- gpsp_src_2Xb/video.c	2007-04-08 21:35:13.000000000 -0400
++++ gpsp_src_zacaj/video.c	2008-03-21 21:27:39.203125000 -0400
+@@ -16,7 +16,7 @@
+  * along with this program; if not, write to the Free Software
+  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+  */
+-
++#include "gp2x/cop.h"
+ #include "common.h"
+ #include "font.h"
+ 
+@@ -91,14 +91,20 @@
+ #include "SDL_gp2x.h"
+ SDL_Surface *hw_screen;
+ #endif
+-SDL_Surface *screen;
+-const u32 video_scale = 1;
+-
++//ISDL_Surface *screen;
++//const u32 video_scale = 1;
++ u16 *screen=NULL;
++ u16 *screenb=NULL;
++ const u32 video_scale = 0;
++ u32 screen_pitch = 0;
++ u32 screenx,screeny;
++ int frame=0;
++ u16 *iscreen;
+ #define get_screen_pixels()                                                   \
+-  ((u16 *)screen->pixels)                                                     \
++  ((u16 *)screen)                                                     \
+ 
+ #define get_screen_pitch()                                                    \
+-  (screen->pitch / 2)                                                         \
++  (240)                                                         \
+ 
+ #endif
+ 
+@@ -3358,7 +3364,7 @@
+ 
+ void flip_screen()
+ {
+-  if((video_scale != 1) && (current_scale != unscaled))
++ /* if((video_scale != 1) && (current_scale != unscaled))
+   {
+     s32 x, y;
+     s32 x2, y2;
+@@ -3393,28 +3399,118 @@
+          screen_ptr + (y * pitch), 480 * video_scale);
+         y2--;
+       }
+-    }
++    }*///I
++   	u16* tmp;
++cop_execute(	tmp=screen);
++cop_execute(	screen=screenb);
++	cop_execute(screenb=tmp);
++	outl(screen,0x40015100);
++	outl(inl(COP_STATUS) | COP_LINE_REQ, COP_STATUS); 
++}
++
++int scalex[320];
++int scaley[240];
++void flip_screen_()
++{
++  u16 *cscreen=inl(0x40015100);
++ // if (screenx<240)
++ // {
++        u16 *bufp=iscreen;
++	u32 p=0;
++//	p+=((160-screeny)>>1)*240;	
++//	p+=((240-screenx)>>1);	
++	int i,j;
++	for (j=0; j<screeny; j++)
++	{
++	//	int sy=scaley[j];
++		for (i=0; i<screenx; i++)
++		{
++		//	int sx=scalex[i];
++		cop_execute(	p=scaley[j]+scalex[i]);
++		cop_execute(	*bufp=cscreen[p]);
++			cop_execute(bufp++);
++//	p++;
++		}
++		//p+=buffer_x-mW;
++	//	p+=240-screenx;
++	
++	}
++  /*}
++  else
++  {
++        u16 *bufp=iscreen;
++	u32 p=0;
++	bufp+=((screenx-240)>>1);	
++	int i,j;
++	for (j=0; j<160; j++)
++	{
++		for (i=0; i<240; i++)
++		{
++			
++			*bufp=cscreen[p];
++			bufp++;
++			p++;
++		}
++		//p+=buffer_x-mW;
++		bufp+=screenx-240;
++	
++	}
++  }*/
++	 cop_execute(HD_LCD_Update (iscreen,0,0,screenx,screeny));
++}
++/*void flip_screen_()
++{
++  u16 *cscreen=inl(0x40015100);
++  if (0)
++  {
++        u16 *bufp=iscreen;
++	u32 p=0;
++//+=((160-screeny)>>1)*240;	
++//	p+=((240-screenx)>>1);	
++	int i,j;
++	for (j=0; j<screeny; j++)
++	{
++		int sy=scaley[j];
++		for (i=0; i<screenx; i++)
++		{
++			int sx=scalex[i];
++			p=sy+sx;
++			*bufp=cscreen[p];
++			bufp++;
++//	p++;
++		}
++		//p+=buffer_x-mW;
++		p+=240-screenx;
++	
++	}
+   }
+-#ifdef GP2X_BUILD
++  else
+   {
+-    if((screen_scale == unscaled) &&
+-     (resolution_width == small_resolution_width) &&
+-     (resolution_height == small_resolution_height))
+-    {
+-      SDL_Rect srect = {0, 0, 240, 160};
+-      SDL_Rect drect = {40, 40, 240, 160};
+-      SDL_BlitSurface(screen, &srect, hw_screen, &drect);
+-    }
+-    else
+-    {
+-      SDL_BlitSurface(screen, NULL, hw_screen, NULL);
+-    }
++        u16 *bufp=iscreen;
++	u32 p=0;
++	p+=((160-screeny)>>1)*240;	
++	p+=((240-screenx)>>1);	
++	//bufp+=((screenx-screenx)>>1);	
++	int i,j;
++	for (j=0; j<screeny; j++)
++	{
++	int sy=scaley[j];
++		for (i=0; i<screenx; i++)
++		{
++			
++			int sx=scalex[i];
++			p=sy+sx;
++			*bufp=cscreen[p];
++			bufp++;
++		}
++		//p+=buffer_x-mW;
++		p+=240-screenx;
++	
++	}
+   }
+-#else
+-  SDL_Flip(screen);
+-#endif
++	 HD_LCD_Update (iscreen,0,0,screenx,screeny);
+ }
+-
++*/
+ #endif
+ 
+ u32 frame_to_render;
+@@ -3516,8 +3612,28 @@
+ 
+ void init_video()
+ {
+-  SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_NOPARACHUTE);
+-
++  //L_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_NOPARACHUTE);
++  HD_LCD_Init();
++    int hw_ver;
++    int lcd_width;
++    int lcd_height;
++    int lcd_type;
++   
++    HD_LCD_GetInfo (&hw_ver, &lcd_width, &lcd_height, &lcd_type);
++  screen_pitch=lcd_width;
++  screen=malloc(240*160*2);
++  screenb=malloc(240*160*2);
++  outl(screen,0x40015100);
++  iscreen=malloc(lcd_width*lcd_height*2);
++  screenx=lcd_width;
++  screeny=lcd_height;
++  int k;
++  for (k=0; k<320; k++) scalex[k]=0;
++  for (k=0; k<240; k++) scaley[k]=0;
++  for (k=0; k<lcd_width; k++) scalex[k]=k*240/lcd_width;
++  for (k=0; k<lcd_height; k++) scaley[k]=(k*160/lcd_height)*240;
++  
++  cop_begin();
+ #ifdef GP2X_BUILD
+   SDL_GP2X_AllowGfxMemory(NULL, 0);
+ 
+@@ -3529,9 +3645,9 @@
+ 
+   gp2x_load_mmuhack();
+ #else
+-  screen = SDL_SetVideoMode(240 * video_scale, 160 * video_scale, 16, 0);
++//  screen = SDL_SetVideoMode(240 * video_scale, 160 * video_scale, 16, 0);
+ #endif
+-  SDL_ShowCursor(0);
++//  SDL_ShowCursor(0);
+ }
+ 
+ #endif
+@@ -3658,16 +3774,18 @@
+ 
+   gp2x_load_mmuhack();
+ #else
+-  screen = SDL_SetVideoMode(480, 272, 16, 0);
++ /* screen = SDL_SetVideoMode(480, 272, 16, 0);
+   resolution_width = 480;
+-  resolution_height = 272;
++  resolution_height = 272;*///I
++  resolution_width = screenx;
++   resolution_height = screeny;
+ #endif
+ }
+ 
+ void video_resolution_small()
+ {
+-  current_scale = screen_scale;
+-
++ //I current_scale = screen_scale;
++current_scale = unscaled;
+ #ifdef GP2X_BUILD
+   SDL_FreeSurface(screen);
+   SDL_GP2X_AllowGfxMemory(NULL, 0);
+@@ -3683,11 +3801,13 @@
+ 
+   gp2x_load_mmuhack();
+ #else
+-  screen = SDL_SetVideoMode(small_resolution_width * video_scale,
+-   small_resolution_height * video_scale, 16, 0);
++ //I screen = SDL_SetVideoMode(small_resolution_width * video_scale,
++   //small_resolution_height * video_scale, 16, 0);
+ #endif
+-  resolution_width = small_resolution_width;
+-  resolution_height = small_resolution_height;
++ //I resolution_width = small_resolution_width;
++  //resolution_height = small_resolution_height;
++resolution_width = screenx; //small_resolution_width;
++   resolution_height = screeny; //small_resolution_height;
+ }
+ 
+ void set_gba_resolution(video_scale_type scale)
+@@ -3710,16 +3830,16 @@
+ void clear_screen(u16 color)
+ {
+   u16 *dest_ptr = get_screen_pixels();
+-  u32 line_skip = get_screen_pitch() - screen->w;
++  u32 line_skip = get_screen_pitch();//I - screen->w;
+   u32 x, y;
+ 
+-  for(y = 0; y < screen->h; y++)
++  for(y = 0; y < screeny; y++)
+   {
+-    for(x = 0; x < screen->w; x++, dest_ptr++)
++    for(x = 0; x < screenx; x++, dest_ptr++)
+     {
+       *dest_ptr = color;
+     }
+-    dest_ptr += line_skip;
++   // dest_ptr += line_skip;
+   }
+ }
+ 
+@@ -3734,7 +3854,7 @@
+ 
+ void blit_to_screen(u16 *src, u32 w, u32 h, u32 dest_x, u32 dest_y)
+ {
+-  u32 pitch = get_screen_pitch();
++  /*u32 pitch = get_screen_pitch();
+   u16 *dest_ptr = get_screen_pixels() + dest_x + (dest_y * pitch);
+ 
+   u16 *src_ptr = src;
+@@ -3748,7 +3868,7 @@
+       *dest_ptr = *src_ptr;
+     }
+     dest_ptr += line_skip;
+-  }
++  }*/
+ }
+ 
+ void print_string_ext(const char *str, u16 fg_color, u16 bg_color,

@@ -1,0 +1,6 @@
+Module: igpSP
+Display-name: igpSP
+Description: Gameboy Advance (GBA) emulator.
+Category: Emulators
+Author: Exophase, Keripo
+Dependencies: browser,browser-ext

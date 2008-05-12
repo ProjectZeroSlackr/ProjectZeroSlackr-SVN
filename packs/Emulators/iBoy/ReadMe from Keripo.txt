@@ -28,10 +28,11 @@ Usage:
 - Files with a ".gb" and ".gbc" extension have their default
   action set to iBoy.
 - Rom files should be placed in the "Roms" folder.
-  Public domain rom files can be optained through various internet
-  websites while commercial rom files should be dumped from real
-  Gameboy game cartriages (downloading commercial roms that you do
-  not own is ILLEGAL).
+  Public domain rom files can be optained through various
+  internet websites while commercial rom files should be dumped
+  from real Gameboy game cartriages (downloading commercial
+  roms that you do not own is ILLEGAL). Public domain roms can
+  be found here: http://www.pdroms.de/files/gameboy/
 - You may want to edit the "Conf/iboy.cfg" file if you want to
   change settings, etc.
 - iPod mini users should replace the "Conf/iboy.cfg" file with

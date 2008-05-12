@@ -40,6 +40,12 @@ Usage:
 - Files with a ".nes" extension have their default
   action set to iDarcNES. Files with a ".sms" extension
   can also be opened with iDarcNES by holding centre.
+- Rom files should be placed in the "Roms" folder.
+  Public domain rom files can be optained through various
+  internet websites while commercial rom files should be dumped
+  from real NES game cartriages (downloading commercial
+  roms that you do not own is ILLEGAL). Public domain roms can
+  be found here: http://www.pdroms.de/files/nes/
 - Keep in mind that while iDarcNES is in "working" status,
   it is _far_ from stable and has many bugs; expect issues.
 
