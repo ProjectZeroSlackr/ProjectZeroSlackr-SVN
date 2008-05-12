@@ -78,7 +78,7 @@ Original:
   
 ZS Version:
 - Modder: Keripo
-- Type: ZS Recompile / Repack
+- Type: Porter / ZS Recompile / Repack
 - Date: May 1, 2008
 - Version: B X.X
 
