@@ -1,38 +1,38 @@
-Last updated: Feb 2, 2008
+Last updated: May 16, 2008
 ~Keripo
 
 Note: This should only be done on Linux (e.g. Slax).
 It may not work on Mac OS X and will not work Windows/Cygwin.
 
-This is for generating a userland image from scratch. If you want
-to use pre-generated images, see the "build.sh" script. If you
-just want to edit your userland image, see only the below
-"To mount and edit the image" instructions.
- 
-
-Assuming your iPod's Linux partition is at /dev/sda3 and mounted at /mnt/sda3_removable, 
-and your iPod's data partition at /dev/sda2 and mounted at /mnt/sda2_removable,
-
-To create the image:
-
-dd if=/dev/sda3 of=/mnt/sda2_removable/linux.ext3 bs=512 (count=#)
-(where #: 16384 = 8MB, 32768=16MB, 65536=32MB)
-mkfs.ext3 /mnt/sda2_removable/userland.ext3 (answer "y")
-tune2fs -c 0 /mnt/sda2_removable/userland.ext3
+This is for generating a userland loop-mount image from
+scratch. If you want to use pre-generated images, see the
+"build.sh" script. If you just want to edit your userland,
+skip to the "To mount and edit loop-mount image:" section.
 
 
-To mount and edit the image:
+To create the loop-mount image from scratch:
 
-mkdir /mnt/ipl
-mount -t ext3 -o loop,rw /mnt/sda2_removable/userland.ext3 /mnt/ipl
-(edit content at /mnt/ipl)
-(best to do rm -rf /mnt/ipl/* then start from scratch)
-(i.e. extract userland archive directly here)
-umount /mnt/ipl
+dd if=/dev/zero of=~/userland.ext3 bs=512 count=#
+(where # is: 16384 for 8MB, 32768 for 16MB, or 65536 for 32MB)
+mkfs.ext3 ~/userland.ext3 (answer "y")
+tune2fs -c 0 ~/userland.ext3
 
 
-If you want to use a raw userland, you will have to
-make the following changes to the "rc" file:
+To mount and edit loop-mount image:
+
+mkdir ~/ipl-loop
+mount -t ext3 -o loop,rw ~/userland.ext3 ~/ipl-loop
+(edit content at ~/ipl-loop)
+(if you are making a userland image from scratch,
+ best to do rm -rf ~/ipl-loop/* then add content
+ i.e. extract/copy userland files to ~/ipl-loop/)
+umount ~/ipl-loop
+
+
+To make newly made loop-mount userland usable:
+
+If you want to use unmodified userland files, you will
+have to make the following changes to the "/etc/rc" file:
 
 1. Add the line "mount -t devfs devfs /dev"
    before the line "mount -t proc proc /proc"
@@ -42,6 +42,8 @@ make the following changes to the "rc" file:
 
 If you are using the 2.4.24 kernel, you must patch the
 command line to use "root=/dev/hda2 rootfstype=vfat rw".
-If you are using the 2.4.32 kernel, you can pass the above
-command line as a kernel argument through Loader 2.
+If you are using the 2.4.32 kernel with the cmdline patch
+applied (i.e. Keripo's and experimental builds but not
+official builds, you can pass the above command line as a
+kernel argument through Loader 2.
 
