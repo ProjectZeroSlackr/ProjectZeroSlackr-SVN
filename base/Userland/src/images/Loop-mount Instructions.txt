@@ -43,7 +43,7 @@ have to make the following changes to the "/etc/rc" file:
 If you are using the 2.4.24 kernel, you must patch the
 command line to use "root=/dev/hda2 rootfstype=vfat rw".
 If you are using the 2.4.32 kernel with the cmdline patch
-applied (i.e. Keripo's and experimental builds but not
-official builds, you can pass the above command line as a
-kernel argument through Loader 2.
+applied (i.e. kernel builds found on the "Experimental
+Kernel" iPodLinux wiki page), you can pass the above
+command line as a kernel argument through Loader 2.
 
