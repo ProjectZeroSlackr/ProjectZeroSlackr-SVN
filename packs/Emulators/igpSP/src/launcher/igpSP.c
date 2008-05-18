@@ -1,5 +1,5 @@
 /*
- * Last updated: May 11, 2008
+ * Last updated: May 18, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -41,9 +41,11 @@ static int check_bios()
 	FILE *bios;
 	bios = fopen(path_bios, "r");
 	if (bios == NULL) {
-		pz_message_title("No GBA BIOS found!", "No \"gba_bios.bin\" found in \"Data/\"!");
+		pz_error("No GBA BIOS found!", "No \"gba_bios.bin\" found in \"Data/\"!");
 		return 0;
 	} else {
+		pz_warning("Note: %s requires large amounts of memory and may not work here.", "igpSP");
+		pz_warning("You should try launching %s from Loader2 instead (see the \"/boot/loader.cfg\" file).", "igpSP");
 		return 1;
 	}
 }
