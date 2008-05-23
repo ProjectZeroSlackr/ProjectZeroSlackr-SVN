@@ -1,4 +1,4 @@
-Last updated: May 12, 2008
+Last updated: May 22, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -20,7 +20,7 @@ igpSP
   Zaphod, then later improved by zacaj.
 - The latest igpSP version is a proper re-port by Keripo
   and is very stable and relatively fast. It is able to
-  achieve emulation speeds between 40-70%.  
+  achieve emulation speeds between 50-80%.  
 - The ZeroSlackr version has a few path changes for
   ZS-friendliness.
 For more information, see:
@@ -60,7 +60,7 @@ Original:
 ZS Version:
 - Modder: Keripo
 - Type: Porter
-- Date: May 11, 2008
+- Date: May 22, 2008
 - Version: B X.X
 
 Modifications:
@@ -75,6 +75,8 @@ Launch Module:
 
 To do:
 - none; further optimize emulator and keep up with Exophase
+- see igpSP's "ReadMe from Keripo.txt" for igpSP development
+  notes (worked on separatly from ZeroSlackr pack)
 
 Changelog:
 [keep untouched till beta release]
