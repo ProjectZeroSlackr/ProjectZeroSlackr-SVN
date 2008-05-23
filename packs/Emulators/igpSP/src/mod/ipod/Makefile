@@ -1,8 +1,8 @@
-# Last updated: May 11, 2008
+# Last updated: May 22, 2008
 # ~Keripo
 
 # igpSP Makefile
-# Build 0.9-2xb K3
+# Build 0.9-2Xb K4
 # Based on GP2X Makefile
 
 
@@ -11,8 +11,8 @@
 CC         = arm-uclinux-elf-gcc
 
 OBJS       = main.o cpu.o memory.o video.o input.o sound.o gui.o               \
-             cheats.o cpu_threaded.o cop.o                                     \
-             ../gp2x/font.o ../gp2x/arm_stub.o
+             cheats.o cpu_threaded.o ../gp2x/font.o ../gp2x/arm_stub.o         \
+             ipod_cop.o ipod_hw.o ipod_video.o ipod_input.o
 BIN        = igpSP
 
 
