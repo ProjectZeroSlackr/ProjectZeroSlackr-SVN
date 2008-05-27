@@ -3,7 +3,7 @@
 # Userland Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 27, 2008
+# Last updated: May 26, 2008
 #
 echo ""
 echo "==========================================="
@@ -51,10 +51,11 @@ cp -rf "../src/images/Loop-mount Instructions.txt" $DOCS/
 mkdir $DOCS/Mod
 cp -rf ../src/mod/loop-mount.sh $DOCS/Mod/
 cp -rf ../src/mod/zeroslackr-userland-mod.tar.gz $DOCS/Mod/
-cp -rf ../../../Changelog.txt $DOCS/../
-cp -rf ../../../License.txt $DOCS/../
-cp -rf "../../../ReadMe from Keripo.txt" $DOCS/../
-cp -rf "../../../To Do.txt" $DOCS/../
+cp -rf ../../../Changelog.txt release/
+cp -rf ../../../License.txt release/
+cp -rf "../../../ReadMe from Keripo.txt" release/
+cp -rf "../../../To Do.txt" release/
+cp -rf "../../../FAQ.txt" release/
 sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $DOCS
