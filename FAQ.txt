@@ -1,0 +1,140 @@
+Last updated: May 26, 2008
+~Keripo
+
+
+== Fast FAQ ==
+
+Q: What is Project ZeroSlackr?
+A: Read the "ReadMe from Keripo.txt" document.
+
+Q: When I run the "patch" script I am told by iPod patcher
+   that my iPod cannot be found when my iPod is clearly
+   connected. Whats up with that?
+A: If ipodpatcher says your iPod isn't connected but it is,
+   you may not have full admin access; find a computer in
+   which you do have admin access. If you have such
+   privileges, iTunes is closed and your iPod shows up as
+   a drive, it is possible that your iPod is not supported
+   by iPodLinux. See the iPodLinux Generations wiki page.
+
+Q: After trying out a few apps I keep getting this
+   "blahblahblah is too big" message or a lot of random
+   numbers and letters or my iPod just freezes. What gives?
+A: Due to large number of SlackrPacks now and thus
+   ZeroLauncher's larger footprint, your iPod will run out
+   of memory (think RAM, not hard-drive space). This is
+   partially due to memory fragmenting in the kernel (for
+   which we need kernel developers (see this thread:
+   http://ipodlinux.org/forums/viewtopic.php?t=27395 )
+   and sometimes due to bad programming in the apps
+   (I did not write the majority of these applications and
+   would not know how to fix such). The current solution
+   to this is "reboot, reboot, reboot". See the iPodLinux
+   "Key_Combinations" wiki page for information on how to
+   force reboot your iPod.
+
+Q: Help, I get a "Can't write to log on /dev/tty5!" every
+   time I boot into ZeroSlackr! How can I fix of this?
+A: This is a busybox-related issue but not one affecting
+   anything (its just a warning message that can be ignored).
+   I might recompile busybox one day with the message
+   removed, but later.
+
+Q: I installed ZeroSlackr and it works great, but how do
+   I access the Linux partition?
+A: The ZeroSlackr Framework uses a userland disk image
+   through the "loop-mount" boot method originally
+   introduced by DataGhost (see iPodLinux's
+   "Installation:_Winpod_without_datacorruption" wiki page).
+   More information on it can be found in the ZeroSlackr
+   Framework's userland readme ("/boot/docs/userland/
+   ReadMe from Keripo.txt"). For instructions on how to
+   access/edit the userland image, see the
+   "/boot/docs/userland/Loop-mount Instructions.txt".
+
+Q: I'm trying to use your kernel with a normal iPodLinux
+   installation and/or I am trying to use Loader2 args as
+   the wiki page instructs but its not working. Why?
+A: The kernel I use for the ZeroSlackr Framework is a
+   modified version of the iPodLinux "Experimental_Kernel"
+   wiki. See the comments of the "/boot/loader.cfg" file
+   for instructions on how to use the kernel and loader2
+   args (which I use "autoexec=").
+
+Q: Your previous "Sneak Peak" and "Testing" pre-releases
+   for Windows users had this nice little
+   just-keep-clicking-"Next" GUI installer. Will there be
+   one for this?
+A: No. There won't be. And no, I don't plan to make one.
+   If I wanted, it would take 5 seconds, but I won't
+   because people shouldn't be that lazy. iPodLinux
+   (and Linux for general) is not for everyone
+   (i.e. the "keep clicking Next" generation) and at least
+   this way (extract and run script) there is some kind of
+   "manual" aspect of things. I will, however, be working
+   on a Java-based package manager for managing SlackrPacks
+   though work is being stalled at the moment while I work
+   directly on ZeroSlackr stuff (I'll come back to it one
+   day).
+
+Q: All these packs are really cool but the ZeroSlackr SVN
+   keeps getting updated and there are apps that have yet
+   to be added. How can I build my own SlackrPacks?
+A: To compile things for ZeroSlackr, see the
+   "== Compiling ==" section of ""ReadMe from Keripo.txt"
+   and follow the iPodLinux
+   "Introduction_to_Compiling_for_iPodLinux" wiki tutorial.
+   I have not finished adding everything I know to Project
+   ZeroSlackr but if you're willing to help (and are an
+   experienced C programmer), feel free to contact me via PM.
+
+Q: I'm lame and want my iPod back to "normal". How do I
+   uninstall this?
+A: The only real "installation" that you did was add in
+   the Loader2 bootloader. Everything else is just files
+   copied over to your iPod (no partitioning or other
+   modifications were done to your iPod). To uninstall the
+   bootloader, use ipodpatcher with the "--delete-bootloader"
+   argument. After that you can delete the directories
+   containing ZeroSlackr files (i.e. bin, boot, dev, etc,
+   and ZeroSlackr). More info can be found on Rockbox's
+   ipodpatcher wiki page (see
+   http://www.rockbox.org/twiki/bin/view/Main/IpodPatcher).
+
+Q: Installing iPodLinux through Project ZeroSlackr is very
+   easy! Will this ever be officially supported?
+A: Project ZeroSlackr is a custom iPodLinux installation
+   created by me (Keripo) but based off the work and ideas
+   of many people. Because of my modifications, it is
+   highly unlikely that it will become official (though I
+   do hope the non-partitioning loop-mount install method
+   becomes adopted as the official install method). Whenever
+   I do make modifications that I believe are beneficial to
+   the iPodLinux project, however, I do try to get the
+   modifications committed upstream by the official
+   developers (i.e. see http://ipl.nonb.org/search?q=Keripo
+   if Trac wasn't down).
+
+Q: Project ZeroSlackr is awesome! How can I thank you?
+A: If you're an experienced programmer, feel free to contact
+   me if you want to help. Otherwise, just leave a word of
+   thanks in a Project ZeroSlackr thread on the iPodLinux
+   forums. If you're really generous and want to donate,
+   you can contact me (since I haven't set up donations
+   on SourceForge) though I would better recommend you
+   instead donate directly to the iPodLinux project via
+   the iPodLinux "Donations" wiki page. Such money can go
+   towards RE for the newer iPod models, etc.
+
+Q: What about my question _____ which you didn't answer here?
+A: This FAQ only covers the basics concerning Project
+   ZeroSlackr. For more information on iPodLinux, see the
+   iPodLinux page (http://ipodlinux.org). For more
+   information on how certain packs/applications work, see
+   the pack's own "ReadMe from Keripo.txt", documents in the
+   pack's Misc/Docs, the pack's iPodLinux wiki page (if it
+   has) and Google searches. If you think you have an
+   important question that concerns only Project ZeroSlackr
+   and I forgot to add here, please contact me through the
+   iPodLinux forums.
+
