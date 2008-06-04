@@ -1,5 +1,5 @@
 /*
- * Last updated: May 22, 2008
+ * Last updated: Jun 2, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo, Various
@@ -29,10 +29,8 @@
 #define COP_LINE_REQ		(1 << 1)
 #define COP_LINE_REQ_CLEAR	(2 << 1)
 
-static void ipod_cop_clear_frameready()
-{
-	outl(inl(COP_STATUS) &~ COP_LINE_REQ_CLEAR, COP_STATUS);
-}
+#define ipod_cop_clear_frameready() \
+	outl(inl(COP_STATUS) &~ COP_LINE_REQ_CLEAR, COP_STATUS)
 
 // Waits for main update_screen to call "ipod_cop_update_screen();"
 static void ipod_cop_sync_screen()
@@ -70,4 +68,3 @@ void ipod_exit_cop()
 	outl(inl(COP_STATUS) &~ COP_RUNNING, COP_STATUS); // Stop COP
 	outl(inl(COP_STATUS) | COP_LINE_REQ, COP_STATUS);
 }
-

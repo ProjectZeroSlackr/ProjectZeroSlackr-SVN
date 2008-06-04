@@ -1,26 +1,25 @@
-# Last updated: May 22, 2008
+# Last updated: Jun 1, 2008
 # ~Keripo
 
 # igpSP Makefile
-# Build 0.9-2Xb K4
+# Build 0.9-2Xb K5
 # Based on GP2X Makefile
 
 
 # Global definitions
 
 CC         = arm-uclinux-elf-gcc
-
-OBJS       = main.o cpu.o memory.o video.o input.o sound.o gui.o               \
-             cheats.o cpu_threaded.o ../gp2x/font.o ../gp2x/arm_stub.o         \
-             ipod_cop.o ipod_hw.o ipod_video.o ipod_input.o
 BIN        = igpSP
+OBJS       = main.o cpu.o memory.o video.o input.o gui.o                       \
+             cheats.o cpu_threaded.o                                           \
+			 ../gp2x/font.o ../gp2x/arm_stub.o video_blend.o                   \
+             ipod_cop.o ipod_hw.o ipod_video.o ipod_input.o
 
 
 # Platform specific definitions
 
 # Use 'make' for normal, 'make NOSOUND=1' for without sound.
-# Benchmark with 'make NOSOUND=1 BENCHMARK=1'
-# Using benchmark with sound doesn't seem to work for some reason.
+# Benchmark by adding 'BENCHMARK=1'
 
 # 'BENCHMARK' only affects main.c while
 # 'NOSOUND' affects gui.c, main.c and memory.c
@@ -30,15 +29,17 @@ VPATH      += ..
 CFLAGS     += -DARM_ARCH -DIPOD_BUILD
 ifdef NOSOUND
 CFLAGS     += -DNOSOUND
+else
+OBJS       += sound.o ipod_sound.o
 endif
 ifdef BENCHMARK
 CFLAGS     += -DBENCHMARK
 endif
-CFLAGS     += -O3 -std=c99 -msoft-float -funsigned-char -fno-common           \
-              -fno-builtin -elf2flt                                           \
+CFLAGS     += -O3 -msoft-float -funsigned-char -fno-common                    \
+              -fno-builtin -fomit-frame-pointer -elf2flt                      \
 
 INCLUDES   = -I../../hotdog
-LIBS       = -lm -lpthread -L../../hotdog/ipod -lhotdog -Wl,-elf2flt
+LIBS       = -Wl,-elf2flt -L../../hotdog/ipod -lhotdog -lm -lpthread
 
 
 # Compilation:

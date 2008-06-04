@@ -19,31 +19,22 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "ipod_common.h"
+// Postscalar values: CPU speed = (24 / 8) * postscalar
+// 81MHz is the MAXIMUM the iPod will go without screwing up
+// 75MHz is iPodLinux's default, 66MHz is Apple OS's default
+#define CPU_33MHz	11
+#define CPU_45MHz	15
+#define CPU_66MHz	22 // Underclock
+#define CPU_75MHz	25 // Normal
+#define CPU_78MHz	26 // Overclocked
+#define CPU_81MHz	27 // Max Overclock - Unstable!
 
-static const char *igpsp_config_filenames = {
-	"igpSP.cfg",
-	"igpsp.cfg",
-	"Conf/igpSP.cfg",
-	
-}
+#define BACKLIGHT_OFF	0
+#define BACKLIGHT_ON	1
 
-void ipod_update_settings()
-{
-	ipod_update_cpu_speed();
-	ipod_update_contrast();
-	ipod_update_scale_type();
-	ipod_update_volume();
-}
-
-void ipod_init_config()
-{
-	
-}
-
-void ipod_save_config()
-{
-
-
-}
+#define CLOCK_SCALER	0x60006034
+#define CLOCK_POLICY	0x60006020
+#define RUN_CLK(x) (0x20000000 | ((x) <<  4))
+#define RUN_GET(x) ((inl(CLOCK_POLICY) & 0x0fffff8f) | RUN_CLK(x))
+#define RUN_SET(x) outl(RUN_GET(x), CLOCK_POLICY)
 

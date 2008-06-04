@@ -1,6 +1,6 @@
 diff -ur common.h common.h
 --- common.h	2007-04-08 21:35:13.000000000 -0400
-+++ common.h	2008-05-10 14:00:02.593750000 -0400
++++ common.h	2008-05-31 21:37:58.750000000 -0400
 @@ -32,6 +32,7 @@
    #include <stdlib.h>
    #include <stdio.h>
@@ -130,16 +130,16 @@ diff -ur font.h font.h
     name: 6x10
 diff -ur gui.c gui.c
 --- gui.c	2007-04-08 21:35:13.000000000 -0400
-+++ gui.c	2008-05-21 21:02:27.234375000 -0400
++++ gui.c	2008-06-04 17:23:10.515625000 -0400
 @@ -38,6 +38,12 @@
  #define FILE_LIST_POSITION 5
  #define DIR_LIST_POSITION 260
  
 +#elif defined(IPOD_BUILD)
 +
-+#define FILE_LIST_ROWS 10
-+#define FILE_LIST_POSITION 5
-+#define DIR_LIST_POSITION 80
++#define FILE_LIST_ROWS 12 // Max # of entries via experimentation
++#define FILE_LIST_POSITION 20 // Offset from left
++#define DIR_LIST_POSITION 120 // 240 / 2
 +
  #else
  
@@ -171,16 +171,35 @@ diff -ur gui.c gui.c
  
  u32 gamepad_config_line_to_button[] =
   { 0, 2, 1, 3, 8, 9, 10, 11, 6, 7, 4, 5 };
-@@ -699,7 +707,7 @@
-     return 0;
+@@ -738,6 +746,7 @@
  
-   current_frameskip_type = auto_frameskip;
--  frameskip_value = 4;
-+  frameskip_value = 6;
-   random_skip = 0;
-   clock_speed = 333;
+       screen_scale = file_options[0] % 3;
+       screen_filter = file_options[1] % 2;
++#ifndef NOSOUND
+       global_enable_audio = file_options[2] % 2;
  
-@@ -1008,7 +1016,11 @@
+ #ifdef PSP_BUILD
+@@ -746,6 +755,8 @@
+       audio_buffer_size_number = file_options[3] % 11;
+ #endif
+ 
++#endif
++
+       update_backup_flag = file_options[4] % 2;
+       global_enable_analog = file_options[5] % 2;
+       analog_sensitivity_level = file_options[6] % 8;
+@@ -838,8 +849,10 @@
+ 
+     file_options[0] = screen_scale;
+     file_options[1] = screen_filter;
++#ifndef NOSOUND
+     file_options[2] = global_enable_audio;
+     file_options[3] = audio_buffer_size_number;
++#endif
+     file_options[4] = update_backup_flag;
+     file_options[5] = global_enable_analog;
+     file_options[6] = analog_sensitivity_level;
+@@ -1008,7 +1021,11 @@
  
    void menu_load()
    {
@@ -192,11 +211,12 @@ diff -ur gui.c gui.c
      u8 load_filename[512];
      save_game_config_file();
      if(load_file(file_ext, load_filename) != -1)
-@@ -1191,6 +1203,24 @@
+@@ -1191,6 +1208,25 @@
    };
  
    // Marker for help information, don't go past this mark (except \n)------*
 +#ifdef IPOD_BUILD
++extern int ipod_volume;
 +menu_option_type graphics_sound_options[] =
 +  {
 +    string_selection_option(NULL, "Frameskip type", frameskip_options,
@@ -209,15 +229,15 @@ diff -ur gui.c gui.c
 +	 ,
 +    string_selection_option(NULL, "Audio output", yes_no_options,
 +     &global_enable_audio, 2, "", 3),
-+    string_selection_option(NULL, "Audio buffer", audio_buffer_options,
-+             &audio_buffer_size_number, 10, "", 4)
++    numeric_selection_option(NULL, "Volume level",
++     (u32 *)(&ipod_volume), 150, "", 4)
 +#endif
 +  };
 +#else
    menu_option_type graphics_sound_options[] =
    {
      string_selection_option(NULL, "Display scaling", scale_options,
-@@ -1242,9 +1272,25 @@
+@@ -1242,9 +1278,25 @@
       10),
      submenu_option(NULL, "Back", "Return to the main menu.", 12)
    };
@@ -243,7 +263,7 @@ diff -ur gui.c gui.c
    menu_option_type cheats_misc_options[] =
    {
      cheat_option(0),
-@@ -1270,9 +1316,26 @@
+@@ -1270,9 +1322,26 @@
       "Use the latter with extreme care.", 12),
      submenu_option(NULL, "Back", "Return to the main menu.", 14)
    };
@@ -270,7 +290,7 @@ diff -ur gui.c gui.c
    menu_option_type savestate_options[] =
    {
      numeric_selection_action_hide_option(menu_load_state, menu_change_state,
-@@ -1293,6 +1356,7 @@
+@@ -1293,6 +1362,7 @@
       "Change the current savestate slot.\n", 11),
      submenu_option(NULL, "Back", "Return to the main menu.", 13)
    };
@@ -278,7 +298,7 @@ diff -ur gui.c gui.c
  
    make_menu(savestate, submenu_savestate, NULL);
  
-@@ -1375,9 +1439,66 @@
+@@ -1375,9 +1445,91 @@
  
  #endif
  
@@ -288,16 +308,40 @@ diff -ur gui.c gui.c
 +#endif
 +
 +#ifdef IPOD_BUILD
++  #include "ipod/ipod_common.h"
++
++  extern int ipod_menu_scrolling;
++  extern int ipod_map_triggers;
++  extern int ipod_rapid_fire;
++
++  u8 *off_on_options[] = { "Off", "On" };
++  u8 *on_off_options[] = { "On", "Off" };
++
++  void submenu_ipod_input() {}
++
++  menu_option_type ipod_input_options[] =
++  {
++    string_selection_option(NULL, "Menu scrolling",
++     off_on_options, (u32 *)(&ipod_menu_scrolling), 2, "", 0),
++    string_selection_option(NULL, "Map L/R Triggers",
++     off_on_options, (u32 *)(&ipod_map_triggers), 2, "", 1),
++    string_selection_option(NULL, "Rapid Fire for A & B",
++     off_on_options, (u32 *)(&ipod_rapid_fire), 2, "", 2)
++  };
++
++  make_menu(ipod_input, submenu_ipod_input, NULL);
++
++
++  extern u32 no_alpha;
++  extern u32 synchronize_flag;
 +  extern int ipod_scale_type;
++  extern int ipod_smooth_type;
 +  extern int ipod_cpu_speed;
 +  extern int ipod_contrast;
-+  extern int ipod_map_triggers;
-+  extern int ipod_menu_scrolling;
-+  extern void ipod_toggle_backlight();
-+  u8 *on_off_options[] = { "On", "Off" };
-+  u8 *off_on_options[] = { "Off", "On" };
++
 +  u8 *scale_type_options[] = { "Unscaled", "Full-screen", "Scale to height", "Scale to width" };
-+  u8 *cpu_speed_options[] = { "Normal", "Overclock", "Max Overclock" };
++  u8 *smooth_type_options[] = { "None", "Smooth", "Smoother" };
++  u8 *cpu_speed_options[] = { "66MHz", "75MHz", "78MHz", "81MHz [Unstable]" };
 +
 +  void submenu_ipod_tweaks() {}
 +
@@ -305,23 +349,24 @@ diff -ur gui.c gui.c
 +  {
 +    string_selection_option(NULL, "Scale type",
 +     scale_type_options, (u32 *)(&ipod_scale_type), 4, "", 0),
++    string_selection_option(NULL, "Smooth type",
++     smooth_type_options, (u32 *)(&ipod_smooth_type), 3, "", 1),
 +    string_selection_option(NULL, "Alpha Blending",
-+     on_off_options, &no_alpha, 2, "", 1),
++     on_off_options, &no_alpha, 2, "", 2),
++    string_selection_option(NULL, "Synchronize",
++     off_on_options, &synchronize_flag, 2, "", 3),
 +    string_selection_option(NULL, "CPU Speed",
-+     cpu_speed_options, (u32 *)(&ipod_cpu_speed), 3, "", 2),
++     cpu_speed_options, (u32 *)(&ipod_cpu_speed), 4, "", 4),
 +    numeric_selection_option(NULL, "Contrast",
-+     (u32 *)(&ipod_contrast), 120, "", 3),
-+    action_option(ipod_toggle_backlight, NULL, "Toggle Backlight", "", 4),
-+    string_selection_option(NULL, "Menu scrolling",
-+     off_on_options, (u32 *)(&ipod_menu_scrolling), 2, "", 5),
-+    string_selection_option(NULL, "Map L/R Triggers",
-+     off_on_options, (u32 *)(&ipod_map_triggers), 2, "", 6)
++     (u32 *)(&ipod_contrast), 120, "", 5),
++    action_option(ipod_toggle_backlight, NULL, "Toggle Backlight", "", 6),
++    submenu_option(&ipod_input_menu, "Modify Input Mapping", "", 7)
 +  };
 +
 +  make_menu(ipod_tweaks, submenu_ipod_tweaks, NULL);
- 
-+#endif
 +
++#endif
+ 
 +#ifdef IPOD_BUILD
 +  menu_option_type main_options[] =
 +  {
@@ -339,13 +384,13 @@ diff -ur gui.c gui.c
 +    submenu_option(&cheats_misc_menu, "Enable Cheats", "", 5),
 +    action_option(menu_load, NULL, "Load new game", "", 6),
 +    action_option(menu_restart, NULL, "Restart game", "", 7),
-+    action_option(menu_quit, NULL, "Exit igpSP", "", 8)
++    action_option(menu_quit, NULL, "Exit igpSP K5", "", 8)
 +  };
 +#else
    menu_option_type main_options[] =
    {
      submenu_option(&graphics_sound_menu, "Graphics and Sound options",
-@@ -1415,13 +1536,16 @@
+@@ -1415,13 +1567,16 @@
      action_option(menu_quit, NULL, "Exit gpSP",
       "Select to exit gpSP and return to the PSP XMB/loader.", 15)
    };
@@ -362,7 +407,7 @@ diff -ur gui.c gui.c
  
      clear_screen(COLOR_BG);
  
-@@ -1446,6 +1570,7 @@
+@@ -1446,6 +1601,7 @@
  
    video_resolution_large();
  
@@ -370,7 +415,7 @@ diff -ur gui.c gui.c
  #ifndef GP2X_BUILD
    SDL_LockMutex(sound_mutex);
  #endif
-@@ -1454,6 +1579,7 @@
+@@ -1454,6 +1610,7 @@
  #ifndef GP2X_BUILD
    SDL_UnlockMutex(sound_mutex);
  #endif
@@ -378,7 +423,7 @@ diff -ur gui.c gui.c
  
    if(gamepak_filename[0] == 0)
    {
-@@ -1599,7 +1725,9 @@
+@@ -1599,7 +1756,9 @@
      scePowerSetClockFrequency(clock_speed, clock_speed, clock_speed / 2);
    #endif
  
@@ -390,14 +435,12 @@ diff -ur gui.c gui.c
  }
 diff -ur input.c input.c
 --- input.c	2007-04-08 21:35:13.000000000 -0400
-+++ input.c	2008-05-21 20:08:25.390625000 -0400
-@@ -629,6 +629,58 @@
++++ input.c	2008-06-02 19:47:52.000000000 -0400
+@@ -629,6 +629,55 @@
  #endif
  
  
 +#ifdef IPOD_BUILD
-+
-+#include "ipod/ipod_common.h"
 +
 +// Doesn't do anything but needed for config file
 +u32 gamepad_config_map[16] =
@@ -422,10 +465,9 @@ diff -ur input.c input.c
 +
 +void enter_menu()
 +{
-+  u32 ret_val;
 +  u16 *screen_copy;
 +  screen_copy = copy_screen();
-+  ret_val = menu(screen_copy);
++  menu(screen_copy);
 +  free(screen_copy);
 +}
 +
@@ -452,24 +494,22 @@ diff -ur input.c input.c
  
 diff -ur main.c main.c
 --- main.c	2007-04-08 21:35:13.000000000 -0400
-+++ main.c	2008-05-22 17:08:36.750000000 -0400
-@@ -50,6 +50,15 @@
++++ main.c	2008-06-02 22:37:40.203125000 -0400
+@@ -50,6 +50,13 @@
  u32 gp2x_fps_debug = 0;
  
  void gp2x_quit(void);
 +
 +#elif defined(IPOD_BUILD)
 +
-+#include "ipod/ipod_common.h"
-+
-+u32 frameskip_value = 6;
++u32 frameskip_value = 4;
 +u64 frame_count_initial_timestamp = 0;
 +u64 last_frame_interval_timestamp;
 +
  #else
  
  u32 frameskip_value = 4;
-@@ -97,6 +106,8 @@
+@@ -97,6 +104,8 @@
    if(timer[timer_number].status == TIMER_PRESCALE)                            \
      check_count(timer[timer_number].count);                                   \
  
@@ -478,7 +518,7 @@ diff -ur main.c main.c
  #define update_timer(timer_number)                                            \
    if(timer[timer_number].status != TIMER_INACTIVE)                            \
    {                                                                           \
-@@ -134,7 +145,43 @@
+@@ -134,7 +143,43 @@
      }                                                                         \
    }                                                                           \
  
@@ -522,7 +562,7 @@ diff -ur main.c main.c
  
  #ifdef ARM_ARCH
  void ChangeWorkingDirectory(char *exe)
-@@ -159,7 +206,9 @@
+@@ -159,7 +204,9 @@
    for(i = 0; i < 4; i++)
    {
      dma[i].start_type = DMA_INACTIVE;
@@ -532,7 +572,7 @@ diff -ur main.c main.c
      timer[i].status = TIMER_INACTIVE;
      timer[i].reload = 0x10000;
      timer[i].stop_cpu_ticks = 0;
-@@ -221,6 +270,13 @@
+@@ -221,6 +268,14 @@
    delay_us(2500000);
  #endif
  
@@ -540,13 +580,14 @@ diff -ur main.c main.c
 +  ipod_init_hw();
 +  ipod_init_input();
 +  ipod_init_cop();
++  // ipod_init_sound() is called by init_sound()
 +  // ipod_init_video() is called by init_video()
 +#endif
 +
    init_video();
  
  #ifdef GP2X_BUILD
-@@ -288,7 +344,9 @@
+@@ -288,7 +343,9 @@
    }
  
    init_main();
@@ -556,7 +597,7 @@ diff -ur main.c main.c
  
    init_input();
  
-@@ -342,7 +400,7 @@
+@@ -342,7 +399,7 @@
    execute_arm_translate(execute_cycles);
  #else
  
@@ -565,7 +606,7 @@ diff -ur main.c main.c
    get_ticks_us(&frame_count_initial_timestamp);
  #endif
  
-@@ -351,7 +409,9 @@
+@@ -351,7 +408,9 @@
     current_savestate_filename);
    load_state(current_savestate_filename); */
  
@@ -575,7 +616,7 @@ diff -ur main.c main.c
  
    if(argc > 2)
    {
-@@ -404,7 +464,9 @@
+@@ -404,7 +463,9 @@
    u64 new_ticks;
    u8 current_savestate_filename[512];
  
@@ -585,7 +626,7 @@ diff -ur main.c main.c
  
    if(event_number)
    {
-@@ -475,14 +537,14 @@
+@@ -475,14 +536,14 @@
         benchmark_ticks[6];
        benchmark_ticks[7] = benchmark_ticks[0] - benchmark_ticks[1];
  
@@ -603,7 +644,7 @@ diff -ur main.c main.c
        }
        quit();
      }
-@@ -492,6 +554,7 @@
+@@ -492,6 +553,7 @@
  
    get_ticks_us(benchmark_ticks + event_number);
    event_number++;
@@ -611,7 +652,7 @@ diff -ur main.c main.c
  }
  
  u32 update_gba()
-@@ -504,12 +567,14 @@
+@@ -504,12 +566,14 @@
  
      reg[CHANGED_PC_STATUS] = 0;
  
@@ -626,7 +667,7 @@ diff -ur main.c main.c
  
      update_timer(0);
      update_timer(1);
-@@ -607,7 +672,9 @@
+@@ -607,7 +671,9 @@
            if(update_input())
              continue;
  
@@ -636,7 +677,7 @@ diff -ur main.c main.c
            synchronize();
  
            update_screen();
-@@ -750,7 +817,7 @@
+@@ -750,7 +816,7 @@
  
  #endif
  
@@ -645,7 +686,7 @@ diff -ur main.c main.c
  
  u32 real_frame_count = 0;
  u32 virtual_frame_count = 0;
-@@ -769,12 +836,14 @@
+@@ -769,12 +835,14 @@
    static u32 fps = 60;
    static u32 frames_drawn = 60;
  
@@ -660,7 +701,27 @@ diff -ur main.c main.c
  
    get_ticks_us(&new_ticks);
    time_delta = new_ticks - last_screen_timestamp;
-@@ -930,7 +999,9 @@
+@@ -819,7 +887,7 @@
+     u32 new_frames_drawn;
+ 
+     time_delta = new_ticks - last_frame_interval_timestamp;
+-    new_fps = (u64)((u64)1000000 * (u64)frame_interval) / time_delta;
++    new_fps = 1000000 * frame_interval / time_delta;
+     new_frames_drawn =
+      (frame_interval - interval_skipped_frames) * (60 / frame_interval);
+ 
+@@ -851,8 +919,10 @@
+ 
+   interval_skipped_frames += skip_next_frame;
+ 
++#if !defined(IPOD_BUILD) || defined(BENCHMARK)
+   if(!synchronize_flag)
+     print_string("--FF--", 0xFFFF, 0x000, 0, 0);
++#endif
+ }
+ 
+ #endif
+@@ -930,7 +1000,9 @@
    if(!update_backup_flag)
      update_backup_force();
  
@@ -670,23 +731,24 @@ diff -ur main.c main.c
  
  #ifdef REGISTER_USAGE_ANALYZE
    print_register_usage();
-@@ -939,7 +1010,15 @@
+@@ -939,7 +1011,16 @@
  #ifdef PSP_BUILD
    sceKernelExitGame();
  #else
 +
 +#ifdef IPOD_BUILD
-+  ipod_exit_video();
++  // ipod_exit_sound() called by sound_exit()
 +  ipod_exit_cop();
 +  ipod_exit_input();
 +  ipod_exit_hw();
++  ipod_exit_video(); // Slow and needs to be called last
 +#else
    SDL_Quit();
 +#endif
  
  #ifdef GP2X_BUILD
    gp2x_quit();
-@@ -954,7 +1033,9 @@
+@@ -954,7 +1035,9 @@
    init_main();
    init_memory();
    init_cpu();
@@ -698,23 +760,17 @@ diff -ur main.c main.c
  #ifdef PSP_BUILD
 diff -ur main.h main.h
 --- main.h	2007-04-08 21:35:13.000000000 -0400
-+++ main.h	2008-05-10 18:16:59.515625000 -0400
-@@ -131,6 +131,14 @@
++++ main.h	2008-05-31 21:13:24.921875000 -0400
+@@ -131,6 +131,8 @@
  
  #endif
  
-+#ifdef IPOD_BUILD
-+
-+extern u32 no_alpha;
-+
-+#endif
-+
 +#ifndef NOSOUND
 +
  #define count_timer(timer_number)                                             \
    timer[timer_number].reload = 0x10000 - value;                               \
    if(timer_number < 2)                                                        \
-@@ -195,6 +203,49 @@
+@@ -195,6 +197,49 @@
    }                                                                           \
    address16(io_registers, 0x102 + (timer_number * 4)) = value;                \
  
@@ -766,7 +822,7 @@ diff -ur main.h main.h
  #endif
 diff -ur memory.c memory.c
 --- memory.c	2007-04-08 21:35:13.000000000 -0400
-+++ memory.c	2008-05-10 21:18:21.906250000 -0400
++++ memory.c	2008-06-02 22:17:24.875000000 -0400
 @@ -19,7 +19,15 @@
  
  #include "common.h"
@@ -866,7 +922,55 @@ diff -ur memory.c memory.c
  
  #define access_register8_high(address)                                        \
    value = (value << 8) | (address8(io_registers, address))                    \
-@@ -2158,10 +2235,14 @@
+@@ -713,6 +790,7 @@
+       address32(io_registers, 0x3C) = value;
+       break;
+ 
++#ifndef NOSOUND
+     // Sound 1 control sweep
+     case 0x60:
+       access_register8_low(0x60);
+@@ -865,6 +943,7 @@
+     case 0xA4:
+       sound_timer_queue8(1, value);
+       break;
++#endif
+ 
+     // DMA control (trigger byte)
+     case 0xBB:
+@@ -1053,6 +1132,7 @@
+       address32(io_registers, 0x3C) = value;
+       break;
+ 
++#ifndef NOSOUND
+     // Sound 1 control sweep
+     case 0x60:
+       gbc_sound_tone_control_sweep();
+@@ -1133,6 +1213,7 @@
+     case 0xA4:
+       sound_timer_queue16(1, value);
+       break;
++#endif
+ 
+     // DMA control
+     case 0xBA:
+@@ -1244,6 +1325,7 @@
+       address32(io_registers, 0x3C) = value;
+       break;
+ 
++#ifndef NOSOUND
+     // Sound FIFO A
+     case 0xA0:
+       sound_timer_queue32(0, value);
+@@ -1253,6 +1335,7 @@
+     case 0xA4:
+       sound_timer_queue32(1, value);
+       break;
++#endif
+ 
+     default:
+     {
+@@ -2158,10 +2241,14 @@
    s32 file_size;
    u8 cheats_filename[256];
  
@@ -881,7 +985,33 @@ diff -ur memory.c memory.c
  
    // A dumb April fool's joke was here once :o
  
-@@ -3182,11 +3263,13 @@
+@@ -3118,6 +3205,7 @@
+ #endif
+ }
+ 
++#ifndef NOSOUND
+ 
+ #define savestate_block(type)                                                 \
+   cpu_##type##_savestate(savestate_file);                                     \
+@@ -3127,6 +3215,17 @@
+   sound_##type##_savestate(savestate_file);                                   \
+   video_##type##_savestate(savestate_file)                                    \
+ 
++#else
++
++#define savestate_block(type)                                                 \
++  cpu_##type##_savestate(savestate_file);                                     \
++  input_##type##_savestate(savestate_file);                                   \
++  main_##type##_savestate(savestate_file);                                    \
++  memory_##type##_savestate(savestate_file);                                  \
++  video_##type##_savestate(savestate_file)                                    \
++
++#endif
++
+ void load_state(char *savestate_filename)
+ {
+   file_open(savestate_file, savestate_filename, read);
+@@ -3182,11 +3281,13 @@
         convert_palette(current_color);
      }
  
@@ -897,17 +1027,14 @@ diff -ur memory.c memory.c
  
 diff -ur sound.c sound.c
 --- sound.c	2007-04-08 21:35:13.000000000 -0400
-+++ sound.c	2008-05-10 21:22:46.515625000 -0400
-@@ -17,11 +17,18 @@
++++ sound.c	2008-05-31 23:09:34.410895400 -0400
+@@ -17,11 +17,15 @@
   * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
   */
  
 -
  #include "common.h"
 +#ifdef IPOD_BUILD
-+#include <sys/ioctl.h>
-+#include <sys/soundcard.h>
-+#define SOUND_DEVICE "/dev/dsp"
 +void sound_callback(int length);
 +#else
  #include <SDL.h>
@@ -918,7 +1045,7 @@ diff -ur sound.c sound.c
  direct_sound_struct direct_sound_channel[2];
  gbc_sound_struct gbc_sound_channel[4];
  
-@@ -31,9 +38,11 @@
+@@ -31,9 +35,11 @@
  u32 sound_frequency = 44100;
  #endif
  
@@ -930,7 +1057,7 @@ diff -ur sound.c sound.c
  
  #ifndef PSP_BUILD
  u32 audio_buffer_size_number = 7;
-@@ -433,11 +442,13 @@
+@@ -433,11 +439,13 @@
  
  void synchronize_sound()
  {
@@ -944,7 +1071,7 @@ diff -ur sound.c sound.c
  }
  
  void update_gbc_sound(u32 cpu_ticks)
-@@ -466,17 +477,21 @@
+@@ -466,17 +474,21 @@
      gbc_sound_partial_ticks &= 0xFFFF;
    }
  
@@ -966,7 +1093,7 @@ diff -ur sound.c sound.c
  
  #ifdef PSP_BUILD
        if(current_frameskip_type == auto_frameskip)
-@@ -579,15 +594,42 @@
+@@ -579,18 +591,43 @@
  
    address16(io_registers, 0x84) = sound_status;
  
@@ -980,7 +1107,7 @@ diff -ur sound.c sound.c
 +#ifndef IPOD_BUILD
    gbc_sound_buffer_index =
     (gbc_sound_buffer_index + (buffer_ticks * 2)) % BUFFER_SIZE;
-+#else
++#else // Zaphod made these changes - I have no idea how this works ; / ~Keripo
 +  gbc_sound_buffer_index =
 +   (gbc_sound_buffer_index + (buffer_ticks << 1)) % BUFFER_SIZE;
 +  if (((gbc_sound_buffer_index - sound_buffer_base) % BUFFER_SIZE) > (audio_buffer_size>>2))
@@ -988,10 +1115,11 @@ diff -ur sound.c sound.c
 +#endif
  }
  
-+#ifdef IPOD_BUILD
-+
-+#define sound_copy_normal()                                                   \
-+  current_sample = source[i]                                                  \
+ #define sound_copy_normal()                                                   \
+   current_sample = source[i]                                                  \
+ 
++// Zaphod made these changes - I have no idea how this works ; / ~Keripo
++#ifdef IPOD_BUILD                                                             \
 +
 +#define sound_copy(source_offset, length, render_type)                        \
 +  _length = (length) / 2;                                                     \
@@ -1002,14 +1130,14 @@ diff -ur sound.c sound.c
 +#define sound_copy_null(source_offset, length)                                \
 +  _length = (length) / 2;                                                     \
 +  source = (s16 *)(sound_buffer + source_offset);                             \
-+  memset(source,0,_length);
++  memset(source, 0, _length);
 +  
-+#else
++#else                                                                         \
 +
- #define sound_copy_normal()                                                   \
-   current_sample = source[i]                                                  \
- 
-@@ -615,16 +657,25 @@
+ #define sound_copy(source_offset, length, render_type)                        \
+   _length = (length) / 2;                                                     \
+   source = (s16 *)(sound_buffer + source_offset);                             \
+@@ -615,16 +652,25 @@
      source[i] = 0;                                                            \
    }                                                                           \
  
@@ -1035,7 +1163,7 @@ diff -ur sound.c sound.c
    SDL_LockMutex(sound_mutex);
  
    while(((gbc_sound_buffer_index - sound_buffer_base) % BUFFER_SIZE) <
-@@ -632,6 +683,7 @@
+@@ -632,6 +678,7 @@
    {
      SDL_CondWait(sound_cv, sound_mutex);
    }
@@ -1043,7 +1171,7 @@ diff -ur sound.c sound.c
  
    if(global_enable_audio)
    {
-@@ -666,9 +718,11 @@
+@@ -666,9 +713,11 @@
      }
    }
  
@@ -1055,11 +1183,13 @@ diff -ur sound.c sound.c
  }
  
  // Special thanks to blarrg for the LSFR frequency used in Meridian, as posted
-@@ -747,14 +801,18 @@
+@@ -747,14 +796,20 @@
  {
    gbc_sound_buffer_index =
     (sound_buffer_base + audio_buffer_size) % BUFFER_SIZE;
-+#ifndef IPOD_BUILD
++#ifdef IPOD_BUILD
++  ipod_exit_sound();
++#else
    SDL_PauseAudio(1);
    SDL_CondSignal(sound_cv);
 +#endif
@@ -1074,51 +1204,19 @@ diff -ur sound.c sound.c
  #elif defined(TAVI_BUILD) || defined(ARM_ARCH)
    audio_buffer_size = 16 << audio_buffer_size_number;
  //  audio_buffer_size = 16384;
-@@ -762,6 +820,43 @@
+@@ -762,6 +817,11 @@
    audio_buffer_size = 16384;
  #endif
  
 +#ifdef IPOD_BUILD
-+    u32 mixer;
-+    mixer = open("/dev/mixer", O_RDWR); 
-+    u32 volume = 100; 
-+    u32 vol = volume << 8 | volume;
-+    int ret = ioctl(mixer, SOUND_MIXER_WRITE_PCM, &vol);
-+    sound_fd = open(SOUND_DEVICE, O_WRONLY);
-+    if (sound_fd < 0) {
-+      perror("failed");
-+      sound_fd = 0;
-+      return;
-+    } else {
-+      printf("done.\n");
-+    }
-+    u32 tmp = 2;
-+    u32 result = ioctl(sound_fd, SNDCTL_DSP_CHANNELS, &tmp);
-+    if (result < 0) {
-+      perror("failed");
-+      close(sound_fd);
-+      sound_fd = 0;
-+      return;
-+    } else {
-+      printf("done.\n");
-+    }
-+    printf("setting sound rate to %dHz...", sound_frequency);
-+    result = ioctl(sound_fd, SNDCTL_DSP_SPEED, &sound_frequency);
-+    if (result < 0) {
-+      perror("failed");
-+      close(sound_fd);
-+      sound_fd = 0;
-+      return;
-+    } else {
-+      printf("got %dHz...done.\n", sound_frequency);
-+    }
++  ipod_init_sound();
 +#endif
 +
 +#ifndef IPOD_BUILD
    SDL_AudioSpec desired_spec =
    {
      sound_frequency,
-@@ -774,6 +869,7 @@
+@@ -774,6 +834,7 @@
      sound_callback,
      NULL
    };
@@ -1126,7 +1224,7 @@ diff -ur sound.c sound.c
  
    gbc_sound_tick_step =
     float_to_fp16_16(256.0 / sound_frequency);
-@@ -783,11 +879,13 @@
+@@ -783,11 +844,13 @@
  
    reset_sound();
  
@@ -1140,7 +1238,7 @@ diff -ur sound.c sound.c
  }
  
  #define sound_savestate_builder(type)                                       \
-@@ -809,4 +907,3 @@
+@@ -809,4 +872,3 @@
  
  sound_savestate_builder(read);
  sound_savestate_builder(write_mem);
@@ -1161,17 +1259,18 @@ diff -ur sound.h sound.h
  void sound_timer_queue16(u32 channel, u16 value);
 diff -ur video.c video.c
 --- video.c	2007-04-08 21:35:13.000000000 -0400
-+++ video.c	2008-05-21 20:00:59.656250000 -0400
-@@ -91,6 +91,24 @@
++++ video.c	2008-06-01 21:59:48.234375000 -0400
+@@ -91,6 +91,25 @@
  #include "SDL_gp2x.h"
  SDL_Surface *hw_screen;
  #endif
 +
 +#ifdef IPOD_BUILD
++
 +#include "ipod/ipod_common.h"
-+#include "hotdog.h"
 +
 +extern uint32 IPOD_WIDTH, IPOD_HEIGHT;
++
 +u16 *screen;
 +uint32 WIDTH, HEIGHT;
 +const u32 video_scale = 0;
@@ -1187,7 +1286,7 @@ diff -ur video.c video.c
  SDL_Surface *screen;
  const u32 video_scale = 1;
  
-@@ -102,6 +120,8 @@
+@@ -102,6 +121,8 @@
  
  #endif
  
@@ -1196,7 +1295,7 @@ diff -ur video.c video.c
  void render_scanline_conditional_tile(u32 start, u32 end, u16 *scanline,
   u32 enable_flags, u32 dispcnt, u32 bldcnt, tile_layer_render_struct
   *layer_renderers);
-@@ -657,7 +677,7 @@
+@@ -657,7 +678,7 @@
  #define get_tile_4bpp()                                                       \
    current_tile = *map_ptr;                                                    \
    current_palette = (current_tile >> 12) << 4;                                \
@@ -1205,7 +1304,7 @@ diff -ur video.c video.c
  
  
  // Helper macro for drawing clipped 4bpp tiles.
-@@ -860,7 +880,7 @@
+@@ -860,7 +881,7 @@
    u32 pixel_run = 256 - (horizontal_offset % 256);                            \
    u32 current_tile;                                                           \
                                                                                \
@@ -1214,7 +1313,7 @@ diff -ur video.c video.c
    partial_tile_offset = (horizontal_offset % 8);                              \
                                                                                \
    if(pixel_run >= end)                                                        \
-@@ -1022,12 +1042,12 @@
+@@ -1022,12 +1043,12 @@
                                                                                \
    if((map_size & 0x02) && (vertical_offset >= 256))                           \
    {                                                                           \
@@ -1230,7 +1329,7 @@ diff -ur video.c video.c
    }                                                                           \
                                                                                \
    if(map_size & 0x01)                                                         \
-@@ -1568,7 +1588,7 @@
+@@ -1568,7 +1589,7 @@
  // Get the current row offset into an obj in 1D map space
  
  #define obj_tile_offset_1D(color_depth, flip_op)                              \
@@ -1239,7 +1338,7 @@ diff -ur video.c video.c
     + ((vertical_offset / 8) * (obj_width / 8) * tile_size_##color_depth)      \
     + ((vertical_offset % 8) * tile_width_##color_depth)                       \
     obj_tile_offset_##flip_op(color_depth)                                     \
-@@ -1576,7 +1596,7 @@
+@@ -1576,7 +1597,7 @@
  // Get the current row offset into an obj in 2D map space
  
  #define obj_tile_offset_2D(color_depth, flip_op)                              \
@@ -1248,7 +1347,7 @@ diff -ur video.c video.c
     + ((vertical_offset / 8) * 1024)                                           \
     + ((vertical_offset % 8) * tile_width_##color_depth)                       \
     obj_tile_offset_##flip_op(color_depth)                                     \
-@@ -1681,14 +1701,14 @@
+@@ -1681,14 +1702,14 @@
  }                                                                             \
  
  #define obj_scale_offset_1D(color_depth)                                      \
@@ -1265,7 +1364,7 @@ diff -ur video.c video.c
     + ((vertical_offset / 8) * 1024)                                           \
     + ((vertical_offset % 8) * tile_width_##color_depth)                       \
  
-@@ -1776,7 +1796,7 @@
+@@ -1776,7 +1797,7 @@
  
  #define obj_render_rotate(combine_op, color_depth, alpha_op, map_space)       \
  {                                                                             \
@@ -1274,7 +1373,7 @@ diff -ur video.c video.c
    obj_rotate_offset_##map_space(color_depth);                                 \
                                                                                \
    source_x += (y_delta * dmx) - (middle_x * dx);                              \
-@@ -1834,8 +1854,8 @@
+@@ -1834,8 +1855,8 @@
    u32 obj_pitch = tile_width_##color_depth;                                   \
    u32 obj_tile_pitch;                                                         \
                                                                                \
@@ -1285,7 +1384,25 @@ diff -ur video.c video.c
                                                                                \
    source_x = (middle_x << 8);                                                 \
    source_y = (middle_y << 8);                                                 \
-@@ -3356,6 +3376,12 @@
+@@ -2386,7 +2407,7 @@
+ 
+ #ifdef RENDER_COLOR16_NORMAL
+ 
+-#ifndef GP2X_BUILD
++#if !defined(GP2X_BUILD) && !defined(IPOD_BUILD)
+ 
+ void expand_normal(u16 *screen_ptr, u32 start, u32 end)
+ {
+@@ -2415,6 +2436,8 @@
+ #endif
+ 
+ 
++// expand_blend assembly doesn't work for iPod for some reason ; / ~Keripo
++//#if !defined(GP2X_BUILD) && !defined(IPOD_BUILD)
+ #ifndef GP2X_BUILD
+ 
+ void expand_blend(u32 *screen_src_ptr, u16 *screen_dest_ptr,
+@@ -3356,6 +3379,12 @@
      current_scanline_ptr += pitch;                                            \
    }                                                                           \
  
@@ -1298,7 +1415,7 @@ diff -ur video.c video.c
  void flip_screen()
  {
    if((video_scale != 1) && (current_scale != unscaled))
-@@ -3414,6 +3440,7 @@
+@@ -3414,6 +3443,7 @@
    SDL_Flip(screen);
  #endif
  }
@@ -1306,11 +1423,12 @@ diff -ur video.c video.c
  
  #endif
  
-@@ -3516,6 +3543,12 @@
+@@ -3516,6 +3546,13 @@
  
  void init_video()
  {
 +#ifdef IPOD_BUILD
++  // Gameboy Advance dimensions
 +  WIDTH = 240;
 +  HEIGHT = 160;
 +  screen = malloc(WIDTH * HEIGHT * 2);
@@ -1319,7 +1437,7 @@ diff -ur video.c video.c
    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_NOPARACHUTE);
  
  #ifdef GP2X_BUILD
-@@ -3532,6 +3565,7 @@
+@@ -3532,6 +3569,7 @@
    screen = SDL_SetVideoMode(240 * video_scale, 160 * video_scale, 16, 0);
  #endif
    SDL_ShowCursor(0);
@@ -1327,7 +1445,7 @@ diff -ur video.c video.c
  }
  
  #endif
-@@ -3657,6 +3691,9 @@
+@@ -3657,6 +3695,9 @@
    SDL_ShowCursor(0);
  
    gp2x_load_mmuhack();
@@ -1337,7 +1455,7 @@ diff -ur video.c video.c
  #else
    screen = SDL_SetVideoMode(480, 272, 16, 0);
    resolution_width = 480;
-@@ -3666,6 +3703,11 @@
+@@ -3666,6 +3707,11 @@
  
  void video_resolution_small()
  {
@@ -1349,7 +1467,7 @@ diff -ur video.c video.c
    current_scale = screen_scale;
  
  #ifdef GP2X_BUILD
-@@ -3688,6 +3730,7 @@
+@@ -3688,6 +3734,7 @@
  #endif
    resolution_width = small_resolution_width;
    resolution_height = small_resolution_height;
@@ -1357,17 +1475,21 @@ diff -ur video.c video.c
  }
  
  void set_gba_resolution(video_scale_type scale)
-@@ -3709,6 +3752,9 @@
+@@ -3709,6 +3756,13 @@
  
  void clear_screen(u16 color)
  {
 +#ifdef IPOD_BUILD
-+  ipod_clear_screen(color);
++  int i, max, p;
++  max = WIDTH * HEIGHT;
++  for (i = 0; i < max; i++) {
++    screen[i] = color;
++  }
 +#else
    u16 *dest_ptr = get_screen_pixels();
    u32 line_skip = get_screen_pitch() - screen->w;
    u32 x, y;
-@@ -3721,19 +3767,27 @@
+@@ -3721,6 +3775,7 @@
      }
      dest_ptr += line_skip;
    }
@@ -1375,19 +1497,7 @@ diff -ur video.c video.c
  }
  
  #endif
- 
- u16 *copy_screen()
- {
-+#ifdef IPOD_BUILD
-+  u16 *copy;
-+  ipod_cop_operation(copy = malloc(240 * 160 * 2));
-+  ipod_cop_operation(memcpy(copy, get_screen_pixels(), 240 * 160 * 2));
-+#else
-   u16 *copy = malloc(240 * 160 * 2);
-   memcpy(copy, get_screen_pixels(), 240 * 160 * 2);
-+#endif  
-   return copy;
- }
+@@ -3734,6 +3789,7 @@
  
  void blit_to_screen(u16 *src, u32 w, u32 h, u32 dest_x, u32 dest_y)
  {
@@ -1395,7 +1505,7 @@ diff -ur video.c video.c
    u32 pitch = get_screen_pitch();
    u16 *dest_ptr = get_screen_pixels() + dest_x + (dest_y * pitch);
  
-@@ -3749,6 +3803,7 @@
+@@ -3749,6 +3805,7 @@
      }
      dest_ptr += line_skip;
    }
