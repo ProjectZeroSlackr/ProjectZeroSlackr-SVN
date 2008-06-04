@@ -1,5 +1,5 @@
 /*
- * Last updated: May 22, 2008
+ * Last updated: Jun 4, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo, Various
@@ -19,136 +19,342 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-// FIXME: Current screen blitting code does NOT work on older generations
-// Re-write the entire ipod_screen part to use hd_surface/hotdog stuff
-// (May also be able to use hotdog stuff to to scaling at expense of speed)
-
 #include "ipod_common.h"
-#include "hotdog.h"
+#include "ipod_video.h"
 
 // typedef unsigned short int u16;
 // typedef unsigned long u32;
 
-#define CLEAR	0x000000 // Black
-
-extern void HD_LCD_Init();
-extern void HD_LCD_Quit();
-extern void HD_LCD_GetInfo (int *hw_ver, int *lcd_width, int *lcd_height, int *lcd_type);
-extern void HD_LCD_Update (void *fb, int x, int y, int w, int h);
+typedef void (*ipod_update_screen_type)(); 
 
 extern u16 *screen;
 extern uint32 WIDTH, HEIGHT;
 
-u16 *ipod_screen;
+int ipod_scale_type;
+int ipod_smooth_type;
+int IPOD_HW_VER, IPOD_LCD_TYPE;
 uint32 IPOD_WIDTH, IPOD_HEIGHT;
 
-int ipod_scale_type;
+uint16 *ipod_screen; //RGB565
+uint8 *ipod_screen_mono; //Y'UV - Y only
+
+static ipod_update_screen_type ipod_update_screen_funct = 0;
+static int monochrome = -1;
 static int scale_type_current = -1;
-static int scale_x[320]; // iPod video dimensions
-static int scale_y[240];
+static int smooth_type_current = -1;
+static int scale_x[320], scale_y[240]; // Max iPod screen dimensions (iPod video)
+static int scale_x_offset, scale_y_offset;
+static int scale_x_max, scale_y_max;
 
-// For scale to width
-static u32 MAX_PIXEL;
-static u32 num, den;
+// Yes, a LOT, LOT of code duplication.
+// Unfortunately no way of #define macro'ing them
+// and doing checks inside the loops will make things slow ; /
 
-void ipod_update_scale_type()
+// Normal, no bound checks
+static void ipod_update_screen_default()
 {
-	if (scale_type_current != ipod_scale_type) {
-		scale_type_current = ipod_scale_type;
-		int i;
-		switch (scale_type_current) {
-			case 0: // Unscaled
-				for (i = 0; i < IPOD_WIDTH; ipod_cop_operation(i++))
-					ipod_cop_operation(scale_x[i] = i);
-				for (i = 0; i < IPOD_HEIGHT; ipod_cop_operation(i++))
-					ipod_cop_operation(scale_y[i] = i * WIDTH);
-				break;		
-			case 1: // Full-screen
-				for (i = 0; i < IPOD_WIDTH; ipod_cop_operation(i++))
-					ipod_cop_operation(scale_x[i] = i * WIDTH / IPOD_WIDTH);
-				for (i = 0; i < IPOD_HEIGHT; ipod_cop_operation(i++))
-					ipod_cop_operation(scale_y[i] = (i * HEIGHT / IPOD_HEIGHT) * WIDTH);
-				break;
-			case 2: // Scale to height - width gets stretched
-				for (i = 0; i < IPOD_WIDTH; ipod_cop_operation(i++))
-					ipod_cop_operation(scale_x[i] = i * num / den);
-				for (i = 0; i < IPOD_HEIGHT; ipod_cop_operation(i++))
-					ipod_cop_operation(scale_y[i] = (i * HEIGHT / IPOD_HEIGHT) * WIDTH);
-				break;
-			case 3: // Scale to width - height gets shortened (slightly faster benchmark than others due to using clear pixel)
-				for (i = 0; i < IPOD_WIDTH; ipod_cop_operation(i++))
-					ipod_cop_operation(scale_x[i] = i * WIDTH / IPOD_WIDTH);
-				for (i = 0; i < IPOD_HEIGHT; ipod_cop_operation(i++))
-					ipod_cop_operation(scale_y[i] = (i * WIDTH / IPOD_WIDTH) * WIDTH);
-				break;
+	int x, y, p_ipod, p_src;
+	for (y = 0; y < IPOD_HEIGHT; y++) {
+		for (x = 0; x < IPOD_WIDTH; x++) {
+			p_ipod = x + y * IPOD_WIDTH;
+			p_src = scale_x[x] + scale_y[y];
+			ipod_screen[p_ipod] = screen[p_src];
 		}
 	}
 }
 
-void ipod_clear_screen(u16 color)
+// Two pixel blending
+static void ipod_update_screen_default_smooth() // No bound checks
 {
-	u16 *buffer_screen;
-	ipod_cop_operation(buffer_screen = screen);
-	int x, y;
-	for (y = 0; y < HEIGHT; ipod_cop_operation(y++)) {
-		for (x = 0; x < WIDTH; ipod_cop_operation(x++)) {
-			ipod_cop_operation(*buffer_screen = color);
-			ipod_cop_operation(buffer_screen++);
-		}	
+	int x, y, p_ipod, p_src;
+	uint16 p1, p2;
+	for (y = 0; y < IPOD_HEIGHT; y++) {
+		for (x = 0; x < IPOD_WIDTH; x++) {
+			p_ipod = x + y * IPOD_WIDTH;
+			p_src = scale_x[x] + scale_y[y];
+			p1 = screen[p_src]; // Pixel
+			p2 = screen[p_src + 1]; // Pixel to the right
+			ipod_screen[p_ipod] = blend_pixels_2_RGB565(p1, p2);
+		}
+	}
+}
+
+// Four pixel blending
+static void ipod_update_screen_default_smoother() // No bound checks
+{
+	int x, y, p_ipod, p_src;
+	uint16 p1, p2, p3, p4;
+	for (y = 0; y < IPOD_HEIGHT; y++) {
+		for (x = 0; x < IPOD_WIDTH; x++) {
+			p_ipod = x + y * IPOD_WIDTH;
+			p_src = scale_x[x] + scale_y[y];
+			p1 = screen[p_src]; // Pixel
+			p2 = screen[p_src + 1]; // Pixel to the right
+			p3 = screen[p_src + WIDTH]; // Pixel underneath
+			p4 = screen[p_src + WIDTH + 1]; // Pixel underneath to the right
+			ipod_screen[p_ipod] = blend_pixels_4_RGB565(p1, p2, p3, p4);
+		}
+	}
+}
+
+// For 5G and photo (not sure if works on photo though)
+static void ipod_update_screen_unscaled_big()
+{
+	int x, y, sx, sy, p_ipod, p_src;
+	for (y = scale_y_offset, sy = 0; y <= scale_y_max; y++, sy++) {
+		for (x = scale_x_offset, sx = 0; x <= scale_x_max; x++, sx++) {
+			p_ipod = x + y * IPOD_WIDTH;
+			p_src = scale_x[sx] + scale_y[sy];
+			ipod_screen[p_ipod] = screen[p_src];
+		}
+	}
+}
+
+// Two pixel blending
+static void ipod_update_screen_unscaled_big_smooth()
+{
+	int x, y, sx, sy, p_ipod, p_src;
+	uint16 p1, p2;
+	for (y = scale_y_offset, sy = 0; y <= scale_y_max; y++, sy++) {
+		for (x = scale_x_offset, sx = 0; x <= scale_x_max; x++, sx++) {
+			p_ipod = x + y * IPOD_WIDTH;
+			p_src = scale_x[sx] + scale_y[sy];
+			p1 = screen[p_src]; // Pixel
+			p2 = screen[p_src + 1]; // Pixel to the right
+			ipod_screen[p_ipod] = blend_pixels_2_RGB565(p1, p2);
+		}
+	}
+}
+
+// Four pixel blending
+static void ipod_update_screen_unscaled_big_smoother()
+{
+	int x, y, sx, sy, p_ipod, p_src;
+	uint16 p1, p2, p3, p4;
+	for (y = scale_y_offset, sy = 0; y <= scale_y_max; y++, sy++) {
+		for (x = scale_x_offset, sx = 0; x <= scale_x_max; x++, sx++) {
+			p_ipod = x + y * IPOD_WIDTH;
+			p_src = scale_x[sx] + scale_y[sy];
+			p1 = screen[p_src]; // Pixel
+			p2 = screen[p_src + 1]; // Pixel to the right
+			p3 = screen[p_src + WIDTH]; // Pixel underneath
+			p4 = screen[p_src + WIDTH + 1]; // Pixel underneath to the right
+			ipod_screen[p_ipod] = blend_pixels_4_RGB565(p1, p2, p3, p4);
+		}
+	}
+}
+
+// Doesn't fill full screen
+static void ipod_update_screen_width()
+{
+	int x, y, sy, p_ipod, p_src;
+	for (y = scale_y_offset, sy = 0; y <= scale_y_max; y++, sy++) {
+		for (x = 0; x < IPOD_WIDTH; x++) {
+			p_ipod = x + y * IPOD_WIDTH;
+			p_src = scale_x[x] + scale_y[sy];
+			ipod_screen[p_ipod] = screen[p_src];
+		}
+	}
+}
+
+// Two pixel blending
+static void ipod_update_screen_width_smooth()
+{
+	int x, y, sy, p_ipod, p_src;
+	uint16 p1, p2;
+	for (y = scale_y_offset, sy = 0; y <= scale_y_max; y++, sy++) {
+		for (x = 0; x < IPOD_WIDTH; x++) {
+			p_ipod = x + y * IPOD_WIDTH;
+			p_src = scale_x[x] + scale_y[sy];
+			p1 = screen[p_src]; // Pixel
+			p2 = screen[p_src + 1]; // Pixel to the right
+			ipod_screen[p_ipod] = blend_pixels_2_RGB565(p1, p2);
+		}
+	}
+}
+
+// Four pixel blending
+static void ipod_update_screen_width_smoother()
+{
+	int x, y, sy, p_ipod, p_src;
+	uint16 p1, p2, p3, p4;
+	for (y = scale_y_offset, sy = 0; y <= scale_y_max; y++, sy++) {
+		for (x = 0; x < IPOD_WIDTH; x++) {
+			p_ipod = x + y * IPOD_WIDTH;
+			p_src = scale_x[x] + scale_y[sy];
+			p1 = screen[p_src]; // Pixel
+			p2 = screen[p_src + 1]; // Pixel to the right
+			p3 = screen[p_src + WIDTH]; // Pixel underneath
+			p4 = screen[p_src + WIDTH + 1]; // Pixel underneath to the right
+			ipod_screen[p_ipod] = blend_pixels_4_RGB565(p1, p2, p3, p4);
+		}
+	}
+}
+
+// Monochrome iPods - will be slightly slower due to extra conversion but
+// I don't want to duplicate code just for this; besides, not many people use monochromes
+static void ipod_update_screen_convert_to_mono()
+{
+	int i, max;
+	max = IPOD_WIDTH * IPOD_HEIGHT;
+	for (i = 0; i < max; i++) { // Linear - don't worry about co-ordinates
+		ipod_screen_mono[i] = get_Y_from_RGB565(ipod_screen[i]);
 	}
 }
 
 void ipod_update_screen()
 {
-	int x, y;
-	u32 p;
-	u16 *buffer_screen;
-	ipod_cop_operation(buffer_screen = ipod_screen);
-	
-	if (scale_type_current == 3) { // Make sure not to go outside screen boundaries
-		for (y = 0; y < IPOD_HEIGHT; ipod_cop_operation(y++)) {
-			for (x = 0; x < IPOD_WIDTH; ipod_cop_operation(x++)) {
-				ipod_cop_operation(p = scale_x[x] + scale_y[y]);
-				if (p < MAX_PIXEL) {
-					ipod_cop_operation(*buffer_screen = screen[p]);
-				} else {
-					ipod_cop_operation(*buffer_screen = CLEAR);
-				}
-				ipod_cop_operation(buffer_screen++);
-			}	
-		}
+	ipod_update_screen_funct();
+	if (monochrome) {
+		ipod_update_screen_convert_to_mono();
+		HD_LCD_Update(ipod_screen_mono, 0, 0, IPOD_WIDTH, IPOD_HEIGHT);
 	} else {
-		for (y = 0; y < IPOD_HEIGHT; ipod_cop_operation(y++)) {
-			for (x = 0; x < IPOD_WIDTH; ipod_cop_operation(x++)) {
-				ipod_cop_operation(p = scale_x[x] + scale_y[y]);
-				ipod_cop_operation(*buffer_screen = screen[p]);
-				ipod_cop_operation(buffer_screen++);
-			}
-		}
+		HD_LCD_Update(ipod_screen, 0, 0, IPOD_WIDTH, IPOD_HEIGHT);
 	}
-	HD_LCD_Update(ipod_screen, 0, 0, IPOD_WIDTH, IPOD_HEIGHT);
+}
+
+void ipod_clear_screen()
+{
+	int i, max;
+	max = IPOD_WIDTH * IPOD_HEIGHT;
+	for (i = 0; i < max; i++) { // Linear - don't worry about co-ordinates
+		ipod_screen[i] = CLEAR;
+	}
+}
+
+void ipod_update_scale_type()
+{
+	if (scale_type_current != ipod_scale_type ||
+		smooth_type_current != ipod_smooth_type) {
+		scale_type_current = ipod_scale_type;
+		smooth_type_current = ipod_smooth_type;
+		int i;
+		switch (scale_type_current) {
+			case 0: // Unscaled
+				scale_x_offset = (IPOD_WIDTH - WIDTH) / 2;
+				scale_y_offset = (IPOD_HEIGHT - HEIGHT) / 2;
+				
+				if (IPOD_HEIGHT > HEIGHT || IPOD_WIDTH > WIDTH) { // iPod video or photo
+					scale_x_max = IPOD_WIDTH - scale_x_offset;
+					scale_y_max = IPOD_HEIGHT - scale_y_offset;
+					
+					for (i = 0; i < IPOD_WIDTH; i++)
+						scale_x[i] = i;
+					for (i = 0; i < IPOD_HEIGHT; i++)
+						scale_y[i] = i * WIDTH;
+					
+					if (ipod_smooth_type == 0) {
+						ipod_update_screen_funct = ipod_update_screen_unscaled_big;
+					} else if (ipod_smooth_type == 1) {
+						ipod_update_screen_funct = ipod_update_screen_unscaled_big_smooth;
+					} else {
+						ipod_update_screen_funct = ipod_update_screen_unscaled_big_smoother;
+					}
+				} else {
+					scale_x_max = IGNORE;
+					scale_y_max = IGNORE;
+					
+					for (i = 0; i < IPOD_WIDTH; i++)
+						scale_x[i] = i - scale_x_offset; // - negative = positive
+					for (i = 0; i < IPOD_HEIGHT; i++)
+						scale_y[i] = (i - scale_y_offset) * WIDTH;
+					
+					if (ipod_smooth_type == 0) {
+						ipod_update_screen_funct = ipod_update_screen_default;
+					} else if (ipod_smooth_type == 1) {
+						ipod_update_screen_funct = ipod_update_screen_default_smooth;
+					} else {
+						ipod_update_screen_funct = ipod_update_screen_default_smoother;
+					}
+				}
+				break;
+			case 1: // Full-screen
+				scale_x_offset = IGNORE;
+				scale_y_offset = IGNORE;
+				scale_x_max = IGNORE;
+				scale_y_max = IGNORE;
+				
+				for (i = 0; i < IPOD_WIDTH; i++)
+					scale_x[i] = i * WIDTH / IPOD_WIDTH;
+				for (i = 0; i < IPOD_HEIGHT; i++)
+					scale_y[i] = (i * HEIGHT / IPOD_HEIGHT) * WIDTH;
+				
+				if (ipod_smooth_type == 0) {
+					ipod_update_screen_funct = ipod_update_screen_default;
+				} else if (ipod_smooth_type == 1) {
+					ipod_update_screen_funct = ipod_update_screen_default_smooth;
+				} else {
+					ipod_update_screen_funct = ipod_update_screen_default_smoother;
+				}
+				break;
+			case 2: // Scale to height - width gets stretched
+				scale_x_offset = (IPOD_WIDTH - WIDTH * IPOD_HEIGHT / HEIGHT) / 2;
+				scale_y_offset = IGNORE;
+				scale_x_max = IGNORE;
+				scale_y_max = IGNORE;
+				
+				for (i = 0; i < IPOD_WIDTH; i++)
+					scale_x[i] = (i - scale_x_offset) * HEIGHT / IPOD_HEIGHT;
+				for (i = 0; i < IPOD_HEIGHT; i++)
+					scale_y[i] = (i * HEIGHT / IPOD_HEIGHT) * WIDTH;
+				
+				if (ipod_smooth_type == 0) {
+					ipod_update_screen_funct = ipod_update_screen_default;
+				} else if (ipod_smooth_type == 1) {
+					ipod_update_screen_funct = ipod_update_screen_default_smooth;
+				} else {
+					ipod_update_screen_funct = ipod_update_screen_default_smoother;
+				}
+				break;
+			case 3: // Scale to width - height gets shortened
+				scale_x_offset = IGNORE;
+				scale_y_offset = (IPOD_HEIGHT - HEIGHT * IPOD_WIDTH / WIDTH) / 2;
+				scale_x_max = IGNORE;
+				scale_y_max = IPOD_HEIGHT - scale_y_offset;
+				
+				for (i = 0; i < IPOD_WIDTH; i++)
+					scale_x[i] = i * WIDTH / IPOD_WIDTH;
+				for (i = 0; i < IPOD_HEIGHT; i++)
+					scale_y[i] = (i * WIDTH / IPOD_WIDTH) * WIDTH;
+				
+				if (ipod_smooth_type == 0) {
+					ipod_update_screen_funct = ipod_update_screen_width;
+				} else if (ipod_smooth_type == 1) {
+					ipod_update_screen_funct = ipod_update_screen_width_smooth;
+				} else {
+					ipod_update_screen_funct = ipod_update_screen_width_smoother;
+				}
+				break;
+		}
+		// Note that this sometimes screws up due to syncing issues
+		// Screwy pixels get cleared when the menu is exited though
+		ipod_clear_screen(CLEAR);
+	}
 }
 
 void ipod_init_video()
 {
 	HD_LCD_Init();
-	HD_LCD_GetInfo (0, &IPOD_WIDTH, &IPOD_HEIGHT, 0);
-	ipod_screen = (uint16 *)(malloc(IPOD_WIDTH * IPOD_HEIGHT * 2));
+	HD_LCD_GetInfo(&IPOD_HW_VER, &IPOD_WIDTH, &IPOD_HEIGHT, &IPOD_LCD_TYPE);
 	
-	// For scale to width
-	ipod_cop_operation(
-		MAX_PIXEL =	(IPOD_WIDTH * WIDTH / IPOD_WIDTH)
-		+ ((IPOD_HEIGHT * HEIGHT / IPOD_HEIGHT) * WIDTH) - WIDTH
-		);
-	ipod_cop_operation(num = WIDTH * HEIGHT * IPOD_WIDTH);
-	ipod_cop_operation(den = IPOD_WIDTH * IPOD_HEIGHT * WIDTH);
+	if (IPOD_LCD_TYPE == 2 || IPOD_LCD_TYPE == 3) { // monochromes (1-4G & minis)
+		monochrome = 1;
+		ipod_screen = malloc(IPOD_WIDTH * IPOD_HEIGHT * 2);
+		ipod_screen_mono = malloc(IPOD_WIDTH * IPOD_HEIGHT * 2);
+	} else {
+		monochrome = 0;
+		ipod_screen = malloc(IPOD_WIDTH * IPOD_HEIGHT * 2);
+		ipod_screen_mono = NULL;
+	}
 	
-	ipod_scale_type = 3; // Default scale width - place this into some config file
+	ipod_scale_type = 1; // Default scale width - place this into some config file
+	ipod_smooth_type = 2; // Default scale width - place this into some config file
 	ipod_update_scale_type();
 }
 
 void ipod_exit_video()
 {
+	free(screen);
+	free(ipod_screen);
 	HD_LCD_Quit();
 }
-

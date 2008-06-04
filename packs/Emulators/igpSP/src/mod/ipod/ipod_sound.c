@@ -1,5 +1,5 @@
 /*
- * Last updated: May 22, 2008
+ * Last updated: May 31, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo, Various
@@ -21,6 +21,41 @@
 
 #include "ipod_common.h"
 
-// TODO
-// Sound handling and volume control - see iBoy
+extern u32 sound_fd;
+extern u32 sound_frequency;
+
+int ipod_mixer;
+int ipod_volume;
+
+static int volume_current = -1;
+
+void ipod_update_volume()
+{
+	if (volume_current != ipod_volume) {
+		volume_current = ipod_volume;
+		int vol;
+		vol = volume_current << 8 | volume_current;
+		ioctl(ipod_mixer, SOUND_MIXER_WRITE_PCM, &vol);
+	}
+}
+
+void ipod_init_sound()
+{
+	sound_fd = open("/dev/dsp", O_WRONLY);
+	ipod_mixer = open("/dev/mixer", O_RDWR);
+	
+	ipod_volume = 90; // Default volume level - place this into some config file
+	ipod_update_volume();
+	
+	int channels;
+	channels = 1; // Mono MUCH better and smoother than stereo!
+	ioctl(sound_fd, SNDCTL_DSP_CHANNELS, &channels);
+	ioctl(sound_fd, SNDCTL_DSP_SPEED, &sound_frequency);
+}
+
+void ipod_exit_sound()
+{
+	close(sound_fd);
+	close(ipod_mixer);
+}
 

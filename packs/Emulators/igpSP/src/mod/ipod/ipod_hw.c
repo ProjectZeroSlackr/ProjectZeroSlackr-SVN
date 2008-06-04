@@ -1,5 +1,5 @@
 /*
- * Last updated: May 22, 2008
+ * Last updated: May 31, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo, Various
@@ -20,10 +20,12 @@
  */
 
 #include "ipod_common.h"
+#include "ipod_hw.h"
 
 int ipod_contrast;
 int ipod_cpu_speed;
-static int ipod_backlight;
+
+static int ipod_backlight = -1;
 static int contrast_current = -1;
 static int cpu_speed_current = -1;
 
@@ -89,12 +91,6 @@ void ipod_update_contrast()
 	}
 }
 
-#define CLOCK_SCALER	0x60006034
-#define CLOCK_POLICY	0x60006020
-#define RUN_CLK(x) (0x20000000 | ((x) <<  4))
-#define RUN_GET(x) ((inl(CLOCK_POLICY) & 0x0fffff8f) | RUN_CLK(x))
-#define RUN_SET(x) outl(RUN_GET(x), CLOCK_POLICY)
-
 // See ipod_common.h for postscalar constants
 static void ipod_set_cpu_speed(int postscalar)
 {
@@ -106,18 +102,23 @@ static void ipod_set_cpu_speed(int postscalar)
 	RUN_SET(0x7);
 }
 
+// Note: Do NOT keep at 81MHz too long (i.e. over 15-30min) as iPod get hot
+// After a certain temperature, igpSP gets screwy and iPL stops functioning
 void ipod_update_cpu_speed()
 {
 	if (cpu_speed_current != ipod_cpu_speed) {
 		cpu_speed_current = ipod_cpu_speed;
 		switch (cpu_speed_current) {
-			case 0: // Normal
+			case 0: // Underclock
+				ipod_set_cpu_speed(CPU_66MHz);
+				break;
+			case 1: // Normal
 				ipod_set_cpu_speed(CPU_75MHz);
 				break;
-			case 1: // Overclock
+			case 2: // Overclock
 				ipod_set_cpu_speed(CPU_78MHz);
 				break;
-			case 2: // Max overclock
+			case 3: // Max overclock - Unstable!
 				ipod_set_cpu_speed(CPU_81MHz);
 				break;
 		}
@@ -127,7 +128,7 @@ void ipod_update_cpu_speed()
 void ipod_init_hw()
 {
 	ipod_backlight = 1; // For book-keeping purposes only
-	ipod_cpu_speed = 1; // Default overclock - place this into some config file
+	ipod_cpu_speed = 2; // Default overclocked - place this into some config file
 	ipod_contrast = ipod_get_contrast();
 	ipod_set_backlight(BACKLIGHT_ON);
 	ipod_update_cpu_speed();
@@ -135,7 +136,8 @@ void ipod_init_hw()
 
 void ipod_exit_hw()
 {
-	ipod_set_backlight(BACKLIGHT_ON);
 	ipod_set_cpu_speed(CPU_75MHz); // Normal iPL speed
+	ipod_set_backlight(BACKLIGHT_ON);
 }
+
 

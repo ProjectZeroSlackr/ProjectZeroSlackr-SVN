@@ -1,5 +1,5 @@
 /*
- * Last updated: May 22, 2008
+ * Last updated: May 31, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo, Various
@@ -20,7 +20,4 @@
  */
 
 #include "ipod_common.h"
-
-// TODO
-// hotdog menu for emulators separate from emulation - write from scratch
 
