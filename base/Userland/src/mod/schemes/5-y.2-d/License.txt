@@ -1,0 +1,23 @@
+This scheme was created after I saw a 5-y.2-d
+picture with an iPod in it. The background
+artwork is drawn by Kantoku of the doujin group
+"Afterschool of the 5th Year" or 5-y.2-d. Their
+website is http://5-y.2-d.jp/ though it contains
+links to adult material and is not safe for work
+(NSFW!!!). The other graphics are also borrowed
+from the website's background images, etc. The
+original art can be found at the 2008-05-07 entry
+or at http://5-y.2-d.jp/pict/2008-05-07_.jpg
+
+While the artwork is not under any clear license,
+I am using it in this scheme as free content as
+the picture is very small and degraded in quality.
+Usage of this artwork is not intended to cause
+any harm or benefits to either parties. If you do
+not agree with this view, do not use this scheme.
+
+The .png files were created using Photoshop CS3 10.0.
+To create them, the original images were resized,
+the colour set to Indexed, Selective, 32, then
+edited/cleaned up by hand. The monochrome images
+were set to grayscale, then smudged by hand.

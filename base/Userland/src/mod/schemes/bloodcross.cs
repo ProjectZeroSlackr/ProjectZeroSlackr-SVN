@@ -1,6 +1,7 @@
 \name Blood Cross
-# Last updated: March 14, 2008
-# ~Keripo
+# Scheme created on 06/06/06.
+# by Keripo
+# Last updated: Mar 14, 2008
 
 # Due to a bug in TTK, using #FF00FF will allow for transparency ; )
 \def clear	#FF00FF
