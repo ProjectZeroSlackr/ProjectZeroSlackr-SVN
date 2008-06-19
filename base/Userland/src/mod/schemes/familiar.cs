@@ -1,8 +1,8 @@
 \name Familiar
-# The colour scheme you all know.
-# Modified to add group headings
-# Last updated: March 17, 2008
-# ~Keripo
+# The colour scheme you all know, modified to add group headings
+# by Keripo
+# Last updated: Mar 17, 2008
+
 \def black  #000000
 \def white  #ffffff
 \def nearblack #111111
