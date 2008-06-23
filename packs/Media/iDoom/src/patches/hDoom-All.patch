@@ -54,7 +54,7 @@ diff -ur d_main.c d_main.c
      // Commercial.
 -    doom2wad = malloc(strlen(doomwaddir)+1+9+1);
 -    sprintf(doom2wad, "%s/doom2.wad", doomwaddir);
-+    if (M_CheckParm ("-freedoom")) {
++    if (M_CheckParm ("-freedoom")) { // ~Keripo
 +        // Note that FreeDM is just an empty IWAD with no monsters
 +        // It is used here intended as an IWAD lump supplier for PWADs
 +        // The FreeDoom IWAD does not work with vanilla Doom unfortunately
@@ -106,7 +106,7 @@ diff -ur g_game.c g_game.c
 +// Thus, player should stop moving when user is not touching the iPod's wheel
 +// Note that this doesn't fix kep presses getting stuck ; /
 +extern int IPOD_HW_VER;
-+static int ipod_wheel_is_touched()
++static int ipod_wheel_is_touched() // ~Keripo
 +{
 +    int touch;
 +    touch = 0xff;
@@ -135,7 +135,7 @@ diff -ur g_game.c g_game.c
 +    // For stuck keys, press the key again for the keyup event ; /
 +    // This will, however, prevent further forward moving
 +    // speed increases and thus prevent accidental rushes.
-+    if (ipod_wheel_is_touched()) {
++    if (ipod_wheel_is_touched()) { // ~Keripo
 +        cmd->forwardmove += forward;
 +        cmd->sidemove += side;
 +    } else {
@@ -812,7 +812,7 @@ diff -ur i_video.c i_video.c
 -	    olineptrs[2] += 2*X_width/4;
 -	}
 -
-+    if (monochrome) {
++    if (monochrome) { // Untested - mono owners please contact Keripo!
 +        int x, y, p_ipod, p_src;
 +        for (y = 0; y < IPOD_HEIGHT; y++) {
 +            for (x = 0; x < IPOD_WIDTH; x++) {
@@ -820,12 +820,12 @@ diff -ur i_video.c i_video.c
 +                p_src = x * SCREENWIDTH / IPOD_WIDTH
 +                    + (y * SCREENHEIGHT / IPOD_HEIGHT) * SCREENWIDTH;
 +                ipod_screen_mono[p_ipod] = screens[0][p_src];
-+            }
++            } // ^ probably doesn't work and needs palette->RGB565->Y'UV's Y
 +        }
 +        HD_LCD_Update(ipod_screen_mono, 0, 0, IPOD_WIDTH, IPOD_HEIGHT);
 +    } else {
 +        int x, y, p_ipod, p_src;
-+		uint16 p1, p2, p3;
++        uint16 p1, p2, p3;
 +        for (y = 0; y < IPOD_HEIGHT; y++) {
 +            for (x = 0; x < IPOD_WIDTH; x++) {
 +                p_ipod = x + y * IPOD_WIDTH;
