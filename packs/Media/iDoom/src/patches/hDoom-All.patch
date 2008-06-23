@@ -1,0 +1,1967 @@
+diff -ur Makefile Makefile
+--- Makefile	1997-12-22 14:55:36.000000000 -0500
++++ Makefile	2008-06-22 12:43:54.062500000 -0400
+@@ -1,14 +1,18 @@
+ ################################################################
+ #
+-# $Id:$
++# Last updated: Jun 22, 2008
++# ~Keripo
+ #
+-# $Log:$
++# hDoom 1.10 K1 by Keripo
++# Port of original Doom source code to iPodLinux via hotdog
++# Based on iDoom, sdldoom and igpSP source code
+ #
+-CC=  gcc  # gcc or g++
++CC=arm-uclinux-elf-gcc
+ 
+-CFLAGS=-g -Wall -DNORMALUNIX -DLINUX # -DUSEASM 
+-LDFLAGS=-L/usr/X11R6/lib
+-LIBS=-lXext -lX11 -lnsl -lm
++CFLAGS=-O3 -msoft-float -fpack-struct -mstructure-size-boundary=8 \
++       -I../hotdog -DNORMALUNIX -DLINUX
++LDFLAGS=-elf2flt
++LIBS=-L../hotdog/ipod -lhotdog -lm
+ 
+ # subdirectory for objects
+ O=linux
+@@ -77,15 +81,15 @@
+ 		$(O)/info.o				\
+ 		$(O)/sounds.o
+ 
+-all:	 $(O)/linuxxdoom
++all:	 $(O)/hDoom
+ 
+ clean:
+ 	rm -f *.o *~ *.flc
+ 	rm -f linux/*
+ 
+-$(O)/linuxxdoom:	$(OBJS) $(O)/i_main.o
++$(O)/hDoom:	$(OBJS) $(O)/i_main.o
+ 	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) $(O)/i_main.o \
+-	-o $(O)/linuxxdoom $(LIBS)
++	-o $(O)/hDoom $(LIBS)
+ 
+ $(O)/%.o:	%.c
+ 	$(CC) $(CFLAGS) -c $< -o $@
+diff -ur d_main.c d_main.c
+--- d_main.c	1997-12-22 15:32:03.000000000 -0500
++++ d_main.c	2008-06-22 22:08:22.796875000 -0400
+@@ -580,8 +580,16 @@
+ 	doomwaddir = ".";
+ 
+     // Commercial.
+-    doom2wad = malloc(strlen(doomwaddir)+1+9+1);
+-    sprintf(doom2wad, "%s/doom2.wad", doomwaddir);
++    if (M_CheckParm ("-freedoom")) {
++        // Note that FreeDM is just an empty IWAD with no monsters
++        // It is used here intended as an IWAD lump supplier for PWADs
++        // The FreeDoom IWAD does not work with vanilla Doom unfortunately
++        doom2wad = malloc(strlen(doomwaddir)+1+10+1);
++        sprintf(doom2wad, "%s/freedm.wad", doomwaddir);
++    } else {
++        doom2wad = malloc(strlen(doomwaddir)+1+9+1);
++        sprintf(doom2wad, "%s/doom2.wad", doomwaddir);
++    }
+ 
+     // Retail.
+     doomuwad = malloc(strlen(doomwaddir)+1+8+1);
+@@ -608,9 +616,7 @@
+     doom2fwad = malloc(strlen(doomwaddir)+1+10+1);
+     sprintf(doom2fwad, "%s/doom2f.wad", doomwaddir);
+ 
+-    home = getenv("HOME");
+-    if (!home)
+-      I_Error("Please set $HOME to your home directory");
++    home = ".";
+     sprintf(basedefault, "%s/.doomrc", home);
+ #endif
+ 
+diff -ur d_ticcmd.h d_ticcmd.h
+--- d_ticcmd.h	1997-12-22 15:03:44.000000000 -0500
++++ d_ticcmd.h	2008-06-21 16:03:56.859375000 -0400
+@@ -33,10 +33,11 @@
+ // and transmitted to other peers (multiplayer).
+ // Mainly movements/button commands per game tick,
+ // plus a checksum for internal state consistency.
++// Signed so that strafing left and moving backwards works ~Keripo
+ typedef struct
+ {
+-    char	forwardmove;	// *2048 for move
+-    char	sidemove;	// *2048 for move
++    signed char	forwardmove;	// *2048 for move
++    signed char	sidemove;	// *2048 for move
+     short	angleturn;	// <<16 for angle delta
+     short	consistancy;	// checks for net game
+     byte	chatchar;
+diff -ur g_game.c g_game.c
+--- g_game.c	1997-12-22 15:35:29.000000000 -0500
++++ g_game.c	2008-06-22 12:01:06.218750000 -0400
+@@ -227,6 +227,26 @@
+     return sum; 
+ } 
+  
++// Needed since sometimes strafing get stuck in-game
++// Thus, player should stop moving when user is not touching the iPod's wheel
++// Note that this doesn't fix kep presses getting stuck ; /
++extern int IPOD_HW_VER;
++static int ipod_wheel_is_touched()
++{
++    int touch;
++    touch = 0xff;
++    if (IPOD_HW_VER != 0x4 && IPOD_HW_VER != 0x3) { // mini 1G or 3G
++        int in, st;
++        in = inl(0x7000C140);
++        st = ((in & 0xff000000) >> 24);
++        if (st == 0xc0)
++            touch = (in & 0x007F0000 ) >> 16;
++    }
++    if (touch != 0xff)
++        return 1;
++    else
++        return 0;
++}
+ 
+ //
+ // G_BuildTiccmd
+@@ -419,8 +439,17 @@
+     else if (side < -MAXPLMOVE) 
+ 	side = -MAXPLMOVE; 
+  
+-    cmd->forwardmove += forward; 
+-    cmd->sidemove += side;
++    // Note that this doesn't fix key presses getting stuck.
++    // For stuck keys, press the key again for the keyup event ; /
++    // This will, however, prevent further forward moving
++    // speed increases and thus prevent accidental rushes.
++    if (ipod_wheel_is_touched()) {
++        cmd->forwardmove += forward;
++        cmd->sidemove += side;
++    } else {
++        cmd->forwardmove = 0;
++        cmd->sidemove = 0;
++    }
+     
+     // special buttons
+     if (sendpause) 
+diff -ur i_net.c i_net.c
+--- i_net.c	1997-12-22 15:37:46.000000000 -0500
++++ i_net.c	2008-06-21 16:03:56.859375000 -0400
+@@ -47,24 +47,6 @@
+ #endif
+ #include "i_net.h"
+ 
+-
+-
+-
+-
+-// For some odd reason...
+-#define ntohl(x) \
+-        ((unsigned long int)((((unsigned long int)(x) & 0x000000ffU) << 24) | \
+-                             (((unsigned long int)(x) & 0x0000ff00U) <<  8) | \
+-                             (((unsigned long int)(x) & 0x00ff0000U) >>  8) | \
+-                             (((unsigned long int)(x) & 0xff000000U) >> 24)))
+-
+-#define ntohs(x) \
+-        ((unsigned short int)((((unsigned short int)(x) & 0x00ff) << 8) | \
+-                              (((unsigned short int)(x) & 0xff00) >> 8))) \
+-	  
+-#define htonl(x) ntohl(x)
+-#define htons(x) ntohs(x)
+-
+ void	NetSend (void);
+ boolean NetListen (void);
+ 
+diff -ur i_video.c i_video.c
+--- i_video.c	1997-12-22 15:39:01.000000000 -0500
++++ i_video.c	2008-06-22 12:38:20.609375000 -0400
+@@ -1,54 +1,38 @@
+-// Emacs style mode select   -*- C++ -*- 
+-//-----------------------------------------------------------------------------
+-//
+-// $Id:$
+-//
+-// Copyright (C) 1993-1996 by id Software, Inc.
+-//
+-// This source is available for distribution and/or modification
+-// only under the terms of the DOOM Source Code License as
+-// published by id Software. All rights reserved.
+-//
+-// The source is distributed in the hope that it will be useful,
+-// but WITHOUT ANY WARRANTY; without even the implied warranty of
+-// FITNESS FOR A PARTICULAR PURPOSE. See the DOOM Source Code License
+-// for more details.
+-//
+-// $Log:$
+-//
+-// DESCRIPTION:
+-//	DOOM graphics stuff for X11, UNIX.
+-//
+-//-----------------------------------------------------------------------------
++/*
++ * Last updated: Jun 22, 2008
++ * ~Keripo
++ *
++ * Copyright (C) 2008 Keripo
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software Foundation,
++ * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
++ */
+ 
+ static const char
+ rcsid[] = "$Id: i_x.c,v 1.6 1997/02/03 22:45:10 b1 Exp $";
+ 
++#include "hotdog.h"
++#include "i_video.h"
++
+ #include <stdlib.h>
++#include <fcntl.h>
++#include <termios.h>
+ #include <unistd.h>
+-#include <sys/ipc.h>
+-#include <sys/shm.h>
+-
+-#include <X11/Xlib.h>
+-#include <X11/Xutil.h>
+-#include <X11/keysym.h>
+-
+-#include <X11/extensions/XShm.h>
+-// Had to dig up XShm.c for this one.
+-// It is in the libXext, but not in the XFree86 headers.
+-#ifdef LINUX
+-int XShmGetEventBase( Display* dpy ); // problems with g++?
+-#endif
+-
+-#include <stdarg.h>
+-#include <sys/time.h>
+-#include <sys/types.h>
+-#include <sys/socket.h>
+-
+-#include <netinet/in.h>
+-#include <errnos.h>
+-#include <signal.h>
++#include <linux/kd.h>
++#include <sys/ioctl.h>
+ 
++#include "m_swap.h"
+ #include "doomstat.h"
+ #include "i_system.h"
+ #include "v_video.h"
+@@ -57,122 +41,25 @@
+ 
+ #include "doomdef.h"
+ 
+-#define POINTER_WARP_COUNTDOWN	1
+-
+-Display*	X_display=0;
+-Window		X_mainWindow;
+-Colormap	X_cmap;
+-Visual*		X_visual;
+-GC		X_gc;
+-XEvent		X_event;
+-int		X_screen;
+-XVisualInfo	X_visualinfo;
+-XImage*		image;
+-int		X_width;
+-int		X_height;
+-
+-// MIT SHared Memory extension.
+-boolean		doShm;
+-
+-XShmSegmentInfo	X_shminfo;
+-int		X_shmeventtype;
+-
+-// Fake mouse handling.
+-// This cannot work properly w/o DGA.
+-// Needs an invisible mouse cursor at least.
+-boolean		grabMouse;
+-int		doPointerWarp = POINTER_WARP_COUNTDOWN;
+-
+-// Blocky mode,
+-// replace each 320x200 pixel with multiply*multiply pixels.
+-// According to Dave Taylor, it still is a bonehead thing
+-// to use ....
+-static int	multiply=1;
+-
+-
+-//
+-//  Translates the key currently in X_event
+-//
+-
+-int xlatekey(void)
+-{
+-
+-    int rc;
++// iPod stuff
++static uint16 *ipod_screen_colour; //RGB565
++static uint8 *ipod_screen_mono; //Y'UV - Y only
++static uint16 *colour_palette;
++static int monochrome = -1;
+ 
+-    switch(rc = XKeycodeToKeysym(X_display, X_event.xkey.keycode, 0))
+-    {
+-      case XK_Left:	rc = KEY_LEFTARROW;	break;
+-      case XK_Right:	rc = KEY_RIGHTARROW;	break;
+-      case XK_Down:	rc = KEY_DOWNARROW;	break;
+-      case XK_Up:	rc = KEY_UPARROW;	break;
+-      case XK_Escape:	rc = KEY_ESCAPE;	break;
+-      case XK_Return:	rc = KEY_ENTER;		break;
+-      case XK_Tab:	rc = KEY_TAB;		break;
+-      case XK_F1:	rc = KEY_F1;		break;
+-      case XK_F2:	rc = KEY_F2;		break;
+-      case XK_F3:	rc = KEY_F3;		break;
+-      case XK_F4:	rc = KEY_F4;		break;
+-      case XK_F5:	rc = KEY_F5;		break;
+-      case XK_F6:	rc = KEY_F6;		break;
+-      case XK_F7:	rc = KEY_F7;		break;
+-      case XK_F8:	rc = KEY_F8;		break;
+-      case XK_F9:	rc = KEY_F9;		break;
+-      case XK_F10:	rc = KEY_F10;		break;
+-      case XK_F11:	rc = KEY_F11;		break;
+-      case XK_F12:	rc = KEY_F12;		break;
+-	
+-      case XK_BackSpace:
+-      case XK_Delete:	rc = KEY_BACKSPACE;	break;
+-
+-      case XK_Pause:	rc = KEY_PAUSE;		break;
+-
+-      case XK_KP_Equal:
+-      case XK_equal:	rc = KEY_EQUALS;	break;
+-
+-      case XK_KP_Subtract:
+-      case XK_minus:	rc = KEY_MINUS;		break;
+-
+-      case XK_Shift_L:
+-      case XK_Shift_R:
+-	rc = KEY_RSHIFT;
+-	break;
+-	
+-      case XK_Control_L:
+-      case XK_Control_R:
+-	rc = KEY_RCTRL;
+-	break;
+-	
+-      case XK_Alt_L:
+-      case XK_Meta_L:
+-      case XK_Alt_R:
+-      case XK_Meta_R:
+-	rc = KEY_RALT;
+-	break;
+-	
+-      default:
+-	if (rc >= XK_space && rc <= XK_asciitilde)
+-	    rc = rc - XK_space + ' ';
+-	if (rc >= 'A' && rc <= 'Z')
+-	    rc = rc - 'A' + 'a';
+-	break;
+-    }
++int IPOD_HW_VER, IPOD_LCD_TYPE;
++static int IPOD_WIDTH, IPOD_HEIGHT;
+ 
+-    return rc;
+-
+-}
++static int console;
++static struct termios stored_settings;
+ 
+ void I_ShutdownGraphics(void)
+ {
+-  // Detach from X server
+-  if (!XShmDetach(X_display, &X_shminfo))
+-	    I_Error("XShmDetach() failed in I_ShutdownGraphics()");
+-
+-  // Release shared memory.
+-  shmdt(X_shminfo.shmaddr);
+-  shmctl(X_shminfo.shmid, IPC_RMID, 0);
+-
+-  // Paranoia.
+-  image->data = NULL;
++    close(console);
++    free(ipod_screen_mono);
++    free(ipod_screen_colour);
++    free(colour_palette);
++    HD_LCD_Quit();
+ }
+ 
+ 
+@@ -186,121 +73,144 @@
+ 
+ }
+ 
+-static int	lastmousex = 0;
+-static int	lastmousey = 0;
+-boolean		mousemoved = false;
+-boolean		shmFinished;
++static inline int ipod_get_keypress()
++{
++    int press = 0;
++    if (read(console, &press, 1) != 1)
++        return KEY_NULL;
++    return press;
++}
++
++// For wheel scrolling
++#define SCROLL_MOD_NUM 4 // Arbitrary number via experimentation
++static int scroll_count_l = 0;
++static int scroll_count_r = 0;
++
++#define cancel_scroll() \
++  scroll_count_l = 0; \
++  scroll_count_r = 0
++
++#define SCROLL_MOD_L(n) \
++  ({ \
++    scroll_count_r = 0; \
++    int use_l = 0; \
++    if (++scroll_count_l >= n) { \
++      scroll_count_l -= n; \
++      use_l = 1; \
++    } \
++    (use_l == 1); \
++  })
++
++#define SCROLL_MOD_R(n) \
++  ({ \
++    scroll_count_l = 0; \
++    int use_r = 0; \
++    if (++scroll_count_r >= n) { \
++      scroll_count_r -= n; \
++      use_r = 1; \
++    } \
++    (use_r == 1); \
++  })
+ 
+ void I_GetEvent(void)
+ {
+-
+-    event_t event;
+-
+-    // put event-grabbing stuff in here
+-    XNextEvent(X_display, &X_event);
+-    switch (X_event.type)
+-    {
+-      case KeyPress:
+-	event.type = ev_keydown;
+-	event.data1 = xlatekey();
+-	D_PostEvent(&event);
+-	// fprintf(stderr, "k");
+-	break;
+-      case KeyRelease:
+-	event.type = ev_keyup;
+-	event.data1 = xlatekey();
+-	D_PostEvent(&event);
+-	// fprintf(stderr, "ku");
+-	break;
+-      case ButtonPress:
+-	event.type = ev_mouse;
+-	event.data1 =
+-	    (X_event.xbutton.state & Button1Mask)
+-	    | (X_event.xbutton.state & Button2Mask ? 2 : 0)
+-	    | (X_event.xbutton.state & Button3Mask ? 4 : 0)
+-	    | (X_event.xbutton.button == Button1)
+-	    | (X_event.xbutton.button == Button2 ? 2 : 0)
+-	    | (X_event.xbutton.button == Button3 ? 4 : 0);
+-	event.data2 = event.data3 = 0;
+-	D_PostEvent(&event);
+-	// fprintf(stderr, "b");
+-	break;
+-      case ButtonRelease:
+-	event.type = ev_mouse;
+-	event.data1 =
+-	    (X_event.xbutton.state & Button1Mask)
+-	    | (X_event.xbutton.state & Button2Mask ? 2 : 0)
+-	    | (X_event.xbutton.state & Button3Mask ? 4 : 0);
+-	// suggest parentheses around arithmetic in operand of |
+-	event.data1 =
+-	    event.data1
+-	    ^ (X_event.xbutton.button == Button1 ? 1 : 0)
+-	    ^ (X_event.xbutton.button == Button2 ? 2 : 0)
+-	    ^ (X_event.xbutton.button == Button3 ? 4 : 0);
+-	event.data2 = event.data3 = 0;
+-	D_PostEvent(&event);
+-	// fprintf(stderr, "bu");
+-	break;
+-      case MotionNotify:
+-	event.type = ev_mouse;
+-	event.data1 =
+-	    (X_event.xmotion.state & Button1Mask)
+-	    | (X_event.xmotion.state & Button2Mask ? 2 : 0)
+-	    | (X_event.xmotion.state & Button3Mask ? 4 : 0);
+-	event.data2 = (X_event.xmotion.x - lastmousex) << 2;
+-	event.data3 = (lastmousey - X_event.xmotion.y) << 2;
+-
+-	if (event.data2 || event.data3)
+-	{
+-	    lastmousex = X_event.xmotion.x;
+-	    lastmousey = X_event.xmotion.y;
+-	    if (X_event.xmotion.x != X_width/2 &&
+-		X_event.xmotion.y != X_height/2)
+-	    {
+-		D_PostEvent(&event);
+-		// fprintf(stderr, "m");
+-		mousemoved = false;
+-	    } else
+-	    {
+-		mousemoved = true;
+-	    }
+-	}
+-	break;
+-	
+-      case Expose:
+-      case ConfigureNotify:
+-	break;
+-	
+-      default:
+-	if (doShm && X_event.type == X_shmeventtype) shmFinished = true;
+-	break;
++    int input;
++    while ((input = ipod_get_keypress())!= KEY_NULL) {
++        event_t event;
++        if (KEYSTATE(input)) { // Key up/lifted
++            event.type = ev_keyup;
++            input = KEYCODE(input);
++            switch(input) { // In numeric order for speed
++                case KEY_REWIND:
++                    event.data1 = KEY_LEFTARROW;
++                    D_PostEvent(&event);
++                    break;
++                case KEY_ACTION:
++                    event.data1 = ' ';
++                    D_PostEvent(&event);
++                    break;
++                case KEY_PLAY:
++                    event.data1 = KEY_RCTRL;
++                    D_PostEvent(&event);
++                    break;
++                case KEY_FORWARD:
++                    event.data1 = KEY_RIGHTARROW;
++                    D_PostEvent(&event);
++                    break;
++                case KEY_HOLD:
++                    event.data1 = KEY_ESCAPE;
++                    D_PostEvent(&event);
++                    break;
++                case KEY_MENU: 
++                    event.data1 = KEY_UPARROW;
++                    D_PostEvent(&event);
++                    break;
++                default:
++                    break;
++            }
++        } else {
++            event.type = ev_keydown;
++            input = KEYCODE(input);
++            switch(input) { // In numeric order for speed
++                case KEY_REWIND:
++                    cancel_scroll();
++                    event.data1 = KEY_LEFTARROW;
++                    D_PostEvent(&event);
++                    break;
++                case SCROLL_R:
++                    if (SCROLL_MOD_R(SCROLL_MOD_NUM)) {
++                        event.data1 = '.';
++                        D_PostEvent(&event);
++                    } else {
++                        event.type = ev_keyup;
++                        event.data1 = '.';
++                        D_PostEvent(&event);
++                        event.data1 = ',';
++                        D_PostEvent(&event);
++                    }
++                    break;
++                case KEY_ACTION:
++                    cancel_scroll();
++                    event.data1 = ' ';
++                    D_PostEvent(&event);
++                    break;
++                case KEY_PLAY:
++                    cancel_scroll();
++                    event.data1 = KEY_RCTRL;
++                    D_PostEvent(&event);
++                    break;
++                case KEY_FORWARD:
++                    cancel_scroll();
++                    event.data1 = KEY_RIGHTARROW;
++                    D_PostEvent(&event);
++                    break;
++                case KEY_HOLD:
++                    cancel_scroll();
++                    event.data1 = KEY_ESCAPE;
++                    D_PostEvent(&event);
++                    break;
++                case SCROLL_L:
++                    if (SCROLL_MOD_L(SCROLL_MOD_NUM)) {
++                        event.data1 = ',';
++                        D_PostEvent(&event);
++                    } else {
++                        event.type = ev_keyup;
++                        event.data1 = '.';
++                        D_PostEvent(&event);
++                        event.data1 = ',';
++                        D_PostEvent(&event);
++                    }
++                    break;
++                case KEY_MENU: 
++                    cancel_scroll();
++                    event.data1 = KEY_UPARROW;
++                    D_PostEvent(&event);
++                    break;
++                default:
++                    break;
++            }
++        }
+     }
+-
+-}
+-
+-Cursor
+-createnullcursor
+-( Display*	display,
+-  Window	root )
+-{
+-    Pixmap cursormask;
+-    XGCValues xgc;
+-    GC gc;
+-    XColor dummycolour;
+-    Cursor cursor;
+-
+-    cursormask = XCreatePixmap(display, root, 1, 1, 1/*depth*/);
+-    xgc.function = GXclear;
+-    gc =  XCreateGC(display, cursormask, GCFunction, &xgc);
+-    XFillRectangle(display, cursormask, gc, 0, 0, 1, 1);
+-    dummycolour.pixel = 0;
+-    dummycolour.red = 0;
+-    dummycolour.flags = 04;
+-    cursor = XCreatePixmapCursor(display, cursormask, cursormask,
+-				 &dummycolour,&dummycolour, 0,0);
+-    XFreePixmap(display,cursormask);
+-    XFreeGC(display,gc);
+-    return cursor;
+ }
+ 
+ //
+@@ -308,33 +218,7 @@
+ //
+ void I_StartTic (void)
+ {
+-
+-    if (!X_display)
+-	return;
+-
+-    while (XPending(X_display))
+-	I_GetEvent();
+-
+-    // Warp the pointer back to the middle of the window
+-    //  or it will wander off - that is, the game will
+-    //  loose input focus within X11.
+-    if (grabMouse)
+-    {
+-	if (!--doPointerWarp)
+-	{
+-	    XWarpPointer( X_display,
+-			  None,
+-			  X_mainWindow,
+-			  0, 0,
+-			  0, 0,
+-			  X_width/2, X_height/2);
+-
+-	    doPointerWarp = POINTER_WARP_COUNTDOWN;
+-	}
+-    }
+-
+-    mousemoved = false;
+-
++    I_GetEvent();
+ }
+ 
+ 
+@@ -351,173 +235,35 @@
+ //
+ void I_FinishUpdate (void)
+ {
+-
+-    static int	lasttic;
+-    int		tics;
+-    int		i;
+-    // UNUSED static unsigned char *bigscreen=0;
+-
+-    // draws little dots on the bottom of the screen
+-    if (devparm)
+-    {
+-
+-	i = I_GetTime();
+-	tics = i - lasttic;
+-	lasttic = i;
+-	if (tics > 20) tics = 20;
+-
+-	for (i=0 ; i<tics*2 ; i+=2)
+-	    screens[0][ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0xff;
+-	for ( ; i<20*2 ; i+=2)
+-	    screens[0][ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
+-    
+-    }
+-
+-    // scales the screen size before blitting it
+-    if (multiply == 2)
+-    {
+-	unsigned int *olineptrs[2];
+-	unsigned int *ilineptr;
+-	int x, y, i;
+-	unsigned int twoopixels;
+-	unsigned int twomoreopixels;
+-	unsigned int fouripixels;
+-
+-	ilineptr = (unsigned int *) (screens[0]);
+-	for (i=0 ; i<2 ; i++)
+-	    olineptrs[i] = (unsigned int *) &image->data[i*X_width];
+-
+-	y = SCREENHEIGHT;
+-	while (y--)
+-	{
+-	    x = SCREENWIDTH;
+-	    do
+-	    {
+-		fouripixels = *ilineptr++;
+-		twoopixels =	(fouripixels & 0xff000000)
+-		    |	((fouripixels>>8) & 0xffff00)
+-		    |	((fouripixels>>16) & 0xff);
+-		twomoreopixels =	((fouripixels<<16) & 0xff000000)
+-		    |	((fouripixels<<8) & 0xffff00)
+-		    |	(fouripixels & 0xff);
+-#ifdef __BIG_ENDIAN__
+-		*olineptrs[0]++ = twoopixels;
+-		*olineptrs[1]++ = twoopixels;
+-		*olineptrs[0]++ = twomoreopixels;
+-		*olineptrs[1]++ = twomoreopixels;
+-#else
+-		*olineptrs[0]++ = twomoreopixels;
+-		*olineptrs[1]++ = twomoreopixels;
+-		*olineptrs[0]++ = twoopixels;
+-		*olineptrs[1]++ = twoopixels;
+-#endif
+-	    } while (x-=4);
+-	    olineptrs[0] += X_width/4;
+-	    olineptrs[1] += X_width/4;
+-	}
+-
+-    }
+-    else if (multiply == 3)
+-    {
+-	unsigned int *olineptrs[3];
+-	unsigned int *ilineptr;
+-	int x, y, i;
+-	unsigned int fouropixels[3];
+-	unsigned int fouripixels;
+-
+-	ilineptr = (unsigned int *) (screens[0]);
+-	for (i=0 ; i<3 ; i++)
+-	    olineptrs[i] = (unsigned int *) &image->data[i*X_width];
+-
+-	y = SCREENHEIGHT;
+-	while (y--)
+-	{
+-	    x = SCREENWIDTH;
+-	    do
+-	    {
+-		fouripixels = *ilineptr++;
+-		fouropixels[0] = (fouripixels & 0xff000000)
+-		    |	((fouripixels>>8) & 0xff0000)
+-		    |	((fouripixels>>16) & 0xffff);
+-		fouropixels[1] = ((fouripixels<<8) & 0xff000000)
+-		    |	(fouripixels & 0xffff00)
+-		    |	((fouripixels>>8) & 0xff);
+-		fouropixels[2] = ((fouripixels<<16) & 0xffff0000)
+-		    |	((fouripixels<<8) & 0xff00)
+-		    |	(fouripixels & 0xff);
+-#ifdef __BIG_ENDIAN__
+-		*olineptrs[0]++ = fouropixels[0];
+-		*olineptrs[1]++ = fouropixels[0];
+-		*olineptrs[2]++ = fouropixels[0];
+-		*olineptrs[0]++ = fouropixels[1];
+-		*olineptrs[1]++ = fouropixels[1];
+-		*olineptrs[2]++ = fouropixels[1];
+-		*olineptrs[0]++ = fouropixels[2];
+-		*olineptrs[1]++ = fouropixels[2];
+-		*olineptrs[2]++ = fouropixels[2];
+-#else
+-		*olineptrs[0]++ = fouropixels[2];
+-		*olineptrs[1]++ = fouropixels[2];
+-		*olineptrs[2]++ = fouropixels[2];
+-		*olineptrs[0]++ = fouropixels[1];
+-		*olineptrs[1]++ = fouropixels[1];
+-		*olineptrs[2]++ = fouropixels[1];
+-		*olineptrs[0]++ = fouropixels[0];
+-		*olineptrs[1]++ = fouropixels[0];
+-		*olineptrs[2]++ = fouropixels[0];
+-#endif
+-	    } while (x-=4);
+-	    olineptrs[0] += 2*X_width/4;
+-	    olineptrs[1] += 2*X_width/4;
+-	    olineptrs[2] += 2*X_width/4;
+-	}
+-
++    if (monochrome) {
++        int x, y, p_ipod, p_src;
++        for (y = 0; y < IPOD_HEIGHT; y++) {
++            for (x = 0; x < IPOD_WIDTH; x++) {
++                p_ipod = x + y * IPOD_WIDTH;
++                p_src = x * SCREENWIDTH / IPOD_WIDTH
++                    + (y * SCREENHEIGHT / IPOD_HEIGHT) * SCREENWIDTH;
++                ipod_screen_mono[p_ipod] = screens[0][p_src];
++            }
++        }
++        HD_LCD_Update(ipod_screen_mono, 0, 0, IPOD_WIDTH, IPOD_HEIGHT);
++    } else {
++        int x, y, p_ipod, p_src;
++		uint16 p1, p2, p3;
++        for (y = 0; y < IPOD_HEIGHT; y++) {
++            for (x = 0; x < IPOD_WIDTH; x++) {
++                p_ipod = x + y * IPOD_WIDTH;
++                p_src = x * SCREENWIDTH / IPOD_WIDTH
++                    + (y * SCREENHEIGHT / IPOD_HEIGHT) * SCREENWIDTH;
++                // Blending is cooler
++                //ipod_screen_colour[p_ipod] = colour_palette[screens[0][p_src]];
++                p1 = colour_palette[screens[0][p_src]];
++                p2 = colour_palette[screens[0][p_src + 1]];
++                p3 = colour_palette[screens[0][p_src + SCREENWIDTH]];
++                ipod_screen_colour[p_ipod] = blend_pixels_4_RGB565(p1, p2, p3);
++            }
++        }
++        HD_LCD_Update(ipod_screen_colour, 0, 0, IPOD_WIDTH, IPOD_HEIGHT);    
+     }
+-    else if (multiply == 4)
+-    {
+-	// Broken. Gotta fix this some day.
+-	void Expand4(unsigned *, double *);
+-  	Expand4 ((unsigned *)(screens[0]), (double *) (image->data));
+-    }
+-
+-    if (doShm)
+-    {
+-
+-	if (!XShmPutImage(	X_display,
+-				X_mainWindow,
+-				X_gc,
+-				image,
+-				0, 0,
+-				0, 0,
+-				X_width, X_height,
+-				True ))
+-	    I_Error("XShmPutImage() failed\n");
+-
+-	// wait for it to finish and processes all input events
+-	shmFinished = false;
+-	do
+-	{
+-	    I_GetEvent();
+-	} while (!shmFinished);
+-
+-    }
+-    else
+-    {
+-
+-	// draw the image
+-	XPutImage(	X_display,
+-			X_mainWindow,
+-			X_gc,
+-			image,
+-			0, 0,
+-			0, 0,
+-			X_width, X_height );
+-
+-	// sync up with server
+-	XSync(X_display, False);
+-
+-    }
+-
+ }
+ 
+ 
+@@ -529,522 +275,69 @@
+     memcpy (scr, screens[0], SCREENWIDTH*SCREENHEIGHT);
+ }
+ 
+-
+-//
+-// Palette stuff.
+-//
+-static XColor	colors[256];
+-
+-void UploadNewPalette(Colormap cmap, byte *palette)
+-{
+-
+-    register int	i;
+-    register int	c;
+-    static boolean	firstcall = true;
+-
+-#ifdef __cplusplus
+-    if (X_visualinfo.c_class == PseudoColor && X_visualinfo.depth == 8)
+-#else
+-    if (X_visualinfo.class == PseudoColor && X_visualinfo.depth == 8)
+-#endif
+-	{
+-	    // initialize the colormap
+-	    if (firstcall)
+-	    {
+-		firstcall = false;
+-		for (i=0 ; i<256 ; i++)
+-		{
+-		    colors[i].pixel = i;
+-		    colors[i].flags = DoRed|DoGreen|DoBlue;
+-		}
+-	    }
+-
+-	    // set the X colormap entries
+-	    for (i=0 ; i<256 ; i++)
+-	    {
+-		c = gammatable[usegamma][*palette++];
+-		colors[i].red = (c<<8) + c;
+-		c = gammatable[usegamma][*palette++];
+-		colors[i].green = (c<<8) + c;
+-		c = gammatable[usegamma][*palette++];
+-		colors[i].blue = (c<<8) + c;
+-	    }
+-
+-	    // store the colors to the current colormap
+-	    XStoreColors(X_display, cmap, colors, 256);
+-
+-	}
+-}
+-
+ //
+ // I_SetPalette
+ //
+ void I_SetPalette (byte* palette)
+ {
+-    UploadNewPalette(X_cmap, palette);
+-}
+-
+-
+-//
+-// This function is probably redundant,
+-//  if XShmDetach works properly.
+-// ddt never detached the XShm memory,
+-//  thus there might have been stale
+-//  handles accumulating.
+-//
+-void grabsharedmemory(int size)
+-{
+-
+-  int			key = ('d'<<24) | ('o'<<16) | ('o'<<8) | 'm';
+-  struct shmid_ds	shminfo;
+-  int			minsize = 320*200;
+-  int			id;
+-  int			rc;
+-  // UNUSED int done=0;
+-  int			pollution=5;
+-  
+-  // try to use what was here before
+-  do
+-  {
+-    id = shmget((key_t) key, minsize, 0777); // just get the id
+-    if (id != -1)
+-    {
+-      rc=shmctl(id, IPC_STAT, &shminfo); // get stats on it
+-      if (!rc) 
+-      {
+-	if (shminfo.shm_nattch)
+-	{
+-	  fprintf(stderr, "User %d appears to be running "
+-		  "DOOM.  Is that wise?\n", shminfo.shm_cpid);
+-	  key++;
+-	}
+-	else
+-	{
+-	  if (getuid() == shminfo.shm_perm.cuid)
+-	  {
+-	    rc = shmctl(id, IPC_RMID, 0);
+-	    if (!rc)
+-	      fprintf(stderr,
+-		      "Was able to kill my old shared memory\n");
+-	    else
+-	      I_Error("Was NOT able to kill my old shared memory");
+-	    
+-	    id = shmget((key_t)key, size, IPC_CREAT|0777);
+-	    if (id==-1)
+-	      I_Error("Could not get shared memory");
+-	    
+-	    rc=shmctl(id, IPC_STAT, &shminfo);
+-	    
+-	    break;
+-	    
+-	  }
+-	  if (size >= shminfo.shm_segsz)
+-	  {
+-	    fprintf(stderr,
+-		    "will use %d's stale shared memory\n",
+-		    shminfo.shm_cpid);
+-	    break;
+-	  }
+-	  else
+-	  {
+-	    fprintf(stderr,
+-		    "warning: can't use stale "
+-		    "shared memory belonging to id %d, "
+-		    "key=0x%x\n",
+-		    shminfo.shm_cpid, key);
+-	    key++;
+-	  }
+-	}
+-      }
+-      else
+-      {
+-	I_Error("could not get stats on key=%d", key);
+-      }
+-    }
+-    else
+-    {
+-      id = shmget((key_t)key, size, IPC_CREAT|0777);
+-      if (id==-1)
+-      {
+-	extern int errno;
+-	fprintf(stderr, "errno=%d\n", errno);
+-	I_Error("Could not get any shared memory");
+-      }
+-      break;
++    if (!monochrome) {
++        int i;
++        for ( i=0; i<256; ++i ) {
++            uint8 r, g, b;
++            r = gammatable[usegamma][*palette++];
++            g = gammatable[usegamma][*palette++];
++            b = gammatable[usegamma][*palette++];
++            colour_palette[i] = RGB565(r, g, b);
++        }
+     }
+-  } while (--pollution);
+-  
+-  if (!pollution)
+-  {
+-    I_Error("Sorry, system too polluted with stale "
+-	    "shared memory segments.\n");
+-    }	
+-  
+-  X_shminfo.shmid = id;
+-  
+-  // attach to the shared memory segment
+-  image->data = X_shminfo.shmaddr = shmat(id, 0, 0);
+-  
+-  fprintf(stderr, "shared memory id=%d, addr=0x%x\n", id,
+-	  (int) (image->data));
+ }
+ 
+-void I_InitGraphics(void)
+-{
+-
+-    char*		displayname;
+-    char*		d;
+-    int			n;
+-    int			pnum;
+-    int			x=0;
+-    int			y=0;
++void ipod_init_input()
++{
++    struct termios new_settings;
++    console = open("/dev/console", O_RDONLY | O_NONBLOCK);
++    tcgetattr(console, &stored_settings);
+     
+-    // warning: char format, different type arg
+-    char		xsign=' ';
+-    char		ysign=' ';
++    new_settings = stored_settings;
++    new_settings.c_lflag &= ~(ICANON | ECHO | ISIG);
++    new_settings.c_iflag &= ~(ISTRIP | IGNCR | ICRNL | INLCR | IXOFF | IXON | BRKINT);
++    new_settings.c_cc[VTIME] = 0;
++    new_settings.c_cc[VMIN] = 0;
+     
+-    int			oktodraw;
+-    unsigned long	attribmask;
+-    XSetWindowAttributes attribs;
+-    XGCValues		xgcvalues;
+-    int			valuemask;
+-    static int		firsttime=1;
+-
+-    if (!firsttime)
+-	return;
+-    firsttime = 0;
+-
+-    signal(SIGINT, (void (*)(int)) I_Quit);
+-
+-    if (M_CheckParm("-2"))
+-	multiply = 2;
+-
+-    if (M_CheckParm("-3"))
+-	multiply = 3;
+-
+-    if (M_CheckParm("-4"))
+-	multiply = 4;
+-
+-    X_width = SCREENWIDTH * multiply;
+-    X_height = SCREENHEIGHT * multiply;
+-
+-    // check for command-line display name
+-    if ( (pnum=M_CheckParm("-disp")) ) // suggest parentheses around assignment
+-	displayname = myargv[pnum+1];
+-    else
+-	displayname = 0;
+-
+-    // check if the user wants to grab the mouse (quite unnice)
+-    grabMouse = !!M_CheckParm("-grabmouse");
+-
+-    // check for command-line geometry
+-    if ( (pnum=M_CheckParm("-geom")) ) // suggest parentheses around assignment
+-    {
+-	// warning: char format, different type arg 3,5
+-	n = sscanf(myargv[pnum+1], "%c%d%c%d", &xsign, &x, &ysign, &y);
+-	
+-	if (n==2)
+-	    x = y = 0;
+-	else if (n==6)
+-	{
+-	    if (xsign == '-')
+-		x = -x;
+-	    if (ysign == '-')
+-		y = -y;
+-	}
+-	else
+-	    I_Error("bad -geom parameter");
+-    }
+-
+-    // open the display
+-    X_display = XOpenDisplay(displayname);
+-    if (!X_display)
+-    {
+-	if (displayname)
+-	    I_Error("Could not open display [%s]", displayname);
+-	else
+-	    I_Error("Could not open display (DISPLAY=[%s])", getenv("DISPLAY"));
+-    }
+-
+-    // use the default visual 
+-    X_screen = DefaultScreen(X_display);
+-    if (!XMatchVisualInfo(X_display, X_screen, 8, PseudoColor, &X_visualinfo))
+-	I_Error("xdoom currently only supports 256-color PseudoColor screens");
+-    X_visual = X_visualinfo.visual;
+-
+-    // check for the MITSHM extension
+-    doShm = XShmQueryExtension(X_display);
+-
+-    // even if it's available, make sure it's a local connection
+-    if (doShm)
+-    {
+-	if (!displayname) displayname = (char *) getenv("DISPLAY");
+-	if (displayname)
+-	{
+-	    d = displayname;
+-	    while (*d && (*d != ':')) d++;
+-	    if (*d) *d = 0;
+-	    if (!(!strcasecmp(displayname, "unix") || !*displayname)) doShm = false;
+-	}
+-    }
+-
+-    fprintf(stderr, "Using MITSHM extension\n");
+-
+-    // create the colormap
+-    X_cmap = XCreateColormap(X_display, RootWindow(X_display,
+-						   X_screen), X_visual, AllocAll);
+-
+-    // setup attributes for main window
+-    attribmask = CWEventMask | CWColormap | CWBorderPixel;
+-    attribs.event_mask =
+-	KeyPressMask
+-	| KeyReleaseMask
+-	// | PointerMotionMask | ButtonPressMask | ButtonReleaseMask
+-	| ExposureMask;
+-
+-    attribs.colormap = X_cmap;
+-    attribs.border_pixel = 0;
+-
+-    // create the main window
+-    X_mainWindow = XCreateWindow(	X_display,
+-					RootWindow(X_display, X_screen),
+-					x, y,
+-					X_width, X_height,
+-					0, // borderwidth
+-					8, // depth
+-					InputOutput,
+-					X_visual,
+-					attribmask,
+-					&attribs );
+-
+-    XDefineCursor(X_display, X_mainWindow,
+-		  createnullcursor( X_display, X_mainWindow ) );
+-
+-    // create the GC
+-    valuemask = GCGraphicsExposures;
+-    xgcvalues.graphics_exposures = False;
+-    X_gc = XCreateGC(	X_display,
+-  			X_mainWindow,
+-  			valuemask,
+-  			&xgcvalues );
+-
+-    // map the window
+-    XMapWindow(X_display, X_mainWindow);
+-
+-    // wait until it is OK to draw
+-    oktodraw = 0;
+-    while (!oktodraw)
+-    {
+-	XNextEvent(X_display, &X_event);
+-	if (X_event.type == Expose
+-	    && !X_event.xexpose.count)
+-	{
+-	    oktodraw = 1;
+-	}
+-    }
+-
+-    // grabs the pointer so it is restricted to this window
+-    if (grabMouse)
+-	XGrabPointer(X_display, X_mainWindow, True,
+-		     ButtonPressMask|ButtonReleaseMask|PointerMotionMask,
+-		     GrabModeAsync, GrabModeAsync,
+-		     X_mainWindow, None, CurrentTime);
+-
+-    if (doShm)
+-    {
+-
+-	X_shmeventtype = XShmGetEventBase(X_display) + ShmCompletion;
+-
+-	// create the image
+-	image = XShmCreateImage(	X_display,
+-					X_visual,
+-					8,
+-					ZPixmap,
+-					0,
+-					&X_shminfo,
+-					X_width,
+-					X_height );
+-
+-	grabsharedmemory(image->bytes_per_line * image->height);
+-
+-
+-	// UNUSED
+-	// create the shared memory segment
+-	// X_shminfo.shmid = shmget (IPC_PRIVATE,
+-	// image->bytes_per_line * image->height, IPC_CREAT | 0777);
+-	// if (X_shminfo.shmid < 0)
+-	// {
+-	// perror("");
+-	// I_Error("shmget() failed in InitGraphics()");
+-	// }
+-	// fprintf(stderr, "shared memory id=%d\n", X_shminfo.shmid);
+-	// attach to the shared memory segment
+-	// image->data = X_shminfo.shmaddr = shmat(X_shminfo.shmid, 0, 0);
+-	
+-
+-	if (!image->data)
+-	{
+-	    perror("");
+-	    I_Error("shmat() failed in InitGraphics()");
+-	}
+-
+-	// get the X server to attach to it
+-	if (!XShmAttach(X_display, &X_shminfo))
+-	    I_Error("XShmAttach() failed in InitGraphics()");
+-
+-    }
+-    else
+-    {
+-	image = XCreateImage(	X_display,
+-    				X_visual,
+-    				8,
+-    				ZPixmap,
+-    				0,
+-    				(char*)malloc(X_width * X_height),
+-    				X_width, X_height,
+-    				8,
+-    				X_width );
+-
+-    }
+-
+-    if (multiply == 1)
+-	screens[0] = (unsigned char *) (image->data);
+-    else
+-	screens[0] = (unsigned char *) malloc (SCREENWIDTH * SCREENHEIGHT);
+-
++    tcsetattr(console, TCSAFLUSH, &new_settings);
++    ioctl(console, KDSKBMODE, K_MEDIUMRAW);
+ }
+ 
+-
+-unsigned	exptable[256];
+-
+-void InitExpand (void)
+-{
+-    int		i;
+-	
+-    for (i=0 ; i<256 ; i++)
+-	exptable[i] = i | (i<<8) | (i<<16) | (i<<24);
+-}
+-
+-double		exptable2[256*256];
+-
+-void InitExpand2 (void)
++void I_InitGraphics(void)
+ {
+-    int		i;
+-    int		j;
+-    // UNUSED unsigned	iexp, jexp;
+-    double*	exp;
+-    union
+-    {
+-	double 		d;
+-	unsigned	u[2];
+-    } pixel;
+-	
+-    printf ("building exptable2...\n");
+-    exp = exptable2;
+-    for (i=0 ; i<256 ; i++)
+-    {
+-	pixel.u[0] = i | (i<<8) | (i<<16) | (i<<24);
+-	for (j=0 ; j<256 ; j++)
+-	{
+-	    pixel.u[1] = j | (j<<8) | (j<<16) | (j<<24);
+-	    *exp++ = pixel.d;
+-	}
+-    }
+-    printf ("done.\n");
+-}
++    static int        firsttime=1;
++    if (!firsttime)
++    return;
++    firsttime = 0;
+ 
+-int	inited;
++    printf("\n");
++    printf("======================\n");
++    printf("    hDoom 1.10 K1\n");
++    printf("    for iPodLinux\n");
++    printf("      by Keripo\n");
++    printf("======================\n");
++    printf("\n");
+ 
+-void
+-Expand4
+-( unsigned*	lineptr,
+-  double*	xline )
+-{
+-    double	dpixel;
+-    unsigned	x;
+-    unsigned 	y;
+-    unsigned	fourpixels;
+-    unsigned	step;
+-    double*	exp;
+-	
+-    exp = exptable2;
+-    if (!inited)
+-    {
+-	inited = 1;
+-	InitExpand2 ();
++    ipod_init_input();
++    
++    HD_LCD_Init();
++    HD_LCD_GetInfo(&IPOD_HW_VER, &IPOD_WIDTH, &IPOD_HEIGHT, &IPOD_LCD_TYPE);
++    
++    if (IPOD_LCD_TYPE == 2 || IPOD_LCD_TYPE == 3) { // monochromes (1-4G & minis)
++        monochrome = 1;
++        ipod_screen_mono = malloc(IPOD_WIDTH * IPOD_HEIGHT * 2);
++        ipod_screen_colour = NULL;
++        colour_palette = NULL;
++    } else {
++        monochrome = 0;
++        ipod_screen_mono = NULL;
++        ipod_screen_colour = malloc(IPOD_WIDTH * IPOD_HEIGHT * 2);
++        colour_palette = (uint16 *)malloc(256 * sizeof(uint16));
+     }
+-		
+-		
+-    step = 3*SCREENWIDTH/2;
+-	
+-    y = SCREENHEIGHT-1;
+-    do
+-    {
+-	x = SCREENWIDTH;
+-
+-	do
+-	{
+-	    fourpixels = lineptr[0];
+-			
+-	    dpixel = *(double *)( (int)exp + ( (fourpixels&0xffff0000)>>13) );
+-	    xline[0] = dpixel;
+-	    xline[160] = dpixel;
+-	    xline[320] = dpixel;
+-	    xline[480] = dpixel;
+-			
+-	    dpixel = *(double *)( (int)exp + ( (fourpixels&0xffff)<<3 ) );
+-	    xline[1] = dpixel;
+-	    xline[161] = dpixel;
+-	    xline[321] = dpixel;
+-	    xline[481] = dpixel;
+-
+-	    fourpixels = lineptr[1];
+-			
+-	    dpixel = *(double *)( (int)exp + ( (fourpixels&0xffff0000)>>13) );
+-	    xline[2] = dpixel;
+-	    xline[162] = dpixel;
+-	    xline[322] = dpixel;
+-	    xline[482] = dpixel;
+-			
+-	    dpixel = *(double *)( (int)exp + ( (fourpixels&0xffff)<<3 ) );
+-	    xline[3] = dpixel;
+-	    xline[163] = dpixel;
+-	    xline[323] = dpixel;
+-	    xline[483] = dpixel;
+-
+-	    fourpixels = lineptr[2];
+-			
+-	    dpixel = *(double *)( (int)exp + ( (fourpixels&0xffff0000)>>13) );
+-	    xline[4] = dpixel;
+-	    xline[164] = dpixel;
+-	    xline[324] = dpixel;
+-	    xline[484] = dpixel;
+-			
+-	    dpixel = *(double *)( (int)exp + ( (fourpixels&0xffff)<<3 ) );
+-	    xline[5] = dpixel;
+-	    xline[165] = dpixel;
+-	    xline[325] = dpixel;
+-	    xline[485] = dpixel;
+-
+-	    fourpixels = lineptr[3];
+-			
+-	    dpixel = *(double *)( (int)exp + ( (fourpixels&0xffff0000)>>13) );
+-	    xline[6] = dpixel;
+-	    xline[166] = dpixel;
+-	    xline[326] = dpixel;
+-	    xline[486] = dpixel;
+-			
+-	    dpixel = *(double *)( (int)exp + ( (fourpixels&0xffff)<<3 ) );
+-	    xline[7] = dpixel;
+-	    xline[167] = dpixel;
+-	    xline[327] = dpixel;
+-	    xline[487] = dpixel;
+-
+-	    lineptr+=4;
+-	    xline+=8;
+-	} while (x-=16);
+-	xline += step;
+-    } while (y--);
++    screens[0] = (uint8 *)malloc(SCREENWIDTH * SCREENHEIGHT);
+ }
+-
+-
+diff -ur i_video.h i_video.h
+--- i_video.h	2008-06-20 17:41:47.140625000 -0400
++++ i_video.h	2008-06-22 12:27:36.453125000 -0400
+@@ -54,6 +54,64 @@
+ void I_EndRead (void);
+ 
+ 
++// ===== iPodLinux stuff ===== //
++
++// hotdog calls
++extern void HD_LCD_Init();
++extern void HD_LCD_GetInfo (int *hw_ver, int *lcd_width, int *lcd_height, int *lcd_type);
++extern void HD_LCD_Update (void *fb, int x, int y, int w, int h);
++extern void HD_LCD_Quit();
++
++
++// Key input stuff
++
++#define KEY_MENU    50 // Up
++#define KEY_PLAY    32 // Down
++#define KEY_REWIND  17 // Left
++#define KEY_FORWARD 33 // Right
++#define KEY_ACTION  28 // Select
++#define KEY_HOLD    35 // Exit
++#define SCROLL_L    38 // Counter-clockwise
++#define SCROLL_R    19 // Clockwise
++#define KEY_NULL    -1 // No key event
++
++#define KEYCODE(a)  (a & 0x7f) // Use to get keycode of scancode.
++#define KEYSTATE(a) (a & 0x80) // Check if key is pressed or lifted
++
++#define inl(a) \
++    (*(volatile unsigned int *)(a)) \
++
++
++// Pixels
++
++#define get_R_from_RGB565(p) \
++	(((p) & 0xf800) >> 8)
++
++#define get_G_from_RGB565(p) \
++	(((p) & 0x07e0) >> 3)
++
++#define get_B_from_RGB565(p) \
++	(((p) & 0x001f) << 3)
++
++#define RGB565(r, g, b) \
++	((r >> 3) << 11) | ((g >> 2) << 5) | ((b >> 3) << 0)
++
++// Blend four pixel values - p1 gets weighted two times
++#define get_avg_R_from_4_RGB565(p1, p2, p3) \
++	(((get_R_from_RGB565(p1) << 1) + get_R_from_RGB565(p2) + get_R_from_RGB565(p3)) >> 2)
++
++#define get_avg_G_from_4_RGB565(p1, p2, p3) \
++	(((get_G_from_RGB565(p1) << 1) + get_G_from_RGB565(p2) + get_G_from_RGB565(p3)) >> 2)
++
++#define get_avg_B_from_4_RGB565(p1, p2, p3) \
++	(((get_B_from_RGB565(p1) << 1) + get_B_from_RGB565(p2) + get_B_from_RGB565(p3)) >> 2)
++
++#define blend_pixels_4_RGB565(p1, p2, p3) \
++	RGB565( \
++		get_avg_R_from_4_RGB565(p1, p2, p3), \
++		get_avg_G_from_4_RGB565(p1, p2, p3), \
++		get_avg_B_from_4_RGB565(p1, p2, p3) \
++	)	
+ 
+ #endif
+ //-----------------------------------------------------------------------------
+diff -ur m_menu.c m_menu.c
+--- m_menu.c	1997-12-22 15:42:21.000000000 -0500
++++ m_menu.c	2008-06-21 16:03:56.890625000 -0400
+@@ -1075,36 +1075,9 @@
+     sfx_sgtatk
+ };
+ 
+-
+-
+-void M_QuitResponse(int ch)
+-{
+-    if (ch != 'y')
+-	return;
+-    if (!netgame)
+-    {
+-	if (gamemode == commercial)
+-	    S_StartSound(NULL,quitsounds2[(gametic>>2)&7]);
+-	else
+-	    S_StartSound(NULL,quitsounds[(gametic>>2)&7]);
+-	I_WaitVBL(105);
+-    }
+-    I_Quit ();
+-}
+-
+-
+-
+-
+ void M_QuitDOOM(int choice)
+ {
+-  // We pick index 0 which is language sensitive,
+-  //  or one at random, between 1 and maximum number.
+-  if (language != english )
+-    sprintf(endstring,"%s\n\n"DOSY, endmsg[0] );
+-  else
+-    sprintf(endstring,"%s\n\n"DOSY, endmsg[ (gametic%(NUM_QUITMESSAGES-2))+1 ]);
+-  
+-  M_StartMessage(endstring,M_QuitResponse,true);
++  I_Quit();
+ }
+ 
+ 
+@@ -1441,7 +1414,21 @@
+ 	else
+ 	    if (ev->type == ev_keydown)
+ 	    {
+-		ch = ev->data1;
++			// Dirty hack borrowed from iDoom for iPod key mapping
++			switch(ev->data1) {
++				case KEY_RCTRL:
++					ch = KEY_DOWNARROW;
++					break;
++				case ' ':
++					ch = KEY_ENTER;
++					break;
++				case '.':
++					ch = 'y';
++					break;
++				default:
++					ch = ev->data1;
++					break;
++			}
+ 	    }
+     }
+     
+diff -ur m_misc.c m_misc.c
+--- m_misc.c	1997-12-22 15:43:11.000000000 -0500
++++ m_misc.c	2008-06-22 11:33:25.406250000 -0400
+@@ -148,9 +148,7 @@
+     handle = open (name, O_RDONLY | O_BINARY, 0666);
+     if (handle == -1)
+ 	I_Error ("Couldn't read file %s", name);
+-    if (fstat (handle,&fileinfo) == -1)
+-	I_Error ("Couldn't read file %s", name);
+-    length = fileinfo.st_size;
++	length = filelength(handle);
+     buf = Z_Malloc (length, PU_STATIC, NULL);
+     count = read (handle, buf, length);
+     close (handle);
+@@ -276,7 +274,7 @@
+     {"joyb_use",&joybuse,3},
+     {"joyb_speed",&joybspeed,2},
+ 
+-    {"screenblocks",&screenblocks, 9},
++    {"screenblocks",&screenblocks, 10}, // Bigger screen
+     {"detaillevel",&detailLevel, 0},
+ 
+     {"snd_channels",&numChannels, 3},
+diff -ur r_data.c r_data.c
+--- r_data.c	1997-12-22 15:57:47.000000000 -0500
++++ r_data.c	2008-06-21 16:03:56.906250000 -0400
+@@ -68,11 +68,11 @@
+ //
+ typedef struct
+ {
+-    short	originx;
+-    short	originy;
+-    short	patch;
+-    short	stepdir;
+-    short	colormap;
++    short __attribute__ ((packed)) originx;
++    short __attribute__ ((packed)) originy;
++    short __attribute__ ((packed)) patch;
++    short __attribute__ ((packed)) stepdir;
++    short __attribute__ ((packed)) colormap;
+ } mappatch_t;
+ 
+ 
+@@ -88,8 +88,8 @@
+     short		width;
+     short		height;
+     void		**columndirectory;	// OBSOLETE
+-    short		patchcount;
+-    mappatch_t	patches[1];
++    short		__attribute__ ((packed)) patchcount;
++    mappatch_t	__attribute__ ((packed)) patches[1];
+ } maptexture_t;
+ 
+ 
+diff -ur r_main.c r_main.c
+--- r_main.c	1997-12-22 15:59:07.000000000 -0500
++++ r_main.c	2008-06-21 16:03:56.906250000 -0400
+@@ -876,23 +876,11 @@
+     R_ClearDrawSegs ();
+     R_ClearPlanes ();
+     R_ClearSprites ();
+-    
+-    // check for new console commands.
+-    NetUpdate ();
+ 
+     // The head node is the last node output.
+     R_RenderBSPNode (numnodes-1);
+     
+-    // Check for new console commands.
+-    NetUpdate ();
+-    
+     R_DrawPlanes ();
+     
+-    // Check for new console commands.
+-    NetUpdate ();
+-    
+     R_DrawMasked ();
+-
+-    // Check for new console commands.
+-    NetUpdate ();				
+ }
+diff -ur r_things.c r_things.c
+--- r_things.c	1997-12-22 16:00:50.000000000 -0500
++++ r_things.c	2008-06-21 16:03:56.906250000 -0400
+@@ -176,7 +176,6 @@
+ //
+ void R_InitSpriteDefs (char** namelist) 
+ { 
+-    char**	check;
+     int		i;
+     int		l;
+     int		intname;
+@@ -186,12 +185,7 @@
+     int		end;
+     int		patched;
+ 		
+-    // count the number of sprite names
+-    check = namelist;
+-    while (*check != NULL)
+-	check++;
+-
+-    numsprites = check-namelist;
++    numsprites = NUMSPRITES;
+ 	
+     if (!numsprites)
+ 	return;
+diff -ur s_sound.c s_sound.c
+--- s_sound.c	1997-12-22 16:01:29.000000000 -0500
++++ s_sound.c	2008-06-14 19:48:38.765625000 -0400
+@@ -162,6 +162,7 @@
+ ( int		sfxVolume,
+   int		musicVolume )
+ {  
++#if 0
+   int		i;
+ 
+   fprintf( stderr, "S_Init: default sfx volume %d\n", sfxVolume);
+@@ -189,6 +190,7 @@
+   // Note that sounds have not been cached (yet).
+   for (i=1 ; i<NUMSFX ; i++)
+     S_sfx[i].lumpnum = S_sfx[i].usefulness = -1;
++#endif
+ }
+ 
+ 
+@@ -201,6 +203,7 @@
+ //
+ void S_Start(void)
+ {
++#if 0
+   int cnum;
+   int mnum;
+ 
+@@ -245,6 +248,7 @@
+   S_ChangeMusic(mnum, true);
+   
+   nextcleanup = 15;
++#endif
+ }	
+ 
+ 
+@@ -257,6 +261,7 @@
+   int		sfx_id,
+   int		volume )
+ {
++#if 0
+ 
+   int		rc;
+   int		sep;
+@@ -392,6 +397,7 @@
+ 				       sep,
+ 				       pitch,
+ 				       priority);
++#endif
+ }	
+ 
+ void
+@@ -399,6 +405,7 @@
+ ( void*		origin,
+   int		sfx_id )
+ {
++#if 0
+ #ifdef SAWDEBUG
+     // if (sfx_id == sfx_sawful)
+     // sfx_id = sfx_itemup;
+@@ -463,6 +470,7 @@
+ }
+ #endif
+  
++#endif
+ }
+ 
+ 
+@@ -470,6 +478,7 @@
+ 
+ void S_StopSound(void *origin)
+ {
++#if 0
+ 
+     int cnum;
+ 
+@@ -481,6 +490,7 @@
+ 	    break;
+ 	}
+     }
++#endif
+ }
+ 
+ 
+@@ -496,20 +506,24 @@
+ //
+ void S_PauseSound(void)
+ {
++#if 0
+     if (mus_playing && !mus_paused)
+     {
+ 	I_PauseSong(mus_playing->handle);
+ 	mus_paused = true;
+     }
++#endif
+ }
+ 
+ void S_ResumeSound(void)
+ {
++#if 0
+     if (mus_playing && mus_paused)
+     {
+ 	I_ResumeSong(mus_playing->handle);
+ 	mus_paused = false;
+     }
++#endif
+ }
+ 
+ 
+@@ -518,6 +532,7 @@
+ //
+ void S_UpdateSounds(void* listener_p)
+ {
++#if 0
+     int		audible;
+     int		cnum;
+     int		volume;
+@@ -610,11 +625,13 @@
+     //      && !I_QrySongPlaying(mus_playing->handle)
+     //      && !mus_paused )
+     // S_StopMusic();
++#endif
+ }
+ 
+ 
+ void S_SetMusicVolume(int volume)
+ {
++#if 0
+     if (volume < 0 || volume > 127)
+     {
+ 	I_Error("Attempt to set music volume at %d",
+@@ -624,18 +641,21 @@
+     I_SetMusicVolume(127);
+     I_SetMusicVolume(volume);
+     snd_MusicVolume = volume;
++#endif
+ }
+ 
+ 
+ 
+ void S_SetSfxVolume(int volume)
+ {
++#if 0
+ 
+     if (volume < 0 || volume > 127)
+ 	I_Error("Attempt to set sfx volume at %d", volume);
+ 
+     snd_SfxVolume = volume;
+ 
++#endif
+ }
+ 
+ //
+@@ -643,7 +663,9 @@
+ //
+ void S_StartMusic(int m_id)
+ {
++#if 0
+     S_ChangeMusic(m_id, false);
++#endif
+ }
+ 
+ void
+@@ -651,6 +673,7 @@
+ ( int			musicnum,
+   int			looping )
+ {
++#if 0
+     musicinfo_t*	music;
+     char		namebuf[9];
+ 
+@@ -683,11 +706,13 @@
+     I_PlaySong(music->handle, looping);
+ 
+     mus_playing = music;
++#endif
+ }
+ 
+ 
+ void S_StopMusic(void)
+ {
++#if 0
+     if (mus_playing)
+     {
+ 	if (mus_paused)
+@@ -700,6 +725,7 @@
+ 	mus_playing->data = 0;
+ 	mus_playing = 0;
+     }
++#endif
+ }
+ 
+ 
+@@ -707,6 +733,7 @@
+ 
+ void S_StopChannel(int cnum)
+ {
++#if 0
+ 
+     int		i;
+     channel_t*	c = &channels[cnum];
+@@ -739,6 +766,7 @@
+ 
+ 	c->sfxinfo = 0;
+     }
++#endif
+ }
+ 
+ 
+@@ -757,6 +785,7 @@
+   int*		sep,
+   int*		pitch )
+ {
++#if 0
+     fixed_t	approx_dist;
+     fixed_t	adx;
+     fixed_t	ady;
+@@ -815,6 +844,7 @@
+     }
+     
+     return (*vol > 0);
++#endif
+ }
+ 
+ 
+@@ -829,6 +859,7 @@
+ ( void*		origin,
+   sfxinfo_t*	sfxinfo )
+ {
++#if 0
+     // channel number to use
+     int		cnum;
+     
+@@ -872,6 +903,8 @@
+     c->origin = origin;
+ 
+     return cnum;
++#endif
++	return -1;
+ }
+ 
+ 
+diff -ur w_wad.c w_wad.c
+--- w_wad.c	1997-12-22 16:05:36.000000000 -0500
++++ w_wad.c	2008-06-21 16:03:56.921875000 -0400
+@@ -71,14 +71,14 @@
+     while (*s) { *s = toupper(*s); s++; }
+ }
+ 
++// From iDoom
+ int filelength (int handle) 
+-{ 
+-    struct stat	fileinfo;
+-    
+-    if (fstat (handle,&fileinfo) == -1)
+-	I_Error ("Error fstating");
+-
+-    return fileinfo.st_size;
++{
++	int current = lseek(handle, 0, SEEK_CUR);
++	int length  = lseek(handle, 0, SEEK_END);
++	lseek(handle, current, SEEK_SET);
++	
++	return length;
+ }
+ 
+ 
