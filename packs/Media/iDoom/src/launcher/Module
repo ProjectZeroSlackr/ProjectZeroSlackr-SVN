@@ -1,6 +1,6 @@
 Module: iDoom
 Display-name: iDoom
-Description: Port of id's classical game Doom.
+Description: Ports of id's classical game Doom.
 Category: Media
-Author: hyarion, jobbe, Jonathan Dowland et al.
+Author: Keripo, hyarion, jobbe, Jonathan Dowland et al.
 Dependencies: browser,browser-ext

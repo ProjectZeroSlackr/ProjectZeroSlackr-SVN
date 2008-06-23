@@ -3,12 +3,12 @@
 # iDoom Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 30, 2008
+# Last updated: Jun 22, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
-echo "iDoom Auto-Building Script"
+echo "iDoom/hDoom Auto-Building Script"
 echo ""
 # Cleanup
 if [ -d build ]; then
@@ -22,17 +22,24 @@ cd build
 # Extract source
 echo "> Extracting source..."
 unzip -q ../src/orig/iDoom1_3-src.zip
-mv iDoom compiling
+mv iDoom iDoom_src
+unzip -q ../src/orig/doomsrc.zip
+tar -xf linuxdoom-1.10.src.tgz
+mv linuxdoom-1.10 hDoom
 # Apply ZeroSlackr custom patches
 echo "> Applying ZeroSlackr patches..."
-cd compiling
-patch -p0 -t -i ../../src/patches/iDoom-All.patch >> ../build.log
+cd iDoom_src
+patch -p0 -t -i ../../src/patches/iDoom-All.patch >> ../build-iDoom.log
+cd ..
+cd hDoom
+patch -p0 -t -i ../../src/patches/hDoom-All.patch >> ../build-hDoom.log
+patch -p0 -t -i ../../src/patches/hDoom-ZS-Friendly.patch >> ../build-hDoom.log
 cd ..
 # Symlink the libraries
 echo "> Symlinking libraries..."
 DIR=$(pwd)
 LIBSDIR=../../../../libs
-LIBS="ttk launch"
+LIBS="hotdog ttk launch"
 for lib in $LIBS
 do
 	if [ ! -d $LIBSDIR/$lib ]; then
@@ -44,25 +51,26 @@ do
 	fi
 	ln -s $LIBSDIR/$lib ./
 done
-# Compiling
-echo "> Compiling..."
+# Compiling iDoom
+echo "> Compiling iDoom..."
 echo "  Note: All warnings/errors here will"
-echo "  be logged to the 'build.log' file."
+echo "  be logged to the 'build-iDoom.log' file."
 echo "  If building fails, check the log file."
-cd compiling
+cd iDoom_src
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
-make >> ../build.log 2>&1
-# Apply ZeroSlackr custom patches
-echo "> Compiling iFreeDoom..."
-patch -p0 -t -i ../../src/patches/iFreeDoom.patch >> ../build-iFreeDoom.log
-make clean >> ../build-iFreeDoom.log 2>&1
-make >> ../build-iFreeDoom.log 2>&1
+make >> ../build-iDoom.log 2>&1
+cd ..
+# Compiling hDoom
+echo "> Compiling hDoom..."
+cd hDoom
+export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
+make >> ../build-hDoom.log
+cd ..
 # Copy over compiled file
 echo "> Copying over compiled files..."
-cd ..
 mkdir compiled
-cp -rf compiling/iDoom compiled/
-cp -rf compiling/iFreeDoom compiled/
+cp -rf iDoom_src/iDoom compiled/
+cp -rf hDoom/linux/hDoom compiled/
 # Launch module
 echo "> Building ZeroLauncher launch module..."
 cp -rf ../src/launcher ./
@@ -73,24 +81,30 @@ cd ..
 # Creating release
 echo "> Creating 'release' folder..."
 unzip -q ../src/orig/iDoom1_3.zip
-unzip -q ../src/orig/freedm-0.6.zip
+unzip -q ../src/orig/freedm-0.6.2.zip
 cp -rf ../src/release ./
 cd release
 # Files
 PACK=ZeroSlackr/opt/Media/iDoom
 cp -rf ../compiled/iDoom $PACK/
-cp -rf ../compiled/iFreeDoom $PACK/
+cp -rf ../compiled/hDoom $PACK/
 cp -rf ../iDoom/doom1.wad $PACK/IWADs/
 cp -rf ../iDoom/keys.key $PACK/Conf/
-mv -f ../freedm-0.6/freedm.wad $PACK/IWADs/
+mv -f ../freedm-0.6.2/freedm.wad $PACK/IWADs/
 cp -rf ../launcher/* $PACK/Launch/
 # Documents
 DOCS=$PACK/Misc/Docs
 cp -rf "../../ReadMe from Keripo.txt" $PACK/
 cp -rf ../../License.txt $PACK/
 cp -rf ../../src/patches $PACK/Misc/Patches
-cp -rf ../iDoom/readme.txt $DOCS/
-mv -f ../freedm-0.6/* $DOCS/FreeDoom/
+cp -rf ../iDoom/readme.txt $DOCS/iDoom/
+cp -rf ../README.TXT $DOCS/hDoom/
+HDOOM_DOCS="ChangeLog DOOMLIC.TXT README.b README.book TODO"
+for doc in $HDOOM_DOCS
+do
+	cp -rf ../hDoom/$doc $DOCS/hDoom/
+done
+mv -f ../freedm-0.6.2/* $DOCS/FreeDoom/
 sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $PACK/Misc

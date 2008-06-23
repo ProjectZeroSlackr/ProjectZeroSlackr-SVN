@@ -1,3 +1,3 @@
 MODULE = iDoom
-DATA = Launch-iDoom.sh,Launch-iFreeDoom.sh
+DATA = Launch-hDoom.sh,Launch-iDoom.sh
 obj-m = iDoom.o
