@@ -3,7 +3,7 @@
 # CmdLine-Tools Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: May 1, 2008
+# Last updated: Jun 25, 2008
 #
 echo ""
 echo "==========================================="
@@ -25,20 +25,16 @@ mkdir build
 cd build
 # Extract source
 echo "> Extracting source..."
-tar zxf ../src/orig/Ipodgzip.tar.gz
 tar zxf ../src/orig/Ipodgawk.tar.gz
 tar zxf ../src/orig/Ipodgrep.tar.gz
 tar zxf ../src/orig/Ipodsed.tar.gz
 tar zxf ../src/orig/diffutils-2.8.1.tar.gz
 tar zxf ../src/orig/john-1.7.2.tar.gz
-tar zxf ../src/repack/unrar_repacked.tar.gz
-tar zxf ../src/repack/unzip_repacked.tar.gz
-unzip -q ../src/orig/zip232.zip -d zip
 # Symlink the libraries
 echo "> Symlinking libraries..."
 DIR=$(pwd)
 LIBSDIR=../../../../libs
-LIBS="bzip2 tar ttk launch"
+LIBS="ttk launch"
 for lib in $LIBS
 do
 	if [ ! -d $LIBSDIR/$lib ]; then
@@ -52,11 +48,6 @@ do
 done
 # Compiling
 echo "> Compiling..."
-export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
-echo "  - gzip"
-cd gzip
-make >> ../gzip.log 2>&1
-cd ..
 echo "  - diffutils"
 if [ "${CYGWIN}" ]; then
 	echo "    Note: diffutils doesn't seem to"
@@ -67,11 +58,6 @@ else
 	make >> ../diffutils.log 2>&1
 	cd ..
 fi
-echo "  - zip"
-cd zip
-cp -rf ../../src/mod/zip-Makefile Makefile
-make ipod >> ../zip.log 2>&1
-cd ..
 echo "  - cmdlineutils"
 svn co --quiet https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/apps/ipod/cmdlineutils
 svn co --quiet https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/libs/libipod
@@ -88,19 +74,17 @@ patch -p0 -t -i ../../src/patches/john-the-ripper-arm.patch >> ../john.log
 cd src
 export PATH=/usr/local/bin:$PATH
 make linux-arm >> ../../john.log 2>&1
-cd ..
-cd ..
+cd ../..
 # Copy over compiled file
 echo "> Copying over compiled files..."
 mkdir compiled
 if [ "${CYGWIN}" ]; then
-	echo "  Note: skipping diffutils and tar"
+	echo "  Note: skipping diffutils"
 else
 	cp -rf diffutils-2.8.1/src/cmp compiled/
 	cp -rf diffutils-2.8.1/src/diff compiled/
 	cp -rf diffutils-2.8.1/src/diff3 compiled/
 	cp -rf diffutils-2.8.1/src/sdiff compiled/
-	cp -rf tar/src/tar compiled/
 fi
 cp -rf gawk/gawk compiled/
 cp -rf grep/grep compiled/
@@ -112,15 +96,6 @@ cp -rf cmdlineutils/font compiled/
 cp -rf cmdlineutils/lsi compiled/
 cp -rf cmdlineutils/pause compiled/
 cp -rf cmdlineutils/raise compiled/
-cp -rf gzip/gzip compiled/
-cp -rf unrar/unrar compiled/
-cp -rf unzip/unzip compiled/
-cp -rf zip/zip compiled/
-cp -rf zip/zipcloak compiled/
-cp -rf zip/zipnote compiled/
-cp -rf zip/zipsplit compiled/
-cp -rf bzip2/bzip2 compiled/
-cp -rf bzip2/bzip2recover compiled/
 if [ -e john-1.7.2/run/john.elf.bflt ]; then
 	cp -rf john-1.7.2/run/john.elf.bflt compiled/john
 else

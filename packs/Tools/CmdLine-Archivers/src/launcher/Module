@@ -1,0 +1,6 @@
+Module: CmdLine-Archivers
+Display-name: CmdLine-Archivers
+Description: Collection of command-line archiving tools.
+Category: Tools
+Author: Various, Keripo
+Dependencies: browser,browser-ext
