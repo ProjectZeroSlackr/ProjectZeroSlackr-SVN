@@ -1,4 +1,4 @@
-Last updated: Apr 15, 2008
+Last updated: May 2, 2008
 ~Keripo
 
 Build individual libraries running
@@ -15,6 +15,9 @@ ftp://download.gnu.org.ua/pub/alpha/tar
 (version 1.16.2-20070123 had to be used
 since version 1.18.90 or higher don't
 seem to compile nicely)
+
+zlib source downloaded from
+http://www.zlib.net/zlib-1.2.3.tar.gz
 
 hotdog and ttk source downloaded from
 the official SVN. hotdog needs to be
