@@ -1,4 +1,4 @@
-Last updated: May 12, 2008
+Last updated: Jun 27, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -62,4 +62,3 @@ To port:
 - DSLinux apps
 - BSD Games
 - dc
-- Rockbox's UISimulator???

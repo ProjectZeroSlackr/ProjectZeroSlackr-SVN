@@ -1,4 +1,4 @@
-Last updated: May 12, 2008
+Last updated: Jun 27, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -10,8 +10,35 @@ original/ported software.
 
 == Changelog ==
 
+Jun 27, 2008
+- Updated igpSP to K6
+
+Jun 26, 2008
+- Added LPAQ4
+- Split CmdLine-Tools into Tools and Archivers
+- CmdLine-Archivers uses scripts for archiving
+
+Jun 23, 2008
+- Added hDoom
+- Added "-freedoom" switch to iDoom
+
+Jun 19, 2008
+- Added 5-y.2-d scheme for PZ2
+
+Jun 4, 2008
+- Updated igpSP to K5
+
+May 27, 2008
+- Added FAQ
+
+May 23, 2008
+- Updated igpSP to K4
+
 May 12, 2008
 - Added igpSP
+
+May 2, 2008
+- Added zlib
 
 May 1, 2008
 - Added John the Ripper to CmdLine-Tools
