@@ -1,4 +1,4 @@
-Last updated: Apr 23, 2008
+Last updated: Jun 27, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -33,6 +33,9 @@ Usage:
 - ZeroSlackr's userland uses getLoader2AutoExec instead of
   getLoader2Args. For more information on how to use that,
   read the comments of "/boot/loader.cfg".
+- Loader2 has also been patched to play a boot tune on startup.
+  The default boot tune should be familiar to Final Fantasy
+  gamers ; )
 
 
 Loader 2:
@@ -45,8 +48,8 @@ Loader 2:
 
 ZS Version:
 - Modder: Keripo
-- Type: Clean Compile
-- Date: Apr 23, 2008
+- Type: Mod and Recompile
+- Date: Jun 27, 2008
 - Version: B X.X
 
 iPodPatcher:
@@ -70,7 +73,6 @@ To do:
 - custom settings
 - FastLaunch.sh searcher
 - sub-menu support (look at iBoot Advanced / iLoadz)
-- intro piezo music? ; )
 
 Changelog:
 [keep untouched till beta release]
