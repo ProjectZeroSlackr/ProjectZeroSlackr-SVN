@@ -1,8 +1,8 @@
 /*
- * Last updated: May 31, 2008
+ * Last updated: Jun 12, 2008
  * ~Keripo
  *
- * Copyright (C) 2008 Keripo, Various
+ * Copyright (C) 2008 Keripo
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,77 +19,29 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+/*
+ * CPU speed code borrowed from ithread
+ * Brightness code borrowed from Rockbox
+ * Backlight and contrast code borrowed from iBoy
+ */
+
 #include "ipod_common.h"
 #include "ipod_hw.h"
 
-int ipod_contrast;
+extern int IPOD_LCD_TYPE;
+
 int ipod_cpu_speed;
+int ipod_contrast;
+int ipod_brightness;
+int ipod_backlight;
 
-static int ipod_backlight = -1;
-static int contrast_current = -1;
 static int cpu_speed_current = -1;
+static int contrast_current = -1;
+static int brightness_current = -1;
+static int backlight_current = -1;
 
-static int ipod_ioctl(int request, int *arg)
-{
-	int fd;
-	fd = open("/dev/fb0", O_NONBLOCK);
-	if (fd < 0) fd = open("/dev/fb/0", O_NONBLOCK);
-	if (fd < 0) return -1;
-	if (ioctl(fd, request, arg) < 0) {
-		close(fd);
-		return -1;
-	}
-	close(fd);
-	return 0;
-}
 
-// Can't figure out how this works so unused by igpSP
-/*
-static int ipod_get_backlight()
-{
-	int backlight = 0;
-	if (ipod_ioctl(_IOR('F', 0x24, int), &backlight) < 0)
-		return -1;
-	return backlight;
-}
-*/
-
-static void ipod_set_backlight(int backlight)
-{
-	ipod_ioctl(_IOW('F', 0x25, int), (int *)(long)backlight);
-}
-
-// Toggle is used instead of setting as I can't seem to get it to work otherwise >_<
-void ipod_toggle_backlight()
-{
-	if (ipod_backlight == 1) {
-		ipod_backlight = 0;
-		ipod_set_backlight(BACKLIGHT_OFF);
-	} else {
-		ipod_backlight = 1;
-		ipod_set_backlight(BACKLIGHT_ON);
-	}
-}
-
-static int ipod_get_contrast()
-{
-	int contrast;
-	ipod_ioctl(_IOR('F', 0x22, int), &contrast);
-	return contrast;
-}
-
-static void ipod_set_contrast(int contrast)
-{
-	ipod_ioctl(_IOW('F', 0x23, int), (int*)(long)contrast);
-}
-
-void ipod_update_contrast()
-{
-	if (contrast_current != ipod_contrast) {
-		contrast_current = ipod_contrast;
-		ipod_set_contrast(contrast_current);
-	}
-}
+/* CPU speed control */
 
 // See ipod_common.h for postscalar constants
 static void ipod_set_cpu_speed(int postscalar)
@@ -125,19 +77,127 @@ void ipod_update_cpu_speed()
 	}
 }
 
+
+/* Contrast control (monochrome iPods only) */
+
+static int ipod_ioctl(int request, int *arg)
+{
+	int fd;
+	fd = open("/dev/fb0", O_NONBLOCK);
+	if (fd < 0) fd = open("/dev/fb/0", O_NONBLOCK);
+	if (fd < 0) return -1;
+	if (ioctl(fd, request, arg) < 0) {
+		close(fd);
+		return -1;
+	}
+	close(fd);
+	return 0;
+}
+
+static int ipod_get_contrast()
+{
+	int contrast;
+	ipod_ioctl(FBIOGET_CONTRAST, &contrast);
+	return contrast;
+}
+
+static void ipod_set_contrast(int contrast)
+{
+	ipod_ioctl(FBIOSET_CONTRAST, (int*)(long)contrast);
+}
+
+void ipod_update_contrast()
+{
+	if (IPOD_LCD_TYPE == 2 || IPOD_LCD_TYPE == 3) { // monochromes (1-4G & minis)
+		if (contrast_current != ipod_contrast) {
+			contrast_current = ipod_contrast;
+			ipod_set_contrast(contrast_current);
+		}
+	}
+}
+
+
+/* Brightness control (iPod nano and videos only) */
+static void ipod_set_brightness(int val)
+{
+	int oldlevel;
+	if (brightness_current < val) {
+		do {
+			oldlevel = disable_irq_save();
+			GPIO_CLEAR_BITWISE(GPIOD_OUTPUT_VAL, 0x80);
+			udelay(10);
+			GPIO_SET_BITWISE(GPIOD_OUTPUT_VAL, 0x80);
+			restore_irq(oldlevel);
+			udelay(10);
+		} while (++brightness_current < val);
+	} else if (brightness_current > val) {
+		do {
+			oldlevel = disable_irq_save();
+			GPIO_CLEAR_BITWISE(GPIOD_OUTPUT_VAL, 0x80);
+			udelay(200);
+			GPIO_SET_BITWISE(GPIOD_OUTPUT_VAL, 0x80);
+			restore_irq(oldlevel);
+			udelay(10);
+		} while (--brightness_current > val);
+	}
+}
+
+void ipod_update_brightness()
+{
+	if (IPOD_LCD_TYPE == 1 || IPOD_LCD_TYPE == 5) { // iPod nano or video
+		if (brightness_current != ipod_brightness) {
+			ipod_set_brightness(ipod_brightness);
+		}
+	}
+}
+
+
+/* Backlight control */
+
+// Can't figure out how this works so unused by igpSP
+/*
+static int ipod_get_backlight()
+{
+	int backlight = 0;
+	if (ipod_ioctl(FBIOGET_BACKLIGHT, &backlight) < 0)
+		return -1;
+	return backlight;
+}
+*/
+
+static void ipod_set_backlight(int backlight)
+{
+	ipod_ioctl(FBIOSET_BACKLIGHT, (int *)(long)backlight);
+}
+
+void ipod_update_backlight()
+{
+	if (backlight_current != ipod_backlight) {
+		backlight_current = ipod_backlight;
+		if (backlight_current == 0) {
+			ipod_set_backlight(BACKLIGHT_OFF);
+		} else {
+			ipod_set_backlight(BACKLIGHT_ON);
+			// Turning on backlight sets brightness level to default, thus need to re-sync
+			brightness_current = BRIGHTNESS_DEFAULT;
+			ipod_update_brightness();
+		}
+	}
+}
+
+
+/* Overall */
+
 void ipod_init_hw()
 {
-	ipod_backlight = 1; // For book-keeping purposes only
-	ipod_cpu_speed = 2; // Default overclocked - place this into some config file
-	ipod_contrast = ipod_get_contrast();
-	ipod_set_backlight(BACKLIGHT_ON);
 	ipod_update_cpu_speed();
+	ipod_update_backlight();
+	// ipod_update_brightness() called by ipod_update_backlight()
 }
 
 void ipod_exit_hw()
 {
-	ipod_set_cpu_speed(CPU_75MHz); // Normal iPL speed
+	ipod_set_backlight(CPU_75MHz); // iPodLinux default
 	ipod_set_backlight(BACKLIGHT_ON);
 }
-
 

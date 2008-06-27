@@ -1,8 +1,8 @@
 /*
- * Last updated: Jun 1, 2008
+ * Last updated: Jun 12, 2008
  * ~Keripo
  *
- * Copyright (C) 2008 Keripo, Various
+ * Copyright (C) 2008 Keripo
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

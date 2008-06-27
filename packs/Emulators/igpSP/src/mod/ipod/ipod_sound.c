@@ -1,8 +1,8 @@
 /*
- * Last updated: May 31, 2008
+ * Last updated: Jun 12, 2008
  * ~Keripo
  *
- * Copyright (C) 2008 Keripo, Various
+ * Copyright (C) 2008 Keripo
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+/*
+ * Sound and volume code based on iBoy
  */
 
 #include "ipod_common.h"
@@ -43,8 +47,6 @@ void ipod_init_sound()
 {
 	sound_fd = open("/dev/dsp", O_WRONLY);
 	ipod_mixer = open("/dev/mixer", O_RDWR);
-	
-	ipod_volume = 90; // Default volume level - place this into some config file
 	ipod_update_volume();
 	
 	int channels;

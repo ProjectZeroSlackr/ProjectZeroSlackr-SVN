@@ -1,4 +1,4 @@
-Last updated: Jun 4, 2008
+Last updated: Jun 26, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -60,8 +60,8 @@ Original:
 ZS Version:
 - Modder: Keripo
 - Type: Porter
-- Date: Jun 4, 2008
-- Version: 0.9-2xb K5, B X.X
+- Date: Jun 26, 2008
+- Version: 0.9-2xb K6, B X.X
 
 Modifications:
 - made ZS friendly; see "igpSP ReadMe from Keripo.txt" in

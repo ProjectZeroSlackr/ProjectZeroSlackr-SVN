@@ -1,8 +1,8 @@
 /*
- * Last updated: Jun 2, 2008
+ * Last updated: Jun 12, 2008
  * ~Keripo
  *
- * Copyright (C) 2008 Keripo, Various
+ * Copyright (C) 2008 Keripo
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+/*
+ * COP code borrowed from iBoy
  */
 
 #include "ipod_common.h"
@@ -65,6 +69,7 @@ void ipod_init_cop()
 
 void ipod_exit_cop()
 {
-	outl(inl(COP_STATUS) &~ COP_RUNNING, COP_STATUS); // Stop COP
-	outl(inl(COP_STATUS) | COP_LINE_REQ, COP_STATUS);
+	// Causes iPod to freeze sometimes ?
+	//outl(inl(COP_STATUS) &~ COP_RUNNING, COP_STATUS); // Stop COP
+	//outl(inl(COP_STATUS) | COP_LINE_REQ, COP_STATUS);
 }

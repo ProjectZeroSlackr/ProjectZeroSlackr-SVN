@@ -3,7 +3,7 @@
 # igpSP Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: May 11, 2008
+# Last updated: Jun 26, 2008
 #
 echo ""
 echo "==========================================="
@@ -61,8 +61,8 @@ cd ipod
 echo "  - Compiling no-sound build..."
 make NOSOUND=1 ZEROSLACKR=1 >> ../../build.log 2>&1
 mv igpSP igpSP-no-sound
-rm -rf gui.o main.o memory.o igpSP.gdb
 echo "  - Compiling with-sound build..."
+make clean-sound >> ../../build.log 2>&1
 make ZEROSLACKR=1 >> ../../build.log 2>&1
 mv igpSP igpSP-with-sound
 cd ..

@@ -1,8 +1,8 @@
 /*
- * Last updated: Jun 4, 2008
+ * Last updated: Jun 12, 2008
  * ~Keripo
  *
- * Copyright (C) 2008 Keripo, Various
+ * Copyright (C) 2008 Keripo
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,12 +21,13 @@
 
 /*
  * Source code for these files borrowed from various places including:
- * iBoy: http://sourceforge.net/projects/iboy
- * igpSP: http://ipodlinux.org/Igpsp (Zaphod's original port)
- * iDarcNES: http://ipodlinux.org/Idarcnes
- * ithread: http://svn.so2.sytes.net/repos/ipod/ithread/
- * libipod: https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/libs/libipod/
- *
+ * - iBoy: http://sourceforge.net/projects/iboy
+ * - igpSP: http://ipodlinux.org/Igpsp (Zaphod's original port)
+ * - ithread: http://svn.so2.sytes.net/repos/ipod/ithread/
+ * - libipod: https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/libs/libipod/
+ * - Rockbox: svn://svn.rockbox.org/rockbox/trunk/firmware
+ * - iniParser: http://ndevilla.free.fr/iniparser/
+ * See the comments of each file for more details
  */
 
 #include "../common.h"
@@ -49,6 +50,7 @@ void ipod_init_hw();
 void ipod_exit_hw();
 void ipod_toggle_backlight();
 void ipod_update_contrast();
+void ipod_update_brightness();
 void ipod_update_cpu_speed();
 
 
@@ -93,8 +95,8 @@ void ipod_update_volume();
 
 #endif
 
-/* ipod_config.c */
-//void ipod_init_config();
-//void ipod_save_config();
-//void ipod_update_settings();
+/* ipod_conf.c */
+void ipod_init_conf();
+void ipod_exit_conf();
+void ipod_update_settings();
 

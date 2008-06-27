@@ -1,8 +1,8 @@
 /*
- * Last updated: Jun 2, 2008
+ * Last updated: Jun 12, 2008
  * ~Keripo
  *
- * Copyright (C) 2008 Keripo, Various
+ * Copyright (C) 2008 Keripo
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+/*
+ * Key press and touch input code based on iBoy
+ * Scroll mod and (rapid fire) code borrowed from courtc (Courtney Calvin)
  */
 
 #include "ipod_common.h"
@@ -37,16 +42,6 @@ static struct termios stored_settings;
 
 static int trigger_pressed = 0;
 static u32 pressed_buttons = 0;
-
-static void ipod_update_settings()
-{
-	ipod_update_cpu_speed();
-	ipod_update_contrast();
-	ipod_update_scale_type();
-#ifndef NOSOUND
-	ipod_update_volume();
-#endif
-}
 
 static int ipod_get_keypress()
 {
@@ -307,15 +302,12 @@ void ipod_init_input()
 	
 	tcsetattr(console, TCSAFLUSH, &new_settings);
 	ioctl(console, KDSKBMODE, K_MEDIUMRAW);
-	
-	ipod_rapid_fire = 0; // Default no rapid fire - place this into some config file
-	ipod_map_triggers = 0; // Default no L/R triggers - place this into some config file
-	ipod_menu_scrolling = 0; // Default up/down menu - place this into some config file
 }
 
 void ipod_exit_input()
 {
-	tcsetattr(console, TCSAFLUSH, &stored_settings);
+	// Causes weird characters to appear due to HD_LCD_Quit
+	//tcsetattr(console, TCSAFLUSH, &stored_settings);
 	close(console);
 }
 

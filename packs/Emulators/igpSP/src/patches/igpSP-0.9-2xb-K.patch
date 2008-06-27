@@ -130,7 +130,7 @@ diff -ur font.h font.h
     name: 6x10
 diff -ur gui.c gui.c
 --- gui.c	2007-04-08 21:35:13.000000000 -0400
-+++ gui.c	2008-06-04 17:23:10.515625000 -0400
++++ gui.c	2008-06-11 15:31:56.250000000 -0400
 @@ -38,6 +38,12 @@
  #define FILE_LIST_POSITION 5
  #define DIR_LIST_POSITION 260
@@ -275,12 +275,12 @@ diff -ur gui.c gui.c
 +  menu_option_type savestate_options[] =
 +  {
 +    numeric_selection_action_hide_option(menu_load_state, menu_change_state,
-+     "Load savestate from current slot", &savestate_slot, 10, "", 0),
++     "Load from current slot", &savestate_slot, 10, "", 0),
 +    numeric_selection_action_hide_option(menu_save_state, menu_change_state,
-+     "Save savestate to current slot", &savestate_slot, 10, "", 1),
++     "Save to current slot", &savestate_slot, 10, "", 1),
 +    numeric_selection_action_hide_option(menu_load_state_file,
 +      menu_change_state,
-+     "Load savestate from file", &savestate_slot, 10, "", 2),
++     "Load from file", &savestate_slot, 10, "", 2),
 +    numeric_selection_option(menu_change_state,
 +     "Current savestate slot", &savestate_slot, 10, "", 3),
 +	string_selection_option(NULL, "Update backup",
@@ -298,7 +298,7 @@ diff -ur gui.c gui.c
  
    make_menu(savestate, submenu_savestate, NULL);
  
-@@ -1375,9 +1445,91 @@
+@@ -1375,9 +1445,108 @@
  
  #endif
  
@@ -323,25 +323,46 @@ diff -ur gui.c gui.c
 +  {
 +    string_selection_option(NULL, "Menu scrolling",
 +     off_on_options, (u32 *)(&ipod_menu_scrolling), 2, "", 0),
-+    string_selection_option(NULL, "Map L/R Triggers",
++    string_selection_option(NULL, "Map L/R triggers",
 +     off_on_options, (u32 *)(&ipod_map_triggers), 2, "", 1),
-+    string_selection_option(NULL, "Rapid Fire for A & B",
++    string_selection_option(NULL, "Rapid fire for A & B",
 +     off_on_options, (u32 *)(&ipod_rapid_fire), 2, "", 2)
 +  };
 +
 +  make_menu(ipod_input, submenu_ipod_input, NULL);
 +
 +
-+  extern u32 no_alpha;
-+  extern u32 synchronize_flag;
-+  extern int ipod_scale_type;
-+  extern int ipod_smooth_type;
 +  extern int ipod_cpu_speed;
 +  extern int ipod_contrast;
++  extern int ipod_brightness;
++  extern int ipod_backlight;
++
++  u8 *cpu_speed_options[] = { "66MHz", "75MHz", "78MHz", "81MHz [Unstable]" };
++
++  void submenu_ipod_hardware() {}
++
++  menu_option_type ipod_hardware_options[] =
++  {
++    string_selection_option(NULL, "CPU speed",
++     cpu_speed_options, (u32 *)(&ipod_cpu_speed), 4, "", 0),
++    numeric_selection_option(NULL, "Contrast",
++     (u32 *)(&ipod_contrast), 120, "", 1),
++    numeric_selection_option(NULL, "Brightness",
++     (u32 *)(&ipod_brightness), 32, "", 2),
++    string_selection_option(NULL, "Backlight",
++     off_on_options, (u32 *)(&ipod_backlight), 2, "", 3)
++  };
++
++  make_menu(ipod_hardware, submenu_ipod_hardware, NULL);
+ 
++
++  extern int ipod_scale_type;
++  extern int ipod_smooth_type;
++  extern u32 no_alpha;
++  extern u32 synchronize_flag;
 +
 +  u8 *scale_type_options[] = { "Unscaled", "Full-screen", "Scale to height", "Scale to width" };
-+  u8 *smooth_type_options[] = { "None", "Smooth", "Smoother" };
-+  u8 *cpu_speed_options[] = { "66MHz", "75MHz", "78MHz", "81MHz [Unstable]" };
++  u8 *smooth_type_options[] = { "Normal", "Type 1", "Type 2" };
 +
 +  void submenu_ipod_tweaks() {}
 +
@@ -351,22 +372,18 @@ diff -ur gui.c gui.c
 +     scale_type_options, (u32 *)(&ipod_scale_type), 4, "", 0),
 +    string_selection_option(NULL, "Smooth type",
 +     smooth_type_options, (u32 *)(&ipod_smooth_type), 3, "", 1),
-+    string_selection_option(NULL, "Alpha Blending",
++    string_selection_option(NULL, "Alpha blending",
 +     on_off_options, &no_alpha, 2, "", 2),
 +    string_selection_option(NULL, "Synchronize",
 +     off_on_options, &synchronize_flag, 2, "", 3),
-+    string_selection_option(NULL, "CPU Speed",
-+     cpu_speed_options, (u32 *)(&ipod_cpu_speed), 4, "", 4),
-+    numeric_selection_option(NULL, "Contrast",
-+     (u32 *)(&ipod_contrast), 120, "", 5),
-+    action_option(ipod_toggle_backlight, NULL, "Toggle Backlight", "", 6),
-+    submenu_option(&ipod_input_menu, "Modify Input Mapping", "", 7)
++    submenu_option(&ipod_input_menu, "Input settings", "", 4),
++    submenu_option(&ipod_hardware_menu, "Hardware settings", "", 5)
 +  };
 +
 +  make_menu(ipod_tweaks, submenu_ipod_tweaks, NULL);
 +
 +#endif
- 
++
 +#ifdef IPOD_BUILD
 +  menu_option_type main_options[] =
 +  {
@@ -384,13 +401,13 @@ diff -ur gui.c gui.c
 +    submenu_option(&cheats_misc_menu, "Enable Cheats", "", 5),
 +    action_option(menu_load, NULL, "Load new game", "", 6),
 +    action_option(menu_restart, NULL, "Restart game", "", 7),
-+    action_option(menu_quit, NULL, "Exit igpSP K5", "", 8)
++    action_option(menu_quit, NULL, "Exit igpSP K6", "", 8)
 +  };
 +#else
    menu_option_type main_options[] =
    {
      submenu_option(&graphics_sound_menu, "Graphics and Sound options",
-@@ -1415,13 +1567,16 @@
+@@ -1415,13 +1584,16 @@
      action_option(menu_quit, NULL, "Exit gpSP",
       "Select to exit gpSP and return to the PSP XMB/loader.", 15)
    };
@@ -407,7 +424,7 @@ diff -ur gui.c gui.c
  
      clear_screen(COLOR_BG);
  
-@@ -1446,6 +1601,7 @@
+@@ -1446,6 +1618,7 @@
  
    video_resolution_large();
  
@@ -415,7 +432,7 @@ diff -ur gui.c gui.c
  #ifndef GP2X_BUILD
    SDL_LockMutex(sound_mutex);
  #endif
-@@ -1454,6 +1610,7 @@
+@@ -1454,6 +1627,7 @@
  #ifndef GP2X_BUILD
    SDL_UnlockMutex(sound_mutex);
  #endif
@@ -423,7 +440,7 @@ diff -ur gui.c gui.c
  
    if(gamepak_filename[0] == 0)
    {
-@@ -1599,7 +1756,9 @@
+@@ -1599,7 +1773,9 @@
      scePowerSetClockFrequency(clock_speed, clock_speed, clock_speed / 2);
    #endif
  
@@ -492,9 +509,10 @@ diff -ur input.c input.c
  
  #ifdef PC_BUILD
  
+Only in gpsp_src_ipod_k6: ipod
 diff -ur main.c main.c
 --- main.c	2007-04-08 21:35:13.000000000 -0400
-+++ main.c	2008-06-02 22:37:40.203125000 -0400
++++ main.c	2008-06-07 12:48:32.875000000 -0400
 @@ -50,6 +50,13 @@
  u32 gp2x_fps_debug = 0;
  
@@ -572,11 +590,12 @@ diff -ur main.c main.c
      timer[i].status = TIMER_INACTIVE;
      timer[i].reload = 0x10000;
      timer[i].stop_cpu_ticks = 0;
-@@ -221,6 +268,14 @@
+@@ -221,8 +268,21 @@
    delay_us(2500000);
  #endif
  
 +#ifdef IPOD_BUILD
++  ipod_init_conf();
 +  ipod_init_hw();
 +  ipod_init_input();
 +  ipod_init_cop();
@@ -586,8 +605,14 @@ diff -ur main.c main.c
 +
    init_video();
  
++#ifdef IPOD_BUILD
++  ipod_update_settings();
++#endif
++
  #ifdef GP2X_BUILD
-@@ -288,7 +343,9 @@
+   // Overclocking GP2X and MMU patch goes here
+   gp2x_overclock();
+@@ -288,7 +348,9 @@
    }
  
    init_main();
@@ -597,7 +622,7 @@ diff -ur main.c main.c
  
    init_input();
  
-@@ -342,7 +399,7 @@
+@@ -342,7 +404,7 @@
    execute_arm_translate(execute_cycles);
  #else
  
@@ -606,7 +631,7 @@ diff -ur main.c main.c
    get_ticks_us(&frame_count_initial_timestamp);
  #endif
  
-@@ -351,7 +408,9 @@
+@@ -351,7 +413,9 @@
     current_savestate_filename);
    load_state(current_savestate_filename); */
  
@@ -616,7 +641,7 @@ diff -ur main.c main.c
  
    if(argc > 2)
    {
-@@ -404,7 +463,9 @@
+@@ -404,7 +468,9 @@
    u64 new_ticks;
    u8 current_savestate_filename[512];
  
@@ -626,7 +651,7 @@ diff -ur main.c main.c
  
    if(event_number)
    {
-@@ -475,14 +536,14 @@
+@@ -475,14 +541,14 @@
         benchmark_ticks[6];
        benchmark_ticks[7] = benchmark_ticks[0] - benchmark_ticks[1];
  
@@ -644,7 +669,7 @@ diff -ur main.c main.c
        }
        quit();
      }
-@@ -492,6 +553,7 @@
+@@ -492,6 +558,7 @@
  
    get_ticks_us(benchmark_ticks + event_number);
    event_number++;
@@ -652,7 +677,7 @@ diff -ur main.c main.c
  }
  
  u32 update_gba()
-@@ -504,12 +566,14 @@
+@@ -504,12 +571,14 @@
  
      reg[CHANGED_PC_STATUS] = 0;
  
@@ -667,7 +692,7 @@ diff -ur main.c main.c
  
      update_timer(0);
      update_timer(1);
-@@ -607,7 +671,9 @@
+@@ -607,7 +676,9 @@
            if(update_input())
              continue;
  
@@ -677,7 +702,7 @@ diff -ur main.c main.c
            synchronize();
  
            update_screen();
-@@ -750,7 +816,7 @@
+@@ -750,7 +821,7 @@
  
  #endif
  
@@ -686,7 +711,7 @@ diff -ur main.c main.c
  
  u32 real_frame_count = 0;
  u32 virtual_frame_count = 0;
-@@ -769,12 +835,14 @@
+@@ -769,12 +840,14 @@
    static u32 fps = 60;
    static u32 frames_drawn = 60;
  
@@ -701,7 +726,7 @@ diff -ur main.c main.c
  
    get_ticks_us(&new_ticks);
    time_delta = new_ticks - last_screen_timestamp;
-@@ -819,7 +887,7 @@
+@@ -819,7 +892,7 @@
      u32 new_frames_drawn;
  
      time_delta = new_ticks - last_frame_interval_timestamp;
@@ -710,7 +735,7 @@ diff -ur main.c main.c
      new_frames_drawn =
       (frame_interval - interval_skipped_frames) * (60 / frame_interval);
  
-@@ -851,8 +919,10 @@
+@@ -851,8 +924,10 @@
  
    interval_skipped_frames += skip_next_frame;
  
@@ -721,7 +746,7 @@ diff -ur main.c main.c
  }
  
  #endif
-@@ -930,7 +1000,9 @@
+@@ -930,7 +1005,9 @@
    if(!update_backup_flag)
      update_backup_force();
  
@@ -731,24 +756,25 @@ diff -ur main.c main.c
  
  #ifdef REGISTER_USAGE_ANALYZE
    print_register_usage();
-@@ -939,7 +1011,16 @@
+@@ -939,7 +1016,17 @@
  #ifdef PSP_BUILD
    sceKernelExitGame();
  #else
 +
 +#ifdef IPOD_BUILD
++  ipod_exit_conf();
 +  // ipod_exit_sound() called by sound_exit()
 +  ipod_exit_cop();
 +  ipod_exit_input();
 +  ipod_exit_hw();
-+  ipod_exit_video(); // Slow and needs to be called last
++  ipod_exit_video(); // Exits to console mode
 +#else
    SDL_Quit();
 +#endif
  
  #ifdef GP2X_BUILD
    gp2x_quit();
-@@ -954,7 +1035,9 @@
+@@ -954,7 +1041,9 @@
    init_main();
    init_memory();
    init_cpu();
@@ -1027,7 +1053,7 @@ diff -ur memory.c memory.c
  
 diff -ur sound.c sound.c
 --- sound.c	2007-04-08 21:35:13.000000000 -0400
-+++ sound.c	2008-05-31 23:09:34.410895400 -0400
++++ sound.c	2008-06-10 08:34:45.359375000 -0400
 @@ -17,11 +17,15 @@
   * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
   */
@@ -1110,8 +1136,8 @@ diff -ur sound.c sound.c
 +#else // Zaphod made these changes - I have no idea how this works ; / ~Keripo
 +  gbc_sound_buffer_index =
 +   (gbc_sound_buffer_index + (buffer_ticks << 1)) % BUFFER_SIZE;
-+  if (((gbc_sound_buffer_index - sound_buffer_base) % BUFFER_SIZE) > (audio_buffer_size>>2))
-+    sound_callback(audio_buffer_size>>2);
++  if (((gbc_sound_buffer_index - sound_buffer_base) % BUFFER_SIZE) > (audio_buffer_size >> 2))
++    sound_callback(audio_buffer_size >> 2);
 +#endif
  }
  
@@ -1259,7 +1285,7 @@ diff -ur sound.h sound.h
  void sound_timer_queue16(u32 channel, u16 value);
 diff -ur video.c video.c
 --- video.c	2007-04-08 21:35:13.000000000 -0400
-+++ video.c	2008-06-01 21:59:48.234375000 -0400
++++ video.c	2008-06-20 10:56:09.640625000 -0400
 @@ -91,6 +91,25 @@
  #include "SDL_gp2x.h"
  SDL_Surface *hw_screen;

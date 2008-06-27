@@ -1,0 +1,51 @@
+Last updated: Jun 10, 2008
+~Keripo
+
+After a long period of inactivity of Zaphod and zacaj, I (Keripo)
+took diffs of their source code against the official gpSP source
+codes and did a proper port of gpSP to the iPodLinux target as
+a separate branch/build target. Using Zaphod's original changes,
+and studying the iBoy source code, I re-wrote separate iPod-
+specific code and added a few iPod-specific tweaks and settings. 
+A large chunk of the code is borrowed from various places (see
+the comments of the "ipod/ipod_common.h" file.
+
+To set up the source code, extract the original source archive,
+copy both the 'ipod' directory and igpSP patch file to the new
+'gpsp_src' directory, then apply the igpSP patch. For example,
+  tar -xjf gpsp09-2xb_src.tar.bz2
+  cp ipod gpsp_src/
+  cp igpSP-0.9-2xb-K#.patch gpsp_src/
+  cd gpsp_src
+  patch -p0 -t -i igpSP-0.9-2xb-K#.patch
+
+To compile the modified source code, type 'make' in the 'ipod'
+directory with the 3.4.3 toolchain. Just typing 'make' will
+build igpSP with sound. Using 'make NOSOUND=1' will build igpSP
+without sound. Using 'make NOSOUND=1 BENCHMARK=1' will enable
+benchmarking. See the ipod/Makefile for more information.
+For example,
+  cd ipod
+  export PATH=/usr/local/arm-uclinux-tools2/bin:$PATH
+  make NOSOUND=1
+
+Now that you've compiled igpSP, why not contribute back? Look
+at the iPod-specific changes and see if you're able to further
+optimize the code (use benchtests in stable locations to test
+out performance - contact me if you want the ROM and savestate
+that I use for benchmarking tests). If you have knowledge of
+assembly, try to optimize the assembly output (according to
+Exophase, gcc is sometimes "stupid"). If you're very skilled,
+you might even be able to optimize the gpSP code itself (such
+as the few optimizations from the binary shifts I changed).
+The current gpSP version (0.9-2Xb) will be Exophase's last open
+source version with the source code of future builds available
+only to a few people (including myself). The reason behind the
+close-sourcing is due to annoying forks by Takka and the PSP
+scene's consequential disrespectful attitudes towards Exophase.
+For more information, see Exophase's reply on the GP2X forums:
+http://www.gp32x.com/board/index.php?&showtopic=42302&p=613143&#entry613143
+Thus, if you are able to make improvements, please contact
+either myself or Exophase where necessary. ; )
+
+~Keripo

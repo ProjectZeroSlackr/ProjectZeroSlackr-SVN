@@ -1,6 +1,6 @@
 diff -ur common.h common.h
---- common.h	2008-05-12 16:40:45.375000000 -0400
-+++ common.h	2008-05-12 15:22:47.875000000 -0400
+--- common.h	2008-06-27 14:26:31.953125000 -0400
++++ common.h	2008-06-27 14:26:47.140625000 -0400
 @@ -106,6 +106,9 @@
  #ifndef IPOD_BUILD
    #include "SDL.h"
@@ -12,8 +12,8 @@ diff -ur common.h common.h
  #ifdef ARM_ARCH
    #define function_cc
 diff -ur gui.c gui.c
---- gui.c	2008-05-12 16:40:45.468750000 -0400
-+++ gui.c	2008-05-12 15:22:47.875000000 -0400
+--- gui.c	2008-06-27 14:26:32.000000000 -0400
++++ gui.c	2008-06-27 14:26:47.156250000 -0400
 @@ -661,7 +661,11 @@
    u8 game_config_filename[512];
    u32 file_loaded = 0;
@@ -38,7 +38,7 @@ diff -ur gui.c gui.c
    #else
      sprintf(config_path, "%s\\%s", main_path, GPSP_CONFIG_FILENAME);
    #endif
-@@ -797,7 +805,11 @@
+@@ -800,7 +808,11 @@
    u8 game_config_filename[512];
    u32 i;
  
@@ -50,7 +50,19 @@ diff -ur gui.c gui.c
  
    file_open(game_config_file, game_config_filename, write);
  
-@@ -931,7 +943,11 @@
+@@ -833,7 +845,11 @@
+   u8 config_path[512];
+ 
+   #if (defined(PSP_BUILD) || defined(ARM_ARCH)) && !defined(_WIN32_WCE)
++  #ifdef ZEROSLACKR
++    sprintf(config_path, "%s%s", ROOT "/Conf/", GPSP_CONFIG_FILENAME);
++  #else
+     sprintf(config_path, "%s/%s", main_path, GPSP_CONFIG_FILENAME);
++  #endif
+   #else
+     sprintf(config_path, "%s\\%s", main_path, GPSP_CONFIG_FILENAME);
+   #endif
+@@ -936,7 +952,11 @@
    u8 savestate_ext[16];
  
    sprintf(savestate_ext, "%d.svs", slot);
@@ -62,7 +74,7 @@ diff -ur gui.c gui.c
  
    get_savestate_snapshot(name_buffer);
  }
-@@ -941,7 +957,11 @@
+@@ -946,7 +966,11 @@
    u8 savestate_ext[16];
  
    sprintf(savestate_ext, "%d.svs", slot);
@@ -75,22 +87,33 @@ diff -ur gui.c gui.c
  
  #ifdef PSP_BUILD
 diff -ur ipod/Makefile ipod/Makefile
---- ipod/Makefile	2008-05-11 20:08:00.906250000 -0400
-+++ ipod/Makefile	2008-05-12 15:22:47.890625000 -0400
-@@ -34,6 +34,9 @@
+--- ipod/Makefile	2008-06-27 14:26:10.562500000 -0400
++++ ipod/Makefile	2008-06-27 14:26:47.156250000 -0400
+@@ -36,6 +36,9 @@
  ifdef BENCHMARK
  CFLAGS     += -DBENCHMARK
  endif
 +ifdef ZEROSLACKR
 +CFLAGS     += -DZEROSLACKR
 +endif
- CFLAGS     += -O3 -std=c99 -msoft-float -funsigned-char -fno-common           \
-               -fno-builtin -elf2flt                                           \
+ CFLAGS     += -O3 -msoft-float -funsigned-char -fno-common                    \
+               -fno-builtin -fomit-frame-pointer                               \
+ 			  -mapcs -march=armv4t -mcpu=arm7tdmi -elf2flt                    \
+diff -ur ipod/ipod_conf.c ipod/ipod_conf.c
+--- ipod/ipod_conf.c	2008-06-27 14:26:10.562500000 -0400
++++ ipod/ipod_conf.c	2008-06-27 14:27:36.265625000 -0400
+@@ -120,6 +120,7 @@
+ #endif
  
+ static const char *igpsp_conf_filenames[] = {
++	"/opt/Emulators/igpSP/Conf/igpSP.ini",
+ 	"igpSP.ini",
+ 	"Conf/igpSP.ini",
+ 	"/igpSP.ini",
 diff -ur main.c main.c
---- main.c	2008-05-12 16:40:45.484375000 -0400
-+++ main.c	2008-05-12 16:41:58.406250000 -0400
-@@ -188,6 +188,9 @@
+--- main.c	2008-06-27 14:26:32.015625000 -0400
++++ main.c	2008-06-27 14:26:47.156250000 -0400
+@@ -184,6 +184,9 @@
  #ifdef ARM_ARCH
  void ChangeWorkingDirectory(char *exe)
  {
@@ -100,7 +123,7 @@ diff -ur main.c main.c
  #ifndef _WIN32_WCE
    char *s = strrchr(exe, '/');
    if (s != NULL) {
-@@ -196,6 +199,7 @@
+@@ -192,6 +195,7 @@
      *s = '/';
    }
  #endif
@@ -108,7 +131,7 @@ diff -ur main.c main.c
  }
  #endif
  
-@@ -283,8 +287,12 @@
+@@ -292,8 +296,12 @@
    sprintf(bios_filename, "%s/%s", main_path, "gba_bios.bin");
    if(load_bios(bios_filename) == -1)
  #else
@@ -121,7 +144,7 @@ diff -ur main.c main.c
    {
      gui_action_type gui_action = CURSOR_NONE;
  
-@@ -1097,10 +1105,19 @@
+@@ -1113,10 +1121,19 @@
  
  #endif
  
@@ -142,9 +165,9 @@ diff -ur main.c main.c
  
    if(dot_position)
 diff -ur main.h main.h
---- main.h	2008-05-12 16:40:45.484375000 -0400
-+++ main.h	2008-05-12 15:22:48.203125000 -0400
-@@ -246,7 +246,11 @@
+--- main.h	2008-06-27 14:26:32.015625000 -0400
++++ main.h	2008-06-27 14:26:47.156250000 -0400
+@@ -240,7 +240,11 @@
  
  #endif
  
@@ -157,9 +180,9 @@ diff -ur main.h main.h
  #endif
  
 diff -ur memory.c memory.c
---- memory.c	2008-05-12 16:40:45.500000000 -0400
-+++ memory.c	2008-05-12 15:22:48.218750000 -0400
-@@ -2091,7 +2091,11 @@
+--- memory.c	2008-06-27 14:26:32.031250000 -0400
++++ memory.c	2008-06-27 14:26:47.171875000 -0400
+@@ -2097,7 +2097,11 @@
    flash_device_id = FLASH_DEVICE_MACRONIX_64KB;
  
  #if (defined(PSP_BUILD) || defined(ARM_ARCH)) && !defined(_WIN32_WCE)
@@ -171,7 +194,7 @@ diff -ur memory.c memory.c
  #else
    sprintf(config_path, "%s\\%s", main_path, CONFIG_FILENAME);
  #endif
-@@ -2252,7 +2256,11 @@
+@@ -2258,7 +2262,11 @@
  
      strcpy(backup_filename, name);
      strncpy(gamepak_filename, name, 512);
@@ -183,7 +206,7 @@ diff -ur memory.c memory.c
  
      load_backup(backup_filename);
  
-@@ -2266,7 +2274,11 @@
+@@ -2272,7 +2280,11 @@
      load_game_config(gamepak_title, gamepak_code, gamepak_maker);
      load_game_config_file();
  
