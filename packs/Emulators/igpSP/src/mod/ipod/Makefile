@@ -1,8 +1,8 @@
-# Last updated: Jun 1, 2008
+# Last updated: Jun 26, 2008
 # ~Keripo
 
 # igpSP Makefile
-# Build 0.9-2Xb K5
+# Build 0.9-2Xb K6
 # Based on GP2X Makefile
 
 
@@ -13,7 +13,8 @@ BIN        = igpSP
 OBJS       = main.o cpu.o memory.o video.o input.o gui.o                       \
              cheats.o cpu_threaded.o                                           \
 			 ../gp2x/font.o ../gp2x/arm_stub.o video_blend.o                   \
-             ipod_cop.o ipod_hw.o ipod_video.o ipod_input.o
+			 iniparser/dictionary.o iniparser/iniparser.o                      \
+             ipod_cop.o ipod_hw.o ipod_video.o ipod_input.o ipod_conf.o
 
 
 # Platform specific definitions
@@ -22,7 +23,7 @@ OBJS       = main.o cpu.o memory.o video.o input.o gui.o                       \
 # Benchmark by adding 'BENCHMARK=1'
 
 # 'BENCHMARK' only affects main.c while
-# 'NOSOUND' affects gui.c, main.c and memory.c
+# 'NOSOUND' affects ipod_conf.c, gui.c, main.c and memory.c
 # Delete only the affected .o files for faster re-compiling
 
 VPATH      += ..
@@ -36,7 +37,8 @@ ifdef BENCHMARK
 CFLAGS     += -DBENCHMARK
 endif
 CFLAGS     += -O3 -msoft-float -funsigned-char -fno-common                    \
-              -fno-builtin -fomit-frame-pointer -elf2flt                      \
+              -fno-builtin -fomit-frame-pointer                               \
+			  -mapcs -march=armv4t -mcpu=arm7tdmi -elf2flt                    \
 
 INCLUDES   = -I../../hotdog
 LIBS       = -Wl,-elf2flt -L../../hotdog/ipod -lhotdog -lm -lpthread
@@ -61,6 +63,9 @@ LIBS       = -Wl,-elf2flt -L../../hotdog/ipod -lhotdog -lm -lpthread
 all:	$(OBJS)
 	$(CC) $(OBJS) $(LIBS) -o $(BIN)  
 
+clean-sound:
+	rm -rf ipod_conf.o gui.o main.o memory.o
+
 clean:
-	rm -f *.o ../gp2x/*.o $(BIN).gdb $(BIN)
+	rm -f *.o ../gp2x/*.o iniparser/*.o $(BIN).gdb $(BIN)
 

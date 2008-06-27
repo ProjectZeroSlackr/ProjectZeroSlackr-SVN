@@ -1,8 +1,8 @@
 /*
- * Last updated: Jun 4, 2008
+ * Last updated: Jun 20, 2008
  * ~Keripo
  *
- * Copyright (C) 2008 Keripo, Various
+ * Copyright (C) 2008 Keripo
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,17 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+/*
+ * Scaling code based on Zaphod's old code
+ * Hotdog code based on hotdog demos (hdpong)
+ * RGB565 code based on various resources
+ * (see ipod_video.h)
+ */
+
 #include "ipod_common.h"
 #include "ipod_video.h"
 
+// From gpSP's common.h
 // typedef unsigned short int u16;
 // typedef unsigned long u32;
 
@@ -63,27 +71,11 @@ static void ipod_update_screen_default()
 	}
 }
 
-// Two pixel blending
-static void ipod_update_screen_default_smooth() // No bound checks
-{
-	int x, y, p_ipod, p_src;
-	uint16 p1, p2;
-	for (y = 0; y < IPOD_HEIGHT; y++) {
-		for (x = 0; x < IPOD_WIDTH; x++) {
-			p_ipod = x + y * IPOD_WIDTH;
-			p_src = scale_x[x] + scale_y[y];
-			p1 = screen[p_src]; // Pixel
-			p2 = screen[p_src + 1]; // Pixel to the right
-			ipod_screen[p_ipod] = blend_pixels_2_RGB565(p1, p2);
-		}
-	}
-}
-
 // Four pixel blending
-static void ipod_update_screen_default_smoother() // No bound checks
+static void ipod_update_screen_default_smooth_1()
 {
 	int x, y, p_ipod, p_src;
-	uint16 p1, p2, p3, p4;
+	uint16 p1, p2, p3;
 	for (y = 0; y < IPOD_HEIGHT; y++) {
 		for (x = 0; x < IPOD_WIDTH; x++) {
 			p_ipod = x + y * IPOD_WIDTH;
@@ -91,8 +83,37 @@ static void ipod_update_screen_default_smoother() // No bound checks
 			p1 = screen[p_src]; // Pixel
 			p2 = screen[p_src + 1]; // Pixel to the right
 			p3 = screen[p_src + WIDTH]; // Pixel underneath
-			p4 = screen[p_src + WIDTH + 1]; // Pixel underneath to the right
-			ipod_screen[p_ipod] = blend_pixels_4_RGB565(p1, p2, p3, p4);
+			ipod_screen[p_ipod] = blend_pixels_4_RGB565(p1, p2, p3);
+		}
+	}
+}
+
+// Eight pixel blending
+static void ipod_update_screen_default_smooth_2()
+{
+	int x, y, p_ipod, p_src;
+	uint16 p1, p2, p3, p4, p5;
+	// To stay in bounds
+	for (y = 0; y < 2; y++) {
+		for (x = 0; x < IPOD_WIDTH * 2; x++) {
+			p_ipod = x + y * IPOD_WIDTH;
+			p_src = scale_x[x] + scale_y[y];
+			p1 = screen[p_src]; // Pixel
+			p2 = screen[p_src + 1]; // Pixel to the right
+			p3 = screen[p_src + WIDTH]; // Pixel underneath
+			ipod_screen[p_ipod] = blend_pixels_4_RGB565(p1, p2, p3);
+		}
+	}
+	for (y = 2; y < IPOD_HEIGHT; y++) {
+		for (x = 0; x < IPOD_WIDTH; x++) {
+			p_ipod = x + y * IPOD_WIDTH;
+			p_src = scale_x[x] + scale_y[y];
+			p1 = screen[p_src]; // Pixel
+			p2 = screen[p_src + 1]; // Pixel to the right
+			p3 = screen[p_src - 1]; // Pixel to the right
+			p4 = screen[p_src + WIDTH]; // Pixel underneath
+			p5 = screen[p_src - WIDTH]; // Pixel above
+			ipod_screen[p_ipod] = blend_pixels_8_RGB565(p1, p2, p3, p4, p5);
 		}
 	}
 }
@@ -110,27 +131,11 @@ static void ipod_update_screen_unscaled_big()
 	}
 }
 
-// Two pixel blending
-static void ipod_update_screen_unscaled_big_smooth()
-{
-	int x, y, sx, sy, p_ipod, p_src;
-	uint16 p1, p2;
-	for (y = scale_y_offset, sy = 0; y <= scale_y_max; y++, sy++) {
-		for (x = scale_x_offset, sx = 0; x <= scale_x_max; x++, sx++) {
-			p_ipod = x + y * IPOD_WIDTH;
-			p_src = scale_x[sx] + scale_y[sy];
-			p1 = screen[p_src]; // Pixel
-			p2 = screen[p_src + 1]; // Pixel to the right
-			ipod_screen[p_ipod] = blend_pixels_2_RGB565(p1, p2);
-		}
-	}
-}
-
 // Four pixel blending
-static void ipod_update_screen_unscaled_big_smoother()
+static void ipod_update_screen_unscaled_big_smooth_1()
 {
 	int x, y, sx, sy, p_ipod, p_src;
-	uint16 p1, p2, p3, p4;
+	uint16 p1, p2, p3;
 	for (y = scale_y_offset, sy = 0; y <= scale_y_max; y++, sy++) {
 		for (x = scale_x_offset, sx = 0; x <= scale_x_max; x++, sx++) {
 			p_ipod = x + y * IPOD_WIDTH;
@@ -138,8 +143,37 @@ static void ipod_update_screen_unscaled_big_smoother()
 			p1 = screen[p_src]; // Pixel
 			p2 = screen[p_src + 1]; // Pixel to the right
 			p3 = screen[p_src + WIDTH]; // Pixel underneath
-			p4 = screen[p_src + WIDTH + 1]; // Pixel underneath to the right
-			ipod_screen[p_ipod] = blend_pixels_4_RGB565(p1, p2, p3, p4);
+			ipod_screen[p_ipod] = blend_pixels_4_RGB565(p1, p2, p3);
+		}
+	}
+}
+
+// Eight pixel blending
+static void ipod_update_screen_unscaled_big_smooth_2()
+{
+	int x, y, sx, sy, p_ipod, p_src;
+	uint16 p1, p2, p3, p4, p5;
+	// To stay in bounds
+	for (y = scale_y_offset, sy = 0; y < scale_y_offset + 2; y++, sy++) {
+		for (x = scale_x_offset, sx = 0; x <= scale_x_max; x++, sx++) {
+			p_ipod = x + y * IPOD_WIDTH;
+			p_src = scale_x[sx] + scale_y[sy];
+			p1 = screen[p_src]; // Pixel
+			p2 = screen[p_src + 1]; // Pixel to the right
+			p4 = screen[p_src + WIDTH]; // Pixel underneath
+			ipod_screen[p_ipod] = blend_pixels_4_RGB565(p1, p2, p3);
+		}
+	}
+	for (y = scale_y_offset + 2, sy = 2; y <= scale_y_max; y++, sy++) {
+		for (x = scale_x_offset, sx = 0; x <= scale_x_max; x++, sx++) {
+			p_ipod = x + y * IPOD_WIDTH;
+			p_src = scale_x[sx] + scale_y[sy];
+			p1 = screen[p_src]; // Pixel
+			p2 = screen[p_src + 1]; // Pixel to the right
+			p3 = screen[p_src - 1]; // Pixel to the right
+			p4 = screen[p_src + WIDTH]; // Pixel underneath
+			p5 = screen[p_src - WIDTH]; // Pixel above
+			ipod_screen[p_ipod] = blend_pixels_8_RGB565(p1, p2, p3, p4, p5);
 		}
 	}
 }
@@ -157,27 +191,11 @@ static void ipod_update_screen_width()
 	}
 }
 
-// Two pixel blending
-static void ipod_update_screen_width_smooth()
-{
-	int x, y, sy, p_ipod, p_src;
-	uint16 p1, p2;
-	for (y = scale_y_offset, sy = 0; y <= scale_y_max; y++, sy++) {
-		for (x = 0; x < IPOD_WIDTH; x++) {
-			p_ipod = x + y * IPOD_WIDTH;
-			p_src = scale_x[x] + scale_y[sy];
-			p1 = screen[p_src]; // Pixel
-			p2 = screen[p_src + 1]; // Pixel to the right
-			ipod_screen[p_ipod] = blend_pixels_2_RGB565(p1, p2);
-		}
-	}
-}
-
 // Four pixel blending
-static void ipod_update_screen_width_smoother()
+static void ipod_update_screen_width_smooth_1()
 {
 	int x, y, sy, p_ipod, p_src;
-	uint16 p1, p2, p3, p4;
+	uint16 p1, p2, p3;
 	for (y = scale_y_offset, sy = 0; y <= scale_y_max; y++, sy++) {
 		for (x = 0; x < IPOD_WIDTH; x++) {
 			p_ipod = x + y * IPOD_WIDTH;
@@ -185,8 +203,37 @@ static void ipod_update_screen_width_smoother()
 			p1 = screen[p_src]; // Pixel
 			p2 = screen[p_src + 1]; // Pixel to the right
 			p3 = screen[p_src + WIDTH]; // Pixel underneath
-			p4 = screen[p_src + WIDTH + 1]; // Pixel underneath to the right
-			ipod_screen[p_ipod] = blend_pixels_4_RGB565(p1, p2, p3, p4);
+			ipod_screen[p_ipod] = blend_pixels_4_RGB565(p1, p2, p3);
+		}
+	}
+}
+
+// Eight pixel blending
+static void ipod_update_screen_width_smooth_2()
+{
+	int x, y, sy, p_ipod, p_src;
+	uint16 p1, p2, p3, p4, p5;
+	// To stay in bounds
+	for (y = scale_y_offset, sy = 0; y <= scale_y_offset + 2; y++, sy++) {
+		for (x = 0; x < IPOD_WIDTH; x++) {
+			p_ipod = x + y * IPOD_WIDTH;
+			p_src = scale_x[x] + scale_y[sy];
+			p1 = screen[p_src]; // Pixel
+			p2 = screen[p_src + 1]; // Pixel to the right
+			p3 = screen[p_src + WIDTH]; // Pixel underneath
+			ipod_screen[p_ipod] = blend_pixels_4_RGB565(p1, p2, p3);
+		}
+	}
+	for (y = scale_y_offset + 2, sy = 2; y <= scale_y_max; y++, sy++) {
+		for (x = 0; x < IPOD_WIDTH; x++) {
+			p_ipod = x + y * IPOD_WIDTH;
+			p_src = scale_x[x] + scale_y[sy];
+			p1 = screen[p_src]; // Pixel
+			p2 = screen[p_src + 1]; // Pixel to the right
+			p3 = screen[p_src - 1]; // Pixel to the right
+			p4 = screen[p_src + WIDTH]; // Pixel underneath
+			p5 = screen[p_src - WIDTH]; // Pixel above
+			ipod_screen[p_ipod] = blend_pixels_8_RGB565(p1, p2, p3, p4, p5);
 		}
 	}
 }
@@ -198,7 +245,7 @@ static void ipod_update_screen_convert_to_mono()
 	int i, max;
 	max = IPOD_WIDTH * IPOD_HEIGHT;
 	for (i = 0; i < max; i++) { // Linear - don't worry about co-ordinates
-		ipod_screen_mono[i] = get_Y_from_RGB565(ipod_screen[i]);
+		ipod_screen_mono[i] = convert_pixel_RGB565_to_Y(ipod_screen[i]);
 	}
 }
 
@@ -243,12 +290,16 @@ void ipod_update_scale_type()
 					for (i = 0; i < IPOD_HEIGHT; i++)
 						scale_y[i] = i * WIDTH;
 					
-					if (ipod_smooth_type == 0) {
-						ipod_update_screen_funct = ipod_update_screen_unscaled_big;
-					} else if (ipod_smooth_type == 1) {
-						ipod_update_screen_funct = ipod_update_screen_unscaled_big_smooth;
-					} else {
-						ipod_update_screen_funct = ipod_update_screen_unscaled_big_smoother;
+					switch(ipod_smooth_type) {
+						case 0:
+							ipod_update_screen_funct = ipod_update_screen_unscaled_big;
+							break;
+						case 1:
+							ipod_update_screen_funct = ipod_update_screen_unscaled_big_smooth_1;
+							break;
+						case 2:
+							ipod_update_screen_funct = ipod_update_screen_unscaled_big_smooth_2;
+							break;
 					}
 				} else {
 					scale_x_max = IGNORE;
@@ -259,12 +310,16 @@ void ipod_update_scale_type()
 					for (i = 0; i < IPOD_HEIGHT; i++)
 						scale_y[i] = (i - scale_y_offset) * WIDTH;
 					
-					if (ipod_smooth_type == 0) {
-						ipod_update_screen_funct = ipod_update_screen_default;
-					} else if (ipod_smooth_type == 1) {
-						ipod_update_screen_funct = ipod_update_screen_default_smooth;
-					} else {
-						ipod_update_screen_funct = ipod_update_screen_default_smoother;
+					switch(ipod_smooth_type) {
+						case 0:
+							ipod_update_screen_funct = ipod_update_screen_default;
+							break;
+						case 1:
+							ipod_update_screen_funct = ipod_update_screen_default_smooth_1;
+							break;
+						case 2:
+							ipod_update_screen_funct = ipod_update_screen_default_smooth_2;
+							break;
 					}
 				}
 				break;
@@ -279,12 +334,16 @@ void ipod_update_scale_type()
 				for (i = 0; i < IPOD_HEIGHT; i++)
 					scale_y[i] = (i * HEIGHT / IPOD_HEIGHT) * WIDTH;
 				
-				if (ipod_smooth_type == 0) {
-					ipod_update_screen_funct = ipod_update_screen_default;
-				} else if (ipod_smooth_type == 1) {
-					ipod_update_screen_funct = ipod_update_screen_default_smooth;
-				} else {
-					ipod_update_screen_funct = ipod_update_screen_default_smoother;
+				switch(ipod_smooth_type) {
+					case 0:
+						ipod_update_screen_funct = ipod_update_screen_default;
+						break;
+					case 1:
+						ipod_update_screen_funct = ipod_update_screen_default_smooth_1;
+						break;
+					case 2:
+						ipod_update_screen_funct = ipod_update_screen_default_smooth_2;
+						break;
 				}
 				break;
 			case 2: // Scale to height - width gets stretched
@@ -298,12 +357,16 @@ void ipod_update_scale_type()
 				for (i = 0; i < IPOD_HEIGHT; i++)
 					scale_y[i] = (i * HEIGHT / IPOD_HEIGHT) * WIDTH;
 				
-				if (ipod_smooth_type == 0) {
-					ipod_update_screen_funct = ipod_update_screen_default;
-				} else if (ipod_smooth_type == 1) {
-					ipod_update_screen_funct = ipod_update_screen_default_smooth;
-				} else {
-					ipod_update_screen_funct = ipod_update_screen_default_smoother;
+				switch(ipod_smooth_type) {
+					case 0:
+						ipod_update_screen_funct = ipod_update_screen_default;
+						break;
+					case 1:
+						ipod_update_screen_funct = ipod_update_screen_default_smooth_1;
+						break;
+					case 2:
+						ipod_update_screen_funct = ipod_update_screen_default_smooth_2;
+						break;
 				}
 				break;
 			case 3: // Scale to width - height gets shortened
@@ -317,12 +380,16 @@ void ipod_update_scale_type()
 				for (i = 0; i < IPOD_HEIGHT; i++)
 					scale_y[i] = (i * WIDTH / IPOD_WIDTH) * WIDTH;
 				
-				if (ipod_smooth_type == 0) {
-					ipod_update_screen_funct = ipod_update_screen_width;
-				} else if (ipod_smooth_type == 1) {
-					ipod_update_screen_funct = ipod_update_screen_width_smooth;
-				} else {
-					ipod_update_screen_funct = ipod_update_screen_width_smoother;
+				switch(ipod_smooth_type) {
+					case 0:
+						ipod_update_screen_funct = ipod_update_screen_width;
+						break;
+					case 1:
+						ipod_update_screen_funct = ipod_update_screen_width_smooth_1;
+						break;
+					case 2:
+						ipod_update_screen_funct = ipod_update_screen_width_smooth_2;
+						break;
 				}
 				break;
 		}
@@ -337,18 +404,15 @@ void ipod_init_video()
 	HD_LCD_Init();
 	HD_LCD_GetInfo(&IPOD_HW_VER, &IPOD_WIDTH, &IPOD_HEIGHT, &IPOD_LCD_TYPE);
 	
+	ipod_screen = malloc(IPOD_WIDTH * IPOD_HEIGHT * 2);
 	if (IPOD_LCD_TYPE == 2 || IPOD_LCD_TYPE == 3) { // monochromes (1-4G & minis)
 		monochrome = 1;
-		ipod_screen = malloc(IPOD_WIDTH * IPOD_HEIGHT * 2);
 		ipod_screen_mono = malloc(IPOD_WIDTH * IPOD_HEIGHT * 2);
 	} else {
 		monochrome = 0;
-		ipod_screen = malloc(IPOD_WIDTH * IPOD_HEIGHT * 2);
 		ipod_screen_mono = NULL;
 	}
 	
-	ipod_scale_type = 1; // Default scale width - place this into some config file
-	ipod_smooth_type = 2; // Default scale width - place this into some config file
 	ipod_update_scale_type();
 }
 
