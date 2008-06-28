@@ -105,7 +105,7 @@ static void init_loopback()
 static void init_db()
 {
 	if (pz_get_int_setting(config, TOGGLE_UPDATE) == 1) {
-		pz_message("MPD will now update its dataBase. Please be patient; you will be notified once the update is done.");
+		pz_message("MPD will now update its database. Please be patient; you will be notified once the update is done.");
 		toggle_backlight(); // Turn backlight off to save batteries
 		pid_t pid;
 		switch (pid = vfork()) {
@@ -166,7 +166,7 @@ static PzWindow *toggle_update()
 
 static void init()
 {
-	module = pz_register_module("MPD", cleanup_mpd);
+	module = pz_register_module("mpd", cleanup_mpd);
 	
 	config = pz_load_config("/opt/Base/MPD/Conf/podzilla2-svn.conf");
 	if (!pz_get_setting(config, ENABLE_MPD))
