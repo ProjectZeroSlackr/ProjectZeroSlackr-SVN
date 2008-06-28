@@ -3,7 +3,7 @@
 # Podzilla2-SVN Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 30, 2008
+# Last updated: Jun 28, 2008
 #
 echo ""
 echo "==========================================="
@@ -98,7 +98,7 @@ for module in $PATCHED
 do
 	cp -rf ../compiling/PATCHED.txt $USRLIB/Unsorted/$module/
 done
-DEL="libstdcxx mymodule pthreadstubs"
+DEL="libstdcxx mymodule pthreadstubs sleep"
 for module in $DEL
 do
 	rm -rf $USRLIB/Unsorted/$module
@@ -123,7 +123,7 @@ for module in $MEDIA
 do
 	mv $USRLIB/Unsorted/$module $USRLIB/Media/
 done
-MISC="animated_deco headerclock sleep"
+MISC="animated_deco headerclock"
 for module in $MISC
 do
 	mv $USRLIB/Unsorted/$module $USRLIB/Misc/
