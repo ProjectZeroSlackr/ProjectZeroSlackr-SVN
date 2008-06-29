@@ -1,0 +1,6 @@
+Module: mpd
+Display-name: MPD
+Description: Default music player, modified for ZeroSlackr.
+Category: Base
+Author: Keripo, courtc
+Dependencies: browser-ext
