@@ -1,4 +1,4 @@
-Last updated: Jun 27, 2008
+Last updated: Jun 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -10,14 +10,18 @@ original/ported software.
 
 == Changelog ==
 
+Jun 28, 2008
+- Added lolcode flex and bison interpreter to CmdLine-Tools
+- Fixed ZeroLauncher's podread and MPD modules (hopefully)
+
 Jun 27, 2008
 - Updated igpSP to K6
 - Added boot tune patch to Loader2
 
 Jun 26, 2008
-- Added LPAQ4
 - Split CmdLine-Tools into Tools and Archivers
 - CmdLine-Archivers uses scripts for archiving
+- Added LPAQ4 and minigzip to CmdLine-Archivers
 
 Jun 23, 2008
 - Added hDoom

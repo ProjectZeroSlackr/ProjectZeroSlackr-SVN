@@ -3,7 +3,7 @@
 # ZeroLauncher Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 30, 2008
+# Last updated: Jun 28, 2008
 #
 echo ""
 echo "==========================================="
@@ -99,7 +99,7 @@ do
 	cp -rf ../compiling/PATCHED.txt $PACK/Add-ons/$module/
 done
 mv -f $PACK/Add-ons/ZeroLauncher $PACK/Launch
-mv -f $PACK/Add-ons/MPD $PACK/../MPD/Launch
+mv -f $PACK/Add-ons/mpd $PACK/../MPD/Launch
 # Documents
 echo "> Copying over documents..."
 DOCS=$PACK/Misc/Docs

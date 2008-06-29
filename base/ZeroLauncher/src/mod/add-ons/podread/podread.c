@@ -610,7 +610,7 @@ static int check_is_ascii_file(const char *filename)
 	return 1;
 }
 
-#include "browser-ext.h"
+#include "../../launch/browser-ext.h"
 static int check_is_text_file(const char* file)
 {
 	return (
