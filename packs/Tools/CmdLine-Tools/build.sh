@@ -3,7 +3,7 @@
 # CmdLine-Tools Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Jun 25, 2008
+# Last updated: Jun 28, 2008
 #
 echo ""
 echo "==========================================="
@@ -30,6 +30,7 @@ tar zxf ../src/orig/Ipodgrep.tar.gz
 tar zxf ../src/orig/Ipodsed.tar.gz
 tar zxf ../src/orig/diffutils-2.8.1.tar.gz
 tar zxf ../src/orig/john-1.7.2.tar.gz
+unzip -q ../src/orig/lolcode.zip -d ./
 # Symlink the libraries
 echo "> Symlinking libraries..."
 DIR=$(pwd)
@@ -75,6 +76,12 @@ cd src
 export PATH=/usr/local/bin:$PATH
 make linux-arm >> ../../john.log 2>&1
 cd ../..
+echo "  - lolcode flex and bison interpreter"
+cd lolcode
+export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
+cp -rf ../../src/mod/lolcode/* ./
+./build-ipod >> ../lolcode.log 2>&1
+cd ..
 # Copy over compiled file
 echo "> Copying over compiled files..."
 mkdir compiled
@@ -101,6 +108,7 @@ if [ -e john-1.7.2/run/john.elf.bflt ]; then
 else
 	cp -rf john-1.7.2/run/john compiled/
 fi
+cp -rf lolcode/lol compiled/
 # Launch module
 echo "> Building ZeroLauncher launch module..."
 cp -rf ../src/launcher ./
@@ -118,6 +126,7 @@ cp -rf ../compiled/* $PACK/Bin/
 cp -rf ../john-1.7.2/run/*.chr $PACK/John/
 cp -rf ../john-1.7.2/run/john.conf $PACK/John/
 cp -rf ../john-1.7.2/run/password.lst $PACK/John/
+cp -rf ../lolcode/example.lol $PACK/LOLCODE/
 cp -rf ../launcher/* $PACK/Launch/
 # Documents
 # Too many original docs; done by hand

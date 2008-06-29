@@ -1,0 +1,13 @@
+#!/bin/sh
+# Last updated: Jun 28, 2008
+# ~Keripo
+# 
+# lolcode flex and bison interpretter
+# by Bobby Tomatoseed
+# Cross compiled by Keripo for iPodLinux
+#
+
+bison -y -v -d lol.y
+flex lol.l
+arm-uclinux-elf-gcc -c y.tab.c lex.yy.c
+arm-uclinux-elf-gcc y.tab.o lex.yy.o lol.c -o lol -elf2flt

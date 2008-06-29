@@ -1,4 +1,4 @@
-Last updated: Jun 25, 2008
+Last updated: Jun 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -56,10 +56,15 @@ Original:
   http://www.openwall.com/john/f/john-1.7.2.tar.gz
   http://web.archive.org/web/20050404001647/http://booc.coob.org/john-1.6.37-arm.diff
   
+  lolcode flex and bison interpreter
+  Keripo, Jun 28, 2008
+  http://lolcode.com/contributions/flex-and-bison-implementation
+  http://umich.edu/~rmurillo/lolcode.zip
+  
 ZS Version:
 - Modder: Keripo
 - Type: Porter / ZS Recompile / Repack
-- Date: Jun 25, 2008
+- Date: Jun 28, 2008
 - Version: B X.X
 
 Modifications:
@@ -70,6 +75,7 @@ Launch Module:
   by the shell
 - "/opt/Tools/CmdLine-Tools/John" is set to $JOHN for John
   the ripper
+- interpret LOLCODE scripts from file browser
 
 To do:
 - port more command line tools!!!

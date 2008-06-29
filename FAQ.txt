@@ -1,4 +1,4 @@
-Last updated: May 26, 2008
+Last updated: Jun 28, 2008
 ~Keripo
 
 
@@ -16,6 +16,27 @@ A: If ipodpatcher says your iPod isn't connected but it is,
    privileges, iTunes is closed and your iPod shows up as
    a drive, it is possible that your iPod is not supported
    by iPodLinux. See the iPodLinux Generations wiki page.
+
+Q: I've already installed iPodLinux through Installer 2.
+   What will happen to my old installation?
+A: Installing the ZeroSlackr Framework on top of a previous
+   Installer 2 installation will not affect your previous
+   setup. In fact, the kernel used by Project ZeroSlackr
+   also supports a normal, partitioned installation like the
+   one created by Installer 2. Uncomment the "#iPodLinux"
+   line of "boot/loader.cfg" to make available your old
+   installation.
+
+Q: iPodLinux is cool but I also want Rockbox! Do I have to
+   uninstall ZeroSlackr just to get Rockbox?
+A: No. Rockbox can be installed along side Project ZeroSlackr
+   without any influence to either OS's. After you've run the
+   "patch" script, installing Rockbox is easy. Download the
+   latest Rockbox build for your iPod model and extract it
+   directly to your iPod. Reboot and select the "Rockbox"
+   option of Loader2. Thats it! (Note that if you do NOT want
+   Rockbox, you may want to comment out the line in the 
+   "boot/loader.cfg" file and change the default to 1).
 
 Q: After trying out a few apps I keep getting this
    "blahblahblah is too big" message or a lot of random
