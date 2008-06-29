@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 30, 2008
+ * Last updated: Jun 28, 2008
  * ~Keripo
  *
  * Modified for ZeroLauncher
@@ -610,6 +610,19 @@ static int check_is_ascii_file(const char *filename)
 	return 1;
 }
 
+#include "browser-ext.h"
+static int check_is_text_file(const char* file)
+{
+	return (
+		check_file_ext(file, ".txt") ||
+		check_file_ext(file, ".log") ||
+		check_file_ext(file, ".nfo") ||
+		check_file_ext(file, ".ini") ||
+		check_file_ext(file, ".cfg") ||
+		check_file_ext(file, ".conf")
+		);
+}
+
 static PzWindow *podread_open_handler(ttk_menu_item *item)
 {
 	return new_podread_window_with_file(item->data);
@@ -617,7 +630,7 @@ static PzWindow *podread_open_handler(ttk_menu_item *item)
 
 static void cleanup()
 {
-	pz_browser_remove_handler(check_is_ascii_file);
+	pz_browser_remove_handler(check_is_text_file);
 }
 
 static void podread_mod_init()
@@ -628,7 +641,7 @@ static void podread_mod_init()
 	podread_fbx.name = N_("Open with PodRead");
 	podread_fbx.makesub = podread_open_handler;
 	pz_browser_add_action (check_is_ascii_file, &podread_fbx);
-	pz_browser_set_handler(check_is_ascii_file, new_podread_window_with_file);
+	pz_browser_set_handler(check_is_text_file, new_podread_window_with_file);
 }
 
 PZ_MOD_INIT(podread_mod_init)
