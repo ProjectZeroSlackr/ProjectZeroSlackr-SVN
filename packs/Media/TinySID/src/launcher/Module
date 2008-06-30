@@ -1,0 +1,6 @@
+Module: TinySID
+Display-name: TinySID
+Description: The smallest SID player available for C64 music.
+Category: Media
+Author: Rainer Sinsch et al., Keripo
+Dependencies: browser,browser-ext

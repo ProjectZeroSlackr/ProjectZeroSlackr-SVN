@@ -1,4 +1,4 @@
-Last updated: Jun 27, 2008
+Last updated: Jun 30, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -38,7 +38,6 @@ Tools:
 - Lua
 
 Media:
-- sidplay
 - iPod Midi Player
 - iRoids
 

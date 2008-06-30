@@ -1,4 +1,4 @@
-Last updated: Jun 28, 2008
+Last updated: Jun 30, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,9 @@ original/ported software.
 
 
 == Changelog ==
+
+Jun 30, 2008
+- Added TinySID
 
 Jun 28, 2008
 - Added lolcode flex and bison interpreter to CmdLine-Tools
