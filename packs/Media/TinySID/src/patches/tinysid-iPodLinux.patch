@@ -1,0 +1,52 @@
+diff -ur makefile makefile
+--- makefile	2006-05-08 16:56:40.000000000 -0400
++++ makefile	2008-06-29 23:16:37.828125000 -0400
+@@ -1,13 +1,18 @@
++# Last updated: Jun 29, 2008
++# ~Keripo
++#
+ # TinySID makefile
+-DEFS = -Wall
++# Modified for iPodLinux
++#
++DEFS =
+ CFLAGS = $(DEFS) -O
+-LDFLAGS =
++LDFLAGS = -elf2flt
+ LIBS = -lpthread
+-CC = gcc
++CC = arm-uclinux-elf-gcc
+ 
+-OBJECTS_A = tinysid.o sidengine.o soundcard.o
++OBJECTS_A = tinysid.o sidengine.o soundcard.o ipod_volume_control.o
+ 
+-ARCH_FILES = tinysid.c sidengine.c soundcard.c makefile defines.h
++ARCH_FILES = tinysid.c sidengine.c soundcard.c ipod_volume_control.c makefile defines.h
+ 
+ tinysid: $(OBJECTS_A)
+ 		$(CC) -o tinysid $(LDFLAGS) $(OBJECTS_A) $(LIBS)
+@@ -17,8 +22,12 @@
+ 
+ soundcard.o: soundcard.c
+ 		$(CC) -c $(CFLAGS) soundcard.c
++
++ipod_volume_control.o: ipod_volume_control.c
++		$(CC) -c $(CFLAGS) ipod_volume_control.c
+ 		
+ clean:
+ 	echo Cleaning up...
+ 	rm *.o
++	rm tinysid tinysid.gdb
+ 	echo OK.
+diff -ur tinysid.c tinysid.c
+--- tinysid.c	2006-05-25 08:10:06.000000000 -0400
++++ tinysid.c	2008-06-29 23:03:29.046875000 -0400
+@@ -37,7 +37,7 @@
+ 	cpuJSR(init_addr, actual_subsong);
+ 	printf("Playing... Hit return quit.\n");
+ 	start_playing(play_addr, play_speed);
+-	getchar();
++	ipod_init_volume_control();
+ 	stop_playing();
+ 	return(0);
+ }

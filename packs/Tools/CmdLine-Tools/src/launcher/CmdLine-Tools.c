@@ -1,5 +1,5 @@
 /*
- * Last updated: Jun 25, 2008
+ * Last updated: Jun 30, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -75,11 +75,11 @@ static void init_launch()
 	setenv("PATH", path, 1);
 	setenv("JOHN", JOHN, 1);
 	
-	pz_menu_add_stub_group("/Tools/Lolcode", "Development");
-	pz_menu_add_action_group("/Tools/Lolcode/#FastLaunch",
+	pz_menu_add_stub_group("/Tools/LOLCODE", "Development");
+	pz_menu_add_action_group("/Tools/LOLCODE/#FastLaunch",
 		"#FastLaunch", lolcode_fastlaunch);
-	pz_menu_add_action_group("/Tools/Lolcode/Scripts", "Browse", browse_lolcode);
-	pz_menu_sort("/Tools/Lolcode");
+	pz_menu_add_action_group("/Tools/LOLCODE/Scripts", "Browse", browse_lolcode);
+	pz_menu_sort("/Tools/LOLCODE");
 	
 	lolcode_browser_extension.name = N_("Interpret LOLCODE");
 	lolcode_browser_extension.makesub = lolcode_load_file_handler;

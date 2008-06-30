@@ -1,4 +1,4 @@
-Last updated: Jun 28, 2008
+Last updated: Jun 30, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -22,10 +22,12 @@ Usage:
   binaries are accessible to the shell and terminal.
   Thus they can be used in shell scripts or via the
   terminal module.
-- The CmdLine-Tools launch module adds file handlers
-  for usage of the archiving tools; hold the centre/
-  select button on an item in the file browser to
-  access the archiving options.
+- FastLaunch LOLCODE interpreter through
+  "Tools > LOLCODE > FastLaunch" to start interpreter (type
+  in the commands via terminal) or use
+  "Tools > LOLCODE > Scripts" to select script to run.
+- Files with a ".lol" extension have their default action
+  set to the LOLCODE interpreter.
 
 
 Original:
@@ -75,6 +77,7 @@ Launch Module:
   by the shell
 - "/opt/Tools/CmdLine-Tools/John" is set to $JOHN for John
   the ripper
+- Fastlaunches LOLCODE interpreter through terminal
 - interpret LOLCODE scripts from file browser
 
 To do:
