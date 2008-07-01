@@ -1,0 +1,22 @@
+Last updated: July 1, 2008
+~Keripo
+
+This scheme was created to celebrate July 1st,
+i.e. Canada Day. The background picture was
+taken from canadian-flag.org at
+http://www.canadian-flag.org/canadian-flag-640.jpg
+and is highly likely to be part of public domain.
+
+While the picture is not under any clear license,
+I am using it in this scheme as free content as
+the picture is very small and degraded in quality
+and is very likely shown as public domain. Usage
+of this picture is not intended to cause any harm
+or benefits to either parties. If you do not agree
+with this view, do not use this scheme.
+
+The .png files were created using Photoshop CS3 10.0.
+To create them, the original images were resized,
+the colour set to Indexed, Selective, 32, then
+edited/cleaned up by hand. The monochrome images
+were set to grayscale, then smudged by hand.
