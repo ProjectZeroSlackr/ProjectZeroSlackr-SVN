@@ -1,4 +1,4 @@
-Last updated: Jun 30, 2008
+Last updated: July 1, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,9 @@ original/ported software.
 
 
 == Changelog ==
+
+July 1, 2008
+- Added O Canada! scheme for PZ2
 
 Jun 30, 2008
 - Added TinySID
