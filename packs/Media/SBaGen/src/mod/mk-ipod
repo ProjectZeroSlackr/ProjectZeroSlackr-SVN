@@ -1,3 +1,3 @@
 #!/bin/bash
 
-arm-elf-gcc sbagen.c -o sbagen -DT_LINUX -Wall -O3 -s -lc -lm -lpthread -elf2flt
+arm-elf-gcc ipod.c sbagen.c -o sbagen -DT_LINUX -Wall -O3 -s -lc -lm -lpthread -elf2flt
