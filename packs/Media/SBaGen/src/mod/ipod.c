@@ -19,22 +19,22 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
- 
+
 /* == Volume code == */
 
 #include <fcntl.h>
+#include <unistd.h>
 #include <sys/soundcard.h>
 #include <sys/ioctl.h>
 
 static int ipod_mixer;
+static int volume_current;
 static int ipod_volume;
-static int volume_current = -1;
 
-static void ipod_update_volume()
-{
+static void ipod_update_volume() {
 	if (volume_current != ipod_volume) {
-		volume_current = ipod_volume;
 		int vol;
+		volume_current = ipod_volume;
 		vol = volume_current << 8 | volume_current;
 		ioctl(ipod_mixer, SOUND_MIXER_WRITE_PCM, &vol);
 	}
@@ -52,12 +52,12 @@ static void ipod_exit_sound()
 	close(ipod_mixer);
 }
 
-
 /* == Input code == */
 
 #include <stdio.h>
 #include <fcntl.h>
 #include <termios.h>
+#include <unistd.h>
 #include <linux/kd.h>
 
 #define KEY_MENU	50 // Up
@@ -107,58 +107,43 @@ static void ipod_exit_input()
 	close(console);
 }
 
+/* == loop() functions == */
 
-/* == Main loop == */
-
-#define SCROLL_MOD_NUM 5 // Via experimentation
-#define SCROLL_MOD(n) \
-	({ \
-		static int scroll_count = 0; \
-		int use = 0; \
-		if (++scroll_count >= n) { \
-			scroll_count -= n; \
-			use = 1; \
-		} \
-		(use == 1); \
-	})
-
-void ipod_init_volume_control()
+void ipod_init()
 {
 	ipod_init_sound();
 	ipod_init_input();
-	
-	int input, exit;
-	exit = 0;
-	while (exit != 1) {
-		input = KEYCODE(ipod_get_keypress());
-		switch (input) {
-			case SCROLL_L:
-				if (SCROLL_MOD(SCROLL_MOD_NUM)) {
-					ipod_volume--;
-					if (ipod_volume < 0)
-						ipod_volume = 0; // Negative volume DNE!
-					ipod_update_volume();
-				}
-				break;
-			case KEY_ACTION:
-				exit = 1;
-				break;
-			case SCROLL_R:
-				if (SCROLL_MOD(SCROLL_MOD_NUM)) {
-					ipod_volume++;
-					if (ipod_volume > 70)
-						ipod_volume = 70; // To be safe - 70 is VERY loud
-					ipod_update_volume();
-				}
-				break;
-			case KEY_MENU:
-				exit = 1;
-				break;			
-			default:
-				break;		
-		}
+}
+
+void ipod_update()
+{
+	int input;
+	input = KEYCODE(ipod_get_keypress());
+	switch (input) {
+		// Scrol wheel not used for volume due to SBAGen's slow main loop
+		case KEY_REWIND:
+			ipod_volume -= 2;
+			if (ipod_volume < 0)
+				ipod_volume = 0; // Negative volume DNE!
+			ipod_update_volume();
+			break;
+		case KEY_FORWARD:
+			ipod_volume += 2;
+			if (ipod_volume > 70)
+				ipod_volume = 70; // To be safe - 70 is VERY loud
+			ipod_update_volume();
+			break;
+		case KEY_ACTION:
+		case KEY_MENU:
+			exit(0);
+			break;
+		default:
+			break;
 	}
-	
+}
+
+void ipod_exit()
+{
 	ipod_exit_sound();
 	ipod_exit_input();
 }

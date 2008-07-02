@@ -1,22 +1,38 @@
-diff -urN src/main/main.c src/main/main.c
---- src/main/main.c	2007-12-05 23:39:27.000000000 +0000
-+++ src/main/main.c	2008-02-16 17:42:53.000000000 +0000
-@@ -290,7 +290,13 @@
+diff -ur src/main/main.c src/main/main.c
+--- src/main/main.c	2008-07-02 10:05:17.312500000 -0400
++++ src/main/main.c	2008-07-02 10:43:34.562500000 -0400
+@@ -288,9 +288,29 @@
+     k = cmd = 0;
+ #endif
  
++#define SCROLL_MOD_NUM 5
++#define SCROLL_MOD(n) \
++    ({ \
++        static int scroll_count = 0; \
++        int use = 0; \
++        if (++scroll_count >= n) { \
++            scroll_count -= n; \
++            use = 1; \
++        } \
++        (use == 1); \
++    })
++
      if (k > 0) {
  	switch (cmd) {
 -	case 'q':	/* quit */
 +	case 'r':	/* volume increase */
-+	    xmp_gvol_inc(ctx);
++        if (SCROLL_MOD(SCROLL_MOD_NUM))
++	        xmp_gvol_inc(ctx);
 +	    break;
 +	case 'l':	/* volume decrease */
-+	    xmp_gvol_dec(ctx);
++	    if (SCROLL_MOD(SCROLL_MOD_NUM))
++	        xmp_gvol_dec(ctx);
 +	    break;
 +	case 'm':	/* quit */
  	    skip = -2;
  	    xmp_mod_stop(ctx);
  	    if (pause)
-@@ -301,7 +307,7 @@
+@@ -301,7 +321,7 @@
  	    if (pause)
  		pause = xmp_mod_pause(ctx);
  	    break;
@@ -25,7 +41,7 @@ diff -urN src/main/main.c src/main/main.c
  	    xmp_ord_prev(ctx);
  	    if (pause)
  		pause = xmp_mod_pause(ctx);
-@@ -318,7 +324,7 @@
+@@ -318,7 +338,7 @@
  	    if (pause)
  		pause = xmp_mod_pause(ctx);
  	    break;

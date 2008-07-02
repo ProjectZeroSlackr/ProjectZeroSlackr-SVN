@@ -1,4 +1,4 @@
-Last updated: Jun 30, 2008
+Last updated: July 2, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -46,7 +46,7 @@ Original:
 ZS Version:
 - Modder: Keripo
 - Type: Porter
-- Date: Jun 30, 2008
+- Date: July 2, 2008
 - Version: B X.X
 
 Modifications:

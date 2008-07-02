@@ -3,7 +3,7 @@
 # SBaGen Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 30, 2008
+# Last updated: July 2, 2008
 #
 echo ""
 echo "==========================================="
@@ -26,6 +26,11 @@ mv sbagen-1.4.4 compiling
 # Apply ZeroSlackr custom patches
 echo "> Applying ZeroSlackr patches..."
 cp -rf ../src/mod/* compiling/
+cd compiling
+for file in ../../src/patches/*; do
+	patch -p0 -t -i $file >> ../build.log
+done
+cd ..
 # Symlink the libraries
 echo "> Symlinking libraries..."
 DIR=$(pwd)

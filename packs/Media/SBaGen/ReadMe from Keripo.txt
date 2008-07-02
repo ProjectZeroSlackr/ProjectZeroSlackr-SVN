@@ -1,4 +1,4 @@
-Last updated: Apr 23, 2008
+Last updated: July 2, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -43,10 +43,10 @@ Usage:
   action set to SBaGen.
 - Toggle the "Media > SBaGen > Toggle Backlight" setting
   to set backlight on/off.
-- Note that SBaGen doesn't have a built-in exit function;
-  you will have to exit by rebooting (holding the right
-  key combinations to force reboot - see the iPodLinux
-  wiki's "Key_combinations" article for more info).
+- Press forward/rewind to adjust volume and press menu/centre
+  to exit SBaGen. Due to how SBaGen's main loop works, the
+  response to the button presses sometimes isn't immediate
+  and there may be a few seconds of delay.
 - Neither the author (Jim Peters) nor I (Keripo) will
   take any responsibilities in your actions;
   USE AND EXPERIMENT WITH THIS UTILITY AT YOUR OWN RISK!
@@ -63,19 +63,19 @@ Original:
 ZS Version:
 - Modder: Keripo
 - Type: Porter
-- Date: Apr 23, 2008
+- Date: July 2, 2008
 - Version: B X.X
 
 Modifications:
-- none; simple recompile
+- added working (but not perfect) interactive volume control
+  and exiting
 
 Launch Module:
 - FastLaunches SBaGen with "basics/prog-chakras-1.sbg"
 - launch beat files from file browser
 
 To do:
-- add a built-in exit function and volume control
-  (steal code from xmp!)
+- none
 
 Changelog:
 [keep untouched till beta release]
