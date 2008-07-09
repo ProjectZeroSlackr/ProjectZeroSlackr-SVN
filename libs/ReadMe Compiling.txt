@@ -1,4 +1,4 @@
-Last updated: May 2, 2008
+Last updated: July 7, 2008
 ~Keripo
 
 Build individual libraries running
@@ -9,6 +9,33 @@ libraries)
 
 bzip2 source downloaded from
 http://www.bzip.org/downloads.html
+
+freetype source download from
+http://download.savannah.gnu.org/releases/freetype/
+
+libjpeg source download from
+ftp://ftp.uu.net/graphics/jpeg/
+
+libmad source download from
+http://sourceforge.net/projects/mad/
+
+libpng source download from
+http://sourceforge.net/projects/libpng/
+
+libtiff source download from
+ftp://ftp.remotesensing.org/pub/libtiff/
+
+SDL source download from
+http://www.libsdl.org/download-1.2.php
+
+SDL_image source download from
+http://www.libsdl.org/projects/SDL_image/
+
+SDL_mixer source download from
+http://www.libsdl.org/projects/SDL_mixer/
+
+SDL_ttf source download from
+http://www.libsdl.org/projects/SDL_ttf/
 
 tar source downloaded from
 ftp://download.gnu.org.ua/pub/alpha/tar

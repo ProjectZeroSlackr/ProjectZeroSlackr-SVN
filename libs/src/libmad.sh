@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# zlib Auto-Compiling Script
+# libmad Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
 # Last updated: July 7, 2008
@@ -8,23 +8,23 @@
 echo ""
 echo "==========================================="
 echo ""
-echo "zlib Auto-Compiling Script"
+echo "libmad Auto-Compiling Script"
 echo ""
 # Cleanup
-if [ -d zlib ]; then
-	echo "> Removing old zlib directory..."
-	rm -rf zlib
+if [ -d libmad ]; then
+	echo "> Removing old libmad directory..."
+	rm -rf libmad
 fi
 # Extract source
 echo "> Extracting source..."
-tar -xf src/zlib/zlib-1.2.3.tar.gz
-mv zlib-1.2.3 zlib
+tar -xf src/libmad/libmad-0.15.1b.tar.gz
+mv libmad-0.15.1b libmad
 # Compiling
+cd libmad
 echo "> Compiling..."
-cd zlib
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
-./configure --prefix=$(pwd) >> build.log
-make install CC=arm-uclinux-elf-gcc LDFLAGS="-L. libz.a -elf2flt" EXE="" >> build.log
+./configure CC=arm-uclinux-elf-gcc LDFLAGS=-elf2flt --host=arm-uclinux-elf --enable-fpm=arm --prefix=$(pwd) >> build.log 2>&1
+make install >> build.log
 echo ""
 echo "Fin!"
 echo ""

@@ -3,7 +3,7 @@
 # ttk Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 27, 2008
+# Last updated: July 7, 2008
 #
 # Requires hotdog
 if [ ! -d hotdog ]; then
@@ -38,7 +38,7 @@ if [ "${CYGWIN}" ]; then
 fi
 echo "> Compiling..."
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
-make NOMWIN=1 NOX11=1 >> build.log
+make NOMWIN=1 NOX11=1 >> build.log 2>&1
 echo ""
 echo "Fin!"
 echo ""
