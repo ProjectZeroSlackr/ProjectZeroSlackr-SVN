@@ -1,4 +1,4 @@
-Last updated: Jun 30, 2008
+Last updated: July 9, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -11,15 +11,13 @@ original/ported software.
 == To do ==
 
 Misc:
-- Add a "Known Issues" section to "ReadMe from Keripo.txt"s
+- Add SansaLinux support
+- Add a "Known Issues" and "Works on" sections to
+  "ReadMe from Keripo.txt"s
 - Port DSLinux stuff
 - Use Insune instead of PZ2 for ZeroLauncher
 
 Fixes:
-- iDarcNES complete redo!!! (too many bugs to care about)
-
-Testing: 
-- TimeWalk: test with old monochrome iPods, complete zillae list
 
 
 == To add ==
@@ -58,6 +56,7 @@ Attempt:
 - aalib
 
 To port:
+- Ren'Py
 - DSLinux apps
 - BSD Games
 - dc

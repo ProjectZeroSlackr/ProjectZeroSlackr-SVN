@@ -1,4 +1,4 @@
-Last updated: July 1, 2008
+Last updated: July 9, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,14 @@ original/ported software.
 
 
 == Changelog ==
+
+July 9, 2008
+- Removed defunct monochrome support from igpSP
+- Added extra quotes to launch scripts (hopes this
+  doesn't screw anything up)
+- Added freetype, libjpeg, libmad, libpng, libtiff, SDL,
+  SDL_image, SDL_mixer, and SDL_tff libraries
+- Added ONScripter
 
 July 1, 2008
 - Added O Canada! scheme for PZ2

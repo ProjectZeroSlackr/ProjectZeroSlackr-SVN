@@ -1,0 +1,6 @@
+Module: ONScripter
+Display-name: ONScripter
+Description: Open-source clone of the NScripter engine for the creation of visual novels.
+Category: Media
+Author: Ogapee, Insani, Haeleth
+Dependencies: browser-ext
