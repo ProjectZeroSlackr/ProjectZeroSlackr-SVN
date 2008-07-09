@@ -1,5 +1,5 @@
 /*
- * Last updated: Jun 12, 2008
+ * Last updated: July 8, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -86,8 +86,9 @@ static inline void udelay(unsigned usecs)
 #define BACKLIGHT_OFF	0
 #define BACKLIGHT_ON	1
 
-#define FBIOGET_CONTRAST	_IOR('F', 0x22, int)
-#define FBIOSET_CONTRAST	_IOW('F', 0x23, int)
+// No support for monochrome iPods - see ipod_video.c
+//#define FBIOGET_CONTRAST	_IOR('F', 0x22, int)
+//#define FBIOSET_CONTRAST	_IOW('F', 0x23, int)
 
 #define FBIOGET_BACKLIGHT	_IOR('F', 0x24, int)
 #define FBIOSET_BACKLIGHT	_IOW('F', 0x25, int)

@@ -1,5 +1,5 @@
 /*
- * Last updated: Jun 12, 2008
+ * Last updated: July 9, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -49,7 +49,7 @@
 void ipod_init_hw();
 void ipod_exit_hw();
 void ipod_toggle_backlight();
-void ipod_update_contrast();
+//void ipod_update_contrast(); // No support for monochrome iPods - see ipod_video.c
 void ipod_update_brightness();
 void ipod_update_cpu_speed();
 
