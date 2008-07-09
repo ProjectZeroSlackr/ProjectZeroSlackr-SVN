@@ -1,5 +1,5 @@
 /*
- * Last updated: Jun 12, 2008
+ * Last updated: July 9, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -35,7 +35,7 @@ extern u32 no_alpha;
 extern u32 synchronize_flag;
 // Hardware settings
 extern int ipod_cpu_speed;
-extern int ipod_contrast;
+//extern int ipod_contrast;
 extern int ipod_brightness;
 extern int ipod_backlight;
 // Input settings
@@ -59,7 +59,7 @@ static const char *keys[] = {
 	"tweaks:synchronize_flag",
 	// Hardware settings
 	"hardware:cpu_speed",
-	"hardware:contrast",
+	//"hardware:contrast",
 	"hardware:brightness",
 	"hardware:backlight",
 	// Input settings
@@ -81,7 +81,7 @@ static int *values[] = {
 	(int *)(&synchronize_flag),
 	// Hardware settings
 	&ipod_cpu_speed,
-	&ipod_contrast,
+	//&ipod_contrast,
 	&ipod_brightness,
 	&ipod_backlight,
 	// Input settings
@@ -103,7 +103,7 @@ static int defaults[] = {
 	1,	// Synchronize on
 	// Hardware settings
 	2,	// 78MHz
-	101,// Default constrast level
+	//101,// Default constrast level
 	16,	// Default brightness level
 	1,	// Backlight on
 	// Input settings
@@ -206,8 +206,8 @@ static void ipod_parse_conf(dictionary *ini)
 	// Hardware settings
 	ipod_cpu_speed =
 		ipod_get_setting(ini, "hardware:cpu_speed", 2);
-	ipod_contrast =
-		ipod_get_setting(ini, "hardware:contrast", 101);
+	//ipod_contrast =
+		//ipod_get_setting(ini, "hardware:contrast", 101);
 	ipod_brightness =
 		ipod_get_setting(ini, "hardware:brightness", 16);
 	ipod_backlight =
@@ -246,7 +246,7 @@ static void ipod_save_conf()
 	ipod_set_setting(ini, "tweaks:synchronize", (int)(synchronize_flag));
 	// Hardware settings
 	ipod_set_setting(ini, "hardware:cpu_speed", ipod_cpu_speed);
-	ipod_set_setting(ini, "hardware:contrast", ipod_contrast);
+	//ipod_set_setting(ini, "hardware:contrast", ipod_contrast);
 	ipod_set_setting(ini, "hardware:brightness", ipod_brightness);
 	ipod_set_setting(ini, "hardware:backlight", ipod_backlight);
 	// Input settings
@@ -265,7 +265,7 @@ static void ipod_save_conf()
 void ipod_update_settings()
 {
 	ipod_update_cpu_speed();
-	ipod_update_contrast();
+	//ipod_update_contrast(); // No support for monochrome iPods - see ipod_video.c
 	ipod_update_brightness();
 	ipod_update_backlight();
 	ipod_update_scale_type();

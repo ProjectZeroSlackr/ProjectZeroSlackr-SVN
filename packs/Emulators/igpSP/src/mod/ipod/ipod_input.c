@@ -1,5 +1,5 @@
 /*
- * Last updated: Jun 12, 2008
+ * Last updated: July 9, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -56,6 +56,8 @@ static int ipod_get_keytouch()
 	int touch;
 	
 	touch = 0xff;
+	// No support for monochrome iPods - see ipod_video.c
+	/*
 	if (IPOD_HW_VER != 0x4 && IPOD_HW_VER != 0x3) { // mini 1G or 3G
 		int in, st;
 		in = inl(0x7000C140);
@@ -65,6 +67,7 @@ static int ipod_get_keytouch()
 		if (st == 0xc0)
 			touch = (in & 0x007F0000 ) >> 16;
 	}
+	*/
 	
 	// See http://ipodlinux.org/Key_Chart
 	// The +6 is for rounding

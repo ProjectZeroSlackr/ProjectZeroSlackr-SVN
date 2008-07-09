@@ -333,7 +333,7 @@ diff -ur gui.c gui.c
 +
 +
 +  extern int ipod_cpu_speed;
-+  extern int ipod_contrast;
++  //extern int ipod_contrast; // No support for monochrome iPods - see ipod_video.c
 +  extern int ipod_brightness;
 +  extern int ipod_backlight;
 +
@@ -345,12 +345,12 @@ diff -ur gui.c gui.c
 +  {
 +    string_selection_option(NULL, "CPU speed",
 +     cpu_speed_options, (u32 *)(&ipod_cpu_speed), 4, "", 0),
-+    numeric_selection_option(NULL, "Contrast",
-+     (u32 *)(&ipod_contrast), 120, "", 1),
++    //numeric_selection_option(NULL, "Contrast",
++     //(u32 *)(&ipod_contrast), 120, "", 1),
 +    numeric_selection_option(NULL, "Brightness",
-+     (u32 *)(&ipod_brightness), 32, "", 2),
++     (u32 *)(&ipod_brightness), 32, "", 1),
 +    string_selection_option(NULL, "Backlight",
-+     off_on_options, (u32 *)(&ipod_backlight), 2, "", 3)
++     off_on_options, (u32 *)(&ipod_backlight), 2, "", 2)
 +  };
 +
 +  make_menu(ipod_hardware, submenu_ipod_hardware, NULL);

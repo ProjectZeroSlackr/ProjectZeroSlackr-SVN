@@ -1,5 +1,5 @@
 /*
- * Last updated: Jun 12, 2008
+ * Last updated: July 9, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -31,12 +31,12 @@
 extern int IPOD_LCD_TYPE;
 
 int ipod_cpu_speed;
-int ipod_contrast;
+//int ipod_contrast;
 int ipod_brightness;
 int ipod_backlight;
 
 static int cpu_speed_current = -1;
-static int contrast_current = -1;
+//static int contrast_current = -1;
 static int brightness_current = -1;
 static int backlight_current = -1;
 
@@ -94,6 +94,8 @@ static int ipod_ioctl(int request, int *arg)
 	return 0;
 }
 
+// No support for monochrome iPods - see ipod_video.c
+/*
 static int ipod_get_contrast()
 {
 	int contrast;
@@ -115,6 +117,7 @@ void ipod_update_contrast()
 		}
 	}
 }
+*/
 
 
 /* Brightness control (iPod nano and videos only) */

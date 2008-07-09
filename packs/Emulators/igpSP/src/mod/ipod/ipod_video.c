@@ -1,5 +1,5 @@
 /*
- * Last updated: Jun 20, 2008
+ * Last updated: July 9, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -26,6 +26,20 @@
  * (see ipod_video.h)
  */
 
+/*
+ * Note that after extensive testing with Doitle's 4G iPod, it was concluded
+ * that hotdog does not support proper blitting on monochrome iPods (even
+ * the hotdog demos did not work when properly tweaked). Although
+ * monochrome screen support can be added through using iBoy/SDL's
+ * monochrome screen code, I haven't the time to experiment with that
+ * nor enough testers. There are not many monochrome users and adding
+ * monochrome iPod checks to the code slows things down for colour users.
+ * The mini has special input code and the 3G and older supposedly do not
+ * have wheel touch support and I have testers for neither. As a result, it
+ * would be simpler for me to exclude monochrome support entirely. The old
+ * code is still kept, just commented out.
+ */
+
 #include "ipod_common.h"
 #include "ipod_video.h"
 
@@ -44,10 +58,10 @@ int IPOD_HW_VER, IPOD_LCD_TYPE;
 uint32 IPOD_WIDTH, IPOD_HEIGHT;
 
 uint16 *ipod_screen; //RGB565
-uint8 *ipod_screen_mono; //Y'UV - Y only
+//uint8 *ipod_screen_mono; //Y'UV - Y only
 
 static ipod_update_screen_type ipod_update_screen_funct = 0;
-static int monochrome = -1;
+//static int monochrome = -1;
 static int scale_type_current = -1;
 static int smooth_type_current = -1;
 static int scale_x[320], scale_y[240]; // Max iPod screen dimensions (iPod video)
@@ -240,6 +254,7 @@ static void ipod_update_screen_width_smooth_2()
 
 // Monochrome iPods - will be slightly slower due to extra conversion but
 // I don't want to duplicate code just for this; besides, not many people use monochromes
+/*
 static void ipod_update_screen_convert_to_mono()
 {
 	int i, max;
@@ -248,16 +263,17 @@ static void ipod_update_screen_convert_to_mono()
 		ipod_screen_mono[i] = convert_pixel_RGB565_to_Y(ipod_screen[i]);
 	}
 }
+*/
 
 void ipod_update_screen()
 {
 	ipod_update_screen_funct();
-	if (monochrome) {
-		ipod_update_screen_convert_to_mono();
-		HD_LCD_Update(ipod_screen_mono, 0, 0, IPOD_WIDTH, IPOD_HEIGHT);
-	} else {
+	//if (monochrome) {
+		//ipod_update_screen_convert_to_mono();
+		//HD_LCD_Update(ipod_screen_mono, 0, 0, IPOD_WIDTH, IPOD_HEIGHT);
+	//} else {
 		HD_LCD_Update(ipod_screen, 0, 0, IPOD_WIDTH, IPOD_HEIGHT);
-	}
+	//}
 }
 
 void ipod_clear_screen()
@@ -405,6 +421,7 @@ void ipod_init_video()
 	HD_LCD_GetInfo(&IPOD_HW_VER, &IPOD_WIDTH, &IPOD_HEIGHT, &IPOD_LCD_TYPE);
 	
 	ipod_screen = malloc(IPOD_WIDTH * IPOD_HEIGHT * 2);
+	/*
 	if (IPOD_LCD_TYPE == 2 || IPOD_LCD_TYPE == 3) { // monochromes (1-4G & minis)
 		monochrome = 1;
 		ipod_screen_mono = malloc(IPOD_WIDTH * IPOD_HEIGHT * 2);
@@ -412,6 +429,7 @@ void ipod_init_video()
 		monochrome = 0;
 		ipod_screen_mono = NULL;
 	}
+	*/
 	
 	ipod_update_scale_type();
 }

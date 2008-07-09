@@ -1,5 +1,5 @@
 /*
- * Last updated: Jun 12, 2008
+ * Last updated: July 9, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -56,17 +56,20 @@
 #define RGB565(r, g, b) \
 	((r >> 3) << 11) | ((g >> 2) << 5) | ((b >> 3) << 0)
 
-#define Y(r, g, b) \
-	(((r) + (g << 1) + (b)) >> 2)
+// No support for monochrome iPods - see ipod_video.c
+//#define Y(r, g, b) \
+	//(((r) + (g << 1) + (b)) >> 2)
 
 
 // Get Y (luminosity) value of YUV format from RGB565 format for monochrome iPods
+/*
 #define convert_pixel_RGB565_to_Y(p) \
 	Y( \
 		get_R_from_RGB565(p), \
 		get_G_from_RGB565(p), \
 		get_B_from_RGB565(p) \
 	)
+*/
 
 
 // Blend four pixel values - p1 gets weighted two times

@@ -1,4 +1,4 @@
-Last updated: Jun 26, 2008
+Last updated: July 9, 2008
 ~Keripo
 
 
@@ -15,7 +15,8 @@ platforms such as the iPhone, etc.). For more information on
 the emulator itself (gpSP), see the documents in the "docs"
 directory. For information on the iPodLinux port, see the iPL
 wiki page (http://ipodlinux.org/Igpsp) or search the iPodLinux
-forums (http://www.ipodlinux.org/forums/).
+forums (http://www.ipodlinux.org/forums/). Currently igpSP only
+runs on colour iPods (i.e. iPod colour/photo/nano/video).
 
 
 == History ==
@@ -52,7 +53,6 @@ and the iPod's screen dimensions. The smoothing code "smooths"
 the outputed screen by blending nearby pixels from the GBA
 screen (four pixels for "Type 1" and eight for "Type 2")
 through getting their RGB values and rebuilding a new pixel.
-Monochrome iPods re-converts these pixels to luminosity (YUV).
 Turning off alpha blending may offer game speed-ups (depending
 on how much alpha blending is used by the game) at the price of
 graphics/proper emulation). The synchronization flag can also
@@ -223,8 +223,6 @@ Hardware settings:
   to warm up and become unstable after prolonged use (i.e.
   when used with backlight for over 20 minutes). USE 81MHz
   WITH CAUTION!
-- The "Contrast" setting controls the iPod's screen contrast.
-  Contrast control will only work with monochrome iPods.
 - The "Brightness" setting controls the brightness level of
   the iPod's backlight. Brightness control will only work with
   iPod nano and videos.
@@ -251,6 +249,8 @@ K6:
 - Better screen smoothing code (now more "blend" than "blur")
 - Added backlight brightness control
 - Added .ini configuration file to save iPod-specific settings
+- Removed monochrome support as it turns out hotdog doesn't
+  work at all on monochromes
 K5:
 - Fixed sound output - no longer as crappy!
 - Fixed L/R trigger mapping so touch doesn't conflict
