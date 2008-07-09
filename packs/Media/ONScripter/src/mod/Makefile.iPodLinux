@@ -1,0 +1,49 @@
+# Last updated: July 7, 2008
+# ~Keripo
+#
+# Modified copy of the Makefile.iPodLinux borrowed from
+# the Japanese source code for ONScripter as Haeleth's
+# English ONScripter source code uses an inflexible
+# configure script.
+#
+
+# -*- Makefile -*-
+#
+# Makefile.iPodLinux - Makefile rules for uClinux on iPod (photo/nano/video)
+#   Thanks Shiikuru-san
+#
+# Playing movie and audio is not supported.
+#
+
+PREF = /usr/local/arm-uclinux-elf-tools/arm-uclinux-elf
+
+INCS = -I$(PWD)/../SDL/include -I$(PWD)/../SDL/include/SDL -I$(PWD)/../SDL_image/include/SDL -I$(PWD)/../SDL_mixer/include/SDL -I$(PWD)/../SDL_ttf/include/SDL -I$(PWD)/../bzip2/include -I$(PWD)/../freetype/include -I$(PWD)/../libjpeg/include -I$(PWD)/../libmad/include -I$(PWD)/../libpng/include -I$(PWD)/../zlib/include
+
+LIBS = -L$(PWD)/../SDL/lib -L$(PWD)/../SDL_image/lib -L$(PWD)/../SDL_mixer/lib -L$(PWD)/../SDL_ttf/lib -L$(PWD)/../bzip2/lib -L$(PWD)/../freetype/lib -L$(PWD)/../libjpeg/lib -L$(PWD)/../libmad/lib -L$(PWD)/../libpng/lib -L$(PWD)/../zlib/lib -lSDL_ttf -lSDL_image -lSDL_mixer -lSDL -lmad -lfreetype -ljpeg -lbz2 -lpng -lz -elf2flt
+
+# for iPod 5G (video) : 320x240
+#DEFS = -DIPODLINUX -DLINUX -DPDA -DBPP16 -DMP3_MAD
+# for iPod photo      : 220x176 -> 220x165
+#DEFS = -DIPODLINUX -DLINUX -DPDA -DPDA_WIDTH=220 -DBPP16 -DMP3_MAD
+# for iPod nano       : 176x132
+#DEFS = -DIPODLINUX -DLINUX -DPDA -DPDA_WIDTH=176 -DBPP16 -DMP3_MAD
+
+# for iPod (nano, photo, 4G color, 5G) : Auto
+DEFS = -DIPODLINUX -DLINUX -DPDA -DPDA_AUTOSIZE -DBPP16 -DMP3_MAD -DENABLE_1BYTE_CHAR -DFORCE_1BYTE_CHAR -DINSANI -DHAELETH -elf2flt
+
+EXESUFFIX =
+OBJSUFFIX = .o
+
+.SUFFIXES:
+.SUFFIXES: $(OBJSUFFIX) .cpp .h
+
+CXX = arm-uclinux-elf-g++ 
+LD = arm-uclinux-elf-gcc -Wl,-elf2flt -o
+
+CFLAGS = -O3 -Wall -fno-exceptions -fno-rtti -fno-check-new -fomit-frame-pointer -pipe -c $(INCS) $(DEFS)
+RM = rm -f
+
+TARGET = onscripter
+EXT_OBJS = MadWrapper.o
+
+include Makefile.onscripter

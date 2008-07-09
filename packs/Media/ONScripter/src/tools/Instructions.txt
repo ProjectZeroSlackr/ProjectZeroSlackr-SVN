@@ -1,0 +1,88 @@
+Last updated: July 9, 2008
+
+These tools/applications are for Windows
+only. You will have to recompile them from
+source code (not provided here) if you want
+to use them. Those in "onscripter-tools_win.zip"
+can be compiled from the ONScripter source
+code. All instructions assume that the tools
+are placed in the same folder as the data files.
+
+When converting the files, remember to set the
+output to a _different_ filename than the
+original but rename the file when you copy it
+onto your iPod (i.e. convert "arc.nsa" to
+"arc-ipod.nsa", copy "arc-ipod.nsa" to your iPod,
+then rename the "arc-ipod.nsa" on your iPod to
+"arc.nsa"). Failing to do so may result in
+overwriting the original files as corrupt 0 or
+1 KB files.
+
+To resize pictures to smaller dimensions:
+ nsaconv 640 xxx arc.nsa arc-ipod.nsa
+ sarconv 640 xxx arc.sar arc-ipod.sar
+where xxx is your iPod's width
+(nano=176, photo/colour=220, video=320)
+Note that nsaconv cannot resize PNG files
+such as the ones used in a mirror moon
+patched Tsukihime. To resize these files,
+see next.
+
+To manually resize pictures, you need to
+extract the files, resize the files, then
+re-archive them.
+To extract:
+ nsaout
+ (for arc.sar files, use SarOut.exe;
+  select your .sar file, click the first
+  button in the box on the right, then OK)
+For resizing, ImageMagick is recommended:
+(note that Windows users may have to
+ rename the "convert.exe" to "convert2.exe"
+ to avoid conflicting with Windows' own
+ "convert" command)
+ for /r %f in (*.PNG *.BMP *.JPG)
+  do convert2.exe "%f" -resize xx.x% "%f"
+where xx.x is the percent ratio between
+640 and your iPod's screen width
+(nano=27.5, photo/colour=34.4, video=50.0)
+To re-archive:
+ nsaarc (then select folder)
+ SarAll (then select folder)
+
+If you wish not to manually resize the PNGs,
+you may want to convert all the PNG files to
+JPG format (ImageMagick probably also has a
+tool for that). If you do that, you will also
+have to edit the game script (nscript.dat)
+itself and replace all instances of ".png"
+with ".jpg", then repack the archive and use
+nsaconv or sarconv on it to do the resizing.
+To edit the game script:
+ NSDEC (then rename "result.txt" to "0.txt")
+ONScripter will accept either a "nscript.dat"
+or "0.txt", so you can use either (but not
+both).
+
+Note that audio does not seem to work for
+the iPodLinux build of ONScripter (SDL_mixer
+probably needs some hacking) so audio files
+inside the archives can be deleted and no
+"cd" folder is needed. While you have the
+files extracted, feel free to delete all
+.mp3/.ogg/.wav files.
+
+For more complex/game-specific instructions,
+search Google. Tutorials for converting
+NScripter games to the PSP port of ONScripter
+will work as long as the iPod screen sizes
+are used instead of the PSP's (320 width).
+Most games use a native screen width of either
+640 or 800 - extract the archives with nsaout
+or SarOut to inspect the CG files. Note that
+some of the newer visual novels that use the
+more capable KiriKiri (which use .xp3 archives),
+such as Fate/Stay Night, can be converted to
+NScripter format. Search Google for such
+converting tools.
+

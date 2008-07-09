@@ -1,0 +1,20 @@
+--- ONScripterLabel.cpp	2008-07-08 15:32:54.000000000 +0000
++++ ONScripterLabel.cpp	2008-07-08 15:34:45.000000000 +0000
+@@ -742,6 +742,9 @@
+     sprintf(script_h.save_path, "%s%c%s%c", path, DELIMITER, gameid, DELIMITER);
+ 	mkdir(script_h.save_path, 0755);
+ #elif defined LINUX
++#ifdef IPODLINUX
++	script_h.save_path = archive_path->get_path(0);
++#else
+ 	// On Linux (and similar *nixen), place in ~/.gameid
+ 	passwd* pwd = getpwuid(getuid());
+ 	if (pwd) {
+@@ -751,6 +754,7 @@
+ 	    mkdir(script_h.save_path, 0755);
+ 	}
+ 	else script_h.save_path = archive_path->get_path(0);
++#endif
+ #else
+ 	// Fall back on default ONScripter behaviour if we don't have
+ 	// any better ideas.
