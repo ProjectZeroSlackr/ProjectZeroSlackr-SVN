@@ -6,7 +6,7 @@ stty erase "^H"
 if [ -z "$1" ]; then
 	lol
 else
-	lol < "$1"
+	lol < "\"$1\""
 fi
 read -p "Press any key to exit..."
 exit

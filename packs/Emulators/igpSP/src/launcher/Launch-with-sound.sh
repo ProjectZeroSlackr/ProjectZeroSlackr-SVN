@@ -8,5 +8,5 @@ if [ -z "$1" ]; then
 	exec /opt/Emulators/igpSP/igpSP-with-sound /opt/Emulators/igpSP/Roms/SuperWings.gba
 else
 	cd /opt/Emulators/igpSP/Roms
-	exec /opt/Emulators/igpSP/igpSP-with-sound "$1"
+	exec /opt/Emulators/igpSP/igpSP-with-sound "\"$1\""
 fi

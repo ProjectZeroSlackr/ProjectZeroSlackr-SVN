@@ -8,5 +8,5 @@ if [ -z "$1" ]; then
 	exec /opt/Emulators/iGameGear/iGameGear /opt/Emulators/iGameGear/Roms/Nibbles.gg --fskip 5 --display center
 else
 	cd /opt/Emulators/iGameGear
-	exec /opt/Emulators/iGameGear/iGameGear "$1" --fskip "$2" --display "$3" "$4"
+	exec /opt/Emulators/iGameGear/iGameGear "\"$1\"" --fskip "$2" --display "$3" "$4"
 fi

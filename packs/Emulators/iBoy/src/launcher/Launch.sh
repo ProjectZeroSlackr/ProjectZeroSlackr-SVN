@@ -8,5 +8,5 @@ if [ -z "$1" ]; then
 	exec /opt/Emulators/iBoy/iBoy ChipTheChick.gb /opt/Emulators/iBoy/Roms
 else
 	cd /opt/Emulators/iBoy/Roms
-	exec /opt/Emulators/iBoy/iBoy "$1" "$2"
+	exec /opt/Emulators/iBoy/iBoy "\"$1\"" "\"$2\""
 fi

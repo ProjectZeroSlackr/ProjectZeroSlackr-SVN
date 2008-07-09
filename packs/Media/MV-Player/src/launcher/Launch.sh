@@ -8,5 +8,5 @@ if [ -z "$1" ]; then
 	exec /opt/Media/MV-Player/MV-Player
 else
 	cd /opt/Media/MV-Player
-	exec /opt/Media/MV-Player/MV-Player-CLI "$1"
+	exec /opt/Media/MV-Player/MV-Player-CLI "\"$1\""
 fi

@@ -1,4 +1,4 @@
-Last updated: Apr 22, 2008
+Last updated: Apr 30, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -24,11 +24,10 @@ Usage:
 - FastLaunch through "Emulators > iPodMAME > FastLaunch"
   to start the "Alien Armada" game or select a supported
   romset in "Emulators > iPodMAME".
-- A list of working romsets can be found in the
-  "Roms" directory. Place your legally obtained
-  rom files in their proper folders. iPodMAME
-  will not run a romset game if any of the rom
-  files for that romset are missing/incorrect.
+- A list of working romsets can be found in the "Roms"
+  directory. Place your legally obtained  rom files in
+  their proper folders. iPodMAME expects that the folders
+  be named the as the expected game name.
 - If you have an iPod video and/or you want to
   configure the screen/controls, edit the
   "Conf/ipodmame.ini" file.
@@ -45,7 +44,7 @@ Original:
 ZS Version:
 - Modder: Keripo
 - Type: ZS Recompile
-- Date: Apr 22, 2008
+- Date: Apr 30, 2008
 - Version: B X.X
 
 Modifications:
@@ -53,11 +52,10 @@ Modifications:
 - added aarmada rom from http://www.widel.com/files/aa.zip
 
 Launch Module:
-- individual launches for each supported romset
-- full file checks for missing files before launch
+- launches with game data folder set by filebrowser
 
 To do:
-- better, non-hardcoded launching mechanism (browser-style)
+- none
 
 Changelog:
 [keep untouched till beta release]
