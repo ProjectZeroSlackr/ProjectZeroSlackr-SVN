@@ -8,5 +8,5 @@ if [ -z "$1" ]; then
 	exec /opt/Media/XMP/XMP /opt/Media/XMP/Mods/a-depres.xm
 else
 	cd /opt/Media/XMP
-	exec /opt/Media/XMP/XMP "$1"
+	exec /opt/Media/XMP/XMP "\"$1\""
 fi

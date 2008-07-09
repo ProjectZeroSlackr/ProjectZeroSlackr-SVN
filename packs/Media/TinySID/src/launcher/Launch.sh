@@ -8,5 +8,5 @@ if [ -z "$1" ]; then
 	exec /opt/Media/TinySID/TinySID /opt/Media/TinySID/SIDs/Freeze.sid
 else
 	cd /opt/Media/TinySID
-	exec /opt/Media/TinySID/TinySID "$1"
+	exec /opt/Media/TinySID/TinySID "\"$1\""
 fi

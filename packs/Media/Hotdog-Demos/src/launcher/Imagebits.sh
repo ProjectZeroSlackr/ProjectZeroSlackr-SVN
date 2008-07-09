@@ -4,4 +4,4 @@
 
 # Format: $binary $png
 cd /opt/Media/Hotdog-Demos/Hotdog-EX
-exec /opt/Media/Hotdog-Demos/Hotdog-EX/Imagebits "$1"
+exec /opt/Media/Hotdog-Demos/Hotdog-EX/Imagebits "\"$1\""

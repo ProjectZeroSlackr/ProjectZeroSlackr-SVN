@@ -8,5 +8,5 @@ if [ -z "$1" ]; then
 	exec /opt/Emulators/iDarcNES/iDarcNES /opt/Emulators/iDarcNES/Roms/BombSweeper.nes
 else
 	cd /opt/Emulators/iDarcNES
-	exec /opt/Emulators/iDarcNES/iDarcNES "$1" "$2"
+	exec /opt/Emulators/iDarcNES/iDarcNES "\"$1\"" "$2"
 fi
