@@ -3,13 +3,14 @@
 # bzip2 Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 25, 2008
+# Last updated: July 7, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
 echo "bzip2 Auto-Compiling Script"
 echo ""
+# Cleanup
 if [ -d bzip2 ]; then
 	echo "> Removing old bzip2 directory..."
 	rm -rf bzip2
@@ -24,7 +25,7 @@ echo "> Applying iPod patch..."
 patch -p0 -t -i ../src/bzip2/bzip2-Makefile.patch >> build.log
 echo "> Compiling..."
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
-make >> build.log 2>&1
+make install PREFIX=$(pwd) >> build.log
 echo ""
 echo "Fin!"
 echo ""

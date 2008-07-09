@@ -3,7 +3,7 @@
 # tar Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 27, 2008
+# Last updated: July 7, 2008
 #
 echo ""
 echo "==========================================="
@@ -19,6 +19,7 @@ if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
 	echo ""
 	exit
 fi
+# Cleanup
 if [ -d tar ]; then
 	echo "> Removing old tar directory..."
 	rm -rf tar
@@ -35,8 +36,8 @@ if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
 	echo "  expect lots of problems and it to fail."
 fi
 export PATH=/usr/local/bin:$PATH
-./configure CC=arm-elf-gcc LDFLAGS=-elf2flt --host=arm-elf --disable-largefile >> build.log 2>&1
-make >> build.log 2>&1
+./configure CC=arm-elf-gcc LDFLAGS=-elf2flt --host=arm-elf --disable-largefile --prefix=$(pwd) >> build.log
+make install >> build.log
 echo ""
 echo "Fin!"
 echo ""
