@@ -1,4 +1,4 @@
-Last updated: July 7, 2008
+Last updated: July 14, 2008
 ~Keripo
 
 Build individual libraries running
@@ -47,8 +47,13 @@ zlib source downloaded from
 http://www.zlib.net/zlib-1.2.3.tar.gz
 
 hotdog and ttk source downloaded from
-the official SVN. hotdog needs to be
-built before ttk.
+the official SVN. The Noblesse artwork
+was drawn by calico_pirate (original:
+http://i49.photobucket.com/albums/
+f258/calico_pirate/keripoani.gif). I
+do not remember where the Ren picture
+is from but its probably from an old
+screenshot I took of a doujinshi.
 
 Note that the ttk compiling does not
 "make install" and that used libraries

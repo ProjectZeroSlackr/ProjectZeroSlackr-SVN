@@ -3,7 +3,7 @@
 # CmdLine-Tools Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Jun 28, 2008
+# Last updated: July 11, 2008
 #
 echo ""
 echo "==========================================="
@@ -12,7 +12,7 @@ echo "CmdLine-Tools Auto-Building Script"
 echo ""
 # Cygwin check
 if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
-	CYGWIN="yes"
+	CYGWIN=1
 fi
 # Cleanup
 if [ -d build ]; then
@@ -50,7 +50,7 @@ done
 # Compiling
 echo "> Compiling..."
 echo "  - diffutils"
-if [ "${CYGWIN}" ]; then
+if [ $CYGWIN ]; then
 	echo "    Note: diffutils doesn't seem to"
 	echo "    compile nicely on Cygwin - skipping"
 else
@@ -85,7 +85,7 @@ cd ..
 # Copy over compiled file
 echo "> Copying over compiled files..."
 mkdir compiled
-if [ "${CYGWIN}" ]; then
+if [ $CYGWIN ]; then
 	echo "  Note: skipping diffutils"
 else
 	cp -rf diffutils-2.8.1/src/cmp compiled/

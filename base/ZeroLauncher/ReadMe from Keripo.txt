@@ -1,4 +1,4 @@
-Last updated: Apr 30, 2008
+Last updated: July 11, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -53,10 +53,16 @@ Original:
 - Date: Apr 27, 2008
 - Version: Revision 2418
 
+SansaLinux:
+- Porter: Sebastian Duell
+- Type: Mod
+- Date: May 15, 2008
+- Version: 0.20
+
 ZS Version:
 - Modder: Keripo
 - Type: Mod and ZS Recompile
-- Date: Apr 27, 2008
+- Date: July 11, 2008
 - Version: B X.X
 
 Modifications:
@@ -109,6 +115,7 @@ To do:
 - use stripped down TTK library to reduce footprint (?)
 - specialized module searching for faster boot-up
 - replace with Insune (hopefully)
+- USB support for Sansas (see SansaLinux website)
 
 Changelog:
 [keep untouched till beta release]

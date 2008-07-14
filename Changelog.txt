@@ -1,4 +1,4 @@
-Last updated: July 9, 2008
+Last updated: July 14, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,11 @@ original/ported software.
 
 
 == Changelog ==
+
+July 14, 2008
+- Replaced TTK's boring Tux icon for PZ2 with either
+  Keripo's Noblesse or Tsukihime's Ren
+- Added SansaLinux support for ZeroLauncher
 
 July 9, 2008
 - Removed defunct monochrome support from igpSP
