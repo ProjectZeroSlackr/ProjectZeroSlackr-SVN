@@ -13,6 +13,7 @@ original/ported software.
 July 15, 2008
 - Added CPU speed changing function to browser-ext
 - Improved MPD module
+- Updated userland and all launch scripts with killall
 
 July 14, 2008
 - Replaced TTK's boring Tux icon for PZ2 with either

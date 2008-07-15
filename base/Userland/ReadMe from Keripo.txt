@@ -1,4 +1,4 @@
-Last updated: Apr 27, 2008
+Last updated: July 15, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -66,8 +66,9 @@ Modifications:
   - modified "pre-rc" file
 - modified loop-mount userland:
   (see /boot/docs/userland/Mod/*)
-  - modified rc file 
+  - modified rc file (keeps launching ZeroLauncher)
   - getLoader2AutoExec
+  - symlinked "cd" to minix and "killall" to busybox
   - modified Podzilla0-Lite
   - symlinked podzilla, zerolauncher and mpd binaries
   - symlinks:
