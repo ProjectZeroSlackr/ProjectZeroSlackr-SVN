@@ -10,9 +10,10 @@ if [ -z "$1" ]; then
 	# /opt will also work since ZeroLauncher searches for launch
 	# modules recursively but this is done such that
 	# /opt/Base/ZeroLauncher/Add-ons is loaded first
-	#exec /opt/Base/ZeroLauncher/ZeroLauncher -l /opt/Base:/opt/Emulators:/opt/Media:/opt/Tools:/opt/Zillae
-	exec /opt/Base/ZeroLauncher/ZeroLauncher
+	#/opt/Base/ZeroLauncher/ZeroLauncher -l /opt/Base:/opt/Emulators:/opt/Media:/opt/Tools:/opt/Zillae
+	/opt/Base/ZeroLauncher/ZeroLauncher
 else
 	cd /opt/Base/ZeroLauncher
-	exec /opt/Base/ZeroLauncher/ZeroLauncher -l "$1"
+	/opt/Base/ZeroLauncher/ZeroLauncher -l "$1"
 fi
+sleep 3s
