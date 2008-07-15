@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 30, 2008
+ * Last updated: July 15, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -54,6 +54,18 @@ extern int check_nothing(const char *file);
 // Backlight
 extern void toggle_backlight();
 extern PzWindow *toggle_backlight_window();
+
+// CPU speed
+// Postscalar values: CPU speed = (24 / 8) * postscalar
+// 81MHz is the MAXIMUM the iPod will go without screwing up
+// 75MHz is iPodLinux's default, 66MHz is Apple OS's default
+#define CPU_33MHz	11
+#define CPU_45MHz	15
+#define CPU_66MHz	22 // Underclock
+#define CPU_75MHz	25 // Normal
+#define CPU_78MHz	26 // Overclocked
+#define CPU_81MHz	27 // Max Overclock - Unstable!
+extern void set_cpu_speed(int postscalar);
 
 // Mini-browser mod
 extern TWidget *read_directory_mod(const char *dirname,

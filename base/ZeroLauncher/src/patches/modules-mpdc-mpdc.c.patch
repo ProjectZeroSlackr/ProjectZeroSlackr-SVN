@@ -1,17 +1,89 @@
 Index: modules/mpdc/mpdc.c
 ===================================================================
---- modules/mpdc/mpdc.c	(revision 2397)
+--- modules/mpdc/mpdc.c	(revision 2420)
 +++ modules/mpdc/mpdc.c	(working copy)
-@@ -417,7 +417,7 @@
+@@ -28,6 +28,10 @@
+ #include "pz.h"
+ #include "mpdc.h"
+ 
++extern void cleanup_mpd();
++extern void init_mpd();
++int MPD_ACTIVE = 1; // Accessible to other modules
++
+ PzModule *module;
+ 
+ mpd_Connection *mpdz = NULL;
+@@ -124,7 +128,7 @@
+ 	static int warned_once = 0;
+ 	if ((mpdz = mpd_init_connection()) == NULL) {
+ 		if (!warned_once) {
+-			pz_error(_("Unable to connect to MPD"));
++			//pz_error(_("Unable to connect to MPD"));
+ 			warned_once = 1;
+ 		}
+ 		return -1;
+@@ -338,6 +342,9 @@
+ 
+ static int playing_visible(ttk_menu_item *item)
+ {
++	if (MPD_ACTIVE != 1)
++		return 0;
++	
+ 	int state;
+ 
+ 	if (mpdc_tickle() < 0)
+@@ -412,13 +419,49 @@
+     item->choicechanged = b; \
+     item->choice = c; } while (0)
+ 
++static int is_active(ttk_menu_item *item)
++{
++	return MPD_ACTIVE;
++}
++static int is_not_active(ttk_menu_item *item)
++{
++	return !MPD_ACTIVE;
++}
++static PzWindow *force_kill()
++{
++	if (MPD_ACTIVE) {
++		cleanup_mpdc();
++		cleanup_mpd();
++		MPD_ACTIVE = 0;
++		pz_message("MPD process killed.");
++		return TTK_MENU_UPALL;
++	} else {
++		pz_message("MPD not active.");
++		return NULL;
++	}
++}
++static PzWindow *force_init()
++{
++	if (MPD_ACTIVE) {
++		pz_message("MPD already active.");
++		return NULL;
++	} else {
++		init_mpd();
++		mpdc_init();
++		MPD_ACTIVE = 1;
++		pz_message("MPD process initiated.");
++		return TTK_MENU_UPALL;
++	}
++}
++
+ static void init_mpdc()
+ {
  	const int flag = TTK_MENU_ICON_SUB;
  	if ((mpdz = mpd_init_connection()) == NULL) {
  #ifdef IPOD /* warning gets a bit annoying if you don't have MPD installed */
 -		pz_error(_("Unable to connect to MPD"));
 +		//pz_error(_("Unable to connect to MPD"));
  #endif
++		MPD_ACTIVE = 0;
  		return;
  	}
-@@ -426,19 +426,20 @@
+ 	module = pz_register_module("mpdc", cleanup_mpdc);
+@@ -426,19 +469,32 @@
  	pz_register_global_unused_handler(PZ_BUTTON_NEXT, mpdc_unused_handler);
  	pz_register_global_unused_handler(PZ_BUTTON_PREVIOUS,
  			mpdc_unused_handler);
@@ -36,12 +108,24 @@ Index: modules/mpdc/mpdc.c
 +		pz_menu_add_action_group("/Music/Search...", "Browse", new_search_window);
 +	pz_menu_add_action_group("/Music/Queue", "Playlists", new_queue_menu)->flags = flag;
 +	pz_menu_add_action_group("/Now Playing", "#MPD", mpd_currently_playing);
++	pz_menu_add_action_group("/Music/Kill MPD", "~Settings", force_kill);
++	pz_menu_add_action_group("/Music/Initiate MPD", "~Settings", force_init);
  	pz_get_menu_item("/Now Playing")->visible = playing_visible;
++	pz_get_menu_item("/Music/Playlists")->visible = is_active;
++	pz_get_menu_item("/Music/Artists")->visible = is_active;
++	pz_get_menu_item("/Music/Albums")->visible = is_active;
++	pz_get_menu_item("/Music/Songs")->visible = is_active;
++	pz_get_menu_item("/Music/Folders")->visible = is_active;
++	pz_get_menu_item("/Music/Queue")->visible = is_active;
++	if (search_available())
++		pz_get_menu_item("/Music/Search...")->visible = is_active;
++	pz_get_menu_item("/Music/Kill MPD")->visible = is_active;
++	pz_get_menu_item("/Music/Initiate MPD")->visible = is_not_active;
 +	pz_menu_sort("/Music");
  
  	SETUP_MENUITEM("/Settings/Shuffle", set_shuffle, init_shuffle());
  	SETUP_MENUITEM("/Settings/Repeat", set_repeat, init_repeat());
-@@ -450,6 +451,7 @@
+@@ -450,6 +506,7 @@
  					      &widget_inf );
  	pz_add_header_widget( "MPD Icons", mpd_widg_icons_update,
  					   mpd_widg_icons_draw, NULL );
