@@ -3,7 +3,7 @@
 # zlib Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 7, 2008
+# Last updated: July 15, 2008
 #
 echo ""
 echo "==========================================="
@@ -25,6 +25,7 @@ cd zlib
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
 ./configure --prefix=$(pwd) >> build.log
 make install CC=arm-uclinux-elf-gcc LDFLAGS="-L. libz.a -elf2flt" EXE="" >> build.log
+make minigzip CC=arm-uclinux-elf-gcc LDFLAGS="-L. libz.a -elf2flt" EXE="" >> build.log
 echo ""
 echo "Fin!"
 echo ""
