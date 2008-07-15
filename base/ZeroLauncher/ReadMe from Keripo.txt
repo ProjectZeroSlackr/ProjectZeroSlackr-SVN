@@ -1,4 +1,4 @@
-Last updated: July 11, 2008
+Last updated: July 15, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -62,7 +62,7 @@ SansaLinux:
 ZS Version:
 - Modder: Keripo
 - Type: Mod and ZS Recompile
-- Date: July 11, 2008
+- Date: July 15, 2008
 - Version: B X.X
 
 Modifications:
@@ -77,6 +77,7 @@ Modifications:
   > added open_directory_title function
 - mpdc module modified
   > group-and-icon-goodness
+  > added kill/initiate functions
 - podwrite module modified
   > /Notes/ -> /mnt/Notes/
 
@@ -93,12 +94,14 @@ Add-ons:
   > various ZeroLauncher functions (checks and
     get_filename/dirname)
   > backlight toggle option
+  > cpu speed changing function
   > script and binary exec handler (just like from PZ0)
   > modified mini-browser for specialty launching
 - MPD:
   > rewritten based on courtc's code
   > fully functional and ZeroSlackr-friendly
-  > "Enable MPD", and "Toggle Update" settings
+  > "Enable MPD", and "Update next startup" settings
+  > overclock iPod to 78MHz for smoother playback
   > source:
     http://so2.sys-techs.com/ipod/mpdmodule-src-0.4.tar.gz
 - podread:
@@ -110,10 +113,6 @@ Add-ons:
     http://ipodlinux.org/modules/podread/podread-0.0.1-src.tar.gz
 
 To do:
-- disable scheme rendering during scheme selection
- (too much slowdown)
-- use stripped down TTK library to reduce footprint (?)
-- specialized module searching for faster boot-up
 - replace with Insune (hopefully)
 - USB support for Sansas (see SansaLinux website)
 

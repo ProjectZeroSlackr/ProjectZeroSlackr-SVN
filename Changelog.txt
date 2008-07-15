@@ -1,4 +1,4 @@
-Last updated: July 14, 2008
+Last updated: July 15, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,10 @@ original/ported software.
 
 
 == Changelog ==
+
+July 15, 2008
+- Added CPU speed changing function to browser-ext
+- Improved MPD module
 
 July 14, 2008
 - Replaced TTK's boring Tux icon for PZ2 with either

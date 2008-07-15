@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 30, 2008
+ * Last updated: July 15, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -98,6 +98,30 @@ PzWindow *toggle_backlight_window()
 {
 	toggle_backlight();
 	return NULL;
+}
+
+// CPU speed
+// See browser-ext.h for postscalar constants
+#define outl(a, b) \
+	(*(volatile unsigned int *)(b) = (a)) \
+
+#define inl(a) \
+	(*(volatile unsigned int *)(a)) \
+
+#define CLOCK_SCALER	0x60006034
+#define CLOCK_POLICY	0x60006020
+#define RUN_CLK(x) (0x20000000 | ((x) <<  4))
+#define RUN_GET(x) ((inl(CLOCK_POLICY) & 0x0fffff8f) | RUN_CLK(x))
+#define RUN_SET(x) outl(RUN_GET(x), CLOCK_POLICY)
+
+void set_cpu_speed(int postscalar)
+{
+	outl(inl(0x70000020) | (1 << 30), 0x70000020);
+	RUN_SET(0x2);
+	outl(0xaa020008 | (postscalar << 8), CLOCK_SCALER);
+	int x;
+	for (x = 0; x < 10000; x++);
+	RUN_SET(0x7);
 }
 
 // Binary executer
