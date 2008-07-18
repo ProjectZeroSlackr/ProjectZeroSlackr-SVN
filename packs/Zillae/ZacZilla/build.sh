@@ -3,13 +3,21 @@
 # ZacZilla Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 26, 2008
+# Last updated: July 17, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
 echo "ZacZilla Auto-Building Script"
 echo ""
+# SansaLinux not supported yet
+if [ $SANSA ]; then
+	echo "[ZacZilla compiling not yet"
+	echo " supported for SansaLinux - skipping]"
+	echo ""
+	echo "==========================================="
+	exit
+fi
 # Cleanup
 if [ -d build ]; then
 	echo "> Removing old build directory..."
@@ -78,7 +86,7 @@ cp -rf ../launcher/* $PACK/Launch/
 # Documents
 cp -rf "../../ReadMe from Keripo.txt" $PACK/
 cp -rf ../../License.txt $PACK/
-sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
+#sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $PACK/Misc
 tar -cf Docs.tar Docs

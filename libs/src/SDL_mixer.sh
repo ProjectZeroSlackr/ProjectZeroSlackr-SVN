@@ -3,8 +3,21 @@
 # SDL_mixer Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 7, 2008
+# Last updated: July 17, 2008
 #
+# SansaLinux not supported yet
+if [ $SANSA ]; then
+	echo ""
+	echo "==========================================="
+	echo ""
+	echo "SDL_mixer Auto-Compiling Script"
+	echo ""
+	echo "[SDL_mixer compiling not yet"
+	echo " supported for SansaLinux - skipping]"
+	echo ""
+	echo "==========================================="
+	exit
+fi
 # Cygwin check
 if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
 	echo ""
@@ -16,7 +29,6 @@ if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
 	echo " nicely on Cygwin - skipping]"
 	echo ""
 	echo "==========================================="
-	echo ""
 	exit
 fi
 # Requires libmad and SDL

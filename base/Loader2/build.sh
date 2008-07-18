@@ -3,13 +3,22 @@
 # Loader2 & iPodPatcher Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 26, 2008
+# Last updated: July 17, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
 echo "Loader2 & iPodPatcher Auto-Building Script"
 echo ""
+# SansaLinux not supported yet
+if [ $SANSA ]; then
+	echo "[Bootloader compiling not yet"
+	echo " supported for SansaLinux - skipping]"
+	echo ""
+	echo "==========================================="
+	echo ""
+	exit
+fi
 # Cleanup
 if [ -d build ]; then
 	echo "> Removing old build directory..."
@@ -86,11 +95,11 @@ cp -rf ../loader2/compiled/* ./
 cp -rf ../ipodpatcher/compiled/* ./
 chmod -fR ugo+rwx ./*
 # Documents
-DOCS=boot/docs/loader2
+DOCS=docs/loader2
 cp -rf "../../ReadMe from Keripo.txt" "$DOCS/ReadMe from Keripo.txt"
 cp -rf ../../License.txt $DOCS/License.txt
 cp -rf ../../src/patches $DOCS/Patches
-sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
+#sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $DOCS
 tar -cf Patches.tar Patches

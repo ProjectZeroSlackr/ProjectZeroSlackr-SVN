@@ -1,15 +1,23 @@
 #!/bin/sh
 #
-# iDoom Auto-Building Script
+# iDoom/hDoom Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Jun 22, 2008
+# Last updated: July 17, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
 echo "iDoom/hDoom Auto-Building Script"
 echo ""
+# SansaLinux not supported yet
+if [ $SANSA ]; then
+	echo "[iDoom/hDoom compiling not yet"
+	echo " supported for SansaLinux - skipping]"
+	echo ""
+	echo "==========================================="
+	exit
+fi
 # Cleanup
 if [ -d build ]; then
 	echo "> Removing old build directory..."
@@ -105,7 +113,7 @@ do
 	cp -rf ../hDoom/$doc $DOCS/hDoom/
 done
 mv -f ../freedm-0.6.2/* $DOCS/FreeDoom/
-sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
+#sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $PACK/Misc
 tar -cf Patches.tar Patches

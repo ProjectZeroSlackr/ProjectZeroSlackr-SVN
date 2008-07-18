@@ -3,7 +3,7 @@
 # PiCalc Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 30, 2008
+# Last updated: July 17, 2008
 #
 echo ""
 echo "==========================================="
@@ -85,7 +85,7 @@ for file in $FILES
 do
 	cp -rf ../compiling/$file $DOCS/
 done
-sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
+#sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $PACK/Misc
 tar -cf Patches.tar Patches

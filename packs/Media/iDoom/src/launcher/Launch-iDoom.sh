@@ -3,7 +3,7 @@
 #exec >> /opt/Media/iDoom/Misc/Launch-iDoom.log 2>&1
 
 # Format: $binary -file $pwad_path (-freedoom)
-killall -15 ZeroLauncher
+killall -15 ZeroLauncher >> /dev/null 2>&1
 if [ -z "$1" ]; then
 	cd /opt/Media/iDoom
 	exec /opt/Media/iDoom/iDoom

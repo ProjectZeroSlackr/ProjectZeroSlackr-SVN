@@ -1,6 +1,6 @@
 Index: config.c
 ===================================================================
---- config.c	(revision 2419)
+--- config.c	(revision 2420)
 +++ config.c	(working copy)
 @@ -103,6 +103,19 @@
  	"(hd0,0)/linx",
@@ -22,18 +22,21 @@ Index: config.c
  int is_applefw_img (char *firstblock);
  
  static config_image_t configimgs[MAX_MENU_ITEMS];
-@@ -123,6 +136,7 @@
+@@ -123,6 +136,8 @@
      config.hicolor   = fb_rgb(64,128,0);
      config.beep_time = 50;
      config.beep_period = 30;
++    config.disable_boot_tune = 0;
 +    config.boot_tune = (char *)find_somewhere (tunenames, "boot tune", NULL);
  
      {
          // preset default menu items
-@@ -240,6 +254,8 @@
+@@ -240,6 +255,10 @@
                  config.beep_time = mlc_atoi (value);
              } else if (!mlc_strcmp (p, "beep_period")) {
                  config.beep_period = mlc_atoi (value);
++            } else if (!mlc_strcmp (p, "disable_boot_tune")) {
++                config.disable_boot_tune = mlc_atoi (value);
 +            } else if (!mlc_strcmp (p, "boot_tune")) {
 +                config.boot_tune = value;
              } else if (!mlc_strcmp (p, "ata_standby_code")) {
@@ -41,19 +44,20 @@ Index: config.c
              } else {
 Index: config.h
 ===================================================================
---- config.h	(revision 2419)
+--- config.h	(revision 2420)
 +++ config.h	(working copy)
-@@ -15,6 +15,7 @@
+@@ -15,6 +15,8 @@
  
  typedef struct {
    config_image_t *image;
 +  char *boot_tune;
++  int16 disable_boot_tune;
    int16 timeout;
    int16 def;       // default item index in menu, 1-based
    int16 items;
 Index: loader.c
 ===================================================================
---- loader.c	(revision 2419)
+--- loader.c	(revision 2420)
 +++ loader.c	(working copy)
 @@ -144,6 +144,61 @@
    console_printcount = 0; // prevents userconfirm() from doing something
@@ -121,7 +125,7 @@ Index: loader.c
      userconfirm ();
      test_piezo ();
    }
-+  if (conf->boot_tune) {
++  if (conf->boot_tune && conf->disable_boot_tune == 0) {
 +    play_music(conf->boot_tune);    
 +  }
  

@@ -3,7 +3,7 @@
 #exec >> /opt/Media/XMP/Misc/Launch.log 2>&1
 
 # Format: $binary $mod_path
-killall -15 ZeroLauncher
+killall -15 ZeroLauncher >> /dev/null 2>&1
 if [ -z "$1" ]; then
 	cd /opt/Media/XMP
 	exec /opt/Media/XMP/XMP /opt/Media/XMP/Mods/a-depres.xm

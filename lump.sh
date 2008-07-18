@@ -1,10 +1,9 @@
 #!/bin/sh
-./chmod-all.sh >> /dev/null 2>&1
 #
 # Auto-Lumping Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 27, 2008
+# Last updated: July 17, 2008
 #
 echo ""
 echo "==========================================="
@@ -19,9 +18,9 @@ echo "    folder that can be copied directly"
 echo "    to your iPod."
 # Cygwin check
 if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
-	CYGWIN="yes"
+	CYGWIN=1
 fi
-if [ "${CYGWIN}" ]; then
+if [ $CYGWIN ]; then
 	echo ""
 	echo "    Building is recommended to be done on"
 	echo "    Linux. If you are using Cygwin and"
@@ -31,10 +30,19 @@ if [ "${CYGWIN}" ]; then
 	echo "    have to either try recompiling the"
 	echo "    packs disabling TortoiseSVN."
 fi
+if [ $SANSA ]; then
+	echo ""
+	echo "    Building all for SansaLinux target."
+	echo "    Keep in mind that not all Slackr"
+	echo "    packs have been ported and thus some"
+	echo "    will be skipped."
+fi
 echo ""
 echo "==========================================="
 echo "==========================================="
 echo ""
+# permissions
+./chmod-all.sh
 # lump
 SVNROOT=$(pwd)
 LUMP=$SVNROOT"/_lump"
@@ -47,7 +55,7 @@ mkdir $LUMP
 echo "> Building libs..."
 cd $SVNROOT
 cd libs
-./build.sh
+#./build.sh
 # base
 echo ""
 echo "> Building base..."
@@ -57,11 +65,18 @@ for folder in *
 do
 	cd $folder
 	if [ -e SKIP.txt ]; then
+		echo ""
 		echo "  - Skipping building of "$folder"..."
-		cp -rf build/release/* $LUMP/
+		if [ $SANSA ] && [ -d build-sansa ]; then
+			cp -rf build-sansa/release/* $LUMP/
+		else
+			cp -rf build/release/* $LUMP/
+		fi
 	else
 		./build.sh
-		cp -rf build/release/* $LUMP/
+		if [ -d build/release ]; then
+			cp -rf build/release/* $LUMP/
+		fi
 		rm -rf build
 	fi
 	cd ..
@@ -80,11 +95,18 @@ do
 	do
 		cd $pack
 		if [ -e SKIP.txt ]; then
+			echo ""
 			echo "  - Skipping building of "$folder"/"$pack"..."
-			cp -rf build/release/* $LUMP/
+			if [ $SANSA ] && [ -d build-sansa ]; then
+				cp -rf build-sansa/release/* $LUMP/
+			else
+				cp -rf build/release/* $LUMP/
+			fi
 		else
 			./build.sh
-			cp -rf build/release/* $LUMP/
+			if [ -d build/release ]; then
+				cp -rf build/release/* $LUMP/
+			fi
 			rm -rf build
 		fi
 		cd ..
@@ -114,6 +136,8 @@ echo "==========================================="
 echo ""
 echo "                   Fin!"
 echo ""
+# I'm not sure of the bootloader instructions for SansaLinux at the moment
+# but I'll modify this message later
 echo "    Now just copy the entire content of"
 echo "    the '_lump' folder to your iPod, run"
 echo "    the 'patch.bat' or 'patch.sh' file,"

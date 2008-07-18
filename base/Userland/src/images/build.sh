@@ -3,13 +3,23 @@
 # Userland Image Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 26, 2008
+# Last updated: July 17, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
 echo "Userland Image Auto-Building Script"
 echo ""
+# SansaLinux not supported yet
+if [ $SANSA ]; then
+	echo "[SansaLinux uses a different userland"
+	echo " than iPodLinux - please use the"
+	echo " pre-made userland instead]"
+	echo ""
+	echo "==========================================="
+	echo ""
+	exit
+fi
 echo "> Extracting"
 tar -xf userland-zs-8mb.ext3.tar.gz
 tar -xf userland-zs-16mb.ext3.tar.gz

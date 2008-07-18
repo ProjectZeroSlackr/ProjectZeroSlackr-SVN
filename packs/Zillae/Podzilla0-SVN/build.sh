@@ -3,13 +3,22 @@
 # Podzilla0-SVN Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 30, 2008
+# Last updated: July 17, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
 echo "Podzilla0-SVN Auto-Building Script"
 echo ""
+# SansaLinux not supported yet
+if [ $SANSA ]; then
+	echo "[Podzilla0-SVN compiling not yet"
+	echo " supported for SansaLinux - skipping]"
+	echo ""
+	echo "==========================================="
+	echo ""
+	exit
+fi
 # Cleanup
 if [ -d build ]; then
 	echo "> Removing old build directory..."
@@ -96,7 +105,7 @@ cp -rf ../compiling/tuxchess/README $DOCS/tuxchess/
 cp -rf ../compiling/tuxchess/README.chess $DOCS/tuxchess/
 cp -rf ../compiling/tuxchess/README.license $DOCS/tuxchess/
 cp -rf ../compiling/tuxchess/TODO $DOCS/tuxchess/
-sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
+#sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $PACK/Misc
 tar -cf Patches.tar Patches

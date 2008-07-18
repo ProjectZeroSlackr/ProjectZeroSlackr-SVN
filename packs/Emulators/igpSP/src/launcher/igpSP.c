@@ -1,5 +1,5 @@
 /*
- * Last updated: May 18, 2008
+ * Last updated: July 16, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -45,7 +45,7 @@ static int check_bios()
 		return 0;
 	} else {
 		pz_warning("Note: %s requires large amounts of memory and may not work here.", "igpSP");
-		pz_warning("You should try launching %s from Loader2 instead (see the \"/boot/loader.cfg\" file).", "igpSP");
+		pz_warning("You should try launching %s from Loader2 instead (see the \"loader.cfg\" file).", "igpSP");
 		return 1;
 	}
 }

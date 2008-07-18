@@ -3,7 +3,7 @@
 # ZeroLauncher Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 8, 2008
+# Last updated: July 17, 2008
 #
 echo ""
 echo "==========================================="
@@ -66,7 +66,7 @@ echo "  If building fails, check the log file."
 cd compiling
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
 if [ $SANSA ]; then
-echo "  (building for SansaLinux)"
+	echo "  (building for SansaLinux)"
 	make IPOD=1 SANSA=1 >> ../build.log 2>&1
 else
 	make IPOD=1 >> ../build.log 2>&1
@@ -110,7 +110,7 @@ echo "> Copying over documents..."
 DOCS=$PACK/Misc/Docs
 echo "  - ZeroLauncher docs"
 cp -rf ../../License.txt $PACK
-cp -rf ../../"ReadMe from Keripo.txt" $PACK
+cp -rf "../../ReadMe from Keripo.txt" $PACK
 cp -rf ../../src/patches $PACK/Misc/Patches
 echo "  - ttk docs"
 TTK=../ttk
@@ -125,7 +125,7 @@ cp -rf $OFFSVN/contrib/ucdl/README $DOCS/ucdl
 mkdir -p $DOCS/pz2
 cp -rf $OFFSVN/API.tex $DOCS/pz2
 cp -rf $OFFSVN/COPYING $DOCS/pz2
-sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
+#sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $PACK/Misc
 tar -cf Patches.tar Patches

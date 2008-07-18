@@ -3,13 +3,22 @@
 # Kernel Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 26, 2008
+# Last updated: July 17, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
 echo "Kernel Auto-Building Script"
 echo ""
+# SansaLinux not supported yet
+if [ $SANSA ]; then
+	echo "[Kernel compiling not yet"
+	echo " supported for SansaLinux - skipping]"
+	echo ""
+	echo "==========================================="
+	echo ""
+	exit
+fi
 # Cleanup
 if [ -d build ]; then
 	echo "> Removing old build directory..."
@@ -66,7 +75,7 @@ cd release
 # Files
 cp -r ../compiled/vmlinux boot/
 # Documents
-DOCS=boot/docs/kernel
+DOCS=docs/kernel
 cp -rf "../../ReadMe from Keripo.txt" "$DOCS/ReadMe from Keripo.txt"
 cp -rf ../../License.txt $DOCS/License.txt
 cp -rf ../../src/patches $DOCS/Patches
@@ -81,7 +90,7 @@ cp -rf $COMPILING/REPORTING-BUGS $DOCSORIG/
 # Too much and really not needed
 #cp -rf $COMPILING/Documentation $DOCSORIG/
 cp -rf $COMPILING/Documentation/kernel-parameters.txt $DOCS/
-sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
+#sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd boot/docs/kernel
 tar -cf Patches.tar Patches

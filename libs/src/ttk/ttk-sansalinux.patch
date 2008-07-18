@@ -1,23 +1,39 @@
+Index: Makefile
+===================================================================
+--- Makefile	(revision 2420)
++++ Makefile	(working copy)
+@@ -14,8 +14,12 @@
+ endif
+ ifndef NOSDL
+ ifndef NOIPOD
++ifdef SANSA
++	make -C build/ipod-sdl IPOD=1 SDL=1 SANSA=1 all
++else
+ 	make -C build/ipod-sdl IPOD=1 SDL=1 all
+ endif
++endif
+ ifndef NOX11
+ 	make -C build/x11-sdl SDL=1 all
+ endif
 Index: src/Makefile
 ===================================================================
 --- src/Makefile	(revision 2420)
 +++ src/Makefile	(working copy)
-@@ -78,6 +78,10 @@
- endif
- endif
- 
+@@ -21,6 +21,9 @@
+ E2F = -Wl,-elf2flt
+ GS = -Wl,--start-group
+ GE = -Wl,--end-group
 +ifdef SANSA
 +MYCFLAGS += -DSANSA
 +endif
-+
- ifeq ($(GFXLIB),hotdog)
- MYCFLAGS += -DHDOG
- OBJS += hotdog.o
+ else
+ CC ?= gcc
+ CXX ?= g++
 Index: src/ttk.c
 ===================================================================
 --- src/ttk.c	(revision 2420)
 +++ src/ttk.c	(working copy)
-@@ -307,8 +307,13 @@
+@@ -308,8 +308,13 @@
  	    ttk_screen->h = 110;
  	    ttk_screen->bpp = 2;
  	} else if (ver & TTK_POD_PHOTO) {
@@ -31,7 +47,7 @@ Index: src/ttk.c
  	    ttk_screen->bpp = 16;
          } else if (ver & TTK_POD_NANO) {
              ttk_screen->w = 176;
-@@ -887,7 +892,7 @@
+@@ -888,7 +893,7 @@
      period = period ? MIN(MAX(period, 5), 250) : 20; // period: 40=2286Hz, 30=3024Hz, 20=4465Hz, 10=8547Hz
      duration = MIN(MAX(duration, 1), 1000); //duration in millieconds.
  	
@@ -40,7 +56,7 @@ Index: src/ttk.c
      if (ttk_get_podversion() & TTK_POD_PP502X) {
  	outl(inl(0x70000010) & ~0xc, 0x70000010);
  	outl(inl(0x6000600c) | 0x20000, 0x6000600c);    /* enable device */
-@@ -924,6 +929,9 @@
+@@ -925,6 +930,9 @@
  
  static long iPod_GetGeneration() 
  {
@@ -50,7 +66,7 @@ Index: src/ttk.c
      int i;
      char cpuinfo[256];
      char *ptr;
-@@ -940,6 +948,7 @@
+@@ -941,11 +949,14 @@
      ptr = cpuinfo + i + 2;
      
      return strtol(ptr, NULL, 16);
@@ -58,7 +74,15 @@ Index: src/ttk.c
  }
  
  static int ttk_get_podversion_raw() 
-@@ -1551,7 +1560,7 @@
+ {
+-#ifdef IPOD
++#ifdef SANSA
++    return TTK_POD_PHOTO;
++#elif defined(IPOD)
+     static int ver;
+     if (!ver) ver = iPod_GetGeneration();
+     switch (ver >> 16) {
+@@ -1552,7 +1563,7 @@
  }
  
  
@@ -67,25 +91,13 @@ Index: src/ttk.c
  /*** The following LCD code is taken from Linux kernel uclinux-2.4.24-uc0-ipod2,
       file arch/armnommu/mach-ipod/fb.c. A few modifications have been made. ***/
  
-Index: Makefile
-===================================================================
---- Makefile	(revision 2420)
-+++ Makefile	(working copy)
-@@ -4,6 +4,9 @@
+@@ -1809,7 +1820,9 @@
  
- all: build-dirs
- 	@echo ">>> Building TTK..."
-+ifdef SANSA
-+	make -C build/ipod-sdl IPOD=1 SDL=1 SANSA=1 all
-+else
- ifndef NOHDOG
- ifndef NOIPOD
- 	make -C build/ipod-hdog IPOD=1 HDOG=1 all
-@@ -28,6 +31,7 @@
- 	make -C build/x11-mwin MWIN=1 all
- endif
- endif
-+endif
- 	@echo "<<< Done."
- 	@echo
+ void ttk_update_lcd (int xstart, int ystart, int xend, int yend, unsigned char *data)
+ {
++#ifndef SANSA
+     fprintf (stderr, "update_lcd() skipped: not on iPod\n");
++#endif
+ }
  
+ #endif

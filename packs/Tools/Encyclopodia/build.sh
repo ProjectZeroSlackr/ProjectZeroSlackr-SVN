@@ -3,7 +3,7 @@
 # Encyclopodia Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 30, 2008
+# Last updated: July 17, 2008
 #
 echo ""
 echo "==========================================="
@@ -68,7 +68,12 @@ echo "  be logged to the 'build.log' file."
 echo "  If building fails, check the log file."
 cd compiling
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
-make IPOD=1 >> ../build.log 2>&1
+if [ $SANSA ]; then
+	echo "  (building for SansaLinux)"
+	make IPOD=1 SANSA=1 >> ../build.log 2>&1
+else
+	make IPOD=1 >> ../build.log 2>&1
+fi
 # Copy over compiled file
 echo "> Copying over compiled files..."
 cd ..
@@ -112,7 +117,7 @@ echo "> Copying over documents..."
 DOCS=$PACK/Misc/Docs
 echo "  - Encyclopodia docs"
 cp -rf ../../License.txt $PACK/
-cp -rf ../../"ReadMe from Keripo.txt" $PACK/
+cp -rf "../../ReadMe from Keripo.txt" $PACK/
 cp -rf ../../src/libraries/Creation-Instructions.txt $DOCS/
 cp -rf ../../src/libraries/iPL-Export-List.txt $DOCS/
 cp -rf ../../src/libraries/ipodlinux-wiki-articles-YYYY-MM-DD.epodia $DOCS/
@@ -130,7 +135,7 @@ cp -rf $OFFSVN/contrib/ucdl/README $DOCS/ucdl/
 mkdir -p $DOCS/pz2
 cp -rf $OFFSVN/API.tex $DOCS/pz2/
 cp -rf $OFFSVN/COPYING $DOCS/pz2/
-sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
+#sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $PACK/Misc
 tar -cf Patches.tar Patches

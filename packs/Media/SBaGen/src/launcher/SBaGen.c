@@ -32,9 +32,10 @@ static int check_ext(const char *file)
 
 static void warning()
 {
-	pz_message("WARNING! SBaGen is a binaural beat generator and may have adverse effects on your brain!");
-	pz_message("Neither the author (Jim Peters) nor I (Keripo) will take any responsibilities in your actions!");
-	pz_message("USE AND EXPERIMENT WITH THIS UTILITY AT YOUR OWN RISK!");
+	pz_warning("WARNING! %s is a binaural beat generator and may have adverse effects on your brain!", "SBaGen");
+	pz_warning("Neither the author (%s) nor I (%s) will take any responsibilities in your actions!",
+		"Jim Peters", "Keripo");
+	pz_warning("USE AND EXPERIMENT WITH THIS UTILITY AT YOUR OWN RISK%s", "!");
 }
 
 static PzWindow *load_file(const char *file)

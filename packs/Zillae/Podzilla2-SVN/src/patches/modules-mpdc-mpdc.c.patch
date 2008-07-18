@@ -8,7 +8,7 @@ Index: modules/mpdc/mpdc.c
  
 +extern void cleanup_mpd();
 +extern void init_mpd();
-+int MPD_ACTIVE = 1; // Accessible to other modules
++extern int MPD_ACTIVE;
 +
  PzModule *module;
  
@@ -32,7 +32,7 @@ Index: modules/mpdc/mpdc.c
  	int state;
  
  	if (mpdc_tickle() < 0)
-@@ -412,13 +419,49 @@
+@@ -412,33 +419,84 @@
      item->choicechanged = b; \
      item->choice = c; } while (0)
  
@@ -81,9 +81,11 @@ Index: modules/mpdc/mpdc.c
  #endif
 +		MPD_ACTIVE = 0;
  		return;
++	} else {
++		MPD_ACTIVE = 1;
  	}
  	module = pz_register_module("mpdc", cleanup_mpdc);
-@@ -426,19 +469,32 @@
+ 	pz_register_global_unused_handler(PZ_BUTTON_PLAY, mpdc_unused_handler);
  	pz_register_global_unused_handler(PZ_BUTTON_NEXT, mpdc_unused_handler);
  	pz_register_global_unused_handler(PZ_BUTTON_PREVIOUS,
  			mpdc_unused_handler);
@@ -125,7 +127,7 @@ Index: modules/mpdc/mpdc.c
  
  	SETUP_MENUITEM("/Settings/Shuffle", set_shuffle, init_shuffle());
  	SETUP_MENUITEM("/Settings/Repeat", set_repeat, init_repeat());
-@@ -450,6 +506,7 @@
+@@ -450,6 +508,7 @@
  					      &widget_inf );
  	pz_add_header_widget( "MPD Icons", mpd_widg_icons_update,
  					   mpd_widg_icons_draw, NULL );

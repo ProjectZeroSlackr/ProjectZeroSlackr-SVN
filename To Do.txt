@@ -1,4 +1,4 @@
-Last updated: July 9, 2008
+Last updated: July 17, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -11,7 +11,10 @@ original/ported software.
 == To do ==
 
 Misc:
-- Add SansaLinux support
+- Full SansaLinux support:
+  (need kernel, bootloader, SDL, and more packs;
+   wait for Sebastian to finish porting hotdog and
+   official integration into iPodLinux)
 - Add a "Known Issues" and "Works on" sections to
   "ReadMe from Keripo.txt"s
 - Port DSLinux stuff
@@ -44,7 +47,6 @@ Zillae:
 - iZilla
 
 Misc:
-- Bootsplash
 - iLoadz
 - Morphun's iPDL
 

@@ -1,4 +1,4 @@
-Last updated: July 15, 2008
+Last updated: July 17, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -17,6 +17,9 @@ Userland
   for easy access to these folders by Windows users.
 - The ZeroSlackr userland also includes various unofficial
   fonts and schemes created by various users.
+- The SansaLinux port uses a separate userland built with
+  different binaries and a different start-up method.
+  A pre-build one is used, already modified for ZeroSlackr.
 For more information, see:
 - http://ipodlinux.org/Installation:_Winpod_without_datacorruption
 - http://ipodlinux.org/Userland
@@ -35,7 +38,7 @@ Usage:
   can do so via the old, depreciated "start" file method
   (see http://ipodlinux.org/Start_File) or loop-mounting
   the image on Linux/Mac OS X (see
-  "/boot/docs/userland/Loop-mount Instructions.txt").
+  "/docs/userland/Loop-mount Instructions.txt").
 - Since "/usr" is symlinked, any binaries placed in "/usr/bin"
   will also be accessible just like binaries in "/bin".
 - New schemes should be placed into "/usr/share/schemes" and
@@ -53,10 +56,16 @@ Original:
 - Date: Mar 11, 2007?
 - Version: 1.1
 
+SansaLinux:
+- Porter: Sebastian Duell
+- Type: Ported
+- Date: July 15, 2008
+- Version: 1.11
+
 ZS Version:
 - Modder: Keripo
 - Type: Recreated (except busybox binary)
-- Date: Apr 27, 2008
+- Date: July 17, 2008
 - Version: B X.X
 
 Modifications:
@@ -65,7 +74,7 @@ Modifications:
   - busybox binary from DataGhost
   - modified "pre-rc" file
 - modified loop-mount userland:
-  (see /boot/docs/userland/Mod/*)
+  (see /docs/userland/Mod/*)
   - modified rc file (keeps launching ZeroLauncher)
   - getLoader2AutoExec
   - symlinked "cd" to minix and "killall" to busybox

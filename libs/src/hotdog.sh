@@ -3,13 +3,21 @@
 # hotdog Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: March 25, 2008
+# Last updated: July 17, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
 echo "hotdog Auto-Compiling Script"
 echo ""
+# SansaLinux not supported yet
+if [ $SANSA ]; then
+	echo "[hotdog compiling not yet"
+	echo " supported for SansaLinux - skipping]"
+	echo ""
+	echo "==========================================="
+	exit
+fi
 # Cleanup
 if [ -d hotdog ]; then
 	echo "> Removing old hotdog directory..."

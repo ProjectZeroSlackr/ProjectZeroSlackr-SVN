@@ -16,4 +16,6 @@ else
 	cd /opt/Base/ZeroLauncher
 	/opt/Base/ZeroLauncher/ZeroLauncher -l "$1"
 fi
-sleep 3s
+# Have here just to prevent ZeroLauncher from starting up again
+# when rebooting, but it causes unnecessary delay after exiting an app
+#sleep 3s

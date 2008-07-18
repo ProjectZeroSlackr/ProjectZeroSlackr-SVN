@@ -3,7 +3,7 @@
 # TinySID Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 2, 2008
+# Last updated: July 17, 2008
 #
 echo ""
 echo "==========================================="
@@ -81,7 +81,7 @@ cp -rf "../../ReadMe from Keripo.txt" $PACK/
 cp -rf ../../License.txt $PACK/
 cp -rf ../../src/patches $PACK/Misc/Patches
 cp -rf ../../src/mod $PACK/Misc/Mod
-sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
+#sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $PACK/Misc
 tar -cf Patches.tar Patches

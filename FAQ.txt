@@ -1,8 +1,13 @@
-Last updated: Jun 28, 2008
+Last updated: July 17, 2008
 ~Keripo
 
 
 == Fast FAQ ==
+
+Note:
+These questions relate mostly for iPodLinux but some also
+apply to SansaLinux. If there are enough Sansa-specific
+questions need addressing, I'll write a separate FAQ.
 
 Q: What is Project ZeroSlackr?
 A: Read the "ReadMe from Keripo.txt" document.
@@ -24,7 +29,7 @@ A: Installing the ZeroSlackr Framework on top of a previous
    setup. In fact, the kernel used by Project ZeroSlackr
    also supports a normal, partitioned installation like the
    one created by Installer 2. Uncomment the "#iPodLinux"
-   line of "boot/loader.cfg" to make available your old
+   line of "loader.cfg" to make available your old
    installation.
 
 Q: iPodLinux is cool but I also want Rockbox! Do I have to
@@ -36,7 +41,7 @@ A: No. Rockbox can be installed along side Project ZeroSlackr
    directly to your iPod. Reboot and select the "Rockbox"
    option of Loader2. Thats it! (Note that if you do NOT want
    Rockbox, you may want to comment out the line in the 
-   "boot/loader.cfg" file and change the default to 1).
+   "loader.cfg" file and change the default to 1).
 
 Q: After trying out a few apps I keep getting this
    "blahblahblah is too big" message or a lot of random
@@ -54,6 +59,23 @@ A: Due to large number of SlackrPacks now and thus
    "Key_Combinations" wiki page for information on how to
    force reboot your iPod.
 
+Q: After I enabled MPD (iPodLinux's music player), I keep
+   getting a launch confirmation pop-up every time I try
+   launching something. Why is that?
+A: As explained in the previous question, iPodLinux is
+   prone to memory fragmenting and often does not have
+   enough memory to do many things at once. Some small apps
+   can be used along side MPD, but most of the time there
+   just isn't enough free memory. As a result, if you intend
+   to use ZeroLauncher to launch apps, you should try using
+   "/Music/Kill MPD" or, better yet, do not enable MPD at
+   all. Note that ZeroLauncher and Podzilla2-SVN keep their
+   MPD-enabling settings separate from each other so it is
+   recommended that you disable MPD for ZeroLauncher and
+   enable it for Podzilla2-SVN. Keep in mind that MPD is
+   not perfect and will often get choppy and may sometimes
+   freeze your iPod (in which case, "reboot, reboot, reboot").
+
 Q: Help, I get a "Can't write to log on /dev/tty5!" every
    time I boot into ZeroSlackr! How can I fix of this?
 A: This is a busybox-related issue but not one affecting
@@ -68,17 +90,17 @@ A: The ZeroSlackr Framework uses a userland disk image
    introduced by DataGhost (see iPodLinux's
    "Installation:_Winpod_without_datacorruption" wiki page).
    More information on it can be found in the ZeroSlackr
-   Framework's userland readme ("/boot/docs/userland/
+   Framework's userland readme ("/docs/userland/
    ReadMe from Keripo.txt"). For instructions on how to
    access/edit the userland image, see the
-   "/boot/docs/userland/Loop-mount Instructions.txt".
+   "/docs/userland/Loop-mount Instructions.txt".
 
 Q: I'm trying to use your kernel with a normal iPodLinux
    installation and/or I am trying to use Loader2 args as
    the wiki page instructs but its not working. Why?
 A: The kernel I use for the ZeroSlackr Framework is a
    modified version of the iPodLinux "Experimental_Kernel"
-   wiki. See the comments of the "/boot/loader.cfg" file
+   wiki. See the comments of the "loader.cfg" file
    for instructions on how to use the kernel and loader2
    args (which I use "autoexec=").
 
@@ -141,11 +163,7 @@ A: If you're an experienced programmer, feel free to contact
    me if you want to help. Otherwise, just leave a word of
    thanks in a Project ZeroSlackr thread on the iPodLinux
    forums. If you're really generous and want to donate,
-   you can contact me (since I haven't set up donations
-   on SourceForge) though I would better recommend you
-   instead donate directly to the iPodLinux project via
-   the iPodLinux "Donations" wiki page. Such money can go
-   towards RE for the newer iPod models, etc.
+   you can do so through the SourceForge page.
 
 Q: What about my question _____ which you didn't answer here?
 A: This FAQ only covers the basics concerning Project
@@ -159,3 +177,23 @@ A: This FAQ only covers the basics concerning Project
    and I forgot to add here, please contact me through the
    iPodLinux forums.
 
+Q: Will you ever add support for ____?
+A: Although Project ZeroSlackr currently supports a large
+   collection of various apps and content, it is by no means
+   complete. If you know of something that already works on
+   iPodLinux but is not part of ZeroSlackr, it is probably
+   either because I haven't added it yet or because I do not
+   know of it (so request it anyway). If it is something that
+   has not yet been created/ported however (i.e. a new
+   emulator that you really want on your iPod), you amy request
+   it but only after you've done some research into things
+   (i.e. is the iPod powerful enough? Can other stronger
+   hand-helds such as the PSP/GP2X/DS run it?). While porting
+   new apps is low on my priority list, if there are already
+   other ports on other handheld platforms and the hardware
+   requirements are low enough (the iPod's processor maxs out
+   at 81MHz so only emulators of hardware with 20MHz processor
+   or lower are plausible), I may consider doing new ports.
+   I prefer SDL versions and can only port apps already ported
+   to Linux and written in C/C++.
+ 

@@ -3,5 +3,5 @@
 #exec >> /opt/Tools/CmdLine-Archivers/Misc/unzip.log 2>&1
 
 # Format: $binary -o $file
-cd "\"$1\""
-unzip -o "\"$2\""
+cd "$1"
+unzip -o "$2"

@@ -3,7 +3,7 @@
 # CmdLine-Archivers Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 11, 2008
+# Last updated: July 17, 2008
 #
 echo ""
 echo "==========================================="
@@ -101,7 +101,7 @@ cp -rf ../launcher/* $PACK/Launch/
 # Too many original docs; done by hand
 cp -rf "../../ReadMe from Keripo.txt" $PACK/
 cp -rf ../../License.txt $PACK/
-sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
+#sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 #cd $PACK/Misc
 #tar -cf Docs.tar Docs
