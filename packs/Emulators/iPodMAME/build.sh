@@ -3,13 +3,21 @@
 # iPodMAME Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 30, 2008
+# Last updated: July 17, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
 echo "iPodMAME Auto-Building Script"
 echo ""
+# SansaLinux not supported yet
+if [ $SANSA ]; then
+	echo "[iPodMAME compiling not yet"
+	echo " supported for SansaLinux - skipping]"
+	echo ""
+	echo "==========================================="
+	exit
+fi
 # Cleanup
 if [ -d build ]; then
 	echo "> Removing old build directory..."
@@ -90,7 +98,7 @@ do
 done
 cp -rf ../compiling/roms/readme.txt $DOCS/readme-roms.txt
 cp -rf ../compiling/romlist.ipl.txt $PACK/Roms/
-sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
+#sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $PACK/Misc
 tar -cf Patches.tar Patches

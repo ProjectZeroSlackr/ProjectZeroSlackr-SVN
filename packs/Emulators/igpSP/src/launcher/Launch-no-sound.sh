@@ -3,7 +3,7 @@
 #exec >> /opt/Emulators/igpSP/Misc/Launch-no-sound.log 2>&1
 
 # Format: $binary $rom_path
-killall -15 ZeroLauncher
+killall -15 ZeroLauncher >> /dev/null 2>&1
 if [ -z "$1" ]; then
 	cd /opt/Emulators/igpSP/Roms
 	exec /opt/Emulators/igpSP/igpSP-no-sound /opt/Emulators/igpSP/Roms/SuperWings.gba

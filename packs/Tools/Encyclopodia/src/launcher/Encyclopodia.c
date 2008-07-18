@@ -1,5 +1,5 @@
 /*
- * Last updated: May 18, 2008
+ * Last updated: July 16, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -26,7 +26,7 @@ static PzModule *module;
 static PzWindow *fastlaunch()
 {
 	pz_warning("Note: %s requires large amounts of memory and may not work here.", "Encyclopodia");
-	pz_warning("You should try launching %s from Loader2 instead (see the \"/boot/loader.cfg\" file).", "Encyclopodia");
+	pz_warning("You should try launching %s from Loader2 instead (see the \"loader.cfg\" file).", "Encyclopodia");
 	pz_exec("/opt/Tools/Encyclopodia/Launch/Launch.sh");
 	return NULL;
 }

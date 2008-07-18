@@ -1,4 +1,4 @@
-Last updated: Apr 27, 2008
+Last updated: July 17, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -13,7 +13,9 @@ Kernel
   the loop-mount installation method and is compatible
   with newer iBoy builds.
 - It can also load a normal, partitioned iPodLinux
-  installation (see the "/boot/loader.cfg" file).
+  installation (see the "loader.cfg" file).
+- The SansaLinux port uses a pre-compiled 2.4.24 kernel
+  modifed for the Sansa. I will compile my own kernel later.
 For more information, see:
 - http://ipodlinux.org/Experimental_Kernel
 - http://ipodlinux.org/Kernel
@@ -22,9 +24,8 @@ For more information, see:
 Usage:
 - The kernel is used like any other Linux kernel.
 - It can be loaded by Loader2 with kernel arguments.
-- For the proper loader.cfg lines, see 
-  "/boot/loader.cfg" and
-  "/boot/docs/kernel/kernel-parameters.txt"
+- For the proper boot command lines, see "loader.cfg" and
+  "/docs/kernel/kernel-parameters.txt"
 
 
 Vanilla Linux:
@@ -51,6 +52,12 @@ iPodLinux Patches:
   https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/linux/2.4
 - Date: Apr 27, 2008
 - Version: Revision 2418
+
+SansaLinux:
+- Porter: Sebastian Duell
+- Type: Ported
+- Date: May 29, 2008
+- Version: 0.20
 
 ZS Version:
 - Modder: Keripo

@@ -3,7 +3,7 @@
 # Flite Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 30, 2008
+# Last updated: July 17, 2008
 #
 echo ""
 echo "==========================================="
@@ -91,7 +91,7 @@ do
 done
 mv $DOCS/doc/alice $PACK/Text/Alice.txt
 mv $DOCS/doc/intro.txt $PACK/Text/Intro.txt
-sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
+#sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $PACK/Misc
 tar -cf Patches.tar Patches

@@ -3,13 +3,21 @@
 # viPodzilla Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 26, 2008
+# Last updated: July 17, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
 echo "viPodzilla Auto-Building Script"
 echo ""
+# SansaLinux not supported yet
+if [ $SANSA ]; then
+	echo "[viPodzilla compiling not yet"
+	echo " supported for SansaLinux - skipping]"
+	echo ""
+	echo "==========================================="
+	exit
+fi
 # Cleanup
 if [ -d build ]; then
 	echo "> Removing old build directory..."
@@ -50,7 +58,7 @@ cd release
 PACK=ZeroSlackr/opt/Zillae/viPodzilla
 cp -rf ../../src/hex/viPodzilla $PACK/
 cp -rf ../launcher/* $PACK/Launch/
-sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
+#sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Documents
 DOCS=$PACK/Misc/Docs
 cp -rf "../../ReadMe from Keripo.txt" $PACK/

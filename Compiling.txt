@@ -1,4 +1,4 @@
-Last updated: Jun 28, 2008
+Last updated: July 17, 2008
 ~Keripo
 
 
@@ -19,6 +19,11 @@ nice and smooth, you will find the compiled files in the new
 "build/release" folder already set up and ready to be added
 to the ZeroSlackr Framework. If there are issues, look at
 the "build/build.log" file.
+
+Note that if you are compiling for SansaLinux, you much
+first type "export SANSA=1" before runing the build scripts.
+Not all content has been ported to SansaLinux and so some
+packs/content will be skipped.
 
 For convenience I've also written "lump.sh", "clean.sh",
 "chmod-all.sh", and "rm-backups.sh" scripts. They can be

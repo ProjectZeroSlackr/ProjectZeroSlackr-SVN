@@ -1,4 +1,4 @@
-Last updated: May 16, 2008
+Last updated: July 17, 2008
 ~Keripo
 
 Note: This should only be done on Linux (e.g. Slax).
@@ -28,6 +28,10 @@ mount -t ext3 -o loop,rw ~/userland.ext3 ~/ipl-loop
  i.e. extract/copy userland files to ~/ipl-loop/)
 umount ~/ipl-loop
 
+Note that the SansaLinux userland is ext2, thus you will
+need to replace "-t ext3" with "-t ext2" above. As well,
+SansaLinux's userland is slightly different from
+iPodLinux's and the below does not apply.
 
 To make newly made loop-mount userland usable:
 

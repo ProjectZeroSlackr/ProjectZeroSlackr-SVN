@@ -3,13 +3,21 @@
 # Floyd2illA Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Apr 30, 2008
+# Last updated: July 17, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
 echo "Floyd2illA Auto-Building Script"
 echo ""
+# SansaLinux not supported yet
+if [ $SANSA ]; then
+	echo "[Floyd2illA compiling not yet"
+	echo " supported for SansaLinux - skipping]"
+	echo ""
+	echo "==========================================="
+	exit
+fi
 # Cleanup
 if [ -d build ]; then
 	echo "> Removing old build directory..."
@@ -96,7 +104,7 @@ cp -rf "../../ReadMe from Keripo.txt" $PACK/
 cp -rf ../../License.txt $PACK/
 cp -rf ../../src/patches $PACK/Misc/Patches
 cp -rf ../../src/mod $PACK/Misc/Mod
-sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
+#sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $PACK/Misc
 tar -cf Patches.tar Patches

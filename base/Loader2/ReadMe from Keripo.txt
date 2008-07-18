@@ -1,4 +1,4 @@
-Last updated: Jun 27, 2008
+Last updated: July 17, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -13,10 +13,12 @@ Loader2 & iPodPatcher
   Apple OS as well as Rockbox. It is installed via Rockbox's
   ipodpatcher tool.
 - Loader2 can be configured and customized. See the
-  "/boot/loader.cfg" file.
+  "loader.cfg" file.
 - Rockbox can also be installed by extracting the latest
   Rockbox build directly to the iPod and editing the
-  "/boot/loader.cfg" file.
+  "loader.cfg" file.
+- SansaLinux support has not been added yet. It will be
+  done through Rockbox's sansapatcher.
 For more information, see:
 - http://ipodlinux.org/Loader2
 - http://www.rockbox.org/twiki/bin/view/Main/IpodPatcher
@@ -26,13 +28,13 @@ Usage:
 - Since Loader2 is a bootloader written from scratch,
   it has its own special syntax.
 - For proper usage of Loader2 and its various options/syntax,
-  see the provided "/boot/loader.cfg" file as well as
+  see the provided "loader.cfg" file as well as
   the iPodLinux wiki page: http://ipodlinux.org/Loader2
 - The iPodLinux kernel accepts most standard kernel arguments;
-  see "/boot/docs/kernel/Original/kernel-parameters.txt"
+  see "/docs/kernel/Original/kernel-parameters.txt"
 - ZeroSlackr's userland uses getLoader2AutoExec instead of
   getLoader2Args. For more information on how to use that,
-  read the comments of "/boot/loader.cfg".
+  read the comments of "loader.cfg".
 - Loader2 has also been patched to play a boot tune on startup.
   The default boot tune should be familiar to Final Fantasy
   gamers ; )

@@ -1,4 +1,4 @@
-Last updated: July 15, 2008
+Last updated: July 17, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,27 @@ original/ported software.
 
 
 == Changelog ==
+
+July 17, 2008
+- More SansaLinux support:
+    - fully working ZeroLauncher, PZ2-SVN, Encyclopodia
+    - pre-built and modified userland
+	- pre-built SDL, will build later
+	  (also pending hotdog port)
+    - all command-line apps, no graphical apps
+	- modified/updated all scripts and some documents
+	- SansaLinux changes may be accepted into iPodLinux
+	  in the future, original files not included for the
+	  while being
+- Moved "/boot/docs" to root
+- Updated all ZS documents
+- All around cleanup
+
+July 16, 2008
+- ZeroLauncher checks if MPD is active before launching
+- Fixed up launch scripts
+- Moved "/boot/loader.cfg" to root
+- Added "disable_boot_tune" setting to Loader2
 
 July 15, 2008
 - Added CPU speed changing function to browser-ext

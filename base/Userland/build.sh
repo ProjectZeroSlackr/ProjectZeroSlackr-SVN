@@ -3,7 +3,7 @@
 # Userland Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: May 26, 2008
+# Last updated: July 17, 2008
 #
 echo ""
 echo "==========================================="
@@ -19,7 +19,11 @@ fi
 echo "> Setting up build directory..."
 mkdir build
 cd build
-cp -rf ../src/release ./
+if [ $SANSA ]; then
+	cp -rf ../src/release-sansa ./release
+else
+	cp -rf ../src/release ./
+fi
 # Update SVN
 echo "> Updating scheme files..."
 svn co --quiet https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/libs/ttk/schemes release/ZeroSlackr/usr/share/schemes
@@ -40,23 +44,31 @@ echo "> Adding fonts..."
 rm -rf release/ZeroSlackr/usr/share/fonts/fonts.lst
 cp -rf ../src/mod/fonts/* release/ZeroSlackr/usr/share/fonts/
 echo "> Extracting userland..."
-tar -xf ../src/images/userland-zs-8mb.ext3.tar.gz
-mv userland-zs-8mb.ext3 release/boot/userland.ext3
+if [ $SANSA ]; then
+	tar -xf ../src/images/initrd-sansalinux-zs-2mb.tar.gz
+	mv initrd-sansalinux-zs-2mb release/initrd
+else
+	tar -xf ../src/images/userland-zs-8mb.ext3.tar.gz
+	mv userland-zs-8mb.ext3 release/boot/userland.ext3
+fi
 # Documents
 echo "> Copying documents..."
-DOCS=release/boot/docs/userland
-cp -rf "../ReadMe from Keripo.txt" "$DOCS/ReadMe from Keripo.txt"
-cp -rf ../License.txt $DOCS/License.txt
-cp -rf "../src/images/Loop-mount Instructions.txt" $DOCS/
+cd release
+# Userland documents
+DOCS=docs/userland
+cp -rf "../../ReadMe from Keripo.txt" $DOCS/
+cp -rf ../../License.txt $DOCS/
+cp -rf "../../src/images/Loop-mount Instructions.txt" $DOCS/
 mkdir $DOCS/Mod
-cp -rf ../src/mod/loop-mount.sh $DOCS/Mod/
-cp -rf ../src/mod/zeroslackr-userland-mod.tar.gz $DOCS/Mod/
-cp -rf ../../../Changelog.txt release/
-cp -rf ../../../License.txt release/
-cp -rf "../../../ReadMe from Keripo.txt" release/
-cp -rf "../../../To Do.txt" release/
-cp -rf "../../../FAQ.txt" release/
-sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
+cp -rf ../../src/mod/loop-mount.sh $DOCS/Mod/
+cp -rf ../../src/mod/zeroslackr-userland-mod.tar.gz $DOCS/Mod/
+# Project ZeroSlackr documents
+cp -rf ../../../../Changelog.txt ./
+cp -rf ../../../../License.txt ./
+cp -rf "../../../../ReadMe from Keripo.txt" ./
+cp -rf "../../../../To Do.txt" ./
+cp -rf "../../../../FAQ.txt" ./
+#sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $DOCS
 tar -cf Mod.tar Mod

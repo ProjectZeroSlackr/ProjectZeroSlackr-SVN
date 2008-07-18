@@ -1,6 +1,6 @@
 Index: core/menu.c
 ===================================================================
---- core/menu.c	(revision 2397)
+--- core/menu.c	(revision 2420)
 +++ core/menu.c	(working copy)
 @@ -237,8 +237,8 @@
      ttk_menu_item * item;
@@ -13,16 +13,43 @@ Index: core/menu.c
      pz_menu_add_stub_group ("/Extras", "Utility");
      pz_menu_add_stub_group ("/File Browser", "Utility");
      pz_menu_add_stub_group ("/Settings", "~System");
-@@ -328,7 +332,7 @@
+@@ -258,11 +258,15 @@
+     pz_menu_add_setting ("/Settings/Date & Time/Time Tick Noise", TIME_TICKER, pz_global_config, 0);
+     pz_menu_add_setting_group ("/Settings/Repeat", "Music", REPEAT, pz_global_config, repeat_options);
+     pz_menu_add_setting_group ("/Settings/Shuffle", "Music", SHUFFLE, pz_global_config, shuffle_options);
++#ifndef SANSA
+     pz_menu_add_action_group ("/Settings/Contrast", "System", set_contrast);
++#endif
+     pz_menu_add_action_group ("/Settings/Wheel Sensitivity", "System", set_wheeldebounce);
+     pz_menu_add_setting_group ("/Settings/Backlight Timer",  "System", BACKLIGHT_TIMER, pz_global_config, backlight_options);
+     pz_menu_add_setting_group ("/Settings/Clicker", "System", CLICKER, pz_global_config, 0);
++#ifndef SANSA
+     pz_menu_add_setting_group ("/Settings/USB & FW Popup", "System", USB_FW_POPUP, pz_global_config, 0);
++#endif
+ 
+     pz_menu_add_stub_group ("/Settings/Appearance", "Interface" );
+ 
+@@ -328,11 +332,18 @@
      pz_menu_add_setting ("/Settings/Verbosity", VERBOSITY, pz_global_config, verbosity_options);
      pz_menu_add_setting_group ("/Settings/Browser Path Display", "Browser", BROWSER_PATH, pz_global_config, 0);
      pz_menu_add_setting_group ("/Settings/Browser Show Hidden", "Browser", BROWSER_HIDDEN, pz_global_config, 0);
 -    pz_menu_add_action ("/~Power/Quit podzilla", quit_podzilla);
 +    pz_menu_add_action ("/~Power/Quit Podzilla2-SVN", quit_podzilla);
++#ifdef SANSA
++    pz_menu_add_action ("/~Power/Reboot Sansa/Cancel", PZ_MENU_UPONE);
++    pz_menu_add_action ("/~Power/Reboot Sansa/Absolutely", reboot_ipod);
++    pz_menu_add_action ("/~Power/Turn Off Sansa/Cancel", PZ_MENU_UPONE);
++    pz_menu_add_action ("/~Power/Turn Off Sansa/Absolutely", poweroff_ipod);
++#else
      pz_menu_add_action ("/~Power/Reboot iPod/Cancel", PZ_MENU_UPONE);
      pz_menu_add_action ("/~Power/Reboot iPod/Absolutely", reboot_ipod);
      pz_menu_add_action ("/~Power/Turn Off iPod/Cancel", PZ_MENU_UPONE);
-@@ -345,7 +349,7 @@
+     pz_menu_add_action ("/~Power/Turn Off iPod/Absolutely", poweroff_ipod);
++#endif
+     pz_menu_add_action ("/~Power/Diskmode/Cancel", PZ_MENU_UPONE);
+     pz_menu_add_action ("/~Power/Diskmode/Absolutely", diskmode_ipod);
+     pz_get_menu_item ("/~Power/Diskmode")->visible = usb_fw_connected;
+@@ -345,7 +356,7 @@
      // If you don't want to directly use menu_wid, you can use ttk_menu_get_item() and friends.
      TWindow *ret = ttk_new_window();
      ttk_add_widget (ret, menu_wid);

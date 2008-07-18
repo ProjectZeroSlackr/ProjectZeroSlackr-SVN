@@ -3,25 +3,42 @@
 # SDL Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 7, 2008
+# Last updated: July 17, 2008
 #
+# SansaLinux not supported yet
+if [ $SANSA ]; then
+	echo ""
+	echo "==========================================="
+	echo ""
+	echo "SDL Auto-Compiling Script"
+	echo ""
+	echo "[SDL compiling not yet"
+	echo " supported for SansaLinux - skipping]"
+	echo ""
+	echo "==========================================="
+	exit
+fi
+# Cygwin check
+if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
+	echo ""
+	echo "==========================================="
+	echo ""
+	echo "SDL Auto-Compiling Script"
+	echo ""
+	echo "[SDL doesn't seem to compile"
+	echo " nicely on Cygwin - skipping]"
+	echo ""
+	echo "==========================================="
+	exit
+fi
 echo ""
 echo "==========================================="
 echo ""
 echo "SDL Auto-Compiling Script"
 echo ""
-# Cygwin check
-if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
-	echo "[SDL doesn't seem to compile"
-	echo " nicely on Cygwin - skipping]"
-	echo ""
-	echo "==========================================="
-	echo ""
-	exit
-fi
 # Cleanup
 if [ -d SDL ]; then
-	echo "> Removing old libmad directory..."
+	echo "> Removing old SDL directory..."
 	rm -rf SDL
 fi
 # Extract source

@@ -1,5 +1,5 @@
 /*
- * Last updated: July 9, 2008
+ * Last updated: July 16, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -240,6 +240,7 @@ gui_action_type ipod_update_menu_input()
 	input = ipod_get_keypress();
 	if (input != KEY_NULL) {
 		if (!KEYSTATE(input)) {
+			ipod_clear_screen();
 			input = KEYCODE(input);
 			switch (input) {
 				case KEY_REWIND:
@@ -264,7 +265,6 @@ gui_action_type ipod_update_menu_input()
 					break;
 				case KEY_HOLD:
 					if (!ipod_menu_scrolling) {
-						ipod_clear_screen();
 						new_gui_action = CURSOR_EXIT;
 					}
 					break;
@@ -276,7 +276,6 @@ gui_action_type ipod_update_menu_input()
 					break;
 				case KEY_MENU:
 					if (ipod_menu_scrolling) {
-						ipod_clear_screen();
 						new_gui_action = CURSOR_EXIT;
 					} else {
 						new_gui_action = CURSOR_UP;

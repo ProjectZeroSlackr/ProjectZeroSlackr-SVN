@@ -1,4 +1,4 @@
-Last updated: July 15, 2008
+Last updated: July 16, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -62,7 +62,7 @@ SansaLinux:
 ZS Version:
 - Modder: Keripo
 - Type: Mod and ZS Recompile
-- Date: July 15, 2008
+- Date: July 16, 2008
 - Version: B X.X
 
 Modifications:
@@ -70,6 +70,7 @@ Modifications:
 - modified paths
 - custom default settings
 - ZeroSlackr sub-menus
+- MPD check via mpdc module
 - loads modules with ".zl" extension and "PackInfo" file
 - loads modules from predefined locations
   (see "Launch/Launch.sh")

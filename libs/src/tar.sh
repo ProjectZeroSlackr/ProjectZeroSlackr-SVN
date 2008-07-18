@@ -3,7 +3,7 @@
 # tar Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 7, 2008
+# Last updated: July 17, 2008
 #
 echo ""
 echo "==========================================="
@@ -16,7 +16,6 @@ if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
 	echo " nicely on Cygwin - skipping]"
 	echo ""
 	echo "==========================================="
-	echo ""
 	exit
 fi
 # Cleanup

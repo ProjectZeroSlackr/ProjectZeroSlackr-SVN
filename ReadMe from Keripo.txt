@@ -1,4 +1,4 @@
-Last updated: Jun 28, 2008
+Last updated: July 17, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -17,6 +17,16 @@ installing iPodLinux on their iPods and trying out
 community-generated content. For more information on
 iPodLinux, see iPodLinux's main website:
 http://ipodlinux.org
+
+Project ZeroSlackr has also been ported over to
+SansaLinux although not all Slackr packs work at the
+moment. While the ZeroSlackr Framework is slightly
+different, the majority of things are the same for both
+the iPod and Sansa. Keep in mind that all documentation
+is written for the iPod and thus not everything will
+also apply/work for the Sansa (you will have to
+experiment a bit as I do not have a Sansa myself and
+thus cannot provide proper support for it).
 
 The core of the system is the ZeroSlackr Framework,
 consisting of a modified kernel, a modified,
@@ -64,10 +74,15 @@ or the sort, but if you that nice, feel free to via
 ZeroSlackr's SourceForge page. I myself have been working
 on this through my 2gb iPod nano (for which I also rely on
 soley for music as well) but I don't plan on buying a new
-iPod nor iPhone/iPod Touch.
+iPod nor iPhone/iPod Touch. I may buy a Sansa e200 as I
+am currently depending on others with the SansaLinux port.
 
 Either way, I hope you enjoy using ZeroSlackr and remember
 to leave a word of thanks somewhere or, better yet, help
 contribute back to the iPodLinux community somehow, be it
 making and releasing a scheme, writing tutorials, porting
 new applications, or even writing your own. ; )
+
+Enjoy!
+
+~Keripo

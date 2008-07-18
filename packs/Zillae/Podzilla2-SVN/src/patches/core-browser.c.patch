@@ -1,0 +1,30 @@
+Index: core/browser.c
+===================================================================
+--- core/browser.c	(revision 2420)
++++ core/browser.c	(working copy)
+@@ -36,6 +36,8 @@
+ #include <errno.h>
+ #include "pz.h"
+ 
++int MPD_ACTIVE = 0;
++
+ static void wait_on_sigchld(int signal)
+ { wait(NULL); }
+ 
+@@ -55,6 +57,16 @@
+ void pz_execv(const char *path, char *const argv[])
+ {
+ #ifdef IPOD
++	
++	if (MPD_ACTIVE) {
++		int launch = pz_errdialog(_("Launch app?"),
++			_("MPD is active. There may not be enough memory to launch selected app. Do you wish to continue?"),
++			2, 0, _("No"), _("Yes"));
++		if (launch == 0) {
++			return;
++		}
++	}
++	
+ 	static const char *const vcs[] = {"/dev/vc/%d", "/dev/tty%d", 0};
+ 	int i, tty0_fd, ttyfd, curvt, fd, status, oldvt = 0;
+ 	struct vt_stat vtstate;
