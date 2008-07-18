@@ -3,7 +3,7 @@
 # iDoom/hDoom Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 17, 2008
+# Last updated: July 18, 2008
 #
 echo ""
 echo "==========================================="
@@ -27,6 +27,7 @@ fi
 echo "> Setting up build directory..."
 mkdir build
 cd build
+BUILDDIR=$(pwd)
 # Extract source
 echo "> Extracting source..."
 unzip -q ../src/orig/iDoom1_3-src.zip
@@ -113,7 +114,10 @@ do
 	cp -rf ../hDoom/$doc $DOCS/hDoom/
 done
 mv -f ../freedm-0.6.2/* $DOCS/FreeDoom/
-#sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
+# Delete .svn folders - directory change done in case of previous failure
+cd $BUILDDIR
+cd release
+sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $PACK/Misc
 tar -cf Patches.tar Patches

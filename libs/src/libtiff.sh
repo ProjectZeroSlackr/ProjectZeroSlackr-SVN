@@ -3,20 +3,18 @@
 # libtiff Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 7, 2008
+# Last updated: July 18, 2008
 #
 # Requires zlib and libjpeg
 if [ ! -d zlib ]; then
 	echo ""
 	echo "[libtiff requires zlib]"
 	./src/zlib.sh
-	echo ""
 fi
 if [ ! -d libjpeg ]; then
 	echo ""
 	echo "[libtiff requires libjpeg]"
 	./src/libjpeg.sh
-	echo ""
 fi
 echo ""
 echo "==========================================="

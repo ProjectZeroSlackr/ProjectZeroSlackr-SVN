@@ -1,0 +1,15 @@
+--- Makefile	2008-07-18 10:50:54.000000000 +0000
++++ Makefile	2008-07-18 10:52:26.000000000 +0000
+@@ -50,6 +50,12 @@
+ LT_REVISION = 2
+ LT_LDFLAGS  = -no-undefined -rpath $(DESTDIR)$(libdir) -release $(LT_RELEASE) -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
+ 
++ifdef SANSA
++EXTRA_CFLAGS+=-DSANSA
++SOURCES+=./src/video/ipod/lcd-as-memframe.S
++OBJECTS+=$(objects)/lcd-as-memframe.lo
++endif
++
+ all: $(srcdir)/configure Makefile $(objects) $(objects)/$(TARGET) $(objects)/$(SDLMAIN_TARGET)
+ 
+ $(srcdir)/configure: $(srcdir)/configure.in

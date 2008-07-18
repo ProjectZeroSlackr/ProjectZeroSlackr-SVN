@@ -3,17 +3,13 @@
 # CmdLine-Archivers Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 17, 2008
+# Last updated: July 18, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
 echo "CmdLine-Archivers Auto-Building Script"
 echo ""
-# Cygwin check
-if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
-	CYGWIN=1
-fi
 # Cleanup
 if [ -d build ]; then
 	echo "> Removing old build directory..."
@@ -23,6 +19,7 @@ fi
 echo "> Setting up build directory..."
 mkdir build
 cd build
+BUILDDIR=$(pwd)
 # Extract source
 echo "> Extracting source..."
 tar zxf ../src/orig/Ipodgzip.tar.gz
@@ -66,11 +63,7 @@ cd ..
 # Copy over compiled file
 echo "> Copying over compiled files..."
 mkdir compiled
-if [ $CYGWIN ]; then
-	echo "  Note: skipping tar"
-else
-	cp -rf tar/src/tar compiled/
-fi
+cp -rf tar/bin/tar compiled/
 cp -rf gzip/gzip compiled/
 cp -rf unrar/unrar compiled/
 cp -rf unzip/unzip compiled/
@@ -101,7 +94,10 @@ cp -rf ../launcher/* $PACK/Launch/
 # Too many original docs; done by hand
 cp -rf "../../ReadMe from Keripo.txt" $PACK/
 cp -rf ../../License.txt $PACK/
-#sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
+# Delete .svn folders - directory change done in case of previous failure
+cd $BUILDDIR
+cd release
+sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 #cd $PACK/Misc
 #tar -cf Docs.tar Docs

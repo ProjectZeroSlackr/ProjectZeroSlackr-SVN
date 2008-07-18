@@ -3,7 +3,7 @@
 # Kernel Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 17, 2008
+# Last updated: July 18, 2008
 #
 echo ""
 echo "==========================================="
@@ -28,6 +28,7 @@ fi
 echo "> Setting up build directory..."
 mkdir build
 cd build
+BUILDDIR=$(pwd)
 mkdir compiling
 cd compiling
 # Extract vanilla kernel source
@@ -90,7 +91,10 @@ cp -rf $COMPILING/REPORTING-BUGS $DOCSORIG/
 # Too much and really not needed
 #cp -rf $COMPILING/Documentation $DOCSORIG/
 cp -rf $COMPILING/Documentation/kernel-parameters.txt $DOCS/
-#sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
+# Delete .svn folders - directory change done in case of previous failure
+cd $BUILDDIR
+cd release
+sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd boot/docs/kernel
 tar -cf Patches.tar Patches

@@ -3,14 +3,13 @@
 # freetype Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 7, 2008
+# Last updated: July 18, 2008
 #
 # Requires zlib
 if [ ! -d zlib ]; then
 	echo ""
 	echo "[freetype requires zlib]"
 	./src/zlib.sh
-	echo ""
 fi
 echo ""
 echo "==========================================="

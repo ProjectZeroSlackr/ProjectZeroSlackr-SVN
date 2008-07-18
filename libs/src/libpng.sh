@@ -3,14 +3,13 @@
 # libpng Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 7, 2008
+# Last updated: July 17, 2008
 #
 # Requires zlib
 if [ ! -d zlib ]; then
 	echo ""
 	echo "[libpng requires zlib]"
 	./src/zlib.sh
-	echo ""
 fi
 echo ""
 echo "==========================================="

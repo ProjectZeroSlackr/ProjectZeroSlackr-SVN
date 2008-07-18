@@ -3,7 +3,7 @@
 # SBaGen Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 17, 2008
+# Last updated: July 18, 2008
 #
 echo ""
 echo "==========================================="
@@ -19,6 +19,7 @@ fi
 echo "> Setting up build directory..."
 mkdir build
 cd build
+BUILDDIR=$(pwd)
 # Extract source
 echo "> Extracting source..."
 tar -xf ../src/orig/sbagen-1.4.4.tgz
@@ -88,7 +89,10 @@ for file in $FILES
 do
 	cp -rf ../compiling/$file $DOCS/
 done
-#sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
+# Delete .svn folders - directory change done in case of previous failure
+cd $BUILDDIR
+cd release
+sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $PACK/Misc
 tar -cf Docs.tar Docs

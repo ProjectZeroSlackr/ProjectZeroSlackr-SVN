@@ -3,7 +3,7 @@
 # Loader2 & iPodPatcher Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 17, 2008
+# Last updated: July 18, 2008
 #
 echo ""
 echo "==========================================="
@@ -27,6 +27,7 @@ if [ -d build ]; then
 fi
 mkdir build
 cd build
+BUILDDIR=$(pwd)
 # Loader 2
 echo "Loader 2:"
 # Make new compiling directory
@@ -99,7 +100,10 @@ DOCS=docs/loader2
 cp -rf "../../ReadMe from Keripo.txt" "$DOCS/ReadMe from Keripo.txt"
 cp -rf ../../License.txt $DOCS/License.txt
 cp -rf ../../src/patches $DOCS/Patches
-#sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
+# Delete .svn folders - directory change done in case of previous failure
+cd $BUILDDIR
+cd release
+sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $DOCS
 tar -cf Patches.tar Patches

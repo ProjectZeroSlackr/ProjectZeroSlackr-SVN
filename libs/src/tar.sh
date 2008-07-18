@@ -3,7 +3,7 @@
 # tar Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 17, 2008
+# Last updated: July 18, 2008
 #
 echo ""
 echo "==========================================="
@@ -12,8 +12,9 @@ echo "tar Auto-Compiling Script"
 echo ""
 # Cygwin check
 if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
-	echo "[tar doesn't seem to compile"
-	echo " nicely on Cygwin - skipping]"
+	echo "[tar doesn't seem to compile nicely on"
+	echo " Cygwin - using pre-built files]"
+	cp -rf src/tar/pre-built tar
 	echo ""
 	echo "==========================================="
 	exit
@@ -35,8 +36,8 @@ if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
 	echo "  expect lots of problems and it to fail."
 fi
 export PATH=/usr/local/bin:$PATH
-./configure CC=arm-elf-gcc LDFLAGS=-elf2flt --host=arm-elf --disable-largefile --prefix=$(pwd) >> build.log
-make install >> build.log
+./configure CC=arm-elf-gcc LDFLAGS=-elf2flt --host=arm-elf --disable-largefile --prefix=$(pwd) >> build.log 2>&1
+make install >> build.log 2>&1
 echo ""
 echo "Fin!"
 echo ""
