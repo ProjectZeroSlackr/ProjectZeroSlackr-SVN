@@ -3,22 +3,13 @@
 # ONScripter Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 17, 2008
+# Last updated: July 18, 2008
 #
-
 echo ""
 echo "==========================================="
 echo ""
 echo "ONScripter Auto-Building Script"
 echo ""
-# SansaLinux not supported yet
-if [ $SANSA ]; then
-	echo "[ONScripter compiling not yet"
-	echo " supported for SansaLinux - skipping]"
-	echo ""
-	echo "==========================================="
-	exit
-fi
 # Cygwin check
 if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
 	echo "[ONScripter doesn't seem to compile"
@@ -36,6 +27,7 @@ fi
 echo "> Setting up build directory..."
 mkdir build
 cd build
+BUILDDIR=$(pwd)
 # SVN source unstable and causes a bus error
 #mkdir compiling
 # Update with SVN
@@ -77,7 +69,7 @@ echo "  be logged to the 'build.log' file."
 echo "  If building fails, check the log file."
 cd compiling
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
-make -f Makefile.iPodLinux >> ../build.log 2>&1
+make -f Makefile.iPodLinux >> ../build.log
 # Copy over compiled file
 echo "> Copying over compiled files..."
 cd ..
@@ -119,7 +111,10 @@ for file in $FILES
 do
 	cp -rf ../compiling/$file $DOCS/
 done
-#sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
+# Delete .svn folders - directory change done in case of previous failure
+cd $BUILDDIR
+cd release
+sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $PACK/Misc
 tar -cf Patches.tar Patches

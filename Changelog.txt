@@ -1,4 +1,4 @@
-Last updated: July 17, 2008
+Last updated: July 18, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,11 @@ original/ported software.
 
 
 == Changelog ==
+
+July 18, 2008
+- Added SansaLinux SDL port
+- Added pre-built libraries/files for Cygwin
+- Cleaned up build scripts a bit more
 
 July 17, 2008
 - More SansaLinux support:

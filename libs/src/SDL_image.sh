@@ -3,21 +3,8 @@
 # SDL_image Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 17, 2008
+# Last updated: July 18, 2008
 #
-# SansaLinux not supported yet
-if [ $SANSA ]; then
-	echo ""
-	echo "==========================================="
-	echo ""
-	echo "SDL_image Auto-Compiling Script"
-	echo ""
-	echo "[SDL_image compiling not yet"
-	echo " supported for SansaLinux - skipping]"
-	echo ""
-	echo "==========================================="
-	exit
-fi
 # Cygwin check
 if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
 	echo ""
@@ -25,11 +12,17 @@ if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
 	echo ""
 	echo "SDL_image Auto-Compiling Script"
 	echo ""
-	echo "[SDL_image doesn't seem to compile"
-	echo " nicely on Cygwin - skipping]"
+	echo "[SDL_image doesn't seem to compile nicely"
+	echo " on Cygwin - using pre-built files]"
+	mkdir SDL_image
+	cp -rf src/SDL_image/pre-built/include SDL_image/
+	if [ $SANSA ]; then
+		cp -rf src/SDL_image/pre-built/lib-sansalinux SDL_image/lib
+	else
+		cp -rf src/SDL_image/pre-built/lib SDL_image/
+	fi
 	echo ""
 	echo "==========================================="
-	echo ""
 	exit
 fi
 # Requires zlib, libjpeg, libpng, libtiff and SDL
@@ -39,7 +32,6 @@ for lib in $LIBS; do
 		echo ""
 		echo "[SDL_image requires $lib]"
 		./src/$lib.sh
-		echo ""
 	fi
 done
 echo ""

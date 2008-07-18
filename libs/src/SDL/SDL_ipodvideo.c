@@ -1,5 +1,5 @@
 /*
-  * Last updated: July 7, 2008
+  * Last updated: July 18, 2008
   * ~Keripo
   *
   * Original file borrowed from
@@ -9,6 +9,14 @@
   * All compiling credits for SDL goes to xs who posted the instructions on his blog:
   * http://mewaqua.so.land.to/wfb/index.php?entry-id=481023853e102&view_c=Blog::Entry.html
   * The credits for the actual SDL port go to the iPL Devs
+  *
+  * The Sansa port was done by Sebastian Duell for SansaLinux
+  * It borrows Rockbox's LCD code for blitting to the Sansa
+  * The orginal port can be found at
+  * http://downloads.sourceforge.net/sansalinux/SDL-1.2.8-sansa-src.tar.gz
+  * Note that for now, until the Sansa is properly set as a unique target,
+  * it is treated as an iPod photo. This will change in the future once
+  * the generation value is decided on.
   *
   */
 
@@ -75,6 +83,10 @@ static unsigned long lcd_base, lcd_rtc, lcd_width, lcd_height;
 
 static long iPod_GetGeneration() 
 {
+#ifdef SANSA
+    // Treat as iPod photo for now
+    return 0x60000;
+#else
     int i;
     char cpuinfo[256];
     char *ptr;
@@ -91,6 +103,7 @@ static long iPod_GetGeneration()
     ptr = cpuinfo + i + 2;
     
     return strtol(ptr, NULL, 16);
+#endif
 }
 
 static int iPod_Available() 
@@ -295,8 +308,13 @@ static int iPod_VideoInit (_THIS, SDL_PixelFormat *vformat)
 	    vformat->Rmask = 0xF800;
 	    vformat->Gmask = 0x07E0;
 	    vformat->Bmask = 0x001F;
+#ifdef SANSA
+	    lcd_width = 176;
+	    lcd_height = 220;
+#else
 	    lcd_width = 220;
 	    lcd_height = 176;
+#endif
         } else if ((generation >> 16) == 0xc) {
 	    vformat->BitsPerPixel = 16;
 	    vformat->Rmask = 0xF800;
@@ -316,6 +334,9 @@ static int iPod_VideoInit (_THIS, SDL_PixelFormat *vformat)
 	    vformat->Rmask = vformat->Gmask = vformat->Bmask = 0;
 	}
 
+#ifdef SANSA
+        lcd_type = 0;
+#else
         if (generation == 0x60000) {
             lcd_type = 0;
         } else {
@@ -337,6 +358,7 @@ static int iPod_VideoInit (_THIS, SDL_PixelFormat *vformat)
                 lcd_type = 1;
             }      
         }
+#endif
 
 	initd = 1;
 	if (dbgout) fprintf (dbgout, "Initialized.\n\n");
@@ -520,6 +542,33 @@ static void iPod_PumpEvents (_THIS)
 	}
     } while (posted);
 }
+
+#ifdef SANSA
+
+// Rockbox's lcd-as-memframe.S has the actual blitting code
+
+#define LCD_FB_BASE_REG (*(volatile unsigned long *)(0xc2000028))
+typedef unsigned short fb_data;
+
+extern void lcd_copy_buffer_rect(fb_data *dst, const fb_data *src,
+                                 int width, int height);
+
+static void C_update_display(int mx, int my)
+{
+   int x,y;
+   fb_data *addr = (fb_data *)SDL_VideoSurface->pixels;
+   fb_data *ipod_scrDriver;
+
+   ipod_scrDriver = LCD_FB_BASE_REG & 0x0fffffff;
+   lcd_copy_buffer_rect(ipod_scrDriver, addr, 176*220, 1);
+}
+
+static void iPod_UpdateRects (_THIS, int nrects, SDL_Rect *rects) 
+{
+   C_update_display (lcd_width - 1, lcd_height - 1);
+}
+
+#else
 
 // enough space for 160x128x2
 static char ipod_scr[160 * (128/4)];
@@ -948,3 +997,5 @@ static void iPod_UpdateRects (_THIS, int nrects, SDL_Rect *rects)
 	M_update_display (0, 0, lcd_width - 1, lcd_height - 1);
     }
 }
+
+#endif

@@ -3,7 +3,7 @@
 # libjpeg Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 7, 2008
+# Last updated: July 18, 2008
 #
 echo ""
 echo "==========================================="
@@ -12,7 +12,7 @@ echo "libjpeg Auto-Compiling Script"
 echo ""
 # Cleanup
 if [ -d libjpeg ]; then
-	echo "> Removing old libmad directory..."
+	echo "> Removing old libjpeg directory..."
 	rm -rf libjpeg
 fi
 # Extract source

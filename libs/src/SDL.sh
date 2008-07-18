@@ -3,21 +3,8 @@
 # SDL Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 17, 2008
+# Last updated: July 18, 2008
 #
-# SansaLinux not supported yet
-if [ $SANSA ]; then
-	echo ""
-	echo "==========================================="
-	echo ""
-	echo "SDL Auto-Compiling Script"
-	echo ""
-	echo "[SDL compiling not yet"
-	echo " supported for SansaLinux - skipping]"
-	echo ""
-	echo "==========================================="
-	exit
-fi
 # Cygwin check
 if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
 	echo ""
@@ -25,8 +12,15 @@ if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
 	echo ""
 	echo "SDL Auto-Compiling Script"
 	echo ""
-	echo "[SDL doesn't seem to compile"
-	echo " nicely on Cygwin - skipping]"
+	echo "[SDL doesn't seem to compile nicely on"
+	echo " Cygwin - using pre-built files]"
+	mkdir SDL
+	cp -rf src/SDL/pre-built/include SDL/
+	if [ $SANSA ]; then
+		cp -rf src/SDL/pre-built/lib-sansalinux SDL/lib
+	else
+		cp -rf src/SDL/pre-built/lib SDL/
+	fi
 	echo ""
 	echo "==========================================="
 	exit
@@ -47,12 +41,25 @@ tar -xf src/SDL/SDL-1.2.13.tar.gz
 mv SDL-1.2.13 SDL
 # Compiling
 cd SDL
-echo "> Updating iPod port..."
-cp -rf ../src/SDL/SDL_ipodvideo.c src/video/ipod/
+if [ $SANSA ]; then
+	echo "> Adding SansaLinux port..."
+	cp -rf ../src/SDL/SDL_ipodvideo.c src/video/ipod/
+	cp -rf ../src/SDL/lcd-as-memframe.S src/video/ipod/
+else
+	echo "> Updating iPodLinux port..."
+	cp -rf ../src/SDL/SDL_ipodvideo.c src/video/ipod/
+fi
 echo "> Compiling..."
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
 ./configure CFLAGS="-D__unix__" --host=arm-uclinux-elf LDFLAGS=-Wl,-elf2flt --enable-ipod --disable-cdrom --disable-video-opengl --disable-threads --prefix=$(pwd) >> build.log 2>&1
-make install >> build.log
+if [ $SANSA ]; then
+	echo "  (building for SansaLinux)"
+	patch -p0 -t -i ../src/SDL/Makefile-sansalinux.patch >> build.log
+	patch -p0 -t -i ../src/SDL/build-deps-sansalinux.patch >> build.log
+	make install SANSA=1 >> build.log 2>&1
+else
+	make install >> build.log 2>&1
+fi
 echo ""
 echo "Fin!"
 echo ""

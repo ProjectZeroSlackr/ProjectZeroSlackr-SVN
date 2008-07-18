@@ -1,0 +1,11 @@
+--- ScriptHandler.cpp	2008-07-18 12:06:48.000000000 +0000
++++ ScriptHandler.cpp	2008-07-18 12:07:03.000000000 +0000
+@@ -902,7 +902,7 @@
+     FILE *fp = fopen("game.id", "rb");
+     if (fp) {
+ 	size_t line_size = 0;
+-	char c;
++	int c;
+ 	do {
+ 	    c = fgetc(fp);
+ 	    ++line_size;

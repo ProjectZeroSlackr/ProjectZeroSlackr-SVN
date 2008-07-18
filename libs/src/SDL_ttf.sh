@@ -3,21 +3,8 @@
 # SDL_ttf Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 17, 2008
+# Last updated: July 18, 2008
 #
-# SansaLinux not supported yet
-if [ $SANSA ]; then\
-	echo ""
-	echo "==========================================="
-	echo ""
-	echo "SDL_ttf Auto-Compiling Script"
-	echo ""
-	echo "[SDL_ttf compiling not yet"
-	echo " supported for SansaLinux - skipping]"
-	echo ""
-	echo "==========================================="
-	exit
-fi
 # Cygwin check
 if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
 	echo ""
@@ -25,11 +12,17 @@ if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
 	echo ""
 	echo "SDL_ttf Auto-Compiling Script"
 	echo ""
-	echo "[SDL_ttf doesn't seem to compile"
-	echo " nicely on Cygwin - skipping]"
+	echo "[SDL_ttf doesn't seem to compile nicely on"
+	echo " Cygwin - using pre-built files]"
+	mkdir SDL_ttf
+	cp -rf src/SDL_ttf/pre-built/include SDL_ttf/
+	if [ $SANSA ]; then
+		cp -rf src/SDL_ttf/pre-built/lib-sansalinux SDL_ttf/lib
+	else
+		cp -rf src/SDL_ttf/pre-built/lib SDL_ttf/
+	fi
 	echo ""
 	echo "==========================================="
-	echo ""
 	exit
 fi
 # Requires freetype and SDL
@@ -37,13 +30,11 @@ if [ ! -d freetype ]; then
 	echo ""
 	echo "[SDL_ttf requires freetype]"
 	./src/freetype.sh
-	echo ""
 fi
 if [ ! -d SDL ]; then
 	echo ""
 	echo "[SDL_ttf requires SDL]"
 	./src/SDL.sh
-	echo ""
 fi
 echo ""
 echo "==========================================="

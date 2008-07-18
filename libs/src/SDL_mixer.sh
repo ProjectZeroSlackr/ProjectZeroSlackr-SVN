@@ -3,21 +3,8 @@
 # SDL_mixer Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 17, 2008
+# Last updated: July 18, 2008
 #
-# SansaLinux not supported yet
-if [ $SANSA ]; then
-	echo ""
-	echo "==========================================="
-	echo ""
-	echo "SDL_mixer Auto-Compiling Script"
-	echo ""
-	echo "[SDL_mixer compiling not yet"
-	echo " supported for SansaLinux - skipping]"
-	echo ""
-	echo "==========================================="
-	exit
-fi
 # Cygwin check
 if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
 	echo ""
@@ -25,8 +12,15 @@ if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
 	echo ""
 	echo "SDL_mixer Auto-Compiling Script"
 	echo ""
-	echo "[SDL_mixer doesn't seem to compile"
-	echo " nicely on Cygwin - skipping]"
+	echo "[SDL_mixer doesn't seem to compile nicely"
+	echo " on Cygwin - using pre-built files]"
+	mkdir SDL_mixer
+	cp -rf src/SDL_mixer/pre-built/include SDL_mixer/
+	if [ $SANSA ]; then
+		cp -rf src/SDL_mixer/pre-built/lib-sansalinux SDL_mixer/lib
+	else
+		cp -rf src/SDL_mixer/pre-built/lib SDL_mixer/
+	fi
 	echo ""
 	echo "==========================================="
 	exit
@@ -36,13 +30,11 @@ if [ ! -d libmad ]; then
 	echo ""
 	echo "[SDL_mixer requires libmad]"
 	./src/libmad.sh
-	echo ""
 fi
 if [ ! -d SDL ]; then
 	echo ""
 	echo "[SDL_mixer requires SDL]"
 	./src/SDL.sh
-	echo ""
 fi
 echo ""
 echo "==========================================="
