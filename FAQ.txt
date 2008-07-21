@@ -1,4 +1,4 @@
-Last updated: July 17, 2008
+Last updated: July 21, 2008
 ~Keripo
 
 
@@ -196,4 +196,81 @@ A: Although Project ZeroSlackr currently supports a large
    or lower are plausible), I may consider doing new ports.
    I prefer SDL versions and can only port apps already ported
    to Linux and written in C/C++.
- 
+
+
+== Terminology ==
+
+iPod
+- If you do not know what an iPod is, you should probably
+  consult Google or Wikipedia.
+iPodLinux
+- A port of uClinux to the iPod platform (ARM architecture
+  with no MMU). For more information on iPodLinux, see the
+  website (http://ipodlinux.org). For more information on
+  uClinux or Linux, search Google or Wikipedia.
+Project ZeroSlackr
+- Keripo's easy-to-use, custom iPodLinux installation
+  system which integrates a wide range of cummity-generated
+  content. Note that Project ZeroSlackr is not an "installer"
+  per say; it is the installed content itseld, which consists
+  of the base framework (ZeroSlackr Framework) and additional
+  content (Slackr Packs).
+ZeroSlackr
+- Usually refers to/shortform for "Project ZeroSlackr". You
+  may say "To install iPodLinux, just install ZeroSlackr" or
+  "Install iPodLinux through Project ZeroSlackr". The word
+  itself is an amalgamation of "zero" and "slacker" to an
+  oxymoronic effect ^_^
+ZeroSlackr Framework
+- The base portion of a ZeroSlackr install. Consists of the
+  bootloader, the userland, the kernel, MPD and ZeroLauncher.
+  The framework is basically the iPodLinux system itself;
+  content is added through Slackr Packs.
+Slackr Packs
+- Content added to the ZeroSlackr Framework. These packs
+  can either be applications launchable from ZeroLauncher
+  or just additional content such as schemes or free public
+  domain ROMs.
+root
+- Has different meanings depending on context.
+- The "root of your iPod" or "root of your data partition"
+  usually refers to where all your music/data files are.
+  It is basically the location representing your iPod and
+  contains folders such as "Notes", "Contacts",
+  "iPod_Control", etc. The main "ZeroSlackr" folder should
+  be in the root of your iPod.
+- The "root of your Linux partition" is where the userland
+  files are usually stored in a normal iPodLinux installation,
+  i.e. on an added ext2/ext3 Linux partition. ZeroSlackr does
+  not use a Linux partition but rather stores the userland
+  files on an ext3 partition image that is mounted during
+  startup (the image file is found at "/boot/userland.ext3").
+  Due to symlinking in the userland image, you will usually
+  not need to access the content of the file.
+- The "root of ZeroSlackr" is the content of the "ZeroSlackr"
+  folder. Many commonly used folders in the userland image are
+  symlinked to folders in the ZeroSlackr root.
+- To summarize, on a Windows computer:
+    E:/ = iPod's root
+    E:/ZeroSlackr/ = ZeroSlackr root
+    E:/boot/userland.ext3 = Linux root
+- Sometimes ZeroSlackr's documentation will assume the iPod's
+  root when referring to folder locations; sometimes it will
+  assume the ZeroSlackr root. Overall:
+    /boot     -> /boot
+	/docs     -> /docs
+	/etc/rc.d -> /ZeroSlackr/etc/rc.d
+	/home     -> /ZeroSlackr/home
+	/opt      -> /ZeroSlackr/opt
+	/usr      -> /ZeroSlackr/usr
+  Such inconsistency can be attributed to laziness.
+loop-mount image
+- Special term Keripo uses to describe the userland image
+  used by ZeroSlackr. Instead of using an actual Linux
+  partition to store the userland files, an ext3 partition
+  image containing the userland files is "loop-mounted"
+  during startup. This allows for a partitionless install.
+- This image file is found at "/boot/userland.ext3"; see
+  "Loop-mount Instructions.txt" in "/docs/userland" for
+  instructions on editing the content of the file.
+

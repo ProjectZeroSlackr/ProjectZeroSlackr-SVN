@@ -1,4 +1,4 @@
-Last updated: July 17, 2008
+Last updated: July 21, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -14,9 +14,13 @@ Project ZeroSlackr is a custom iPodLinux installation
 system. The aim of the project is to provide a simple,
 coherent, easy-to-use and newbie friendly method of
 installing iPodLinux on their iPods and trying out
-community-generated content. For more information on
-iPodLinux, see iPodLinux's main website:
-http://ipodlinux.org
+community-generated content. For a full list of
+features, see Features.txt For frequently asked
+questions and a list of terminology, see FAQ.txt.
+For an updated list of changes, see Changelog.txt.
+For a rough ToDo list, see ToDo.txt. For more
+information on iPodLinux, see iPodLinux's main
+website/wiki: http://ipodlinux.org
 
 Project ZeroSlackr has also been ported over to
 SansaLinux although not all Slackr packs work at the

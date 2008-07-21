@@ -1,0 +1,175 @@
+Last updated: July 21, 2008
+~Keripo
+
+All code/scripts written by Keripo are licensed under
+GNU GPL - see License.txt. For the licensing of the
+software/application, refer to the documents found in
+Misc/Docs.tar.gz or the license that comes with the
+original/ported software.
+
+Note that not all features/applications/content listed
+below are available for/compatible with all iPod models.
+Most applications currently do not work on Sansa e200s.
+See each Slackr pack's "ReadMe from Keripo.txt" for
+more information on the application's background and
+usage instructions.
+
+== ZeroSlackr Framework ==
+Loader2
+- iPodLinux's main graphical bootloader
+- Able to load Rockbox, partitioned iPodLinux install
+  and ZeroSlackr install
+- Modified getLoaderAutoExec for the loop-mount kernel
+- Added boot tune feature and FFVII victory fanfare
+  boot tune (disable by default)
+Kernel
+- iPodLinux's 2.4.32 experimental kernel
+- iBoy audio buffer and loop-mount patches applied
+- Backwards compatible; can boot partitioned install
+  created by Installer 2
+Userland
+- Collection of Linux system tools and file heiarchy
+- Modified for ZeroSlackr, most folders symlinked to
+  the ZeroSlackr root on data partition
+- Userland files kept on a loop-mounted ext3 partition
+  image while symlinked folders accessible to Windows
+- Executes start files and scripts found in /etc/rc.d
+  then keeps executing ZeroLauncher
+MPD (Music Player Daemon)
+- iPodLinux's daemon music player, ke-branch
+- Integrated into ZeroLauncher and Podzilla2-SVN
+  using modified MPD and MPDc modules
+ZeroLauncher
+- ZeroSlackr's main launching GUI
+- Custom podzilla2 modified for application launching
+  purposes
+- Includes a few select, modified PZ2 modules
+Extras
+- Large collection of podzilla2 schemes and fonts,
+  including official and user-generated ones
+
+== Emulators ==
+iBoy
+- Gameboy (GB) and Gameboy Colour (GBC) emulator
+- Full speed, well optimized for iPod
+- AntSoldiers Demo, Boxes, Chip the Chick, DanLaser
+  Demo, and Frox PD roms included
+iDarcNES
+- Nintendo Entertainment System (NES) and
+  Sega Master System (SMS) emulator
+- Almost/full speed, very buggy
+- Bomb Sweeper and Stars Fields PD roms included
+iGameGear
+- Sega Master System (SMS) and Sega Game Gear
+  (SGG) emulator
+- Almost/full speed, no sound, no menu
+- Damiana, Nibbles and Tetris PD roms included
+igpSP
+- Gameboy Advance (GBA) emulator
+- Decent speed, well optimized for iPod
+- Super Wings PD rom included, BIOS file not included
+iPodMAME
+- Multiple Arcade Machine Emulator (MAME)
+- Almost/full speed, no menu
+- Old ROMs only - see romlist in documents
+- Alien Armada, Hello Pacman demo and Matrix Pacman
+  demo included
+
+== Media ==
+Hotdog-Demos
+- Collection of demos for displaying capabilities
+  of the iPod-optimized "hotdog" graphics engine
+iDoom/hDoom
+- Port of the classical ID game Doom
+- Hacked for PWAD support through using FreeDoom
+- Shareware IWAD (doom1.wad) and FreeDoom DeathMatch IWAD
+  (freedm.wad) included
+MV Player (Movie Player)
+- Compressed video player for iPodLinux
+- Video files must be converted in a special
+  format created for iPodLinux
+- Preconverted Miku Hatsune PV clip and collection of
+  MV Player schemes included
+nano
+- Demoscene graphical demo for the iPod nano
+- Soundtrack ripped as extra MP3 file
+ONScripter
+- Open-source clone of NScripter visual novel engine
+- English build with Mikachan font
+- Converting tools and instructions included
+- Preconverted Higurashi no Naku Koro ni - Onikakushi-hen
+  demo, fan-translated by Sonozaki Futago-tachi
+Podfather
+- Demoscene graphical demo for monochrome iPods
+SBaGen
+- Binaural beat player, can play converted iDoser files
+- Sample beats included
+TinySID
+- SID player for playback of Commodore 64 music
+- Sample Freeze SID file included
+ToeNailClipper
+- Simple console-based virtual toenail-clipping game
+XMP (Extended Module Player)
+- Module player supporting numerous formats
+- Autumn Depressions and Anticipation modules included
+
+== Tools ==
+CmdLine-Archivers
+- Collection of various command-line archiving tools
+- Includes bzip2, gzip, lpaq4, minigzip, tar, unzip,
+  unrar and zip
+CmdLine-Tools
+- Collection of various command-line tools
+- Includes various GNU tools (grep, gawk, sed),
+  iPod-specific tools (asciichart, backlight, contrast,
+  font, lsi, pause, raise), diffutils (cmp, diff, diff3,
+  sdiff), John the Ripper, and a lolcode interpreter
+Encyclopodia
+- eBook reader for iPodLinux, uses podzilla2
+- eBooks must be converted to a special format created
+  for iPodLinux
+- Made for converting wiki content, such as Wikipedia
+  or Wiktionary
+- Preconverted copy of the iPodLinux wiki included
+Flite
+- Light-weight voice synthesizer
+- Allows visual reading of text during voice synthesized
+  reading
+- Jack London's The Call of the Wild eText included
+PiCalc
+- Calculates digits of pi using the Hartley FFT algorithm
+- Limited to 8000 digits due to iPod's memory limitations
+
+== Zillae ==
+Floyd2illA (Floydzilla)
+- Custom build of podzilla legacy with numerous
+  unstable games/apps
+Podzilla0-Lite
+- Slimmed down build of podzilla legacy with Podwrite
+Podzilla0-SVN
+- SVN build of podzilla legacy (podzilla0/PZ0)
+Podzilla2-SVN
+- SVN build of podzilla 2 (podzilla/podzilla2/PZ2)
+- Launch from ZeroLauncher with select module locations
+  (i.e. load with only game modules, only tools, etc.)
+TimeWalk
+- Large collection of historical zillae created during
+  the development of podzilla legacy (pre-podzilla2)
+- Most are variant of podzilla legacy while a few are
+  completely separate projects aimed at providing an
+  alternate interface (i.e. iPod-Desktop, Owen-OS
+  and Margarelon)
+- The majority of these zillae will only work on older
+  generation iPods (no available source code anymore)
+viPodzilla
+- Custom build of podzilla legacy with circle-based
+  interface
+ZacZilla
+- Custom build of proof-of-concept TTKzilla
+
+== In Development ==
+- Atari800
+- iGens
+- ScummVM
+- See "To Do.txt" for full ToDo list
+
