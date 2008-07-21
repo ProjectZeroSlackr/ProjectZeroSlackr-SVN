@@ -1,5 +1,5 @@
 /*
- * Last updated: July 16, 2008
+ * Last updated: July 21, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -41,7 +41,7 @@ static int check_bios()
 	FILE *bios;
 	bios = fopen(path_bios, "r");
 	if (bios == NULL) {
-		pz_error("No GBA BIOS found!", "No \"gba_bios.bin\" found in \"Data/\"!");
+		pz_error("No \"gba_bios.bin\" found in \"%s\"!", "Data/");
 		return 0;
 	} else {
 		pz_warning("Note: %s requires large amounts of memory and may not work here.", "igpSP");
