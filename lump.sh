@@ -3,7 +3,7 @@
 # Auto-Lumping Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 17, 2008
+# Last updated: July 21, 2008
 #
 echo ""
 echo "==========================================="
@@ -55,7 +55,7 @@ mkdir $LUMP
 echo "> Building libs..."
 cd $SVNROOT
 cd libs
-#./build.sh
+./build.sh
 # base
 echo ""
 echo "> Building base..."

@@ -3,7 +3,7 @@
 # Userland Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 18, 2008
+# Last updated: July 21, 2008
 #
 echo ""
 echo "==========================================="
@@ -65,10 +65,11 @@ cp -rf ../../src/mod/loop-mount.sh $DOCS/Mod/
 cp -rf ../../src/mod/zeroslackr-userland-mod.tar.gz $DOCS/Mod/
 # Project ZeroSlackr documents
 cp -rf ../../../../Changelog.txt ./
+cp -rf ../../../../FAQ.txt ./
+cp -rf ../../../../Features.txt ./
 cp -rf ../../../../License.txt ./
 cp -rf "../../../../ReadMe from Keripo.txt" ./
 cp -rf "../../../../To Do.txt" ./
-cp -rf "../../../../FAQ.txt" ./
 # Delete .svn folders - directory change done in case of previous failure
 cd $BUILDDIR
 cd release

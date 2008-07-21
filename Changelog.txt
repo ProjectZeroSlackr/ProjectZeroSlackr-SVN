@@ -1,4 +1,4 @@
-Last updated: July 18, 2008
+Last updated: July 21, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,12 @@ original/ported software.
 
 
 == Changelog ==
+
+July 21, 2008
+- Added Features document
+- Added Terminology section to FAQ
+- Third and last stable snapshot pre-release
+  (no official pre-release for SansaLinux)
 
 July 18, 2008
 - Added SansaLinux SDL port
@@ -107,52 +113,6 @@ Apr 30, 2008
 
 Apr 28, 2008
 - Second stable snapshot pre-release
-- Contains:
-	Base:
-	- Loader2 from SVN
-	- 2.4.32 kernel (loop-mount & iBoy patches)
-	- Modified, loop-mount userland
-	- User-generated schemes and fonts
-	- ZeroLauncher
-	- MPD (for ZeroLauncher and PZ2-SVN)
-
-	Emulators:
-	- iBoy
-	- iDarcNES
-	- iGameGear
-	- iPodMAME
-	
-	Media:
-	- iDoom
-	- MV Player
-	- nano
-	- Podfather
-	- SBaGen
-	- ToeNailClipper
-	- XMP
-	
-	Tools:
-	- CmdLine-Tools
-	- Encyclopodia
-	- PiCalc
-	
-	Zillae:
-	- Floyd2illA
-	- Podzilla0-Lite
-	- Podzilla0-SVN
-	- Podzilla2-SVN
-	- TimeWalk
-	- viPodzilla
-	- ZacZilla
-	
-- In development:
-  - Flite
-  - iGens
-  - igpSP
-  - Sidplay
-  - ScummVM
-  - Sidplay/Tinysid
-  - DSLinux apps
 
 Apr 27, 2008
 - Resort /opt into categories
@@ -192,29 +152,3 @@ Mar 29, 2008
 Mar 22, 2008
 - Stable snapshot pre-release
 - First proper SVN upload
-- Contains:
-	Base:
-	- Loader2 from SVN
-	- 2.4.32 kernel (loop-mount & iBoy patches)
-	- Modified, loop-mount userland
-	- User-generated schemes and fonts
-	- ZeroLauncher
-	- MPD (for ZeroLauncher and PZ2-SVN)
-
-	Packs:
-	- Encyclopodia
-	- Floyd2illA
-	- iBoy
-	- iDoom
-	- MvPD
-	- nano
-	- PiCalc
-	- Podfather
-	- Podzilla0-Lite
-	- Podzilla0-SVN
-	- Podzilla2-SVN
-	- ToeNailClipper
-	- viPodzilla
-	- XMP
-	- ZacZilla 
-- Unstable: iPodMAME, TimeWalk

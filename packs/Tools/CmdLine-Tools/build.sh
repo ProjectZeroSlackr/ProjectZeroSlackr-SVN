@@ -3,7 +3,7 @@
 # CmdLine-Tools Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 18, 2008
+# Last updated: July 21, 2008
 #
 echo ""
 echo "==========================================="
@@ -67,6 +67,7 @@ export PATH=/usr/local/bin:$PATH
 cd libipod
 make IPOD=1 >> ../cmdlineutils.log 2>&1
 cd ..
+PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
 cd cmdlineutils
 make IPOD=1 >> ../cmdlineutils.log 2>&1
 cd ..
@@ -81,6 +82,7 @@ echo "  - lolcode flex and bison interpreter"
 cd lolcode
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
 cp -rf ../../src/mod/lolcode/* ./
+chmod ugo+rwx ./build-ipod
 ./build-ipod >> ../lolcode.log 2>&1
 cd ..
 # Copy over compiled file
