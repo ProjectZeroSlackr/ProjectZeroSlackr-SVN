@@ -3,7 +3,7 @@
 # libtiff Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 18, 2008
+# Last updated: July 21, 2008
 #
 # Requires zlib and libjpeg
 if [ ! -d zlib ]; then
@@ -34,7 +34,9 @@ mv tiff-4.0.0beta2 libtiff
 cd libtiff
 echo "> Compiling..."
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
+echo "  - Running configure script..."
 ./configure CC=arm-uclinux-elf-gcc CFLAGS="-DPATH_MAX=1024" LDFLAGS=-elf2flt --host=arm-uclinux-elf --with-zlib-include-dir=$(pwd)/../zlib/include --with-zlib-lib-dir=$(pwd)/../zlib/lib --with-jpeg-include-dir=$(pwd)/../libjpeg/include --with-jpeg-lib-dir=$(pwd)/../libjpeg/lib --prefix=$(pwd) >> build.log 2>&1
+echo "  - make install..."
 make install >> build.log 2>&1
 echo ""
 echo "Fin!"

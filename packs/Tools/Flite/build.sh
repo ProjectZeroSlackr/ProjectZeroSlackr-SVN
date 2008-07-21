@@ -3,7 +3,7 @@
 # Flite Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 18, 2008
+# Last updated: July 21, 2008
 #
 echo ""
 echo "==========================================="
@@ -57,7 +57,9 @@ echo "  intensive; if you have an old computer"
 echo "  it is recommended that you skip this."
 cd compiling
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
+echo "  - Running configure script..."
 ./configure CC=arm-elf-gcc --host=arm-elf >> ../build.log 2>&1
+echo "  - make..."
 make >> ../build.log 2>&1
 # Copy over compiled file
 echo "> Copying over compiled files..."

@@ -3,7 +3,7 @@
 # SDL_image Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 18, 2008
+# Last updated: July 21, 2008
 #
 # Cygwin check
 if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
@@ -52,8 +52,11 @@ mv SDL_image-1.2.6 SDL_image
 cd SDL_image
 echo "> Compiling..."
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
+echo "  - Running configure script..."
 ./configure CC=arm-uclinux-elf-gcc --host=arm-uclinux-elf --with-sdl-prefix=$(pwd)/../SDL --prefix=$(pwd) >> build.log 2>&1
+echo "  - Patching Makefile..."
 patch -p0 -t -i ../src/SDL_image/Makefile.patch >> build.log
+echo "  - make install..."
 make install >> build.log
 echo ""
 echo "Fin!"

@@ -3,7 +3,7 @@
 # libmad Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 7, 2008
+# Last updated: July 21, 2008
 #
 echo ""
 echo "==========================================="
@@ -23,7 +23,9 @@ mv libmad-0.15.1b libmad
 cd libmad
 echo "> Compiling..."
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
+echo "  - Running configure script..."
 ./configure CC=arm-uclinux-elf-gcc LDFLAGS=-elf2flt --host=arm-uclinux-elf --enable-fpm=arm --prefix=$(pwd) >> build.log 2>&1
+echo "  - make install..."
 make install >> build.log
 echo ""
 echo "Fin!"

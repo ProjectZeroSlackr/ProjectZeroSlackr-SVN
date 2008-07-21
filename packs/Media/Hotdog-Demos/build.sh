@@ -3,7 +3,7 @@
 # Hotdog-Demos Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 18, 2008
+# Last updated: July 21, 2008
 #
 echo ""
 echo "==========================================="
@@ -52,13 +52,14 @@ cd $LIBSDIR/hotdog/demos
 make clean >> $DIR/build.log 2>&1
 make IPOD=1 >> $DIR/build.log 2>&1
 cd ..
-echo "  - Building hotdog-ex demos..."
+echo "  - Updating hotdog-ex SVN..."
 if [ ! -d hotdog-ex ]; then
 	svn co --quiet http://svn.so2.sytes.net/repos/ipod/hotdog-ex/ hotdog-ex
 fi	
 cd hotdog-ex
 echo "  - Applying ZeroSlackr patches..."
 patch -p0 -t -i $DIR/../src/patches/hotdog-ex-all.patch >> $DIR/build.log
+echo "  - Building hotdog-ex demos..."
 make clean >> $DIR/build.log 2>&1
 make bolly IPOD=1 >> $DIR/build.log 2>&1
 make bouncy IPOD=1 >> $DIR/build.log 2>&1

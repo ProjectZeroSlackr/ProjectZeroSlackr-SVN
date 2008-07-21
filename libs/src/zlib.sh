@@ -3,7 +3,7 @@
 # zlib Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 15, 2008
+# Last updated: July 21, 2008
 #
 echo ""
 echo "==========================================="
@@ -23,8 +23,11 @@ mv zlib-1.2.3 zlib
 echo "> Compiling..."
 cd zlib
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
+echo "  - Running configure script..."
 ./configure --prefix=$(pwd) >> build.log
+echo "  - make install..."
 make install CC=arm-uclinux-elf-gcc LDFLAGS="-L. libz.a -elf2flt" EXE="" >> build.log
+echo "  - make minigzip..."
 make minigzip CC=arm-uclinux-elf-gcc LDFLAGS="-L. libz.a -elf2flt" EXE="" >> build.log
 echo ""
 echo "Fin!"
