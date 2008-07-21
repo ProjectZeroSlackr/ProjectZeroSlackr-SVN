@@ -3,7 +3,7 @@
 # freetype Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 18, 2008
+# Last updated: July 21, 2008
 #
 # Requires zlib
 if [ ! -d zlib ]; then
@@ -29,7 +29,9 @@ mv freetype-2.3.7 freetype
 cd freetype
 echo "> Compiling..."
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
+echo "  - Running configure script..."
 ./configure CC=arm-uclinux-elf-gcc CFLAGS=-I$(pwd)/../zlib/include LDFLAGS="-L$(pwd)/../zlib/lib -elf2flt" --host=arm-uclinux-elf --prefix=$(pwd) >> build.log 2>&1
+echo "  - make install..."
 make install >> build.log 2>&1
 echo ""
 echo "Fin!"

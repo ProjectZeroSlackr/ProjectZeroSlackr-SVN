@@ -3,7 +3,7 @@
 # libjpeg Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 18, 2008
+# Last updated: July 21, 2008
 #
 echo ""
 echo "==========================================="
@@ -23,8 +23,10 @@ mv jpeg-6b libjpeg
 cd libjpeg
 echo "> Compiling..."
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
+echo "  - Running configure script..."
 ./configure CC=arm-uclinux-elf-gcc LDFLAGS=-elf2flt --host=arm-uclinux-elf --prefix=$(pwd) >> build.log 2>&1
 mkdir lib include
+echo "  - make install-lib..."
 make install-lib >> build.log
 echo ""
 echo "Fin!"

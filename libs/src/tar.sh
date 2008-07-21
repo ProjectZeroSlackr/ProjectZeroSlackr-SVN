@@ -3,7 +3,7 @@
 # tar Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 18, 2008
+# Last updated: July 21, 2008
 #
 echo ""
 echo "==========================================="
@@ -31,12 +31,10 @@ mv tar-1.16.2-20070123 tar
 # Compiling
 cd tar
 echo "> Compiling..."
-if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
-	echo "  Note: tar building on Cygwin is a pain;"
-	echo "  expect lots of problems and it to fail."
-fi
 export PATH=/usr/local/bin:$PATH
+echo "  - Running configure script..."
 ./configure CC=arm-elf-gcc LDFLAGS=-elf2flt --host=arm-elf --disable-largefile --prefix=$(pwd) >> build.log 2>&1
+echo "  - make install..."
 make install >> build.log 2>&1
 echo ""
 echo "Fin!"

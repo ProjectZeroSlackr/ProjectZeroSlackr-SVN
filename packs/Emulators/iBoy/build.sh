@@ -3,7 +3,7 @@
 # iBoy Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 18, 2008
+# Last updated: July 21, 2008
 #
 echo ""
 echo "==========================================="
@@ -62,7 +62,9 @@ echo "  be logged to the 'build.log' file."
 echo "  If building fails, check the log file."
 cd compiling
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
+echo "  - make clean"
 make clean >> ../build.log
+echo "  - make"
 make >> ../build.log 2>&1
 # Copy over compiled file
 echo "> Copying over compiled files..."

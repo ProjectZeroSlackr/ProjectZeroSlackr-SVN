@@ -3,7 +3,7 @@
 # SDL Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 18, 2008
+# Last updated: July 21, 2008
 #
 # Cygwin check
 if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
@@ -51,13 +51,16 @@ else
 fi
 echo "> Compiling..."
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
+echo "  - Running configure script..."
 ./configure CFLAGS="-D__unix__" --host=arm-uclinux-elf LDFLAGS=-Wl,-elf2flt --enable-ipod --disable-cdrom --disable-video-opengl --disable-threads --prefix=$(pwd) >> build.log 2>&1
 if [ $SANSA ]; then
-	echo "  (building for SansaLinux)"
+	echo "  - Patching for SansaLinux..."
 	patch -p0 -t -i ../src/SDL/Makefile-sansalinux.patch >> build.log
 	patch -p0 -t -i ../src/SDL/build-deps-sansalinux.patch >> build.log
+	echo "  - make install..."
 	make install SANSA=1 >> build.log 2>&1
 else
+	echo "  - make install..."
 	make install >> build.log 2>&1
 fi
 echo ""

@@ -3,7 +3,7 @@
 # XMP Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 18, 2008
+# Last updated: July 21, 2008
 #
 echo ""
 echo "==========================================="
@@ -55,9 +55,12 @@ echo "  be logged to the 'build.log' file."
 echo "  If building fails, check the log file."
 cd compiling
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
+echo "  - Running configure script..."
 ./configure -q CC=arm-elf-gcc LDFLAGS=-elf2flt --host=arm-elf --disable-alsa >> ../build.log 2>&1
+echo "  - Copying over Makefile.rules..."
 rm -rf Makefiles.rules
 mv Makefile-mod.rules Makefile.rules
+echo "  - make..."
 make >> ../build.log 2>&1
 # Copy over compiled file
 echo "> Copying over compiled files..."

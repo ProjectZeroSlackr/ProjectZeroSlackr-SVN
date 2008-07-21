@@ -3,7 +3,7 @@
 # SDL_mixer Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 18, 2008
+# Last updated: July 21, 2008
 #
 # Cygwin check
 if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
@@ -54,7 +54,9 @@ mv SDL_mixer-1.2.8 SDL_mixer
 cd SDL_mixer
 echo "> Compiling..."
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
+echo "  - Running configure script..."
 ./configure CC=arm-uclinux-elf-gcc CFLAGS=-I$(pwd)/../libmad/include LDFLAGS="-L$(pwd)/../libmad/lib -elf2flt" --host=arm-uclinux-elf --with-sdl-prefix=$(pwd)/../SDL --enable-music-mp3-mad-gpl --prefix=$(pwd) >> build.log 2>&1
+echo "  - make install..."
 make install >> build.log
 echo ""
 echo "Fin!"
