@@ -18,4 +18,4 @@ else
 fi
 # Have here just to prevent ZeroLauncher from starting up again
 # when rebooting, but it causes unnecessary delay after exiting an app
-#sleep 3s
+sleep 2s
