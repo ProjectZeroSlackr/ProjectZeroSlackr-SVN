@@ -1,4 +1,4 @@
-Last updated: July 2, 2008
+Last updated: July 22, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -46,11 +46,12 @@ Original:
 ZS Version:
 - Modder: Keripo
 - Type: Porter
-- Date: July 2, 2008
+- Date: July 22, 2008
 - Version: B X.X
 
 Modifications:
 - added interactive volume control (scrollwheel)
+- added iPod backlight control
 
 Launch Module:
 - FastLaunches TinySID with Freeze.sid

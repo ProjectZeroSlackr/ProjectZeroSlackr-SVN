@@ -1,5 +1,5 @@
 /*
- * Last updated: July 2, 2008
+ * Last updated: July 22, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -50,6 +50,55 @@ static void ipod_init_sound()
 static void ipod_exit_sound()
 {
 	close(ipod_mixer);
+}
+
+
+/* == Backlight code == */
+
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+
+#define BACKLIGHT_OFF	0
+#define BACKLIGHT_ON	1
+#define FBIOSET_BACKLIGHT	_IOW('F', 0x25, int)
+
+static int backlight_current;
+
+static int ipod_ioctl(int request, int *arg)
+{
+	int fd;
+	fd = open("/dev/fb0", O_NONBLOCK);
+	if (fd < 0) fd = open("/dev/fb/0", O_NONBLOCK);
+	if (fd < 0) return -1;
+	if (ioctl(fd, request, arg) < 0) {
+		close(fd);
+		return -1;
+	}
+	close(fd);
+	return 0;
+}
+
+static void ipod_set_backlight(int backlight)
+{
+	ipod_ioctl(FBIOSET_BACKLIGHT, (int *)(long)backlight);
+}
+
+static void ipod_toggle_backlight()
+{
+	if (backlight_current == 0) {
+		ipod_set_backlight(BACKLIGHT_ON);
+		backlight_current = 1;
+	} else {
+		ipod_set_backlight(BACKLIGHT_OFF);
+		backlight_current = 0;
+	}
+}
+
+static void ipod_init_backlight()
+{
+	ipod_set_backlight(BACKLIGHT_ON);
+	backlight_current = 1;
 }
 
 
@@ -110,7 +159,7 @@ static void ipod_exit_input()
 
 /* == Main loop == */
 
-#define SCROLL_MOD_NUM 5 // Via experimentation
+#define SCROLL_MOD_NUM 3 // Via experimentation
 #define SCROLL_MOD(n) \
 	({ \
 		static int scroll_count = 0; \
@@ -126,39 +175,43 @@ void ipod_init_volume_control()
 {
 	ipod_init_sound();
 	ipod_init_input();
+	ipod_init_backlight();
 	
 	int input, exit;
 	exit = 0;
 	while (exit != 1) {
-		input = KEYCODE(ipod_get_keypress());
-		switch (input) {
-			case SCROLL_L:
-				if (SCROLL_MOD(SCROLL_MOD_NUM)) {
-					ipod_volume--;
-					if (ipod_volume < 0)
-						ipod_volume = 0; // Negative volume DNE!
-					ipod_update_volume();
-				}
-				break;
-			case KEY_ACTION:
-				exit = 1;
-				break;
-			case SCROLL_R:
-				if (SCROLL_MOD(SCROLL_MOD_NUM)) {
-					ipod_volume++;
-					if (ipod_volume > 70)
-						ipod_volume = 70; // To be safe - 70 is VERY loud
-					ipod_update_volume();
-				}
-				break;
-			case KEY_MENU:
-				exit = 1;
-				break;			
-			default:
-				break;		
+		input = ipod_get_keypress();
+		if (!KEYSTATE(input)) { // Pressed
+			input = KEYCODE(input);
+			switch (input) {
+				case SCROLL_R:
+					if (SCROLL_MOD(SCROLL_MOD_NUM)) {
+						ipod_volume++;
+						if (ipod_volume > 70)
+							ipod_volume = 70; // To be safe - 70 is VERY loud
+						ipod_update_volume();
+					}
+					break;
+				case KEY_ACTION:
+					ipod_toggle_backlight();
+					break;
+				case SCROLL_L:
+					if (SCROLL_MOD(SCROLL_MOD_NUM)) {
+						ipod_volume--;
+						if (ipod_volume < 0)
+							ipod_volume = 0; // Negative volume DNE!
+						ipod_update_volume();
+					}
+					break;
+				case KEY_MENU:
+					exit = 1;
+					break;			
+				default:
+					break;		
+			}
 		}
 	}
-	
+	printf("Exiting...\n");
 	ipod_exit_sound();
 	ipod_exit_input();
 }

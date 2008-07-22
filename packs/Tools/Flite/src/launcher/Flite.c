@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 30, 2008
+ * Last updated: July 22, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -29,7 +29,7 @@ static ttk_menu_item browser_extension_read;
 static ttk_menu_item browser_extension_convert;
 static pid_t pid;
 static const char *path_read, *path_convert, *dir;
-static const char *on_off_options[] = {"Off", "On", 0};
+static const char *off_on_options[] = {"Off", "On", 0};
 
 // Blatant rip from PZ0's textview.c
 static int check_is_ascii_file(const char *filename)
@@ -58,14 +58,24 @@ static int check_is_ascii_file(const char *filename)
 	return 1;
 }
 
+static int is_active(ttk_menu_item *item)
+{
+	if (pid) return 1;
+	return 0;
+}
+
 static PzWindow *kill_flite()
 {
-	if (pid) kill(pid, SIGKILL);
+	if (pid) kill(pid, SIGTERM);
 	return NULL;
 }
 
 static PzWindow *read_file(const char *file)
 {
+	if (MPD_ACTIVE) {
+		pz_error("MPD is active. Unable to launch Flite.");
+		return NULL;
+	}
 	if (strchr(file, ' ') != NULL) {
 		pz_error("Sorry, Flite cannot process files with spaces in their names.");
 		return NULL;
@@ -137,15 +147,16 @@ static void init_launch()
 		pz_set_int_setting(config, ENABLE_FLITE, 0);
 	
 	pz_menu_add_stub_group("/Tools/Flite", "Accessibility");
-	pz_menu_add_setting_group("/Tools/Flite/Enable Flite", "~Settings", ENABLE_FLITE, config, on_off_options);
+	pz_menu_add_setting_group("/Tools/Flite/Enable Flite", "~Settings", ENABLE_FLITE, config, off_on_options);
 	
-	if (pz_get_int_setting(config, ENABLE_FLITE) == 1) {	
+	if (pz_get_int_setting(config, ENABLE_FLITE) == 1) {
 		path_read = "/opt/Tools/Flite/Launch/Read.sh";
 		path_convert = "/opt/Tools/Flite/Launch/Convert.sh";
 		dir = "/opt/Tools/Flite/Text";
 		
 		pz_menu_add_action_group("/Tools/Flite/Text", "Browse", browse_texts);
 		pz_menu_add_action_group("/Tools/Flite/Kill Flite", "~Settings", kill_flite);
+		pz_get_menu_item("/Tools/Flite/Kill Flite")->visible = is_active;
 		pz_menu_add_action_group("/Tools/Flite/Toggle Backlight", "~Settings", toggle_backlight_window);
 		
 		browser_extension_read.name = N_("Read with Flite");

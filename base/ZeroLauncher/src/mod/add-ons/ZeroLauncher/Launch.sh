@@ -3,6 +3,11 @@
 exec >> /opt/Base/ZeroLauncher/Misc/Launch.log 2>&1
 
 # ZeroLauncher script - called at startup
+
+# Have here just to prevent ZeroLauncher from starting up again
+# when rebooting, but it causes unnecessary delay after exiting an app
+sleep 4s
+
 # Format: $binary -l $module_dirs
 if [ -z "$1" ]; then
 	cd /opt/Base/ZeroLauncher
@@ -11,11 +16,8 @@ if [ -z "$1" ]; then
 	# modules recursively but this is done such that
 	# /opt/Base/ZeroLauncher/Add-ons is loaded first
 	#/opt/Base/ZeroLauncher/ZeroLauncher -l /opt/Base:/opt/Emulators:/opt/Media:/opt/Tools:/opt/Zillae
-	/opt/Base/ZeroLauncher/ZeroLauncher
+	exec /opt/Base/ZeroLauncher/ZeroLauncher
 else
 	cd /opt/Base/ZeroLauncher
-	/opt/Base/ZeroLauncher/ZeroLauncher -l "$1"
+	exec /opt/Base/ZeroLauncher/ZeroLauncher -l "$1"
 fi
-# Have here just to prevent ZeroLauncher from starting up again
-# when rebooting, but it causes unnecessary delay after exiting an app
-sleep 2s

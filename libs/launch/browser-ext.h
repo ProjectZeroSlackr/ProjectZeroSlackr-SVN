@@ -1,5 +1,5 @@
 /*
- * Last updated: July 15, 2008
+ * Last updated: July 22, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -73,3 +73,5 @@ extern TWidget *read_directory_mod(const char *dirname,
 extern TWindow *open_directory_title_mod(const char *filename, const char *title,
 	int check(const char *file), TWindow *handler(ttk_menu_item *item));
 
+// MPD
+extern int MPD_ACTIVE;

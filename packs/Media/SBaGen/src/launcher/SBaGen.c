@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 27, 2008
+ * Last updated: July 22, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -40,6 +40,10 @@ static void warning()
 
 static PzWindow *load_file(const char *file)
 {
+	if (MPD_ACTIVE) {
+		pz_error("MPD is active. Unable to launch SBaGen.");
+		return NULL;
+	}
 	warning();
 	const char *const cmd[] = {"Launch.sh", file, NULL};
 	pz_execv(
@@ -62,9 +66,7 @@ static PzWindow *browse_beats()
 
 static PzWindow *fastlaunch()
 {
-	warning();
-	pz_exec(path);
-	return NULL;
+	return load_file(NULL);
 }
 
 static void cleanup()
@@ -81,7 +83,6 @@ static void init_launch()
 	pz_menu_add_stub_group("/Media/SBaGen", "Music");
 	pz_menu_add_action_group("/Media/SBaGen/#FastLaunch", "#FastLaunch", fastlaunch);
 	pz_menu_add_action_group("/Media/SBaGen/Beats", "Browse", browse_beats);
-	pz_menu_add_action_group("/Media/SBaGen/Toggle Backlight", "~Settings", toggle_backlight_window);
 	pz_menu_sort("/Media/SBaGen");
 	
 	browser_extension.name = N_("Open with SBaGen");
