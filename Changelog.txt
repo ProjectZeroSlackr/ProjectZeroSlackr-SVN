@@ -10,11 +10,12 @@ original/ported software.
 
 == Changelog ==
 
+July 22, 2008
+- Added backlight control to SBaGen, TinySID and XMP
+
 July 21, 2008
 - Added Features document
 - Added Terminology section to FAQ
-- Third and last stable snapshot pre-release
-  (no official pre-release for SansaLinux)
 
 July 18, 2008
 - Added SansaLinux SDL port

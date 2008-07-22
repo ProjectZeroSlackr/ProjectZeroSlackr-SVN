@@ -1,5 +1,5 @@
 /*
- * Last updated: Jun 30, 2008
+ * Last updated: July 22, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -32,6 +32,10 @@ static int check_ext(const char *file)
 
 static PzWindow *load_file(const char *file)
 {
+	if (MPD_ACTIVE) {
+		pz_error("MPD is active. Unable to launch TinySID.");
+		return NULL;
+	}
 	const char *const cmd[] = {"Launch.sh", file, NULL};
 	pz_execv(
 		path,
@@ -53,8 +57,7 @@ static PzWindow *browse_sids()
 
 static PzWindow *fastlaunch()
 {
-	pz_exec(path);
-	return NULL;
+	return load_file(NULL);
 }
 
 static void cleanup()
@@ -71,7 +74,6 @@ static void init_launch()
 	pz_menu_add_stub_group("/Media/TinySID", "Music");
 	pz_menu_add_action_group("/Media/TinySID/#FastLaunch", "#FastLaunch", fastlaunch);
 	pz_menu_add_action_group("/Media/TinySID/SIDs", "Browse", browse_sids);
-	pz_menu_add_action_group("/Media/TinySID/Toggle Backlight", "~Settings", toggle_backlight_window);
 	pz_menu_sort("/Media/TinySID");
 
 	browser_extension.name = N_("Open with TinySID");

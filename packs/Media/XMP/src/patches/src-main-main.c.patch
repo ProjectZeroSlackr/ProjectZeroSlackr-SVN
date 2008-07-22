@@ -1,7 +1,62 @@
 diff -ur src/main/main.c src/main/main.c
---- src/main/main.c	2008-07-02 10:05:17.312500000 -0400
-+++ src/main/main.c	2008-07-02 10:43:34.562500000 -0400
-@@ -288,9 +288,29 @@
+--- src/main/main.c	2007-12-05 18:39:27.000000000 -0500
++++ src/main/main.c	2008-07-22 11:30:23.156250000 -0400
+@@ -200,6 +200,54 @@
+ }
+ 
+ 
++/* == iPod Backlight code == */
++
++#include <fcntl.h>
++#include <unistd.h>
++#include <sys/ioctl.h>
++
++#define BACKLIGHT_OFF	0
++#define BACKLIGHT_ON	1
++#define FBIOSET_BACKLIGHT	_IOW('F', 0x25, int)
++
++static int backlight_current;
++
++static int ipod_ioctl(int request, int *arg)
++{
++	int fd;
++	fd = open("/dev/fb0", O_NONBLOCK);
++	if (fd < 0) fd = open("/dev/fb/0", O_NONBLOCK);
++	if (fd < 0) return -1;
++	if (ioctl(fd, request, arg) < 0) {
++		close(fd);
++		return -1;
++	}
++	close(fd);
++	return 0;
++}
++
++static void ipod_set_backlight(int backlight)
++{
++	ipod_ioctl(FBIOSET_BACKLIGHT, (int *)(long)backlight);
++}
++
++static void ipod_toggle_backlight()
++{
++	if (backlight_current == 0) {
++		ipod_set_backlight(BACKLIGHT_ON);
++		backlight_current = 1;
++	} else {
++		ipod_set_backlight(BACKLIGHT_OFF);
++		backlight_current = 0;
++	}
++}
++
++static void ipod_init_backlight()
++{
++	ipod_set_backlight(BACKLIGHT_ON);
++	backlight_current = 1;
++}
++
+ static void process_echoback(unsigned long i)
+ {
+     unsigned long msg = i >> 4;
+@@ -288,9 +336,30 @@
      k = cmd = 0;
  #endif
  
@@ -29,10 +84,11 @@ diff -ur src/main/main.c src/main/main.c
 +	        xmp_gvol_dec(ctx);
 +	    break;
 +	case 'm':	/* quit */
++	    fprintf(stderr, "\nExiting...\n");
  	    skip = -2;
  	    xmp_mod_stop(ctx);
  	    if (pause)
-@@ -301,7 +321,7 @@
+@@ -301,7 +370,7 @@
  	    if (pause)
  		pause = xmp_mod_pause(ctx);
  	    break;
@@ -41,7 +97,7 @@ diff -ur src/main/main.c src/main/main.c
  	    xmp_ord_prev(ctx);
  	    if (pause)
  		pause = xmp_mod_pause(ctx);
-@@ -318,7 +338,7 @@
+@@ -318,11 +387,14 @@
  	    if (pause)
  		pause = xmp_mod_pause(ctx);
  	    break;
@@ -50,3 +106,26 @@ diff -ur src/main/main.c src/main/main.c
  	    fprintf (stderr, "%s",  (pause = xmp_mod_pause(ctx))
  		? "] - PAUSED\b\b\b\b\b\b\b\b\b\b"
  		: "]         \b\b\b\b\b\b\b\b\b\b");
+ 	    break;
++	case '\n':	/* toggle iPod's backlight */
++	    ipod_toggle_backlight();
++	    break;
+ 	case '1':
+ 	case '2':
+ 	case '3':
+@@ -430,6 +502,7 @@
+ 	}
+     }
+ 
++    ipod_init_backlight();
+     xmp_register_event_callback(process_echoback);
+ 
+     if (opt->verbosity) {
+@@ -439,6 +512,7 @@
+ #ifdef __EMX__
+ 	fprintf(stderr, "OS/2 Port by Kevin Langman (langman@earthling.net)\n" );
+ #endif
++	fprintf (stderr, "iPod Port by Keripo\n");
+     }
+ 
+     if (probeonly || (opt->verbosity)) {

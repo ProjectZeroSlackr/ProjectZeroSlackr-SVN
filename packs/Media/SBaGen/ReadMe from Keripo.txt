@@ -1,4 +1,4 @@
-Last updated: July 2, 2008
+Last updated: July 22, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -63,12 +63,12 @@ Original:
 ZS Version:
 - Modder: Keripo
 - Type: Porter
-- Date: July 2, 2008
+- Date: July 22, 2008
 - Version: B X.X
 
 Modifications:
-- added working (but not perfect) interactive volume control
-  and exiting
+- added working (but not perfect) interactive volume control,
+  exiting, and iPod backlight control
 
 Launch Module:
 - FastLaunches SBaGen with "basics/prog-chakras-1.sbg"

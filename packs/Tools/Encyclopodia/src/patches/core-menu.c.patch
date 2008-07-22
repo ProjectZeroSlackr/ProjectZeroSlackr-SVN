@@ -34,7 +34,7 @@ Index: core/menu.c
      pz_menu_add_setting_group ("/Settings/Browser Path Display", "Browser", BROWSER_PATH, pz_global_config, 0);
      pz_menu_add_setting_group ("/Settings/Browser Show Hidden", "Browser", BROWSER_HIDDEN, pz_global_config, 0);
 -    pz_menu_add_action ("/~Power/Quit podzilla", quit_podzilla);
-+    pz_menu_add_action ("/~Power/Quit encyclopodia", quit_podzilla);
++    pz_menu_add_action ("/~Power/Quit Encyclopodia", quit_podzilla);
 +#ifdef SANSA
 +    pz_menu_add_action ("/~Power/Reboot Sansa/Cancel", PZ_MENU_UPONE);
 +    pz_menu_add_action ("/~Power/Reboot Sansa/Absolutely", reboot_ipod);

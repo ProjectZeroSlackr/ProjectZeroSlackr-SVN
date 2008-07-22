@@ -1,4 +1,4 @@
-Last updated:July 2, 2008
+Last updated: July 22, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -52,6 +52,7 @@ ZS Version:
 Modifications:
 - remapped interactive commands to iPod's buttons
 - added interactives for changing volume (scrollwheel)
+- added iPod backlight control
 - sample mods from source (anticipation.mod) or
   The Mod Archives (a-depres.xm) at http://modarchive.org/
 

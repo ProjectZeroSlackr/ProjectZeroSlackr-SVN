@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 27, 2008
+ * Last updated: July 22, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -53,6 +53,10 @@ static int check_ext(const char *file)
 
 static PzWindow *load_file(const char *file)
 {
+	if (MPD_ACTIVE) {
+		pz_error("MPD is active. Unable to launch XMP.");
+		return NULL;
+	}
 	const char *const cmd[] = {"Launch.sh", file, NULL};
 	pz_execv(
 		path,
@@ -74,8 +78,7 @@ static PzWindow *browse_mods()
 
 static PzWindow *fastlaunch()
 {
-	pz_exec(path);
-	return NULL;
+	return load_file(NULL);
 }
 
 static void cleanup()
@@ -92,7 +95,6 @@ static void init_launch()
 	pz_menu_add_stub_group("/Media/XMP", "Music");
 	pz_menu_add_action_group("/Media/XMP/#FastLaunch", "#FastLaunch", fastlaunch);
 	pz_menu_add_action_group("/Media/XMP/Modules", "Browse", browse_mods);
-	pz_menu_add_action_group("/Media/XMP/Toggle Backlight", "~Settings", toggle_backlight_window);
 	pz_menu_sort("/Media/XMP");
 
 	browser_extension.name = N_("Open with XMP");

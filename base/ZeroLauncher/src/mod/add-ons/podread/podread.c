@@ -1,5 +1,5 @@
 /*
- * Last updated: Jun 28, 2008
+ * Last updated: July 21, 2008
  * ~Keripo
  *
  * Modified for ZeroLauncher
@@ -217,14 +217,14 @@ static PzWindow *new_podread_menu_window()
 	PzWindow *w;
 	podread_menu = ttk_new_menu_widget(0, ttk_menufont, ttk_screen->w, ttk_screen->h-ttk_screen->wy);
 	if (!podread_menu) return 0;
-	ttk_menu_append(podread_menu, podread_new_menu_item(N_("Return to podread"), podread_mh_return, 0));
+	ttk_menu_append(podread_menu, podread_new_menu_item(N_("Return to Podread"), podread_mh_return, 0));
 	ttk_menu_append(podread_menu, podread_new_menu_item(N_("Scroll"), podread_mh_scroll, 0));
 	ttk_menu_append(podread_menu, podread_new_menu_item(N_("Scroll window"), podread_mh_win_scroll, 0));
 	ttk_menu_append(podread_menu, podread_new_menu_item(N_("Autoscroll"), podread_mh_autoscroll, 0));
 	ttk_menu_append(podread_menu, podread_new_menu_item(N_("Music control"), podread_mh_music, 0));
 	ttk_menu_append(podread_menu, podread_new_menu_item(N_("Load linenumber"), podread_mh_loadline, 0));
 	ttk_menu_append(podread_menu, podread_new_menu_item(N_("Save linenumber"), podread_mh_saveline, 0));
-	ttk_menu_append(podread_menu, podread_new_menu_item(N_("Quit podread"), podread_mh_quit, 0));
+	ttk_menu_append(podread_menu, podread_new_menu_item(N_("Quit Podread"), podread_mh_quit, 0));
 	w = pz_new_menu_window(podread_menu);
 	if (w) w->title = _("PodRead");
 	return w;
