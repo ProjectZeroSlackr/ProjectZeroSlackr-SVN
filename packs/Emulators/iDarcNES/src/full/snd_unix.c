@@ -120,6 +120,8 @@ void snd_init(void)
     for (i=0; i<8192; i++) final_wave[i]=0;
 }
 
+extern int volume;
+
 int snd_open(int samples_per_sync, int sample_rate)
 {
     int tmp;
@@ -132,6 +134,10 @@ int snd_open(int samples_per_sync, int sample_rate)
     mixer=open("/dev/mixer", O_RDWR); 
     printf("opening "SOUND_DEVICE"...");
     sound_fd = open(SOUND_DEVICE, O_WRONLY);
+	// Set volume on startup ~Keripo
+	int vol;
+	vol = volume << 8 | volume;
+	ioctl(mixer, SOUND_MIXER_WRITE_PCM, &vol);
     if (sound_fd < 0) {
 	perror("failed");
 	sound_fd = 0;

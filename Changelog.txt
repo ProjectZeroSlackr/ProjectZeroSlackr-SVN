@@ -1,4 +1,4 @@
-Last updated: July 21, 2008
+Last updated: July 25, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -10,8 +10,33 @@ original/ported software.
 
 == Changelog ==
 
+July 25, 2008
+- Added iPod generation warning to podfather
+- Added handler for pz_exec_kill to browser-ext
+- Free config files for ZeroLauncher launch modules
+
+July 24, 2008
+- Cleaned up userland pre-rc and Moonlight schemes
+- Added compiled file checks to library compile scripts
+- More sensitive scrolling for hDoom
+- Added FastLaunch to ONScripter
+- Added MPD check and improved cleanup in ZeroLauncher's
+  pz_execv_kill and pz_exec_kill functions
+- Moved sleep to ZeroLauncher's poweroff and reboot
+  functions
+- Use text files for TimeWalk's Welcome and Missing info
+- Added Wiktionary dump to Encyclopodia (instead of
+  using iPodLinux wiki dump)
+
+July 23, 2008
+- Fixed igpSP a bit
+- Set default volume on iDarcNES
+
 July 22, 2008
 - Added backlight control to SBaGen, TinySID and XMP
+- Added pz_execv_kill and pz_exec_kill functions to
+  ZeroLauncher, updated all launch scripts
+- Added Install document
 
 July 21, 2008
 - Added Features document

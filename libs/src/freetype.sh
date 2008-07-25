@@ -34,7 +34,13 @@ echo "  - Running configure script..."
 echo "  - make install..."
 make install >> build.log 2>&1
 echo ""
-echo "Fin!"
+cd ..
+LIB=freetype/lib/libfreetype.a
+if [ -e $LIB ]; then
+	echo "Fin!"
+else
+	echo "Error! Library not compiled. File \"$LIB\" not found!"
+fi
 echo ""
 echo "Auto-Compiling script by Keripo"
 echo ""

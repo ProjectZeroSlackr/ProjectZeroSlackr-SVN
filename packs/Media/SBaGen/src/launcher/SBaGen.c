@@ -40,13 +40,9 @@ static void warning()
 
 static PzWindow *load_file(const char *file)
 {
-	if (MPD_ACTIVE) {
-		pz_error("MPD is active. Unable to launch SBaGen.");
-		return NULL;
-	}
 	warning();
 	const char *const cmd[] = {"Launch.sh", file, NULL};
-	pz_execv(
+	pz_execv_kill(
 		path,
 		(char *const *)cmd
 	);

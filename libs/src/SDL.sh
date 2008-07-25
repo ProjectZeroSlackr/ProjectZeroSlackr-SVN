@@ -3,7 +3,7 @@
 # SDL Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 21, 2008
+# Last updated: July 25, 2008
 #
 # Cygwin check
 if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
@@ -64,7 +64,13 @@ else
 	make install >> build.log 2>&1
 fi
 echo ""
-echo "Fin!"
+cd ..
+LIB=SDL/lib/libSDL.a
+if [ -e $LIB ]; then
+	echo "Fin!"
+else
+	echo "Error! Library not compiled. File \"$LIB\" not found!"
+fi
 echo ""
 echo "Auto-Compiling script by Keripo"
 echo ""

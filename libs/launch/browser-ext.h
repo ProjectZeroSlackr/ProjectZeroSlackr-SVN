@@ -34,11 +34,13 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-// PZ2 functions
-extern void pz_ipod_reboot();
+// PZ2 core functions - see pz.h for more
+extern int MPD_ACTIVE;
 extern void setup_sigchld_handler();
 extern void pz_set_backlight_timer(int sec);
 extern TWindow *open_directory_title(const char *filename, const char *title);
+
+// Terminal module
 extern PzWindow * new_terminal_window_with(const char *path, char *const argv[]);
 
 // String manipulators
@@ -72,6 +74,3 @@ extern TWidget *read_directory_mod(const char *dirname,
 	int check(const char *file),TWindow *handler(ttk_menu_item *item));
 extern TWindow *open_directory_title_mod(const char *filename, const char *title,
 	int check(const char *file), TWindow *handler(ttk_menu_item *item));
-
-// MPD
-extern int MPD_ACTIVE;

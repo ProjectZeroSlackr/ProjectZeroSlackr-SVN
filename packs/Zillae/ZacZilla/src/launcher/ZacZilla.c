@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 27, 2008
+ * Last updated: July 22, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -25,7 +25,7 @@ static PzModule *module;
 
 static PzWindow *fastlaunch()
 {
-	pz_exec("/opt/Zillae/ZacZilla/Launch/Launch.sh");
+	pz_exec_kill("/opt/Zillae/ZacZilla/Launch/Launch.sh");
 	return NULL;
 }
 

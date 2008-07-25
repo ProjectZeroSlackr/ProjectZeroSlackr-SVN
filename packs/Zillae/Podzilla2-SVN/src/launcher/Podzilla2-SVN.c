@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 28, 2008
+ * Last updated: July 25, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -36,7 +36,7 @@ static const char *on_off_options[] = {"Off", "On", 0};
 
 static PzWindow *fastlaunch()
 {
-	pz_exec(path);
+	pz_exec_kill(path);
 	return NULL;
 }
 static PzWindow *launch_all()
@@ -46,7 +46,7 @@ static PzWindow *launch_all()
 		"/usr/lib",
 		NULL
 	};
-	pz_execv(
+	pz_execv_kill(
 		path,
 		(char *const *)cmd
 	);
@@ -59,7 +59,7 @@ static PzWindow *launch_arcade()
 		"/usr/lib/All:/usr/lib/Arcade",
 		NULL
 	};
-	pz_execv(
+	pz_execv_kill(
 		path,
 		(char *const *)cmd
 	);
@@ -71,7 +71,7 @@ static PzWindow *launch_dev()
 		"/usr/lib/All:/usr/lib/Dev",
 		NULL
 	};
-	pz_execv(
+	pz_execv_kill(
 		path,
 		(char *const *)cmd
 	);
@@ -83,7 +83,7 @@ static PzWindow *launch_media()
 		"/usr/lib/All:/usr/lib/Media",
 		NULL
 	};
-	pz_execv(
+	pz_execv_kill(
 		path,
 		(char *const *)cmd
 	);
@@ -95,7 +95,7 @@ static PzWindow *launch_misc()
 		"/usr/lib/All:/usr/lib/Misc",
 		NULL
 	};
-	pz_execv(
+	pz_execv_kill(
 		path,
 		(char *const *)cmd
 	);
@@ -107,7 +107,7 @@ static PzWindow *launch_tools()
 		"/usr/lib/All:/usr/lib/Tools",
 		NULL
 	};
-	pz_execv(
+	pz_execv_kill(
 		path,
 		(char *const *)cmd
 	);
@@ -119,7 +119,7 @@ static PzWindow *launch_unsorted()
 		"/usr/lib/All:/usr/lib/Unsorted",
 		NULL
 	};
-	pz_execv(
+	pz_execv_kill(
 		path,
 		(char *const *)cmd
 	);
@@ -128,6 +128,8 @@ static PzWindow *launch_unsorted()
 static void cleanup()
 {
 	pz_save_config(config);
+	pz_free_config(config);
+	config = 0;
 }
 
 static void init_launch() 

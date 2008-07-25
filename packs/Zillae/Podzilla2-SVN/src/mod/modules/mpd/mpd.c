@@ -1,5 +1,5 @@
 /*
- * Last updated: July 15, 2008
+ * Last updated: July 25, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -21,8 +21,8 @@
 
 #include "../../launch/browser-ext.h"
 
-#define ENABLE_MPD 1
-#define UPDATE_DB 2
+#define ENABLE_MPD	1
+#define UPDATE_DB	2
 
 static PzModule *module;
 static PzConfig *config;
@@ -147,7 +147,10 @@ void init_mpd()
 void cleanup_mpd()
 {
 	pz_save_config(config);
+	pz_free_config(config);
+	config = 0;
 	send_command("kill");
+	MPD_ACTIVE = 0;
 }
 
 static void init()

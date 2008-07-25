@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # ZeroSlackr Framework's Loop-Mount Script
-# Last updated: Jun 1, 2008
+# Last updated: July 24, 2008
 # ~Keripo
 #
 # Note: This file must be saved in UNIX format.
@@ -14,7 +14,6 @@
 
 # Loop-mount ZeroSlackr userland
 busybox mount -t ext3 -o loop,rw /boot/userland.ext3 /boot/mount
-clear
 
 # Swap roots
 cd /boot/mount/

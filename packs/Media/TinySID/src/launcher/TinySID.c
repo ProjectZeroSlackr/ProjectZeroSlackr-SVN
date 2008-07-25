@@ -32,12 +32,8 @@ static int check_ext(const char *file)
 
 static PzWindow *load_file(const char *file)
 {
-	if (MPD_ACTIVE) {
-		pz_error("MPD is active. Unable to launch TinySID.");
-		return NULL;
-	}
 	const char *const cmd[] = {"Launch.sh", file, NULL};
-	pz_execv(
+	pz_execv_kill(
 		path,
 		(char *const *)cmd
 		);

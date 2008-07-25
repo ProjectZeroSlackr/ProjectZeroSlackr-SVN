@@ -3,7 +3,7 @@
 # tar Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 21, 2008
+# Last updated: July 24, 2008
 #
 echo ""
 echo "==========================================="
@@ -37,7 +37,13 @@ echo "  - Running configure script..."
 echo "  - make install..."
 make install >> build.log 2>&1
 echo ""
-echo "Fin!"
+cd ..
+LIB=tar/lib/libtar.a
+if [ -e $LIB ]; then
+	echo "Fin!"
+else
+	echo "Error! Library not compiled. File \"$LIB\" not found!"
+fi
 echo ""
 echo "Auto-Compiling script by Keripo"
 echo ""

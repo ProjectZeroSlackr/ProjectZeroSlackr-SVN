@@ -3,7 +3,7 @@
 # ttk Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 16, 2008
+# Last updated: July 24, 2008
 #
 echo ""
 echo "==========================================="
@@ -49,7 +49,13 @@ else
 	make NOMWIN=1 NOX11=1 NOHDOG=1 >> build.log 2>&1
 fi
 echo ""
-echo "Fin!"
+cd ..
+LIB=ttk/build/ipod-sdl/libttk.a
+if [ -e $LIB ]; then
+	echo "Fin!"
+else
+	echo "Error! Library not compiled. File \"$LIB\" not found!"
+fi
 echo ""
 echo "Auto-Compiling script by Keripo"
 echo ""

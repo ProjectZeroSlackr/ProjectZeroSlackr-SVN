@@ -1,11 +1,12 @@
 \name Moonlight-Lite
 # Default scheme for ZeroLauncher, Moonlight scheme sans background
 # by Keripo
-# Last updated: Mar 30, 2008
+# Last updated: July 24, 2008
 
 \def clear	#FF00FF
 \def black	#000
 \def white	#fff
+\def light	#6073A0
 \def slate	#304370
 \def gray	#505050
 \def dkgray	#222
@@ -24,22 +25,22 @@ music:
 	bar.bg => slate
 
 battery:
-	border => gray,
+	border => black,
 	bg => black,
 	bg.low => #777,
 	bg.charging => #444,
-	fill.normal => slate +1,
-	fill.low => slate +1,
-	fill.charge => black +1,
+	fill.normal => light +2,
+	fill.low => light +1,
+	fill.charge => gray +1,
 	chargingbolt => #666
 
 lock:
 	border => black,
-	fill => slate
+	fill => light
 
 loadavg:
 	bg => black,
-	fg => slate,
+	fg => light,
 	spike => gray
 
 window:

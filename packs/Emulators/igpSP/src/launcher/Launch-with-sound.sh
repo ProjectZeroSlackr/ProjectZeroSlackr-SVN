@@ -6,7 +6,7 @@
 killall -15 ZeroLauncher >> /dev/null 2>&1
 if [ -z "$1" ]; then
 	cd /opt/Emulators/igpSP/Roms
-	exec /opt/Emulators/igpSP/igpSP-with-sound /opt/Emulators/igpSP/Roms/SuperWings.gba
+	exec /opt/Emulators/igpSP/igpSP-with-sound
 else
 	cd /opt/Emulators/igpSP/Roms
 	exec /opt/Emulators/igpSP/igpSP-with-sound "\"$1\""

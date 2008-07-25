@@ -1,17 +1,22 @@
-Last updated: March 7, 2008
+Last updated: July 23, 2008
 ~Keripo
 
 1. Compile wiki2ebook. A pre-compiled Linux binary is provided.
 2. Download an .xml wiki dump.
+   For creating a Wikipedia/Wiktionary/etc dump, go to
+   http://download.wikimedia.org/backup-index.html
+   and download the appropriate compressed .xml files
+   (e.g. enwiktionary's pages-articles.xml.bz2).
    For creating an iPodLinux wiki dump, go to
    http://ipodlinux.org/Special:Export
-   Copy-paste the content of "iPL-Export-List.txt"
+   and copy-paste the content of "iPL-Export-List.txt"
    into the text box, then save the export as a .xml file
    (you can generate your own list by copying the content of
    http://ipodlinux.org/Special:Allpages, then replacing
-   all tab characters with newline characters)
-   Note that if you downloaded a dump with a .gz extension
-   you will have to extract it first (e.g. "gzip -d blah.xml.gz")
+   all tab characters with newline characters).
+   Note that if you downloaded an archived dump (i.e. file
+   extension of .xml.7z, .xml.bz2 or .xml.gz) you will need
+   to first extract the .xml file with the appropriate tools.
 3. Run "wiki2ebook blah.xml"
 4. Create a duplicate of "ipodlinux-wiki-articles-YYYY-MM-DD.epodia"
    and modify it using an advanced text editor (e.g. your new file

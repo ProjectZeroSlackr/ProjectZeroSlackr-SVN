@@ -1,4 +1,4 @@
-Last updated: July 21, 2008
+Last updated: July 23, 2008
 ~Keripo
 
 
@@ -75,6 +75,23 @@ A: As explained in the previous question, iPodLinux is
    enable it for Podzilla2-SVN. Keep in mind that MPD is
    not perfect and will often get choppy and may sometimes
    freeze your iPod (in which case, "reboot, reboot, reboot").
+
+Q: The "FastLaunch" options of some applications is nifty
+   but how do change the default content that gets launched?
+A: Using the "FastLaunch" option runs the application's
+   launch script (i.e. "Launch.sh") without any arguments.
+   For apps with a menu, this will just start up the app; for
+   apps without a menu (i.e. command-line apps), this will
+   start the app with default content/settings that I have
+   chosen (e.g. launch a certain game that comes with I have
+   included in the pack). Launch scripts for every application
+   can be found in that application's "Launch" folder (e.g.
+   for XMP, this would be "ZeroSlackr/opt/Media/XMP/Launch").
+   Feel free to modify the launch scripts however you want
+   but make sure you are using an advance text editor that
+   allows saving in UNIX format, i.e. Podwrite on iPodLinux,
+   KWrite on Linux, Notepad++ on Windows (note that Notepad/
+   Wordpad will NOT work so do not use them!).   
 
 Q: Help, I get a "Can't write to log on /dev/tty5!" every
    time I boot into ZeroSlackr! How can I fix of this?
@@ -231,6 +248,16 @@ Slackr Packs
   can either be applications launchable from ZeroLauncher
   or just additional content such as schemes or free public
   domain ROMs.
+FastLaunch
+- Phrase I use for describing launching an application with
+  default setting in ZeroLauncher. This is done by executing
+  that app's launch script without arguments.
+- For stand-alone apps, this would describe launching the app
+  itself (i.e. the app's single option in ZeroLauncher).
+- For apps that take arguments, this would be the app's
+  "FastLaunch" option and usually launches the app with
+  pre-selected arguments (that you can modify by editing the
+  launch script with an advance text editor).
 root
 - Has different meanings depending on context.
 - The "root of your iPod" or "root of your data partition"

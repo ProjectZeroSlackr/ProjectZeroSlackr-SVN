@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 27, 2008
+ * Last updated: July 24, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -24,7 +24,7 @@
 #define DEFAULT "podzilla"
 
 static PzModule *module;
-static const char *path;
+static const char *path, *welcome_text, *missing_text;
 
 // Common
 static PzWindow *exec_zilla(const char *folder, const char *binary)
@@ -35,7 +35,7 @@ static PzWindow *exec_zilla(const char *folder, const char *binary)
 		binary,
 		NULL
 	};
-	pz_execv(
+	pz_execv_kill(
 		path,
 		(char *const *)cmd
 	);
@@ -46,7 +46,7 @@ static PzWindow *exec_zilla(const char *folder, const char *binary)
 static PzWindow *iPod_Desktop()
 {
 	// Special since it needs nano-X started
-	pz_exec("/opt/Zillae/TimeWalk/Launch/iPod-Desktop.sh");
+	pz_exec_kill("/opt/Zillae/TimeWalk/Launch/iPod-Desktop.sh");
 	return NULL;
 }
 static PzWindow *Owen_OS()
@@ -175,84 +175,11 @@ static PzWindow *Yankeezilla()
 // Info
 static PzWindow *welcome()
 {
-	pz_message_title(
-		"Welcome Part 1 of 7",
-		"Welcome to TimeWalk! All you see here are "
-		"historical zillae built back when iPodLinux "
-		"was still young and new."
-		);
-	pz_message_title(
-		"Welcome Part 2 of 7",
-		"Some of these custom builds "
-		"demonstrating PZ0 progress while others "
-		"integrate unofficial features."
-		);	
-	pz_message_title(
-		"Welcome Part 3 of 7",
-		"A few of them are alternate interfaces "
-		"separate from podzilla legacy."
-		);
-	pz_message_title(
-		"Welcome Part 4 of 7",
-		"Many of these are incomplete and probably "
-		"WILL NOT WORK on most iPod models."
-		);
-	pz_message_title(
-		"Welcome Part 5 of 7",
-		"There are still a large number of historical zillae "
-		"missing from this collection; please see \"Missing\" "
-		"for the list."
-		);
-	pz_message_title(
-		"Welcome Part 6 of 7",
-		"The ZeroSlackr versions are all mostly hex edited "
-		"in an attempt to be self-contained but are not "
-		"all fully done."
-		);
-	pz_message_title(
-		"Welcome Part 7 of 7",
-		"If you find important paths that need "
-		"changing, please contact me. "
-		"Apart from that, enjoy! ~Keripo"
-		);
-	return NULL;
+	return new_textview_window((char *)welcome_text);
 }
 static PzWindow *missing()
 {
-	pz_message_title(
-		"Missing Part 1 of 6",
-		"Due to iPodLinux's long history of development, "
-		"there are many zillae for which "
-		"download links have long died. "
-	);
-	pz_message_title(
-		"Missing Part 2 of 6",
-		"Here is a list of missing zillae "
-		"(if you happen to have "
-		"any of them, please contact me): "
-	);
-	pz_message_title(
-		"Missing Part 3 of 6",
-		"iPodVX, Pokezilla, illzilla, PureZilla, "
-		"king-zilla, multipodzilla."
-	);
-	pz_message_title(
-		"Missing Part 4 of 6",
-		"Here is a list of unconfirmed zillae "
-		"(if you can confirm their past "
-		"existance, please do): "
-	);
-	pz_message_title(
-		"Missing Part 5 of 6",
-		"vanillazilla, MarioZilla, Canuckzilla. "
-	);
-	pz_message_title(
-		"Missing Part 6 of 6",
-		"If you have/know  any of the previously "
-		"listed zillae, please contact me so "
-		"TimeWalk can be completed ; ) ~Keripo"
-	);
-	return NULL;
+	return new_textview_window((char *)missing_text);
 }
 
 // Init!!!
@@ -260,6 +187,8 @@ static void init_launch()
 {
 	module = pz_register_module ("TimeWalk", 0);
 	path = "/opt/Zillae/TimeWalk/Launch/Launch.sh";
+	welcome_text = "/opt/Zillae/TimeWalk/Launch/Welcome.txt";
+	missing_text = "/opt/Zillae/TimeWalk/Launch/Missing.txt";
 	
 	// Group!
 	pz_menu_add_stub_group ("/~TimeWalk", "#ZeroSlackr");

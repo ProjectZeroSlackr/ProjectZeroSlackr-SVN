@@ -3,7 +3,7 @@
 # hotdog Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 17, 2008
+# Last updated: July 24, 2008
 #
 echo ""
 echo "==========================================="
@@ -32,7 +32,13 @@ cd hotdog
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
 make IPOD=1 >> build.log
 echo ""
-echo "Fin!"
+cd ..
+LIB=hotdog/ipod/libhotdog.a
+if [ -e $LIB ]; then
+	echo "Fin!"
+else
+	echo "Error! Library not compiled. File \"$LIB\" not found!"
+fi
 echo ""
 echo "Auto-Compiling script by Keripo"
 echo ""

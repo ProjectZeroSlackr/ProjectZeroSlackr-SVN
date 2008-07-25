@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 27, 2008
+ * Last updated: July 25, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -66,7 +66,7 @@ static PzWindow *load_file(const char *file)
 		locale,
 		NULL
 	};
-	pz_execv(
+	pz_execv_kill(
 		path,
 		(char *const *)cmd
 	);
@@ -87,13 +87,14 @@ static PzWindow *browse_roms()
 
 static PzWindow *fastlaunch()
 {
-	pz_exec(path);
-	return NULL;
+	return load_file(NULL);
 }
 
 static void cleanup()
 {
 	pz_save_config(config);
+	pz_free_config(config);
+	config = 0;
 	pz_browser_remove_handler(check_ext);
 }
 
