@@ -73,7 +73,7 @@ struct spritedata {
 };
 void video_events(void);
 int fskip=2,fr;
-int volume=64;
+int volume=48;
 int selected=0;
 int totalentries=2;
 #define MAINMENU 0

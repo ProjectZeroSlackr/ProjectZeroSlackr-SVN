@@ -1,5 +1,5 @@
 /*
- * Last updated: July 9, 2008
+ * Last updated: July 23, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -389,7 +389,7 @@ void ipod_update_scale_type()
 				scale_x_offset = IGNORE;
 				scale_y_offset = (IPOD_HEIGHT - HEIGHT * IPOD_WIDTH / WIDTH) / 2;
 				scale_x_max = IGNORE;
-				scale_y_max = IPOD_HEIGHT - scale_y_offset;
+				scale_y_max = IPOD_HEIGHT - scale_y_offset - 1;
 				
 				for (i = 0; i < IPOD_WIDTH; i++)
 					scale_x[i] = i * WIDTH / IPOD_WIDTH;

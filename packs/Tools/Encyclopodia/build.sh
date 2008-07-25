@@ -3,7 +3,7 @@
 # Encyclopodia Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 18, 2008
+# Last updated: July 24, 2008
 #
 echo ""
 echo "==========================================="
@@ -111,7 +111,9 @@ cd release
 PACK=ZeroSlackr/opt/Tools/Encyclopodia
 cp -rf ../compiled/Encyclopodia $PACK/
 cp -rf ../compiled/modules/* $PACK/Modules/
-cp -rf ../../src/libraries/ipodlinux-wiki-articles-2008-03-07.epodia $PACK/Library/
+# Current PZ2 module port only allows for one epodia file
+#cp -rf ../../src/libraries/ipodlinux-wiki-articles-2008-03-07.epodia $PACK/Library/
+cp -rf ../../src/libraries/enwiktionary-20080613-pages-articles.epodia $PACK/Library/
 cp -rf ../launcher/* $PACK/Launch/
 # Documents
 echo "> Copying over documents..."

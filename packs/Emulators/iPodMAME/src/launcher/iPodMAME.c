@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 27, 2008
+ * Last updated: July 22, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -24,10 +24,10 @@
 static PzModule *module;
 static const char *path, *dir;
 
-static PzWindow *load_file(const char *file)
+static PzWindow *load_romset(const char *romset)
 {
-	const char *const cmd[] = {"Launch.sh", file, NULL};
-	pz_execv(
+	const char *const cmd[] = {"Launch.sh", romset, NULL};
+	pz_execv_kill(
 		path,
 		(char *const *)cmd
 	);
@@ -36,7 +36,7 @@ static PzWindow *load_file(const char *file)
 
 static PzWindow *load_file_handler(ttk_menu_item *item)
 {
-	return load_file(item->name); // MAME uses the romset's name as the argument and not path
+	return load_romset(item->name); // MAME uses the romset's name as the argument and not path
 }
 
 static PzWindow *browse_romsets()
@@ -47,8 +47,7 @@ static PzWindow *browse_romsets()
 
 static PzWindow *fastlaunch()
 {
-	pz_exec(path);
-	return NULL;
+	return load_romset(NULL);
 }
 
 static void init_launch() 

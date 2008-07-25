@@ -1,4 +1,4 @@
-Last updated: Apr 28, 2008
+Last updated: July 24, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -27,14 +27,17 @@ For more information, see:
 
 Usage:
 - FastLaunch through "Tools > Encyclopodia".
-- A pre-converted iPodLinux wiki dump is provided. To create
-  your own .epodia file, see "Misc/Docs/Creation-Instructions.txt"
-  or visit the official Encyclopodia website (where you can also
-  download a preconverted Wikipedia dump) and place the .epodia
-  file in the "Library" folder.
+- A pre-converted Wiktionary dump (June 13, 2008) is provided;
+  a pre-converted iPodLinux wiki dump (March 7, 2008) can be
+  found in the ZeroSlackr SVN. To create your own .epodia file,
+  see "Misc/Docs/Creation-Instructions.txt" or visit the
+  official Encyclopodia website (where you can also download a
+  preconverted Wikipedia dump) and place the .epodia  file in
+  the "Library" folder (you must first delete the old .epodia
+  file).
 - Note that you can only have ONE .epodia file in the
   "Library" folder; if there is more than one, Encyclopodia
-  will probably crash.
+  will probably crash. This is a limitation of the PZ2 port.
 - Encyclopodia contains only the bare minimum in modules;
   if you really want to add more PZ2 modules, place them
   in the "Modules" folder.
@@ -57,7 +60,7 @@ Original:
 ZS Version:
 - Modder: Keripo
 - Type: Mod and ZS Recompile
-- Date: Apr 27, 2008
+- Date: July 24, 2008
 - Version: B X.X
 
 Modifications:
@@ -66,7 +69,7 @@ Modifications:
 - fixed font displaying issues
 - uses minimal modules; still needs to be launched from
   Loader2 due to lack of memory
-- comes with iPodLinux wiki dump (dumped by Keripo March 7, 2008)
+- comes with English Wiktionary dump (2008-06-13)
 - made ZS friendly
 
 Launch Module:

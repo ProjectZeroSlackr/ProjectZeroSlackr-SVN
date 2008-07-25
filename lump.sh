@@ -3,7 +3,7 @@
 # Auto-Lumping Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 21, 2008
+# Last updated: July 22, 2008
 #
 echo ""
 echo "==========================================="
@@ -42,6 +42,7 @@ echo "==========================================="
 echo "==========================================="
 echo ""
 # permissions
+chmod ugo+rwx ./chmod-all.sh
 ./chmod-all.sh
 # lump
 SVNROOT=$(pwd)

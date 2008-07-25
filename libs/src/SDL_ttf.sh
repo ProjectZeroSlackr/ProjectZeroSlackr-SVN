@@ -3,7 +3,7 @@
 # SDL_ttf Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 21, 2008
+# Last updated: July 24, 2008
 #
 # Cygwin check
 if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
@@ -59,7 +59,13 @@ echo "  - Running configure script..."
 echo "  - make install..."
 make install >> build.log
 echo ""
-echo "Fin!"
+cd ..
+LIB=SDL_ttf/lib/libSDL_ttf.a
+if [ -e $LIB ]; then
+	echo "Fin!"
+else
+	echo "Error! Library not compiled. File \"$LIB\" not found!"
+fi
 echo ""
 echo "Auto-Compiling script by Keripo"
 echo ""

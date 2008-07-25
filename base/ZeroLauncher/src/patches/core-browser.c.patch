@@ -1,6 +1,6 @@
 Index: core/browser.c
 ===================================================================
---- core/browser.c	(revision 2420)
+--- core/browser.c	(revision 2423)
 +++ core/browser.c	(working copy)
 @@ -36,6 +36,8 @@
  #include <errno.h>
@@ -11,20 +11,67 @@ Index: core/browser.c
  static void wait_on_sigchld(int signal)
  { wait(NULL); }
  
-@@ -55,6 +57,16 @@
- void pz_execv(const char *path, char *const argv[])
- {
- #ifdef IPOD
-+	
+@@ -52,9 +54,23 @@
+ 	sigchld_handler = 1;
+ }
+ 
++int mpd_check()
++{
 +	if (MPD_ACTIVE) {
 +		int launch = pz_errdialog(_("Launch app?"),
 +			_("MPD is active. There may not be enough memory to launch selected app. Do you wish to continue?"),
 +			2, 0, _("No"), _("Yes"));
-+		if (launch == 0) {
-+			return;
-+		}
++		return launch;
 +	}
++	return 1;
++}
++
+ void pz_execv(const char *path, char *const argv[])
+ {
+ #ifdef IPOD
++	
++	if (mpd_check() == 0) return;
 +	
  	static const char *const vcs[] = {"/dev/vc/%d", "/dev/tty%d", 0};
  	int i, tty0_fd, ttyfd, curvt, fd, status, oldvt = 0;
  	struct vt_stat vtstate;
+@@ -179,6 +195,30 @@
+ 	pz_execv("/bin/sh", (char *const *)argv);
+ }
+ 
++extern FILE *errout;
++extern void pz_touch_settings();
++extern void pz_modules_cleanup();
++
++void pz_execv_kill(const char *path, char *const argv[])
++{
++	if (mpd_check() == 0) return;
++	//ttk_quit(); // Causes freeze on launched app's exit
++	pz_touch_settings();
++	pz_modules_cleanup();
++	fclose (errout);
++	pz_execv(path, argv);
++}
++
++void pz_exec_kill(const char *file)
++{
++	if (mpd_check() == 0) return;
++	//ttk_quit(); // Causes freeze on launched app's exit
++	pz_touch_settings();
++	pz_modules_cleanup();
++	fclose (errout);
++	pz_exec(file);
++}
++
+ static TWindow *browser_vt_exec (ttk_menu_item *item)
+ {
+ 	pz_exec((char *)item->data);
+@@ -263,7 +303,7 @@
+ 	return 1;
+ }
+ 
+-static TWindow *new_textview_window(char *filename)
++TWindow *new_textview_window(char *filename)
+ {
+ 	TWindow *ret;
+ 	char *buf = NULL;

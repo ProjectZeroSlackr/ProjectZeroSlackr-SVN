@@ -1,24 +1,11 @@
---- Makefile.orig	2008-07-08 15:07:04.000000000 +0000
-+++ Makefile.modified	2008-07-08 15:16:21.000000000 +0000
-@@ -123,12 +123,14 @@
- CFLAGS = -g -O2 -I/root/iPL/libs/SDL/include/SDL -D_GNU_SOURCE=1
- CPP = arm-uclinux-elf-gcc -E
- CPPFLAGS = 
-+CPPFLAGS += -I$(PWD)/../SDL_image/../libjpeg/include -I$(PWD)/../SDL_image/../zlib/include -I$(PWD)/../SDL_image/../libpng/include -I$(PWD)/../SDL_image/../libtiff/include
- CXX = arm-uclinux-elf-g++
- CXXCPP = arm-uclinux-elf-g++ -E
- CXXDEPMODE = depmode=gcc3
- CXXFLAGS = -g -O2
- CYGPATH_W = echo
- DEFS = -DPACKAGE_NAME=\"\" -DPACKAGE_TARNAME=\"\" -DPACKAGE_VERSION=\"\" -DPACKAGE_STRING=\"\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE=\"SDL_image\" -DVERSION=\"1.2.6\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_DLFCN_H=1 -DLOAD_BMP=1 -DLOAD_GIF=1 -DLOAD_LBM=1 -DLOAD_PCX=1 -DLOAD_PNM=1 -DLOAD_TGA=1 -DLOAD_XCF=1 -DLOAD_XPM=1 -DLOAD_XV=1 
-+DEFS += -DLOAD_JPG=1 -DLOAD_PNG=1 -DLOAD_TIFF=1
- DEPDIR = .deps
- DLLTOOL = dlltool
- ECHO = echo
-@@ -146,6 +148,7 @@
+--- Makefile	2008-07-08 15:07:04.000000000 +0000
++++ Makefile	2008-07-08 15:16:21.000000000 +0000
+@@ -146,6 +146,9 @@
  INSTALL_STRIP_PROGRAM = ${SHELL} $(install_sh) -c -s
  INTERFACE_AGE = 5
  LDFLAGS = 
++DEFS += -DLOAD_JPG=1 -DLOAD_PNG=1 -DLOAD_TIFF=1
++CPPFLAGS += -I$(PWD)/../SDL_image/../libjpeg/include -I$(PWD)/../SDL_image/../zlib/include -I$(PWD)/../SDL_image/../libpng/include -I$(PWD)/../SDL_image/../libtiff/include
 +LDFLAGS += -L$(PWD)/../SDL_image/../libjpeg/lib -ljpeg -L$(PWD)/../SDL_image/../zlib/lib -lz -L$(PWD)/../SDL_image/../libpng/lib -lpng -L$(PWD)/../SDL_image/../libtiff/lib -ltiff -elf2flt
  LIBOBJS = 
  LIBS =  -L/root/iPL/libs/SDL/lib -lSDL

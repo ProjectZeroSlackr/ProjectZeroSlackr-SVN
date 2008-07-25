@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 30, 2008
+ * Last updated: July 22, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -33,7 +33,7 @@ static PzWindow *exec_demo(const char *folder, const char *binary)
 		binary,
 		NULL
 	};
-	pz_execv(
+	pz_execv_kill(
 		path,
 		(char *const *)cmd
 	);
@@ -80,7 +80,7 @@ static int check_ext(const char *file)
 static PzWindow *load_file(const char *file)
 {
 	const char *const cmd[] = {"Imagebits.sh", file, NULL};
-	pz_execv(
+	pz_execv_kill(
 		path_imgbits,
 		(char *const *)cmd
 	);

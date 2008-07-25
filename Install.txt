@@ -1,0 +1,118 @@
+Last updated: July 22, 2008
+~Keripo
+
+All code/scripts written by Keripo are licensed under
+GNU GPL - see License.txt. For the licensing of the
+software/application, refer to the documents found in
+Misc/Docs.tar.gz or the license that comes with the
+original/ported software.
+
+
+== Installation ==
+
+As of the moment, Project ZeroSlackr does not have
+any sort of installer or package manager. I am, however,
+in the process of writing one in Java (cross-platform)
+based around ipodpatcher. For the time being, you will
+have to "install" ZeroSlackr manually.
+
+Please note that ZeroSlackr can only be installed on
+FAT-formatted Winpods that is currently supported by
+iPodLinux.
+
+iPodLinux currently supports/works on 5.5G iPod videos
+and older with the exception of the iPod shuffles.
+This includes: 1G, 2G, 3G, 4G, iPod colour, iPod
+photo, iPod mini 1G, iPod mini 2G, iPod nano 1G,
+5G iPod video and 5.5G iPod video. iPodLinux (or
+Rockbox or iPodWizard hacks) currently does not work on
+iPod shuffles or any of the iPod newer models. This
+includes: iPod shuffle 1G, iPod shuffle 2G, iPod nano
+2G, iPod nano 3G, 6G iPod classic and the iPod Touch.
+The reasoning behind this is Apple's added encryption
+for the newer hardware. If you are not sure what iPod
+model you have, see Wikipedia or iPodLinux's wiki's
+"Generations" page (http://ipodlinux.org/Generations).
+
+A Winpod is an iPod formatted by iTunes on a Windows
+computer; ZeroSlackr will not work on iPods formatted
+on a Mac (Macpods). If your iPod is a Macpod or you are
+not sure or ZeroSlackr does not load from Loader2, you
+should try restoring your iPod through iTunes installed
+on a Windows computer (you may have to first use Windows
+to reformat your iPod as FAT16 or FAT32).
+
+If your iPod is both a FAT-formatted Winpod and is
+currently supported by iPodLinux, you can install
+ZeroSlackr on your iPod through the following
+instructions:
+
+1) Extract/copy the content of the ZeroSlackr archive
+   (i.e. the "ZeroSlackr" folder, the "boot" folder,
+   the "loader.cfg" file, etc.) directly to the root of
+   your iPod.
+   
+   The "root of your iPod" means where your data files,
+   music, etc. is normally stored. On Windows, it would
+   be the drive representing your iPod (e.g. E:/). On
+   Mac OS X, this would be somewhere in /Volumes. On
+   Linux, this would be wherever you/KDE/Gnome mounted
+   it (usually somewhere on /mnt or /media).
+   
+   Archives ending in .7z can be extracted using 7-zip
+   or WinRAR on Windows and p7zip on Mac/Linux. Archives
+   ending in .tar.gz can be extracted by most common
+   archiving tools. Note that you do not need any source
+   code archives (which have "src" in their names) to
+   install ZeroSlackr.
+   
+   If you are on Windows or Mac and have troubles finding
+   your iPod, make sure the "Enable disk use" checkbox
+   is checked in iTunes.
+   
+2) Download the latest Rockbox build for your iPod from
+   Rockbox's build website (http://build.rockbox.org/).
+   Extract it directly to your iPod such that you now
+   have a ".rockbox" folder among your "ZeroSlackr" and
+   original "Notes" folders, etc. If you do not want to
+   install Rockbox, skip this step; however, I highly
+   recommend Rockbox over the original iPod software
+   (often referred to as the "Apple OS") for music
+   playback.
+   
+3) Run the patch script - this would be "patch.bat" for
+   Windows or "patch.sh" for Macs/Linux. This will patch
+   your iPod with Loader2 by using ipodpatcher.
+   
+   If you are on Windows, make sure that you have admin
+   access. If you are on Linux, make sure the script and
+   the "ipodpatcher" binary has full root permission and
+   you run the "patch.sh" script through the console. The
+   script is untested on Macs but should work the same
+   way as on Linux.
+   
+4) Safely remove/eject/unmount/unplug your iPod after the
+   patch script finishes successfully. Allow your iPod to
+   reboot into a graphical bootloader (Loader2) and select
+   the "ZeroSlackr" option.
+   
+5) Welcome to ZeroSlackr on iPodLinux. Explore around a bit
+   and try a few apps. You can return to the original Apple
+   OS by rebooting your iPod back into Loader2. To reboot
+   your iPod, use "Power > Reboot iPod" in ZeroLauncher or
+   force reboot by holding the correct key combination
+   (see http://ipodlinux.org/Key_Combinations). When in the
+   Apple OS, to return to Loader2, force reboot your iPod.
+   
+   Make sure to read all the documentation that comes with
+   ZeroSlackr, starting with the "ReadMe from Keripo.txt",
+   then "FAQ.txt" files in the root of your iPod. Files for
+   each application (i.e. Slackr pack) can be found in their
+   respective folder in "ZeroSlackr/opt". Make sure to read
+   all the documentation for each Slackr pack (i.e. the
+   "ReadMe from Keripo.txt"s and files in the "Misc/
+   Docs.tar.gz" archives) for usage instructions and
+   other information. For more general or iPodLinux-related
+   information/questions, search Google, Wikipedia or even
+   the iPodLinux wiki and forums.
+

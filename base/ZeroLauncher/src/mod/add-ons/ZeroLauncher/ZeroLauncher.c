@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 26, 2008
+ * Last updated: July 22, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -26,7 +26,7 @@ static const char *path;
 
 static PzWindow *fastlaunch()
 {
-	pz_exec(path);
+	pz_exec_kill(path);
 	return NULL;
 }
 

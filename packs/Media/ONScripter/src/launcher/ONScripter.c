@@ -1,5 +1,5 @@
 /*
- * Last updated: July 8, 2008
+ * Last updated: July 24, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -26,15 +26,17 @@ static const char *path, *dir;
 
 static PzWindow *load_game(const char *folder)
 {
+	pz_warning("Note: %s requires large amounts of memory and may not work here.", "ONScripter");
+	pz_warning("You should try launching %s from Loader2 instead (see the \"loader.cfg\" file).", "ONScripter");
 	const char *const cmd[] = {"Launch.sh", folder, NULL};
-	pz_execv(
+	pz_execv_kill(
 		path,
 		(char *const *)cmd
 	);
 	return NULL;
 }
 
-static PzWindow *load_file_handler(ttk_menu_item *item)
+static PzWindow *load_game_handler(ttk_menu_item *item)
 {
 	return load_game((const char *)(item->data)); // Recast for browser_mod
 }
@@ -42,7 +44,12 @@ static PzWindow *load_file_handler(ttk_menu_item *item)
 static PzWindow *browse_novels()
 {
 	return open_directory_title_mod(dir, "Visual Novels",
-		check_is_dir, load_file_handler);
+		check_is_dir, load_game_handler);
+}
+
+static PzWindow *fastlaunch()
+{
+	return load_game(NULL);
 }
 
 static void init_launch() 
@@ -52,6 +59,7 @@ static void init_launch()
 	dir = "/opt/Media/ONScripter/VisualNovels";
 	
 	pz_menu_add_stub_group("/Media/ONScripter", "Games");
+	pz_menu_add_action_group("/Media/ONScripter/#FastLaunch", "#FastLaunch", fastlaunch);
 	pz_menu_add_action_group("/Media/ONScripter/Visual Novels", "Browse", browse_novels);
 	pz_menu_sort("/Media/ONScripter");
 }

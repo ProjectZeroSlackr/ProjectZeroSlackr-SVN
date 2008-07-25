@@ -1,0 +1,12 @@
+
+Welcome to TimeWalk!
+
+All you see here are historical zillae built back when iPodLinux was still young and new. Some of these custom builds demonstrating PZ0 progress while others integrate unofficial features. A few of them are alternate interfaces separate from podzilla legacy.
+
+Many of these are incomplete and probably WILL NOT WORK on most iPod models. There are still a large number of historical zillae missing from this collection; please see "Missing" for the list.
+
+The ZeroSlackr versions are all mostly hex edited in an attempt to be self-contained but are not all fully done. If you find important paths that need changing, please contact me.
+
+Apart from that, enjoy!
+
+~Keripo

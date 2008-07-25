@@ -1,5 +1,5 @@
 /*
- * Last updated: July 22, 2008
+ * Last updated: July 25, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -67,6 +67,7 @@ static int is_active(ttk_menu_item *item)
 static PzWindow *kill_flite()
 {
 	if (pid) kill(pid, SIGTERM);
+	pid = 0;
 	return NULL;
 }
 
@@ -136,6 +137,8 @@ static PzWindow *browse_texts()
 static void cleanup()
 {
 	pz_save_config(config);
+	pz_free_config(config);
+	config = 0;
 	kill_flite();
 }
 

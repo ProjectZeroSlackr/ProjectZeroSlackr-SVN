@@ -1,4 +1,4 @@
-Last updated: July 21, 2008
+Last updated: July 22, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -14,7 +14,8 @@ Project ZeroSlackr is a custom iPodLinux installation
 system. The aim of the project is to provide a simple,
 coherent, easy-to-use and newbie friendly method of
 installing iPodLinux on their iPods and trying out
-community-generated content. For a full list of
+community-generated content. For installation
+instructions, see Install.txt. For a full list of
 features, see Features.txt For frequently asked
 questions and a list of terminology, see FAQ.txt.
 For an updated list of changes, see Changelog.txt.
@@ -72,14 +73,14 @@ Also keep in mind that this is currently a one-man project
 free time. If you are an experienced programmer/developer
 and are willing to actively join in, feel free to contact
 me. If you are a happy end user, feel free to drop by in
-a ZeroSlackr forum thread and say a word of thanks. As this
-project is for my own interest, I do not ask for donations
-or the sort, but if you that nice, feel free to via
+a ZeroSlackr forum thread and say a word of thanks. If you
+are feeling particularly nice, feel free to donate via
 ZeroSlackr's SourceForge page. I myself have been working
-on this through my 2gb iPod nano (for which I also rely on
-soley for music as well) but I don't plan on buying a new
-iPod nor iPhone/iPod Touch. I may buy a Sansa e200 as I
-am currently depending on others with the SansaLinux port.
+on this through my 2GB iPod nano (for which I also rely on
+soley for music as well) but I do not currently have any
+plans on buying a new iPod nor iPhone/iPod Touch.
+I may buy a Sansa e200 as I am currently depending on
+others with the SansaLinux port. Donations would help.
 
 Either way, I hope you enjoy using ZeroSlackr and remember
 to leave a word of thanks somewhere or, better yet, help

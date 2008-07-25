@@ -47,9 +47,9 @@ Index: modules/mpdc/mpdc.c
 +static PzWindow *force_kill()
 +{
 +	if (MPD_ACTIVE) {
++		MPD_ACTIVE = 0;
 +		cleanup_mpdc();
 +		cleanup_mpd();
-+		MPD_ACTIVE = 0;
 +		pz_message("MPD process killed.");
 +		return TTK_MENU_UPALL;
 +	} else {

@@ -1,0 +1,13 @@
+Index: modules/poddraw/poddraw.c
+===================================================================
+--- modules/poddraw/poddraw.c	(revision 2423)
++++ modules/poddraw/poddraw.c	(working copy)
+@@ -105,7 +105,7 @@
+ 
+ 	t = time( NULL );
+ 	current_time = localtime( &t );
+-	strftime( buf, 64, "%Y-%m-%d_%H%M.ppm", current_time );
++	strftime( buf, 64, "/mnt/%Y-%m-%d_%H%M.ppm", current_time );
+ 
+ 	fp = fopen( buf, "w" );
+ 	if( !fp ) return;

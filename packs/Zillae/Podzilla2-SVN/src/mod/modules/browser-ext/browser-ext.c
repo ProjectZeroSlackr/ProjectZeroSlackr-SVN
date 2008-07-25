@@ -1,5 +1,5 @@
 /*
- * Last updated: July 15, 2008
+ * Last updated: July 25, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -22,7 +22,8 @@
 #include "../../launch/browser-ext.h"
 
 static PzModule *module;
-static ttk_menu_item browser_extension;
+static ttk_menu_item browser_extension_terminal;
+static ttk_menu_item browser_extension_pz_exec_kill;
 static int backlight;
 
 // String manipulators
@@ -153,6 +154,15 @@ static TWindow *pz_exec_binary(const char *file)
 	pz_exec(file);
 	return NULL;
 }
+static TWindow *pz_exec_kill_binary(const char *file)
+{
+	pz_exec_kill(file);
+	return NULL;
+}
+static PzWindow *load_pz_exec_kill_handler(ttk_menu_item * item)
+{
+	return pz_exec_kill_binary(item->data);
+}
 static PzWindow *terminal_exec_binary(const char *file)
 {
 	const char *f = get_filename(file);
@@ -256,9 +266,12 @@ static void init_launch()
 	module = pz_register_module("browser-ext", cleanup);
 	backlight = -2;
 	
-	browser_extension.name = N_("Execute in terminal");
-	browser_extension.makesub = load_terminal_handler;
-	pz_browser_add_action(check_is_binary, &browser_extension);
+	browser_extension_terminal.name = N_("Execute in terminal");
+	browser_extension_terminal.makesub = load_terminal_handler;
+	pz_browser_add_action(check_is_binary, &browser_extension_terminal);
+	browser_extension_pz_exec_kill.name = N_("Exit and execute");
+	browser_extension_pz_exec_kill.makesub = load_pz_exec_kill_handler;
+	pz_browser_add_action(check_is_binary, &browser_extension_pz_exec_kill);
 	pz_browser_set_handler(check_is_binary, pz_exec_binary);
 }
 

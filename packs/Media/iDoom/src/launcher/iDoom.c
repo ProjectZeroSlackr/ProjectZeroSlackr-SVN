@@ -1,5 +1,5 @@
 /*
- * Last updated: Jun 22, 2008
+ * Last updated: July 25, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -41,13 +41,13 @@ static PzWindow *load_file_iDoom(const char *file)
 {
 	if (pz_get_int_setting(config, FREEDOOM) == 1) {
 		const char *const cmd[] = {"Launch-iDoom.sh", file, "-freedoom", NULL};
-		pz_execv(
+		pz_execv_kill(
 			path_iDoom,
 			(char *const *)cmd
 		);
 	} else {
 		const char *const cmd[] = {"Launch-iDoom.sh", file, NULL};
-		pz_execv(
+		pz_execv_kill(
 			path_iDoom,
 			(char *const *)cmd
 		);
@@ -59,13 +59,13 @@ static PzWindow *load_file_hDoom(const char *file)
 {
 	if (pz_get_int_setting(config, FREEDOOM) == 1) {
 		const char *const cmd[] = {"Launch-hDoom.sh", file, "-freedoom", NULL};
-		pz_execv(
+		pz_execv_kill(
 			path_hDoom,
 			(char *const *)cmd
 		);
 	} else {
 		const char *const cmd[] = {"Launch-hDoom.sh", file, NULL};
-		pz_execv(
+		pz_execv_kill(
 			path_hDoom,
 			(char *const *)cmd
 		);
@@ -122,19 +122,15 @@ static PzWindow *browse_doom2_pwads()
 
 static PzWindow *fastlaunch()
 {
-	pz_save_config(config);
-	if (pz_get_int_setting(config, LAUNCHER) == 0) {
-		pz_exec(path_iDoom);
-	} else {
-		pz_exec(path_hDoom);
-	}
-	return NULL;
+	return load_file(NULL);
 }
 
 static void cleanup()
 {
 	pz_browser_remove_handler(check_ext);
 	pz_save_config(config);
+	pz_free_config(config);
+	config = 0;
 }
 
 static void init_launch() 

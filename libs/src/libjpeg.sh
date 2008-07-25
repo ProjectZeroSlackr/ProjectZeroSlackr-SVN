@@ -3,7 +3,7 @@
 # libjpeg Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 21, 2008
+# Last updated: July 24, 2008
 #
 echo ""
 echo "==========================================="
@@ -29,7 +29,13 @@ mkdir lib include
 echo "  - make install-lib..."
 make install-lib >> build.log
 echo ""
-echo "Fin!"
+cd ..
+LIB=libjpeg/lib/libjpeg.a
+if [ -e $LIB ]; then
+	echo "Fin!"
+else
+	echo "Error! Library not compiled. File \"$LIB\" not found!"
+fi
 echo ""
 echo "Auto-Compiling script by Keripo"
 echo ""

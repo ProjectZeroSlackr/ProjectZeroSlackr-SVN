@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 27, 2008
+ * Last updated: July 22, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -56,13 +56,13 @@ static PzWindow *load_file(const char *file)
 {
 	if (sound == 1) {
 		const char *const cmd[] = {"Launch.sh", file, NULL};
-		pz_execv(
+		pz_execv_kill(
 			path,
 			(char *const *)cmd
 		);
 	} else {
 		const char *const cmd[] = {"Launch.sh", file, "--nosound", NULL};
-		pz_execv(
+		pz_execv_kill(
 			path,
 			(char *const *)cmd
 		);
@@ -84,8 +84,7 @@ static PzWindow *browse_roms()
 
 static PzWindow *fastlaunch()
 {
-	pz_exec(path);
-	return NULL;
+	return load_file(NULL);
 }
 
 static void cleanup()

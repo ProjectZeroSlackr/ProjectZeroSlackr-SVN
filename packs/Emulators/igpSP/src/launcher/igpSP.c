@@ -1,5 +1,5 @@
 /*
- * Last updated: July 21, 2008
+ * Last updated: July 25, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -50,38 +50,25 @@ static int check_bios()
 	}
 }
 
-static PzWindow *load_file_no_sound(const char *file)
-{
-	if (check_bios() == 1) {
-		const char *const cmd[] = {"Launch-no-sound.sh", file, NULL};
-		pz_execv(
-			path_no_sound,
-			(char *const *)cmd
-		);
-	}
-	return NULL;
-}
-
-static PzWindow *load_file_with_sound(const char *file)
-{
-	if (check_bios() == 1) {
-		const char *const cmd[] = {"Launch-with-sound.sh", file, NULL};
-		pz_execv(
-			path_with_sound,
-			(char *const *)cmd
-		);
-	}
-	return NULL;
-}
-
 static PzWindow *load_file(const char *file)
 {
 	pz_save_config(config);
-	if (pz_get_int_setting(config, SOUND) == 0) {
-		return load_file_no_sound(file);
-	} else {
-		return load_file_with_sound(file);
+	if (check_bios() == 1) {
+		if (pz_get_int_setting(config, SOUND) == 0) {
+			const char *const cmd[] = {"Launch-no-sound.sh", file, NULL};
+			pz_execv_kill(
+				path_no_sound,
+				(char *const *)cmd
+			);
+		} else {
+			const char *const cmd[] = {"Launch-with-sound.sh", file, NULL};
+			pz_execv_kill(
+				path_with_sound,
+				(char *const *)cmd
+			);
+		}
 	}
+	return NULL;
 }
 
 static PzWindow *load_file_handler(ttk_menu_item *item)
@@ -104,6 +91,8 @@ static void cleanup()
 {
 	pz_browser_remove_handler(check_ext);
 	pz_save_config(config);
+	pz_free_config(config);
+	config = 0;
 }
 
 static void init_launch() 

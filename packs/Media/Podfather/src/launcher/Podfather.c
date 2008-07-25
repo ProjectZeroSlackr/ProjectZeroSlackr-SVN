@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 27, 2008
+ * Last updated: July 25, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -25,7 +25,9 @@ static PzModule *module;
 
 static PzWindow *fastlaunch()
 {
-	pz_exec("/opt/Media/Podfather/Launch/Launch.sh");
+	pz_warning("%s only works on some monochrome iPods. It may or may not work on your iPod model.", 
+		"The podfather demo");
+	pz_exec_kill("/opt/Media/Podfather/Launch/Launch.sh");
 	return NULL;
 }
 

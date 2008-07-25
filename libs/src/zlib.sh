@@ -3,7 +3,7 @@
 # zlib Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 21, 2008
+# Last updated: July 24, 2008
 #
 echo ""
 echo "==========================================="
@@ -30,7 +30,13 @@ make install CC=arm-uclinux-elf-gcc LDFLAGS="-L. libz.a -elf2flt" EXE="" >> buil
 echo "  - make minigzip..."
 make minigzip CC=arm-uclinux-elf-gcc LDFLAGS="-L. libz.a -elf2flt" EXE="" >> build.log
 echo ""
-echo "Fin!"
+cd ..
+LIB=zlib/lib/libz.a
+if [ -e $LIB ]; then
+	echo "Fin!"
+else
+	echo "Error! Library not compiled. File \"$LIB\" not found!"
+fi
 echo ""
 echo "Auto-Compiling script by Keripo"
 echo ""

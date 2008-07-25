@@ -3,11 +3,6 @@
 exec >> /opt/Base/ZeroLauncher/Misc/Launch.log 2>&1
 
 # ZeroLauncher script - called at startup
-
-# Have here just to prevent ZeroLauncher from starting up again
-# when rebooting, but it causes unnecessary delay after exiting an app
-sleep 4s
-
 # Format: $binary -l $module_dirs
 if [ -z "$1" ]; then
 	cd /opt/Base/ZeroLauncher

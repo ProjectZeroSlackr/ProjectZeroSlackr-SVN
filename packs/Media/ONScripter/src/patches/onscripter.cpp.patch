@@ -1,0 +1,16 @@
+--- onscripter.cpp	2008-02-12 18:02:19.000000000 -0500
++++ onscripter.cpp	2008-07-24 17:34:05.687500000 -0400
+@@ -81,6 +81,13 @@
+ int main( int argc, char **argv )
+ #endif
+ {
++    printf("ONScripter version %s (%d.%02d)\n", ONS_VERSION, NSC_VERSION/100, NSC_VERSION%100 );
++    printf("Written by Ogapee <ogapee@aqua.dti2.ne.jp>\n\n");
++    printf("Copyright (c) 2001-2006 Ogapee.\n");
++    printf("This is free software; see the source for copying conditions.\n");
++    printf("English version modified by Insani and Haeleth\n");
++    printf("iPodLinux version built by Keripo\n");
++    
+     ONScripterLabel ons;
+ 
+ #ifdef PSP

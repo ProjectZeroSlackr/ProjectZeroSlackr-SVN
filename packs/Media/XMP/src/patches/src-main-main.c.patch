@@ -60,7 +60,7 @@ diff -ur src/main/main.c src/main/main.c
      k = cmd = 0;
  #endif
  
-+#define SCROLL_MOD_NUM 5
++#define SCROLL_MOD_NUM 3 // Via experimentation
 +#define SCROLL_MOD(n) \
 +    ({ \
 +        static int scroll_count = 0; \

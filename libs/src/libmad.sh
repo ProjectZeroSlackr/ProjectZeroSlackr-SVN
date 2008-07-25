@@ -28,7 +28,13 @@ echo "  - Running configure script..."
 echo "  - make install..."
 make install >> build.log
 echo ""
-echo "Fin!"
+cd ..
+LIB=libmad/lib/libmad.a
+if [ -e $LIB ]; then
+	echo "Fin!"
+else
+	echo "Error! Library not compiled. File \"$LIB\" not found!"
+fi
 echo ""
 echo "Auto-Compiling script by Keripo"
 echo ""
