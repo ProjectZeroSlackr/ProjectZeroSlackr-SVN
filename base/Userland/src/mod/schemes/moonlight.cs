@@ -1,12 +1,12 @@
 \name Moonlight
 # Based off Black Glass, with custom background.
 # by Keripo
-# Last updated: July 24, 2008
+# Last updated: July 25, 2008
 
 \def clear	#FF00FF
 \def black	#000
 \def white	#fff
-\def light	#6073A0
+\def light	#899BBC
 \def slate	#304370
 \def gray	#505050
 \def dkgray	#222
@@ -29,7 +29,7 @@ battery:
 	bg => black,
 	bg.low => #777,
 	bg.charging => #444,
-	fill.normal => light +2,
+	fill.normal => light,
 	fill.low => light +1,
 	fill.charge => gray +1,
 	chargingbolt => #666

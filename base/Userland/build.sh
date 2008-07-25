@@ -3,7 +3,7 @@
 # Userland Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 21, 2008
+# Last updated: July 25, 2008
 #
 echo ""
 echo "==========================================="
@@ -67,6 +67,7 @@ cp -rf ../../src/mod/zeroslackr-userland-mod.tar.gz $DOCS/Mod/
 cp -rf ../../../../Changelog.txt ./
 cp -rf ../../../../FAQ.txt ./
 cp -rf ../../../../Features.txt ./
+cp -rf ../../../../Install.txt ./
 cp -rf ../../../../License.txt ./
 cp -rf "../../../../ReadMe from Keripo.txt" ./
 cp -rf "../../../../To Do.txt" ./
