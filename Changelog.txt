@@ -14,6 +14,7 @@ July 25, 2008
 - Added iPod generation warning to podfather
 - Added handler for pz_exec_kill to browser-ext
 - Free config files for ZeroLauncher launch modules
+- Restored accidental removal of igpSP wheel touch code
 
 July 24, 2008
 - Cleaned up userland pre-rc and Moonlight schemes

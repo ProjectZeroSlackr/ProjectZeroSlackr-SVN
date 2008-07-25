@@ -57,7 +57,7 @@ echo "  - Running configure script..."
 echo "  - Patching Makefile..."
 patch -p0 -t -i ../src/SDL_image/Makefile.patch >> build.log
 echo "  - make install..."
-make install >> build.log
+make install >> build.log 2>&1
 echo ""
 cd ..
 LIB=SDL_image/lib/libSDL_image.a
