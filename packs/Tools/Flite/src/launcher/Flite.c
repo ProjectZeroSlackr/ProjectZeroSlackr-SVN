@@ -1,5 +1,5 @@
 /*
- * Last updated: July 25, 2008
+ * Last updated: July 26, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -134,6 +134,12 @@ static PzWindow *browse_texts()
 		check_is_ascii_file, load_file_handler_read);
 }
 
+static PzWindow *readme()
+{
+	return new_textview_window(
+		"/opt/Tools/Flite/ReadMe from Keripo.txt");
+}
+
 static void cleanup()
 {
 	pz_save_config(config);
@@ -150,6 +156,7 @@ static void init_launch()
 		pz_set_int_setting(config, ENABLE_FLITE, 0);
 	
 	pz_menu_add_stub_group("/Tools/Flite", "Accessibility");
+	pz_menu_add_action_group("/Tools/Flite/~ReadMe", "Browse", readme);
 	pz_menu_add_setting_group("/Tools/Flite/Enable Flite", "~Settings", ENABLE_FLITE, config, off_on_options);
 	
 	if (pz_get_int_setting(config, ENABLE_FLITE) == 1) {

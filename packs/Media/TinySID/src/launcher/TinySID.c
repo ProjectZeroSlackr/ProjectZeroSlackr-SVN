@@ -1,5 +1,5 @@
 /*
- * Last updated: July 22, 2008
+ * Last updated: July 26, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -56,6 +56,12 @@ static PzWindow *fastlaunch()
 	return load_file(NULL);
 }
 
+static PzWindow *readme()
+{
+	return new_textview_window(
+		"/opt/Media/TinySID/ReadMe from Keripo.txt");
+}
+
 static void cleanup()
 {
 	pz_browser_remove_handler(check_ext);
@@ -69,6 +75,7 @@ static void init_launch()
 	
 	pz_menu_add_stub_group("/Media/TinySID", "Music");
 	pz_menu_add_action_group("/Media/TinySID/#FastLaunch", "#FastLaunch", fastlaunch);
+	pz_menu_add_action_group("/Media/TinySID/~ReadMe", "#FastLaunch", readme);
 	pz_menu_add_action_group("/Media/TinySID/SIDs", "Browse", browse_sids);
 	pz_menu_sort("/Media/TinySID");
 

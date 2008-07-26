@@ -1,5 +1,5 @@
 /*
- * Last updated: July 22, 2008
+ * Last updated: July 26, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -29,10 +29,19 @@ static PzWindow *fastlaunch()
 	return NULL;
 }
 
+static PzWindow *readme()
+{
+	return new_textview_window(
+		"/opt/Zillae/Floyd2illA/ReadMe from Keripo.txt");
+}
+
 static void init_launch() 
 {
-	module = pz_register_module ("Floyd2illA", 0);
-	pz_menu_add_action_group ("/Zillae/Floyd2illA", "PZ0 Based", fastlaunch);
+	module = pz_register_module("Floyd2illA", 0);
+	pz_menu_add_stub_group("/Zillae/Floyd2illA", "PZ0 Based");
+	pz_menu_add_action_group("/Zillae/Floyd2illA/#FastLaunch", "#FastLaunch", fastlaunch);
+	pz_menu_add_action_group("/Zillae/Floyd2illA/~ReadMe", "#FastLaunch", readme);
+	pz_menu_sort("/Zillae/Floyd2illA");
 }
 
 PZ_MOD_INIT (init_launch)

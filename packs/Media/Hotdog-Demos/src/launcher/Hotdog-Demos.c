@@ -1,5 +1,5 @@
 /*
- * Last updated: July 22, 2008
+ * Last updated: July 26, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -97,6 +97,12 @@ static PzWindow *browse_imagebits()
 		check_ext, load_file_handler);
 }
 
+static PzWindow *readme()
+{
+	return new_textview_window(
+		"/opt/Media/Hotdog-Demos/ReadMe from Keripo.txt");
+}
+
 static void init_launch() 
 {
 	module = pz_register_module ("Hotdog-Demos", 0);
@@ -105,6 +111,7 @@ static void init_launch()
 	dir_imgbits = "/opt/Media/Hotdog-Demos/Hotdog-EX/PNGs";
 	
 	pz_menu_add_stub_group ("/Media/Hotdog-Demos", "Demoscene");
+	pz_menu_add_action_group ("/Media/Hotdog-Demos/ReadMe", "#Information", readme);
 	// hotdog demos
 	pz_menu_add_action_group ("/Media/Hotdog-Demos/HD-Pong", "Games", hd_pong);
 	pz_menu_add_action_group ("/Media/Hotdog-Demos/Anim-Demo", "Interactive", anim_demo);

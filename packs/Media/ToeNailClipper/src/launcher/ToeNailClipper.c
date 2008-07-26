@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 27, 2008
+ * Last updated: July 26, 2008
  * ~Keripo
  *  
  * Copyright (C) 2007 Keripo
@@ -32,10 +32,19 @@ static PzWindow *new_toenailclipper_window(void)
 	);
 }
 
+static PzWindow *readme()
+{
+	return new_textview_window(
+		"/opt/Media/ToeNailClipper/ReadMe from Keripo.txt");
+}
+
 static void init_launch() 
 {
-	module = pz_register_module ("ToeNailClipper", 0);
-	pz_menu_add_action_group ("/Media/ToeNailClipper", "Games", new_toenailclipper_window);
+	module = pz_register_module("ToeNailClipper", 0);
+	pz_menu_add_stub_group("/Media/ToeNailClipper", "Games");
+	pz_menu_add_action_group("/Media/ToeNailClipper/#Terminal launch", "#FastLaunch", new_toenailclipper_window);
+	pz_menu_add_action_group("/Media/ToeNailClipper/~ReadMe", "#FastLaunch", readme);
+	pz_menu_sort("/Media/ToeNailClipper");
 }
 
 PZ_MOD_INIT (init_launch)

@@ -1,5 +1,5 @@
 /*
- * Last updated: Apr 27, 2008
+ * Last updated: July 26, 2008
  * ~Keripo
  *  
  * Copyright (C) 2008 Keripo
@@ -23,7 +23,7 @@
 
 static PzModule *module;
 
-static PzWindow *new_picalc_window(void)
+static PzWindow *new_picalc_window()
 {
 	const char *const cmd[] = {"Terminal.sh", NULL};
 	return new_terminal_window_with(
@@ -32,10 +32,19 @@ static PzWindow *new_picalc_window(void)
 	);
 }
 
+static PzWindow *readme()
+{
+	return new_textview_window(
+		"/opt/Tools/PiCalc/ReadMe from Keripo.txt");
+}
+
 static void init_launch() 
 {
-	module = pz_register_module ("PiCalc", 0);
-	pz_menu_add_action_group ("/Tools/PiCalc", "Reference", new_picalc_window);
+	module = pz_register_module("PiCalc", 0);
+	pz_menu_add_stub_group("/Tools/PiCalc", "Reference");
+	pz_menu_add_action_group("/Tools/PiCalc/#Terminal launch", "#FastLaunch", new_picalc_window);
+	pz_menu_add_action_group("/Tools/PiCalc/~ReadMe", "#FastLaunch", readme);
+	pz_menu_sort("/Tools/PiCalc");
 }
 
 PZ_MOD_INIT (init_launch)

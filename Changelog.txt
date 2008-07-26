@@ -12,6 +12,7 @@ original/ported software.
 
 July 26, 2008
 - Fixed hotdog demos (again)
+- Added ReadMe menu item to all launch modules
 
 July 25, 2008
 - Added iPod generation warning to podfather

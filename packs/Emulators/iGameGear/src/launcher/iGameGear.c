@@ -1,5 +1,5 @@
 /*
- * Last updated: July 25, 2008
+ * Last updated: July 26, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -90,6 +90,12 @@ static PzWindow *fastlaunch()
 	return load_file(NULL);
 }
 
+static PzWindow *readme()
+{
+	return new_textview_window(
+		"/opt/Emulators/iGameGear/ReadMe from Keripo.txt");
+}
+
 static void cleanup()
 {
 	pz_save_config(config);
@@ -111,6 +117,7 @@ static void init_launch()
 	
 	pz_menu_add_stub_group("/Emulators/iGameGear", "Handheld");
 	pz_menu_add_action_group("/Emulators/iGameGear/#FastLaunch", "#FastLaunch", fastlaunch);
+	pz_menu_add_action_group("/Emulators/iGameGear/~ReadMe", "#FastLaunch", readme);
 	pz_menu_add_action_group("/Emulators/iGameGear/Roms", "#FastLaunch", browse_roms);
 	pz_menu_add_setting_group("/Emulators/iGameGear/Frameskip", "~Settings", FRAMESKIP, config, frameskip_options);
 	pz_menu_add_setting_group("/Emulators/iGameGear/Locale", "~Settings", LANG, config, locale_options);

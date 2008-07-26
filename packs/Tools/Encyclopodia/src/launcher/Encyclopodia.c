@@ -1,5 +1,5 @@
 /*
- * Last updated: July 22, 2008
+ * Last updated: July 26, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -31,10 +31,19 @@ static PzWindow *fastlaunch()
 	return NULL;
 }
 
+static PzWindow *readme()
+{
+	return new_textview_window(
+		"/opt/Tools/Encyclopodia/ReadMe from Keripo.txt");
+}
+
 static void init_launch() 
 {
-	module = pz_register_module ("Encyclopodia", 0);
-	pz_menu_add_action_group ("/Tools/Encyclopodia", "Reference", fastlaunch);
+	module = pz_register_module("Encyclopodia", 0);
+	pz_menu_add_stub_group("/Tools/Encyclopodia", "Reference");
+	pz_menu_add_action_group("/Tools/Encyclopodia/#FastLaunch", "#FastLaunch", fastlaunch);
+	pz_menu_add_action_group("/Tools/Encyclopodia/~ReadMe", "#FastLaunch", readme);
+	pz_menu_sort("/Tools/Encyclopodia");
 }
 
 PZ_MOD_INIT (init_launch)

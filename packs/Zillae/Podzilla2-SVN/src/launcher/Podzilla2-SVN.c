@@ -1,5 +1,5 @@
 /*
- * Last updated: July 25, 2008
+ * Last updated: July 26, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -125,6 +125,13 @@ static PzWindow *launch_unsorted()
 	);
 }
 
+static PzWindow *readme()
+{
+	return new_textview_window(
+		"/opt/Zillae/Podzilla2-SVN/ReadMe from Keripo.txt");
+}
+
+
 static void cleanup()
 {
 	pz_save_config(config);
@@ -134,7 +141,7 @@ static void cleanup()
 
 static void init_launch() 
 {
-	module = pz_register_module ("Podzilla2-SVN", cleanup);
+	module = pz_register_module("Podzilla2-SVN", cleanup);
 	path = "/opt/Zillae/Podzilla2-SVN/Launch/Launch.sh";
 
 	config = pz_load_config("/opt/Zillae/Podzilla2-SVN/Conf/Hide.conf");
@@ -146,24 +153,25 @@ static void init_launch()
 	if (!pz_get_setting(config, HIDE_TOOLS)) pz_set_int_setting (config, HIDE_TOOLS, 0);
 	if (!pz_get_setting(config, HIDE_UNSORTED)) pz_set_int_setting (config, HIDE_UNSORTED, 0);
 	
-	pz_menu_add_stub_group ("/Zillae/Podzilla2-SVN", "#PZ2 Based");
+	pz_menu_add_stub_group("/Zillae/Podzilla2-SVN", "#PZ2 Based");
 		pz_menu_add_action_group("/Zillae/Podzilla2-SVN/#Fastlaunch",	"#Normal", fastlaunch);
+		pz_menu_add_action_group("/Zillae/Podzilla2-SVN/~ReadMe",		"#Normal", readme);
 	if (pz_get_int_setting(config, HIDE_ALL) == 0)
-		pz_menu_add_action_group ("/Zillae/Podzilla2-SVN/All Modules",	"#Normal", launch_all);
+		pz_menu_add_action_group("/Zillae/Podzilla2-SVN/All Modules",	"#Normal", launch_all);
 	if (pz_get_int_setting(config, HIDE_ARCADE) == 0)
-		pz_menu_add_action_group ("/Zillae/Podzilla2-SVN/Arcade",	"Lite", launch_arcade);
+		pz_menu_add_action_group("/Zillae/Podzilla2-SVN/Arcade",	"Lite", launch_arcade);
 	if (pz_get_int_setting(config, HIDE_DEV) == 0)
-		pz_menu_add_action_group ("/Zillae/Podzilla2-SVN/Dev",	"Lite", launch_dev);
+		pz_menu_add_action_group("/Zillae/Podzilla2-SVN/Dev",	"Lite", launch_dev);
 	if (pz_get_int_setting(config, HIDE_MEDIA) == 0)
-		pz_menu_add_action_group ("/Zillae/Podzilla2-SVN/Media",	"Lite", launch_media);
+		pz_menu_add_action_group("/Zillae/Podzilla2-SVN/Media",	"Lite", launch_media);
 	if (pz_get_int_setting(config, HIDE_MISC) == 0)
-		pz_menu_add_action_group ("/Zillae/Podzilla2-SVN/Misc",	"Lite", launch_misc);
+		pz_menu_add_action_group("/Zillae/Podzilla2-SVN/Misc",	"Lite", launch_misc);
 	if (pz_get_int_setting(config, HIDE_TOOLS) == 0)
-		pz_menu_add_action_group ("/Zillae/Podzilla2-SVN/Tools",	"Lite", launch_tools);
+		pz_menu_add_action_group("/Zillae/Podzilla2-SVN/Tools",	"Lite", launch_tools);
 	if (pz_get_int_setting(config, HIDE_UNSORTED) == 0)
-		pz_menu_add_action_group ("/Zillae/Podzilla2-SVN/Unsorted","Lite", launch_unsorted);
+		pz_menu_add_action_group("/Zillae/Podzilla2-SVN/Unsorted","Lite", launch_unsorted);
 	
-	pz_menu_add_stub_group ("/Zillae/Podzilla2-SVN/Hide Settings", "~Settings");
+	pz_menu_add_stub_group("/Zillae/Podzilla2-SVN/Hide Settings", "~Settings");
 	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Hide Settings/Hide All Modules",	"#Normal", HIDE_ALL, config, on_off_options);
 	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Hide Settings/Hide Arcade",	"Lite", HIDE_ARCADE, config, on_off_options);
 	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Hide Settings/Hide Dev",	"Lite", HIDE_DEV, config, on_off_options);
@@ -171,7 +179,7 @@ static void init_launch()
 	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Hide Settings/Hide Misc",	"Lite", HIDE_MISC, config, on_off_options);
 	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Hide Settings/Hide Tools",	"Lite", HIDE_TOOLS, config, on_off_options);
 	pz_menu_add_setting_group("/Zillae/Podzilla2-SVN/Hide Settings/Hide Unsorted",	"Lite", HIDE_UNSORTED, config, on_off_options);
-	pz_menu_sort ("/Zillae/Podzilla2-SVN");
+	pz_menu_sort("/Zillae/Podzilla2-SVN");
 }
 
 PZ_MOD_INIT (init_launch)
