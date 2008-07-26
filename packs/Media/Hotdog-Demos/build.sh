@@ -3,7 +3,7 @@
 # Hotdog-Demos Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 21, 2008
+# Last updated: July 26, 2008
 #
 echo ""
 echo "==========================================="
@@ -49,6 +49,7 @@ echo "> Compiling..."
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
 echo "  - Building hotdog demos..."
 cd $LIBSDIR/hotdog/demos
+patch -p0 -t -i $DIR/../src/patches/hotdog-demos-all.patch >> $DIR/build.log
 make clean >> $DIR/build.log 2>&1
 make IPOD=1 >> $DIR/build.log 2>&1
 cd ..
