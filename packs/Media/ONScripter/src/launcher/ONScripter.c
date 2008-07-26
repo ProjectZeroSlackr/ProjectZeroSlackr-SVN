@@ -1,5 +1,5 @@
 /*
- * Last updated: July 24, 2008
+ * Last updated: July 26, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -52,6 +52,12 @@ static PzWindow *fastlaunch()
 	return load_game(NULL);
 }
 
+static PzWindow *readme()
+{
+	return new_textview_window(
+		"/opt/Media/ONScripter/ReadMe from Keripo.txt");
+}
+
 static void init_launch() 
 {
 	module = pz_register_module("ONScripter", 0);
@@ -60,6 +66,7 @@ static void init_launch()
 	
 	pz_menu_add_stub_group("/Media/ONScripter", "Games");
 	pz_menu_add_action_group("/Media/ONScripter/#FastLaunch", "#FastLaunch", fastlaunch);
+	pz_menu_add_action_group("/Media/ONScripter/~ReadMe", "#FastLaunch", readme);
 	pz_menu_add_action_group("/Media/ONScripter/Visual Novels", "Browse", browse_novels);
 	pz_menu_sort("/Media/ONScripter");
 }

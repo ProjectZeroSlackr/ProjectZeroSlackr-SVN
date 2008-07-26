@@ -1,5 +1,5 @@
 /*
- * Last updated: July 22, 2008
+ * Last updated: July 26, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -87,6 +87,12 @@ static PzWindow *fastlaunch()
 	return load_file(NULL);
 }
 
+static PzWindow *readme()
+{
+	return new_textview_window(
+		"/opt/Emulators/iDarcNES/ReadMe from Keripo.txt");
+}
+
 static void cleanup()
 {
 	pz_browser_remove_handler(check_ext);
@@ -100,6 +106,7 @@ static void init_launch()
 	
 	pz_menu_add_stub_group("/Emulators/iDarcNES", "Console");
 	pz_menu_add_action_group("/Emulators/iDarcNES/#FastLaunch", "#FastLaunch", fastlaunch);
+	pz_menu_add_action_group("/Emulators/iDarcNES/~ReadMe", "#FastLaunch", readme);
 	pz_menu_add_action_group("/Emulators/iDarcNES/Roms", "Browse", browse_roms);
 	pz_menu_sort("/Emulators/iDarcNES");
 	

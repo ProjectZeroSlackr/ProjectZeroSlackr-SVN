@@ -1,5 +1,5 @@
 /*
- * Last updated: Jun 25, 2008
+ * Last updated: Jun 26, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -201,6 +201,12 @@ static PzWindow *load_file_handler_gzip_d(ttk_menu_item *item)
 	return gzip_d(item->data);
 }
 
+static PzWindow *readme()
+{
+	return new_textview_window(
+		"/opt/Tools/CmdLine-Archivers/ReadMe from Keripo.txt");
+}
+
 static void cleanup()
 {
 	pz_browser_remove_handler(check_is_file);
@@ -223,6 +229,10 @@ static void init_launch()
 		PATH
 		);	
 	setenv("PATH", path, 1);
+	
+	pz_menu_add_stub_group("/Tools/CmdLine Archivers", "Utilities");
+	pz_menu_add_action_group("/Tools/CmdLine Archivers/~ReadMe", "Info", readme);
+	pz_menu_sort("/Tools/CmdLine Archivers");
 	
 	browser_extension_zip.name = N_("Compress (zip)");
 	browser_extension_zip.makesub = load_file_handler_zip;

@@ -1,5 +1,5 @@
 /*
- * Last updated: July 25, 2008
+ * Last updated: July 26, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -31,10 +31,19 @@ static PzWindow *fastlaunch()
 	return NULL;
 }
 
+static PzWindow *readme()
+{
+	return new_textview_window(
+		"/opt/Media/Podfather/ReadMe from Keripo.txt");
+}
+
 static void init_launch() 
 {
 	module = pz_register_module ("Podfather", 0);
-	pz_menu_add_action_group ("/Media/Podfather", "Demoscene", fastlaunch);
+	pz_menu_add_stub_group("/Media/Podfather", "Demoscene");
+	pz_menu_add_action_group("/Media/Podfather/#FastLaunch", "#FastLaunch", fastlaunch);
+	pz_menu_add_action_group("/Media/Podfather/~ReadMe", "#FastLaunch", readme);
+	pz_menu_sort("/Media/Podfather");
 }
 
 PZ_MOD_INIT (init_launch)

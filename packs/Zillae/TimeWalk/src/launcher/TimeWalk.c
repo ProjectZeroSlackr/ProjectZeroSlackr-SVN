@@ -1,5 +1,5 @@
 /*
- * Last updated: July 24, 2008
+ * Last updated: July 26, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -24,7 +24,7 @@
 #define DEFAULT "podzilla"
 
 static PzModule *module;
-static const char *path, *welcome_text, *missing_text;
+static const char *path, *welcome_text, *missing_text, *readme_text;
 
 // Common
 static PzWindow *exec_zilla(const char *folder, const char *binary)
@@ -181,63 +181,69 @@ static PzWindow *missing()
 {
 	return new_textview_window((char *)missing_text);
 }
+static PzWindow *readme()
+{
+	return new_textview_window((char *)readme_text);
+}
 
-// Init!!!
+// Init
 static void init_launch() 
 {
-	module = pz_register_module ("TimeWalk", 0);
+	module = pz_register_module("TimeWalk", 0);
 	path = "/opt/Zillae/TimeWalk/Launch/Launch.sh";
 	welcome_text = "/opt/Zillae/TimeWalk/Launch/Welcome.txt";
 	missing_text = "/opt/Zillae/TimeWalk/Launch/Missing.txt";
+	readme_text = "/opt/Zillae/TimeWalk/ReadMe from Keripo.txt";
 	
-	// Group!
-	pz_menu_add_stub_group ("/~TimeWalk", "#ZeroSlackr");
+	// Group
+	pz_menu_add_stub_group("/~TimeWalk", "#ZeroSlackr");
 	
 	// Info
-	pz_menu_add_action_group ("/~TimeWalk/#Welcome",	"#Info",	welcome);
-	pz_menu_add_action_group ("/~TimeWalk/Missing",		"#Info",	missing);
+	pz_menu_add_action_group("/~TimeWalk/#Welcome",			"#Info",		welcome);
+	pz_menu_add_action_group("/~TimeWalk/Missing",			"#Info",		missing);
+	pz_menu_add_action_group("/~TimeWalk/~ReadMe",			"#Info",		readme);
 	
 	// Non-standard
-	pz_menu_add_action_group ("/~TimeWalk/iPod-Desktop",	"Non-standard", iPod_Desktop);
-	pz_menu_add_action_group ("/~TimeWalk/Owen-OS",		"Non-standard", Owen_OS);
-	pz_menu_add_action_group ("/~TimeWalk/Margarelon",	"Non-standard", Margarelon);
+	pz_menu_add_action_group("/~TimeWalk/iPod-Desktop",		"Non-standard", iPod_Desktop);
+	pz_menu_add_action_group("/~TimeWalk/Owen-OS",			"Non-standard", Owen_OS);
+	pz_menu_add_action_group("/~TimeWalk/Margarelon",		"Non-standard", Margarelon);
 	
 	// PZ0 Specials
-	pz_menu_add_action_group ("/~TimeWalk/iTanks",		"PZ0 Specials",	iTanks);
-	pz_menu_add_action_group ("/~TimeWalk/MikModPodzilla",	"PZ0 Specials",	MikModPodzilla);
-	pz_menu_add_action_group ("/~TimeWalk/pdPod",		"PZ0 Specials",	pdPod);
+	pz_menu_add_action_group("/~TimeWalk/iTanks",			"PZ0 Specials",	iTanks);
+	pz_menu_add_action_group("/~TimeWalk/MikModPodzilla",	"PZ0 Specials",	MikModPodzilla);
+	pz_menu_add_action_group("/~TimeWalk/pdPod",			"PZ0 Specials",	pdPod);
 	
 	// PZ0 Features
-	pz_menu_add_action_group ("/~TimeWalk/Keyman (PZ0)",	"PZ0 Featured",	Keyman_pz0);
-	pz_menu_add_action_group ("/~TimeWalk/Keyman (Floyd)",	"PZ0 Featured",	Keyman_floyd);
-	pz_menu_add_action_group ("/~TimeWalk/NXSnake",		"PZ0 Featured",	NXSnake);
-	pz_menu_add_action_group ("/~TimeWalk/Othello",		"PZ0 Featured",	Othello);
-	pz_menu_add_action_group ("/~TimeWalk/Sudoku",		"PZ0 Featured",	Sudoku);
-	pz_menu_add_action_group ("/~TimeWalk/Tuxchess",	"PZ0 Featured",	Tuxchess);
-	pz_menu_add_action_group ("/~TimeWalk/Video-podzilla",	"PZ0 Featured",	Video_podzilla);
+	pz_menu_add_action_group("/~TimeWalk/Keyman (PZ0)",		"PZ0 Featured",	Keyman_pz0);
+	pz_menu_add_action_group("/~TimeWalk/Keyman (Floyd)",	"PZ0 Featured",	Keyman_floyd);
+	pz_menu_add_action_group("/~TimeWalk/NXSnake",			"PZ0 Featured",	NXSnake);
+	pz_menu_add_action_group("/~TimeWalk/Othello",			"PZ0 Featured",	Othello);
+	pz_menu_add_action_group("/~TimeWalk/Sudoku",			"PZ0 Featured",	Sudoku);
+	pz_menu_add_action_group("/~TimeWalk/Tuxchess",			"PZ0 Featured",	Tuxchess);
+	pz_menu_add_action_group("/~TimeWalk/Video-podzilla",	"PZ0 Featured",	Video_podzilla);
 	
 	// PZ0 Jonrelay's
-	pz_menu_add_action_group ("/~TimeWalk/podzilla-fbk",	"PZ0 Jonrelay",	podzilla_fbk);
-	pz_menu_add_action_group ("/~TimeWalk/podzilla-mc",	"PZ0 Jonrelay",	podzilla_mc);
-	pz_menu_add_action_group ("/~TimeWalk/podzilla-ti",	"PZ0 Jonrelay",	podzilla_ti);
-	pz_menu_add_action_group ("/~TimeWalk/podzilla-ti2",	"PZ0 Jonrelay",	podzilla_ti2);
-	pz_menu_add_action_group ("/~TimeWalk/podzilla-ti3",	"PZ0 Jonrelay",	podzilla_ti3);
-	pz_menu_add_action_group ("/~TimeWalk/podzilla-ti4",	"PZ0 Jonrelay",	podzilla_ti4);
-	pz_menu_add_action_group ("/~TimeWalk/podzilla-ti5",	"PZ0 Jonrelay",	podzilla_ti5);
-	pz_menu_add_action_group ("/~TimeWalk/podzilla-ti6",	"PZ0 Jonrelay",	podzilla_ti6);
-	pz_menu_add_action_group ("/~TimeWalk/podzilla-ti7",	"PZ0 Jonrelay",	podzilla_ti7);
-	pz_menu_add_action_group ("/~TimeWalk/podzilla-ti8",	"PZ0 Jonrelay",	podzilla_ti8);
-	pz_menu_add_action_group ("/~TimeWalk/relayzilla",	"PZ0 Jonrelay",	relayzilla);
+	pz_menu_add_action_group("/~TimeWalk/podzilla-fbk",		"PZ0 Jonrelay",	podzilla_fbk);
+	pz_menu_add_action_group("/~TimeWalk/podzilla-mc",		"PZ0 Jonrelay",	podzilla_mc);
+	pz_menu_add_action_group("/~TimeWalk/podzilla-ti",		"PZ0 Jonrelay",	podzilla_ti);
+	pz_menu_add_action_group("/~TimeWalk/podzilla-ti2",		"PZ0 Jonrelay",	podzilla_ti2);
+	pz_menu_add_action_group("/~TimeWalk/podzilla-ti3",		"PZ0 Jonrelay",	podzilla_ti3);
+	pz_menu_add_action_group("/~TimeWalk/podzilla-ti4",		"PZ0 Jonrelay",	podzilla_ti4);
+	pz_menu_add_action_group("/~TimeWalk/podzilla-ti5",		"PZ0 Jonrelay",	podzilla_ti5);
+	pz_menu_add_action_group("/~TimeWalk/podzilla-ti6",		"PZ0 Jonrelay",	podzilla_ti6);
+	pz_menu_add_action_group("/~TimeWalk/podzilla-ti7",		"PZ0 Jonrelay",	podzilla_ti7);
+	pz_menu_add_action_group("/~TimeWalk/podzilla-ti8",		"PZ0 Jonrelay",	podzilla_ti8);
+	pz_menu_add_action_group("/~TimeWalk/relayzilla",		"PZ0 Jonrelay",	relayzilla);
 	
 	// PZ0 Translates
-	pz_menu_add_action_group ("/~TimeWalk/podzilla-Dutch",	"PZ0 Translations", podzilla_Dutch);
-	pz_menu_add_action_group ("/~TimeWalk/Jpodzilla",	"PZ0 Translations", Jpodzilla);
+	pz_menu_add_action_group("/~TimeWalk/podzilla-Dutch",	"PZ0 Translations", podzilla_Dutch);
+	pz_menu_add_action_group("/~TimeWalk/Jpodzilla",		"PZ0 Translations", Jpodzilla);
 	
 	// PZ0 Custom Builds
-	pz_menu_add_action_group ("/~TimeWalk/Funzilla",	"PZ0 Custom Builds", Funzilla);
-	pz_menu_add_action_group ("/~TimeWalk/Yankeezilla",	"PZ0 Custom Builds", Yankeezilla);
+	pz_menu_add_action_group("/~TimeWalk/Funzilla",			"PZ0 Custom Builds", Funzilla);
+	pz_menu_add_action_group("/~TimeWalk/Yankeezilla",		"PZ0 Custom Builds", Yankeezilla);
 
-	// Sort!!
+	// Sort
 	pz_menu_sort("/~TimeWalk");
 }
 

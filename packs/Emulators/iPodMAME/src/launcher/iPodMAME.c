@@ -1,5 +1,5 @@
 /*
- * Last updated: July 22, 2008
+ * Last updated: July 26, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -50,6 +50,12 @@ static PzWindow *fastlaunch()
 	return load_romset(NULL);
 }
 
+static PzWindow *readme()
+{
+	return new_textview_window(
+		"/opt/Emulators/iPodMAME/ReadMe from Keripo.txt");
+}
+
 static void init_launch() 
 {
 	module = pz_register_module("iPodMAME", 0);
@@ -58,6 +64,7 @@ static void init_launch()
 	
 	pz_menu_add_stub_group("/Emulators/iPodMAME", "Arcade");
 	pz_menu_add_action_group("/Emulators/iPodMAME/#FastLaunch", "#FastLaunch", fastlaunch);
+	pz_menu_add_action_group("/Emulators/iPodMAME/~ReadMe", "#FastLaunch", readme);
 	pz_menu_add_action_group("/Emulators/iPodMAME/Romsets", "Browse", browse_romsets);
 	pz_menu_sort("/Emulators/iPodMAME");
 }

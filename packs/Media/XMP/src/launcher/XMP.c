@@ -1,5 +1,5 @@
 /*
- * Last updated: July 22, 2008
+ * Last updated: July 26, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -77,6 +77,12 @@ static PzWindow *fastlaunch()
 	return load_file(NULL);
 }
 
+static PzWindow *readme()
+{
+	return new_textview_window(
+		"/opt/Media/XMP/ReadMe from Keripo.txt");
+}
+
 static void cleanup()
 {
 	pz_browser_remove_handler(check_ext);
@@ -90,6 +96,7 @@ static void init_launch()
 	
 	pz_menu_add_stub_group("/Media/XMP", "Music");
 	pz_menu_add_action_group("/Media/XMP/#FastLaunch", "#FastLaunch", fastlaunch);
+	pz_menu_add_action_group("/Media/XMP/~ReadMe", "#FastLaunch", readme);
 	pz_menu_add_action_group("/Media/XMP/Modules", "Browse", browse_mods);
 	pz_menu_sort("/Media/XMP");
 

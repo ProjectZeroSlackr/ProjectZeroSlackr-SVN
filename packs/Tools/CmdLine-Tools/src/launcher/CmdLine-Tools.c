@@ -1,5 +1,5 @@
 /*
- * Last updated: Jun 30, 2008
+ * Last updated: July 26, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -53,6 +53,12 @@ static PzWindow *browse_lolcode()
 	return open_directory_title(lolcode_dir, "LOLCODE Scripts");
 }
 
+static PzWindow *readme()
+{
+	return new_textview_window(
+		"/opt/Tools/CmdLine-Tools/ReadMe from Keripo.txt");
+}
+
 static void cleanup()
 {
 	pz_browser_remove_handler(lolcode_check_ext);
@@ -78,6 +84,7 @@ static void init_launch()
 	pz_menu_add_stub_group("/Tools/LOLCODE", "Development");
 	pz_menu_add_action_group("/Tools/LOLCODE/#FastLaunch",
 		"#FastLaunch", lolcode_fastlaunch);
+	pz_menu_add_action_group("/Tools/LOLCODE/~ReadMe", "#FastLaunch", readme);
 	pz_menu_add_action_group("/Tools/LOLCODE/Scripts", "Browse", browse_lolcode);
 	pz_menu_sort("/Tools/LOLCODE");
 	
