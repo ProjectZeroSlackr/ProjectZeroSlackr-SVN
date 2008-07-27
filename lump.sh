@@ -3,7 +3,7 @@
 # Auto-Lumping Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 22, 2008
+# Last updated: July 27, 2008
 #
 echo ""
 echo "==========================================="
@@ -143,6 +143,13 @@ echo "    Now just copy the entire content of"
 echo "    the '_lump' folder to your iPod, run"
 echo "    the 'patch.bat' or 'patch.sh' file,"
 echo "    and everything will be 'installed' ; )"
+if [ $CYGWIN ]; then
+	echo ""
+	echo "    If you plan on copying over the files"
+	echo "    through Windows, please make sure to"
+	echo "    uncheck the \"Read-only\" attribute in"
+	echo "    the file/folder Properties window."
+fi
 echo ""
 echo "       Auto-Lumping Script by Keripo"
 echo ""
