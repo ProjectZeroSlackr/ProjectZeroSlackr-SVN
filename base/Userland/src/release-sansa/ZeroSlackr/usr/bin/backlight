@@ -1,0 +1,2 @@
+#!/bin/sh
+echo Backlight control not yet implemented for SansaLinux

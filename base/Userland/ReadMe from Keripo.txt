@@ -1,4 +1,4 @@
-Last updated: July 17, 2008
+Last updated: July 27, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -65,7 +65,7 @@ SansaLinux:
 ZS Version:
 - Modder: Keripo
 - Type: Recreated (except busybox binary)
-- Date: July 17, 2008
+- Date: July 27, 2008
 - Version: B X.X
 
 Modifications:
@@ -101,9 +101,11 @@ Modifications:
     - Halloween by Keripo (won't fix)
     - schemes still on scheme page (has version #s)
     - schemes uploaded to wiki (has no version #, some repacked)
+  - added cpu and backlight binaries for controling CPU speed
+    and backlight/brightness
 
 To do:
-- fix up own schemes / make more
+- none
 
 Changelog:
 [keep untouched till beta release]
