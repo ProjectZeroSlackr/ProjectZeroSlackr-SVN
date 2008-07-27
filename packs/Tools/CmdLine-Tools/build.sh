@@ -3,7 +3,7 @@
 # CmdLine-Tools Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 21, 2008
+# Last updated: July 27, 2008
 #
 echo ""
 echo "==========================================="
@@ -100,7 +100,8 @@ cp -rf gawk/gawk compiled/
 cp -rf grep/grep compiled/
 cp -rf sed/sed compiled/
 cp -rf cmdlineutils/asciichart compiled/
-cp -rf cmdlineutils/backlight compiled/
+# I've created my own "backlight" binary with brightness control
+# cp -rf cmdlineutils/backlight compiled/
 cp -rf cmdlineutils/contrast compiled/
 cp -rf cmdlineutils/font compiled/
 cp -rf cmdlineutils/lsi compiled/

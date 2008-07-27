@@ -1,4 +1,4 @@
-Last updated: Jun 30, 2008
+Last updated: July 27, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -47,7 +47,8 @@ Original:
   http://ftp.gnu.org/pub/gnu/diffutils/
   
   commandlineutils
-  (asciichart, backlight, contrast, font, lsi, pause, raise):
+  (asciichart, contrast, font, lsi, pause, raise)
+  (note that backlight isn't included; use Keripo's version)
   Jonrelay, Revision 2113 (pre-"Great Befuddlement")
   http://ipodlinux.org/forums/viewtopic.php?t=705
   https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/apps/ipod/cmdlineutils

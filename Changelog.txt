@@ -1,4 +1,4 @@
-Last updated: July 26, 2008
+Last updated: July 27, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,10 @@ original/ported software.
 
 
 == Changelog ==
+
+July 27, 2008
+- Added cpu and backlight binaries to Framework and
+  added to some launch scripts
 
 July 26, 2008
 - Fixed hotdog demos (again)

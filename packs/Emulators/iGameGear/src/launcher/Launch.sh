@@ -4,6 +4,7 @@
 
 # Format: $binary $rom_path --fskip $# --display $type (--japan)
 killall -15 ZeroLauncher >> /dev/null 2>&1
+cpu 78
 if [ -z "$1" ]; then
 	cd /opt/Emulators/iGameGear
 	exec /opt/Emulators/iGameGear/iGameGear /opt/Emulators/iGameGear/Roms/Nibbles.gg --fskip 5 --display center

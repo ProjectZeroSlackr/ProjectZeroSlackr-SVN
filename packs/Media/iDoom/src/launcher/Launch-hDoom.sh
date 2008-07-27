@@ -4,6 +4,7 @@
 
 # Format: $binary -file $pwad_path (-freedoom)
 killall -15 ZeroLauncher >> /dev/null 2>&1
+backlight brightness 12
 if [ -z "$1" ]; then
 	cd /opt/Media/iDoom
 	exec /opt/Media/iDoom/hDoom
