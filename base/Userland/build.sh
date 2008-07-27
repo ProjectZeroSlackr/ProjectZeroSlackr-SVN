@@ -3,7 +3,7 @@
 # Userland Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 25, 2008
+# Last updated: July 27, 2008
 #
 echo ""
 echo "==========================================="
@@ -70,6 +70,7 @@ cp -rf ../../../../Features.txt ./
 cp -rf ../../../../Install.txt ./
 cp -rf ../../../../License.txt ./
 cp -rf "../../../../ReadMe from Keripo.txt" ./
+cp -rf ../../../../Thanks.txt ./
 cp -rf "../../../../To Do.txt" ./
 # Delete .svn folders - directory change done in case of previous failure
 cd $BUILDDIR

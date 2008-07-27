@@ -1,0 +1,50 @@
+Last updated: July 27, 2008
+~Keripo
+
+All code/scripts written by Keripo are licensed under
+GNU GPL - see License.txt. For the licensing of the
+software/application, refer to the documents found in
+Misc/Docs.tar.gz or the license that comes with the
+original/ported software.
+
+
+== Thanks ==
+
+Here is a not-so-short list of developers/users that
+deserve thanks for direct or indirect help with
+development, testing, etc. without whom ZeroSlackr
+would never have been.
+
+Thanks goes out to:
+- AriX
+- BleuLlama
+- bwalderman
+- courtc
+- DerPapst
+
+Greetingz/kudos out to:
+- bholland
+- DataGhost
+- ducky 'n fellni
+- Exophase
+- hyarion 'n jobbe
+- jonrelay/BeckieRGB
+- rvvs89/Rufus
+- Sebastian Duell
+- xs
+- zacaj
+
+A special thanks goes out to mundi who first helped
+me set up a podzilla0 compiling environment, with
+one thing leading to another.
+
+A special, special thanks goes out to tequilaguru
+who wrote the original iPodLinux installation tutorial
+for nanos (before Arabfreak came and stole it) that
+started it all for me. He was "the one" back in the days.
+
+And of course, special, special, special thanks goes out
+to all iPodLinux/Rockbox developers and all the ZeroSlackr
+users out there! Thanks for all the fish!!!
+
+~Keripo
