@@ -1,5 +1,5 @@
 /*
- * Last updated: July 26, 2008
+ * Last updated: July 27, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -38,7 +38,7 @@ static PzWindow *readme()
 static void init_launch() 
 {
 	module = pz_register_module("viPodzilla", 0);
-	pz_menu_add_stub_group("/Zillae/viPodzilla", "#PZ0 Based");
+	pz_menu_add_stub_group("/Zillae/viPodzilla", "PZ0 Based");
 	pz_menu_add_action_group("/Zillae/viPodzilla/#FastLaunch", "#FastLaunch", fastlaunch);
 	pz_menu_add_action_group("/Zillae/viPodzilla/~ReadMe", "#FastLaunch", readme);
 	pz_menu_sort("/Zillae/viPodzilla");

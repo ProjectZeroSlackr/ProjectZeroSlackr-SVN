@@ -1,5 +1,5 @@
 /*
- * Last updated: July 26, 2008
+ * Last updated: July 27, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -118,7 +118,7 @@ static void init_launch()
 	pz_menu_add_stub_group("/Emulators/iGameGear", "Handheld");
 	pz_menu_add_action_group("/Emulators/iGameGear/#FastLaunch", "#FastLaunch", fastlaunch);
 	pz_menu_add_action_group("/Emulators/iGameGear/~ReadMe", "#FastLaunch", readme);
-	pz_menu_add_action_group("/Emulators/iGameGear/Roms", "#FastLaunch", browse_roms);
+	pz_menu_add_action_group("/Emulators/iGameGear/Roms", "Browse", browse_roms);
 	pz_menu_add_setting_group("/Emulators/iGameGear/Frameskip", "~Settings", FRAMESKIP, config, frameskip_options);
 	pz_menu_add_setting_group("/Emulators/iGameGear/Locale", "~Settings", LANG, config, locale_options);
 	pz_menu_add_setting_group("/Emulators/iGameGear/Scaling", "~Settings", SCALING, config, scaling_options);
