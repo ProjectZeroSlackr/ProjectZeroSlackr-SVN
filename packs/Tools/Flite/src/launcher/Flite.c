@@ -1,5 +1,5 @@
 /*
- * Last updated: July 26, 2008
+ * Last updated: July 28, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -21,7 +21,7 @@
 
 #include "browser-ext.h"
 
-#define ENABLE_FLITE 1
+#define FLITE_STARTUP 1
 
 static PzModule *module;
 static PzConfig *config;
@@ -30,6 +30,7 @@ static ttk_menu_item browser_extension_convert;
 static pid_t pid;
 static const char *path_read, *path_convert, *dir;
 static const char *off_on_options[] = {"Off", "On", 0};
+static int FLITE_ACTIVE; // Use as checking pid sometimes causes freezing
 
 // Blatant rip from PZ0's textview.c
 static int check_is_ascii_file(const char *filename)
@@ -60,12 +61,38 @@ static int check_is_ascii_file(const char *filename)
 
 static int is_active(ttk_menu_item *item)
 {
-	if (pid) return 1;
+	//if (pid) return 1;
+	//return 0;
+	if (FLITE_ACTIVE == 1) return 1;
 	return 0;
+}
+
+static int is_not_active(ttk_menu_item *item)
+{
+	//if (pid) return 0;
+	//return 1;
+	if (FLITE_ACTIVE == 1) return 0;
+	return 1;
+}
+
+static PzWindow *init_flite()
+{
+	setup_sigchld_handler();
+	switch (pid = vfork()) {
+		case 0:
+			execl(path_read, "Read.sh", NULL);
+			_exit(0);
+		default:
+			break;
+	}
+	wait(NULL);
+	FLITE_ACTIVE = 1;
+	return NULL;
 }
 
 static PzWindow *kill_flite()
 {
+	FLITE_ACTIVE = 0;
 	if (pid) kill(pid, SIGTERM);
 	pid = 0;
 	return NULL;
@@ -151,43 +178,35 @@ static void cleanup()
 static void init_launch() 
 {
 	module = pz_register_module("Flite", cleanup);	
+	path_read = "/opt/Tools/Flite/Launch/Read.sh";
+	path_convert = "/opt/Tools/Flite/Launch/Convert.sh";
+	dir = "/opt/Tools/Flite/Text";
+	
 	config = pz_load_config("/opt/Tools/Flite/Conf/Enable.conf");
-	if (!pz_get_setting(config, ENABLE_FLITE))
-		pz_set_int_setting(config, ENABLE_FLITE, 0);
+	FLITE_ACTIVE = 0;
+	if (!pz_get_setting(config, FLITE_STARTUP))
+		pz_set_int_setting(config, FLITE_STARTUP, 0);
+	if (pz_get_int_setting(config, FLITE_STARTUP) == 1)
+		init_flite();
 	
 	pz_menu_add_stub_group("/Tools/Flite", "Accessibility");
-	pz_menu_add_action_group("/Tools/Flite/~ReadMe", "Browse", readme);
-	pz_menu_add_setting_group("/Tools/Flite/Enable Flite", "~Settings", ENABLE_FLITE, config, off_on_options);
-	
-	if (pz_get_int_setting(config, ENABLE_FLITE) == 1) {
-		path_read = "/opt/Tools/Flite/Launch/Read.sh";
-		path_convert = "/opt/Tools/Flite/Launch/Convert.sh";
-		dir = "/opt/Tools/Flite/Text";
-		
-		pz_menu_add_action_group("/Tools/Flite/Text", "Browse", browse_texts);
-		pz_menu_add_action_group("/Tools/Flite/Kill Flite", "~Settings", kill_flite);
-		pz_get_menu_item("/Tools/Flite/Kill Flite")->visible = is_active;
-		pz_menu_add_action_group("/Tools/Flite/Toggle Backlight", "~Settings", toggle_backlight_window);
-		
-		browser_extension_read.name = N_("Read with Flite");
-		browser_extension_read.makesub = load_file_handler_read;
-		pz_browser_add_action (check_is_ascii_file, &browser_extension_read);
-		browser_extension_convert.name = N_("Convert to .wav");
-		browser_extension_convert.makesub = load_file_handler_convert;
-		pz_browser_add_action (check_is_ascii_file, &browser_extension_convert);
-		
-		// Welcome
-		setup_sigchld_handler();
-		switch (pid = vfork()) {
-			case 0:
-				execl(path_read, "Read.sh", NULL);
-				_exit(0);
-			default:
-				break;
-		}
-		wait(NULL);
-	}
+	pz_menu_add_action_group("/Tools/Flite/~ReadMe", "#Info", readme);
+	pz_menu_add_action_group("/Tools/Flite/Text", "Browse", browse_texts);
+	pz_get_menu_item("/Tools/Flite/Text")->visible = is_active;
+	pz_menu_add_setting_group("/Tools/Flite/~Init on startup", "~Settings", FLITE_STARTUP, config, off_on_options);
+	pz_menu_add_action_group("/Tools/Flite/Init Flite", "~Settings", init_flite);
+	pz_get_menu_item("/Tools/Flite/Init Flite")->visible = is_not_active;
+	pz_menu_add_action_group("/Tools/Flite/Kill Flite", "~Settings", kill_flite);
+	pz_get_menu_item("/Tools/Flite/Kill Flite")->visible = is_active;
+	pz_menu_add_action_group("/Tools/Flite/Toggle Backlight", "~Settings", toggle_backlight_window);
 	pz_menu_sort("/Tools/Flite");
+	
+	browser_extension_read.name = N_("Read with Flite");
+	browser_extension_read.makesub = load_file_handler_read;
+	pz_browser_add_action (check_is_ascii_file, &browser_extension_read);
+	browser_extension_convert.name = N_("Convert to .wav");
+	browser_extension_convert.makesub = load_file_handler_convert;
+	pz_browser_add_action (check_is_ascii_file, &browser_extension_convert);
 }
 
 PZ_MOD_INIT(init_launch)
