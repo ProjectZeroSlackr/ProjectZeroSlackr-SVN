@@ -12,6 +12,7 @@ original/ported software.
 
 July 28, 2008
 - Make Flite module more like MPD module
+- Resorted patching script, added 64-bit Linux ipodpatcher
 
 July 27, 2008
 - Added cpu and backlight binaries to Framework and

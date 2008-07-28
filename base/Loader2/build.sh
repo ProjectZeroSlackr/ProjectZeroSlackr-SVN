@@ -3,7 +3,7 @@
 # Loader2 & iPodPatcher Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 18, 2008
+# Last updated: July 28, 2008
 #
 echo ""
 echo "==========================================="
@@ -81,9 +81,13 @@ make >> ../build.log
 echo "> Copying over compiled files..."
 mkdir ../compiled
 if [ -e ipodpatcher.exe ]; then
-	cp -rf ipodpatcher.exe ../compiled/
+	cp -rf ipodpatcher.exe ../compiled/ipodpatcher-win.exe
+elif [ `uname` == "Darwin" ]; then
+	cp -rf ipodpatcher ../compiled/ipodpatcher-mac
+elif [ 'uname -m' == "x86-64" ]; then
+	cp -rf ipodpatcher ../compiled/ipodpatcher-linux-64
 else
-	cp -rf ipodpatcher ../compiled/
+	cp -rf ipodpatcher ../compiled/ipodpatcher-linux-32
 fi
 cd ..
 cd ..
@@ -92,9 +96,10 @@ cp -rf ../src/release ./
 cd release
 # Files
 cp -rf ../../src/mod/* ./
-cp -rf ../loader2/compiled/* ./
-cp -rf ../ipodpatcher/compiled/* ./
+cp -rf ../loader2/compiled/* ./patch-files/
+cp -rf ../ipodpatcher/compiled/* ./patch-files/
 chmod -fR ugo+rwx ./*
+chmod -fR ugo+rwx ./patch-files/*
 # Documents
 DOCS=docs/loader2
 cp -rf "../../ReadMe from Keripo.txt" "$DOCS/ReadMe from Keripo.txt"

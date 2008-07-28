@@ -1,4 +1,4 @@
-Last updated: July 17, 2008
+Last updated: July 28, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -63,16 +63,18 @@ iPodPatcher:
 - Version: Revision 17227
 
 Modifications:
-- none so far
 - added patch to fix ipodpatcher error levels Rockbox's Flyspray
   task #8827: http://www.rockbox.org/tracker/task/8827
-- added easy "patch" scripts for Windows and Linux (untested on Macs)
+- added easy "patch" scripts for Windows and Linux
+  (untested on Macs and 64-bit Linux)
 - added pre-compiled ipodpatcher binaries
-  for Windows (compiled by Keripo), Linux x86 (compiled by Keripo),
-  and Mac OS X (extracted from Rockbox wiki by AriX)
+  for Windows (compiled by Keripo), 32-bit Linux
+  (compiled by Keripo), 64-bit Linux (Rockbox wiki) and
+  Mac OS X (extracted from Rockbox wiki by AriX)
 
 To do:
-- custom settings
+- find someone to help recompile ipodpatcher on 64-bit Linux
+  and Mac OS X
 - FastLaunch.sh searcher
 - sub-menu support (look at iBoot Advanced / iLoadz)
 
