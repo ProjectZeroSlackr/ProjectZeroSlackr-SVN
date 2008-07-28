@@ -1,17 +1,27 @@
 #!/bin/sh
-# Last updated: Apr 17, 2008
+# Last updated: July 28, 2008
 # ~Keripo
 
 echo "====================================================="
-echo "Project ZeroSlackr Auto-Patching Script"
+echo "Project ZeroSlackr Auto-patch-files Script"
 echo "by Keripo"
 echo ""
-echo "- Patching iPod with Loader2..."
+echo "- patching iPod with Loader2..."
 echo ""
 if [ `uname` == "Darwin" ]; then
-	./ipodpatcher-mac -ab loader.bin
+	echo "  Warning: Using an unpatched Mac version"
+	echo "  of ipodpatcher; even if patching is successful,"
+	echo "  this script may report failure. If you are"
+	echo "  able to compile on Mac OS X, please contact me."
+	./patch-files/ipodpatcher-mac -ab patch-files/loader.bin
+elif [ 'uname -m' == "x86-64" ]; then
+	echo "  Warning: Using an unpatched 64-bit Linux version"
+	echo "  of ipodpatcher; even if patching is successful,"
+	echo "  this script may report failure. If you are"
+	echo "  able to compile on 64-bit Linux, please contact me."
+	./patch-files/ipodpatcher-linux-64 -ab patch-files/loader.bin
 else
-	./ipodpatcher -ab loader.bin
+	./patch-files/ipodpatcher-linux-32 -ab patch-files/loader.bin
 fi
 if [ $? != 0 ]; then
 	echo ""
@@ -34,14 +44,16 @@ else
 	echo "  go back to Loader2. For instructions on rebooting,"
 	echo "  see: http://ipodlinux.org/Key_combinations"
 	echo ""
-	echo "- Patching files will be moved to the boot/patch"
+	echo "- Make sure to read all of ZeroSlackr's documents"
+	echo "  starting with \"ReadMe from Keripo.txt\""
+	echo ""
+	echo "- patch files will be moved to the boot/patch"
 	echo "  folder; if you ever need them again, copy them"
 	echo "  to the root of your iPod and execute this script."
 	echo ""
 	echo "====================================================="
 	mkdir -p boot/patch
-	mv -f loader.bin boot/patch/
-	mv -f ipodpatcher* boot/patch/
+	mv -f patch-files boot/patch/
 	read -p "Press any key to exit . . ."
 	mv -f patch.bat boot/patch/
 	mv -f patch.sh boot/patch/

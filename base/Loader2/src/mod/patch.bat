@@ -1,14 +1,14 @@
-::Last updated: Apr 18, 2008
+::Last updated: July 28, 2008
 ::~Keripo
 
 @ECHO OFF
 
 :PATCH
 ECHO =====================================================
-ECHO Project ZeroSlackr Auto-Patching Script
+ECHO Project ZeroSlackr Auto-patch-files Script
 ECHO by Keripo
-ECHO - Patching iPod with Loader2...
-ipodpatcher -ab loader.bin
+ECHO - patching iPod with Loader2...
+patch-files\ipodpatcher-win.exe -ab patch-files\loader.bin
 IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :SUCCESS
 GOTO :FAIL
 
@@ -29,15 +29,14 @@ ECHO   option to boot into the original firmware.
 ECHO - When in the Apple OS, force reboot your iPod to
 ECHO   go back to Loader2. For instructions on rebooting,
 ECHO   see: http://ipodlinux.org/Key_combinations
-ECHO - Patching files will be moved to the boot/patch
+ECHO - Make sure to read all of ZeroSlackr's documents
+ECHO   starting with "ReadMe from Keripo.txt"
+ECHO - patch files will be moved to the boot/patch
 ECHO   folder; if you ever need them again, copy them
 ECHO   to the root of your iPod and execute this script.
 ECHO =====================================================
 MD boot\patch
-MOVE /Y loader.bin boot\patch\
-MOVE /Y ipodpatcher boot\patch\
-MOVE /Y ipodpatcher.exe boot\patch\
-MOVE /Y ipodpatcher-mac boot\patch\
+MOVE /Y patch-files boot\patch\
 PAUSE
 MOVE /Y patch.sh boot\patch\
 MOVE /Y patch.bat boot\patch\
