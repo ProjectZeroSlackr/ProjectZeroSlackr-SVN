@@ -5,6 +5,7 @@ exec >> /opt/Base/ZeroLauncher/Misc/Launch.log 2>&1
 # ZeroLauncher script - called at startup
 # Format: $binary -l $module_dirs
 cpu 72
+sleep 2s
 if [ -z "$1" ]; then
 	cd /opt/Base/ZeroLauncher
 	# ZeroLauncher has location hard-coded in

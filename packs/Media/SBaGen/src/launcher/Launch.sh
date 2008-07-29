@@ -5,6 +5,7 @@
 # Format: $binary $beat_path
 killall -15 ZeroLauncher >> /dev/null 2>&1
 cpu 66
+sleep 2s
 if [ -z "$1" ]; then
 	cd /opt/Media/SBaGen
 	exec /opt/Media/SBaGen/SBaGen /opt/Media/SBaGen/Beats/basics/prog-chakras-1.sbg
