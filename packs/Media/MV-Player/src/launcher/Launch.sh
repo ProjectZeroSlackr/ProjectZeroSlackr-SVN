@@ -7,7 +7,7 @@ killall -15 ZeroLauncher >> /dev/null 2>&1
 # Set CPU higher if  using higher compressed videos
 cpu 69
 backlight brightness 12
-sleep 2s
+sleep 3s
 if [ -z "$1" ]; then
 	cd /opt/Media/MV-Player
 	exec /opt/Media/MV-Player/MV-Player
