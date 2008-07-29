@@ -5,6 +5,5 @@
 killall -15 ZeroLauncher >> /dev/null 2>&1
 cpu 75
 backlight brightness 12
-sleep 3s
 cd /opt/Media/nano
 exec /opt/Media/nano/nano
