@@ -3,22 +3,17 @@
 # Loader2 & iPodPatcher Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 28, 2008
+# Last updated: July 29, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
-echo "Loader2 & iPodPatcher Auto-Building Script"
-echo ""
-# SansaLinux not supported yet
 if [ $SANSA ]; then
-	echo "[Bootloader compiling not yet"
-	echo " supported for SansaLinux - skipping]"
-	echo ""
-	echo "==========================================="
-	echo ""
-	exit
+	echo "SansaPatcher Auto-Building Script"
+else
+	echo "Loader2 & iPodPatcher Auto-Building Script"
 fi
+echo ""
 # Cleanup
 if [ -d build ]; then
 	echo "> Removing old build directory..."
@@ -28,6 +23,31 @@ fi
 mkdir build
 cd build
 BUILDDIR=$(pwd)
+# SansaLinux use pre-compiled files
+if [ $SANSA ]; then
+	echo "> Using pre-built files..."
+	# Make release
+	cp -rf ../src/release-sansa release
+	cd release
+	# Files
+	cp -rf ../../src/mod-sansa/* ./
+	# Documents
+	DOCS=docs/sansapatcher
+	cp -rf "../../ReadMe from Keripo.txt" $DOCS/
+	cp -rf ../../License.txt $DOCS/
+	# Delete .svn folders - directory change done in case of previous failure
+	cd $BUILDDIR
+	cd release
+	sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
+	# Done
+	echo ""
+	echo "Fin!"
+	echo ""
+	echo "Auto-Building script by Keripo"
+	echo ""
+	echo "==========================================="
+	exit
+fi
 # Loader 2
 echo "Loader 2:"
 # Make new compiling directory
@@ -102,8 +122,8 @@ chmod -fR ugo+rwx ./*
 chmod -fR ugo+rwx ./patch-files/*
 # Documents
 DOCS=docs/loader2
-cp -rf "../../ReadMe from Keripo.txt" "$DOCS/ReadMe from Keripo.txt"
-cp -rf ../../License.txt $DOCS/License.txt
+cp -rf "../../ReadMe from Keripo.txt" $DOCS/
+cp -rf ../../License.txt $DOCS/
 cp -rf ../../src/patches $DOCS/Patches
 # Delete .svn folders - directory change done in case of previous failure
 cd $BUILDDIR

@@ -1,4 +1,4 @@
-Last updated: July 28, 2008
+Last updated: July 29, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -7,7 +7,7 @@ software/application, refer to the license that comes
 with the original/ported software.
 
 Overview:
-Loader2 & iPodPatcher
+Loader2 & iPodPatcher / SansaPatcher
 - This is the main bootloader for iPodLinux. It is capable
   of loading both the iPodLinux kernel and the original
   Apple OS as well as Rockbox. It is installed via Rockbox's
@@ -17,8 +17,10 @@ Loader2 & iPodPatcher
 - Rockbox can also be installed by extracting the latest
   Rockbox build directly to the iPod and editing the
   "loader.cfg" file.
-- SansaLinux support has not been added yet. It will be
-  done through Rockbox's sansapatcher.
+- SansaLinux version uses pre-built sansapatcher files
+  that are patched to load SansaLinux. The files currently
+  used are from the original SansaLinux release. Much of
+  the below information does not apply.
 For more information, see:
 - http://ipodlinux.org/Loader2
 - http://www.rockbox.org/twiki/bin/view/Main/IpodPatcher
@@ -61,6 +63,14 @@ iPodPatcher:
   svn://svn.rockbox.org/rockbox/trunk/rbutil/ipodpatcher
 - Date: Apr 23, 2008
 - Version: Revision 17227
+
+SansaPatcher:
+- Authors: Rockbox Devs, Sebastian Duell
+- Source: SansaLinux website
+- Link:
+  http://www.sansalinux.org/index.php?option=com_content&id=46
+- Date: Mar 28, 2008
+- Version: ???
 
 Modifications:
 - added patch to fix ipodpatcher error levels Rockbox's Flyspray
