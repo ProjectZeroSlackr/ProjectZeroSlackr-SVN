@@ -1,0 +1,22 @@
+Index: include/SDL/SDL_config.h
+===================================================================
+--- include/SDL/SDL_config.h	(revision 94)
++++ include/SDL/SDL_config.h	(working copy)
+@@ -74,7 +74,7 @@
+ #define HAVE_STDINT_H 1
+ #define HAVE_CTYPE_H 1
+ #define HAVE_MATH_H 1
+-#define HAVE_ICONV_H 1
++//#define HAVE_ICONV_H 1
+ #define HAVE_SIGNAL_H 1
+ /* #undef HAVE_ALTIVEC_H */
+ 
+@@ -130,7 +130,7 @@
+ #define HAVE_SSCANF 1
+ #define HAVE_SNPRINTF 1
+ #define HAVE_VSNPRINTF 1
+-#define HAVE_ICONV 1
++//#define HAVE_ICONV 1
+ #define HAVE_SIGACTION 1
+ #define HAVE_SETJMP 1
+ #define HAVE_NANOSLEEP 1
