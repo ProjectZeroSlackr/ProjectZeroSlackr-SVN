@@ -3,7 +3,7 @@
 # Auto-Lumping Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 27, 2008
+# Last updated: July 29, 2008
 #
 echo ""
 echo "==========================================="
@@ -137,10 +137,12 @@ echo "==========================================="
 echo ""
 echo "                   Fin!"
 echo ""
-# I'm not sure of the bootloader instructions for SansaLinux at the moment
-# but I'll modify this message later
 echo "    Now just copy the entire content of"
-echo "    the '_lump' folder to your iPod, run"
+if [ $SANSA ]; then
+	echo "    the '_lump' folder to your Sansa, run"
+else
+	echo "    the '_lump' folder to your iPod, run"
+fi
 echo "    the 'patch.bat' or 'patch.sh' file,"
 echo "    and everything will be 'installed' ; )"
 if [ $CYGWIN ]; then

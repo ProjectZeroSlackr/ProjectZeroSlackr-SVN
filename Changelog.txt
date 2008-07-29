@@ -1,4 +1,4 @@
-Last updated: July 28, 2008
+Last updated: July 29, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,10 @@ original/ported software.
 
 
 == Changelog ==
+
+July 29, 2008
+- Added patch scripts for SansaLinux port
+- Added Install-Sansa document
 
 July 28, 2008
 - Make Flite module more like MPD module

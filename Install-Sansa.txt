@@ -1,0 +1,40 @@
+Last updated: July 29, 2008
+~Keripo
+
+All code/scripts written by Keripo are licensed under
+GNU GPL - see License.txt. For the licensing of the
+software/application, refer to the documents found in
+Misc/Docs.tar.gz or the license that comes with the
+original/ported software.
+
+
+== Installation ==
+
+As of the moment, Project ZeroSlackr does not have
+any sort of installer or package manager. I am, however,
+in the process of writing one in Java (cross-platform)
+based around ipodpatcher. Once that is done, I will
+also make a SansaLinux one. For the time being, you will
+have to "install" ZeroSlackr manually.
+
+SansaLinux currently only supports the Sansa e200 V1
+and e200R V1 series. That includes the e250, e260,
+e270, e280 and Rhapsody versions of each. SansaLinux
+and Rockbox do not currently support V2 models. To
+tell which version your Sansa is, check the firmware
+version; 01.xx.xx indicates a V1, 03.xx.xx indicates
+a V2 (V2s also usually have an extra "V2" on the
+bottom right corner on the back).
+ 
+ZeroSlackr installation for Sansa e200s follows the
+same steps as the iPod; see "Install.txt". If your
+Sansa is a Rhapsody model (i.e. e250R, etc.) you
+must first copy over "patch-files/rhapsody/pp5022.mi4"
+to the root of your Sansa.
+
+The files included here are the originals from the
+SansaLinux installation process. Not having a Sansa
+myself however, I am unable to confirm if the patch
+scripts even work. If they do not, follow SansaLinux's
+instructions in place of "3)".
+

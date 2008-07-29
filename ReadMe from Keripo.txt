@@ -1,4 +1,4 @@
-Last updated: July 22, 2008
+Last updated: July 29, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -31,7 +31,8 @@ the iPod and Sansa. Keep in mind that all documentation
 is written for the iPod and thus not everything will
 also apply/work for the Sansa (you will have to
 experiment a bit as I do not have a Sansa myself and
-thus cannot provide proper support for it).
+thus cannot provide proper support for it). See
+Install-Sansa.txt for Sansa-specific instructions.
 
 The core of the system is the ZeroSlackr Framework,
 consisting of a modified kernel, a modified,
