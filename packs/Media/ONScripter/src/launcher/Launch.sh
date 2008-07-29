@@ -8,7 +8,6 @@ killall -15 ZeroLauncher >> /dev/null 2>&1
 # At 57MHz, text displaying speed is slowed down to normal
 cpu 57
 backlight brightness 12
-sleep 3s
 if [ -z "$1" ]; then
 	cd /opt/Media/ONScripter
 	# Because I only have a nano ; P
