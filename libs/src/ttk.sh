@@ -3,7 +3,7 @@
 # ttk Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 24, 2008
+# Last updated: July 30, 2008
 #
 echo ""
 echo "==========================================="
@@ -32,8 +32,13 @@ cd ttk
 #fi
 # I own the character design copyright for Noblesse, but not for Ren
 # Besides, Noblesse looks better ; )
-echo "> Patching with Noblesse icon..."
-patch -p0 -t -i ../src/ttk/ttk-Noblesse-icon.patch >> build.log
+if [ $NEKO ]; then
+	echo "> Patching with Neko Ren icon..."
+	patch -p0 -t -i ../src/ttk/ttk-Ren-icon.patch >> build.log
+else
+	echo "> Patching with Noblesse icon..."
+	patch -p0 -t -i ../src/ttk/ttk-Noblesse-icon.patch >> build.log
+fi
 if [ $SANSA ]; then
 	echo "> Patching for SansaLinux..."
 	patch -p0 -t -i ../src/ttk/ttk-sansalinux.patch >> build.log
