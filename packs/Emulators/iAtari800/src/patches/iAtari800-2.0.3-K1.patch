@@ -1,0 +1,48 @@
+Only in src: atari_ipod.c
+Only in src: configure-ipod.sh
+diff -ur src/configure src/configure
+--- src/configure	2007-07-11 15:50:57.000000000 -0400
++++ src/configure	2008-07-29 18:40:18.000000000 -0400
+@@ -1761,7 +1761,7 @@
+ 
+ 
+ case "$target" in
+-    basic | curses | ncurses | pdcurses | dosvga | falcon | ps2 | sdl | svgalib | windx | x11 | x11-shm | x11-motif | x11-xview | x11-xview-shm)
++    basic | curses | ncurses | pdcurses | dosvga | falcon | ps2 | ipod | sdl | svgalib | windx | x11 | x11-shm | x11-motif | x11-xview | x11-xview-shm)
+         a8_target="$target"
+         ;;
+     shm | motif | xview | xview-shm)
+@@ -1782,6 +1782,7 @@
+         echo "    falcon           (Atari Falcon systems only)"
+         echo "    ps2              (Sony PlayStation 2)"
+         echo "    svgalib          (Linux system with SVGALib library)"
++        echo "    ipod             (iPodLinux with Simple Direct Media Layer library)"
+         echo "    sdl              (System with Simple Direct Media Layer library)"
+         echo "    windx            (Windows with DirectX only)"
+         echo "    x11              (Standard X11)"
+@@ -6321,6 +6322,25 @@
+ 
+         OBJS="atari_ps2.o ps2kbd.s usbd.s audsrv.s"
+         ;;
++    ipod)
++
++cat >>confdefs.h <<\_ACEOF
++#define SDL 1
++_ACEOF
++
++
++cat >>confdefs.h <<\_ACEOF
++#define SUPPORTS_ATARI_CONFIGURE 1
++_ACEOF
++
++
++cat >>confdefs.h <<\_ACEOF
++#define SUPPORTS_ATARI_CONFIGSAVE 1
++_ACEOF
++
++        LIBS="$LIBS"
++        OBJS="atari_ipod.o"
++        ;;
+     sdl)
+ 
+ cat >>confdefs.h <<\_ACEOF
