@@ -3,7 +3,7 @@
 # igpSP Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 18, 2008
+# Last updated: July 31, 2008
 #
 echo ""
 echo "==========================================="
@@ -103,6 +103,7 @@ DOCS=$PACK/Misc/Docs
 cp -rf "../../ReadMe from Keripo.txt" $PACK/
 cp -rf ../../License.txt $PACK/
 cp -rf ../../src/patches $PACK/Misc/Patches
+cp -rf ../../src/mod $PACK/Misc/Mod
 FILES="COPYING.DOC readme.txt gp2x/readme_gp2x.txt"
 for file in $FILES
 do
@@ -117,6 +118,9 @@ cd $PACK/Misc
 tar -cf Patches.tar Patches
 gzip --best Patches.tar
 rm -rf Patches
+tar -cf Mod.tar Mod
+gzip --best Mod.tar
+rm -rf Mod
 tar -cf Docs.tar Docs
 gzip --best Docs.tar
 rm -rf Docs

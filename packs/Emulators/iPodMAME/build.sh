@@ -3,7 +3,7 @@
 # iPodMAME Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 18, 2008
+# Last updated: July 31, 2008
 #
 echo ""
 echo "==========================================="
@@ -80,7 +80,6 @@ cd release
 # Files
 PACK=ZeroSlackr/opt/Emulators/iPodMAME
 cp -rf ../compiled/iPodMAME $PACK/
-cp -rf ../compiling/ipodmame.ini $PACK/Conf/
 mkdir $PACK/Roms/hellopac
 cp -rf ../compiling/roms/hellopac/* $PACK/Roms/hellopac/
 mkdir $PACK/Roms/matrxpac
@@ -92,13 +91,12 @@ DOCS=$PACK/Misc/Docs
 cp -rf "../../ReadMe from Keripo.txt" $PACK/
 cp -rf ../../License.txt $PACK/
 cp -rf ../../src/patches $PACK/Misc/Patches
-FILES="READ_ME.TXT readme.ipl.txt readme.txt README.UNIX romlist.ipl.txt whatsnew.txt"
+FILES="READ_ME.TXT readme.ipl.txt readme.txt README.UNIX whatsnew.txt"
 for file in $FILES
 do
 	cp -rf ../compiling/$file $DOCS/
 done
 cp -rf ../compiling/roms/readme.txt $DOCS/readme-roms.txt
-cp -rf ../compiling/romlist.ipl.txt $PACK/Roms/
 # Delete .svn folders - directory change done in case of previous failure
 cd $BUILDDIR
 cd release

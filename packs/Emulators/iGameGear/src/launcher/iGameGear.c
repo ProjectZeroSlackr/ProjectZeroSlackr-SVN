@@ -1,5 +1,5 @@
 /*
- * Last updated: July 27, 2008
+ * Last updated: July 31, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -59,7 +59,7 @@ static PzWindow *load_file(const char *file)
 		case 2: snprintf(scaling, 8, "stretch"); break;
 	}
 	const char *const cmd[] = {
-		"iGameGear",
+		"Launch.sh",
 		file,
 		frameskip,
 		scaling,
@@ -70,7 +70,6 @@ static PzWindow *load_file(const char *file)
 		path,
 		(char *const *)cmd
 	);
-	pz_save_config(config);
 	return NULL;
 }
 
