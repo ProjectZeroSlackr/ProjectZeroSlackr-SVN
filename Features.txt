@@ -1,4 +1,4 @@
-Last updated: July 21, 2008
+Last updated: July 31, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -49,6 +49,11 @@ Extras
   including official and user-generated ones
 
 == Emulators ==
+iAtari800
+- Atari 800, 800XL, 130XE and 5200 emulator
+- Decent speed, not yet optimized
+- Bumpomov's Dogs, Claim Jumper, Dog Daze and
+  Dog Daze Deluxe disk images/software included
 iBoy
 - Gameboy (GB) and Gameboy Colour (GBC) emulator
 - Full speed, well optimized for iPod
@@ -168,7 +173,6 @@ ZacZilla
 - Custom build of proof-of-concept TTKzilla
 
 == In Development ==
-- Atari800
 - iGens
 - ScummVM
 - See "To Do.txt" for full ToDo list

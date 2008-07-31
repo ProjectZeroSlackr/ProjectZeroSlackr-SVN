@@ -1,4 +1,4 @@
-Last updated: July 17, 2008
+Last updated: July 31, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -28,7 +28,6 @@ Fixes:
 Emulators:
 - ScummVM
 - iGens
-- Atari800
 - Apple iiPod
 
 Tools:
@@ -40,7 +39,6 @@ Tools:
 
 Media:
 - iPod Midi Player
-- iRoids
 
 Zillae:
 - PalmZilla

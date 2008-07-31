@@ -11,6 +11,7 @@ original/ported software.
 == Changelog ==
 
 July 31, 2008
+- Added iAtari800
 - Fixed a few build scripts that ommitted Patches/Mod
 
 July 30, 2008

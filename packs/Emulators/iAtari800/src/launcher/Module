@@ -1,0 +1,6 @@
+Module: iAtari800
+Display-name: iAtari800
+Description: Atari 800, 800XL, 130XE and 5200 emulator.
+Category: Emulators
+Author: David Firth et al., Keripo
+Dependencies: browser,browser-ext
