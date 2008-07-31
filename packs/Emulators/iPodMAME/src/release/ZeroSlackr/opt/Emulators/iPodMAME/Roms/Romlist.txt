@@ -1,0 +1,65 @@
+Last updated: July 30, 3008
+~Keripo
+
+The below are romsets supported by Prow's build of
+iPodMAME. To check the files that are needed for each
+romset, run iPodMAME (or the computer version) with
+"-verifyroms" (e.g. "mame -verifyrom pacman"). Make
+sure to place all required ROM files in their correct
+folders.
+Keep in mind that iPodMAME does not support all
+romsets currently supported by mainstream MAME;
+iPodMAME is based off MAME 0.18 (later MAME versions
+started prioritizing hardware accuracy over speed
+and the iPod may not be powerful enough to emulate
+fast enough using newer MAME source code.
+
+Should work:
+amidar
+bagman
+bombjack
+btime
+carnival
+cclimber
+centiped
+ckong
+ckongs
+congo
+dkong
+dkong3
+docastle
+frogger
+galaxian
+gberet
+invaders
+jumpbug
+junglek
+ladybug
+mario
+milliped
+mooncrst
+moonqsr
+mpatrol
+mplanets
+mrdo
+nibbler
+pacman
+panic
+pengo
+pepper2
+phoenix
+pooyan
+qbert
+rallyx
+scobra
+scramble
+seicross
+timeplt
+vanguard
+venture
+wow
+zaxxon
+
+Do not work:
+elevator
+

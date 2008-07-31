@@ -3,7 +3,7 @@
 # iGameGear Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 18, 2008
+# Last updated: July 31, 2008
 #
 echo ""
 echo "==========================================="
@@ -88,6 +88,7 @@ cp -rf ../launcher/* $PACK/Launch/
 DOCS=$PACK/Misc/Docs
 cp -rf "../../ReadMe from Keripo.txt" $PACK/
 cp -rf ../../License.txt $PACK/
+cp -rf ../../src/patches $PACK/Misc/Patches
 FILES="license README.TXT ipl/README_SMSSDL.TXT"
 for file in $FILES
 do
@@ -99,6 +100,9 @@ cd release
 sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $PACK/Misc
+tar -cf Patches.tar Patches
+gzip --best Patches.tar
+rm -rf Patches
 tar -cf Docs.tar Docs
 gzip --best Docs.tar
 rm -rf Docs

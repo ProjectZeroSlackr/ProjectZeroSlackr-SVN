@@ -1,4 +1,4 @@
-Last updated: Apr 30, 2008
+Last updated: July 30, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -28,9 +28,6 @@ Usage:
   directory. Place your legally obtained  rom files in
   their proper folders. iPodMAME expects that the folders
   be named the as the expected game name.
-- If you have an iPod video and/or you want to
-  configure the screen/controls, edit the
-  "Conf/ipodmame.ini" file.
 
 
 Original:
@@ -42,13 +39,15 @@ Original:
 - Version: Revision 131
 
 ZS Version:
-- Modder: Keripo
-- Type: ZS Recompile
-- Date: Apr 30, 2008
+- Modder: Prow & Keripo
+- Type: Support for more games
+- Date: July 30, 2008
 - Version: B X.X
 
 Modifications:
 - made ZS friendly
+- added full support to remainder of romsets
+  (modifications all done by Prow)
 - added aarmada rom from http://www.widel.com/files/aa.zip
 
 Launch Module:

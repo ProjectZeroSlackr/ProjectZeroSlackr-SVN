@@ -30,9 +30,9 @@ Usage:
 - Files with a ".gg" or ".sms" extension have their default
   action set to iGameGear.
 - Rom files should be placed in the "Roms" folder.
-  Public domain rom files can be optained through various
+  Public domain rom files can be obtained through various
   internet websites while commercial rom files should be dumped
-  from real GG/SMS game cartriages (downloading commercial
+  from real GG/SMS game cartridges (downloading commercial
   roms that you do not own is ILLEGAL). Public domain roms can
   be found at: http://www.pdroms.de/files/gamegear/ and
   http://www.pdroms.de/files/mastersystem/

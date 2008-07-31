@@ -1,9 +1,0 @@
---- src/ipl/asm_rot.S	2008-03-14 17:31:42.000000000 +0000
-+++ src/ipl/asm_rot.S	2008-03-14 17:32:47.000000000 +0000
-@@ -99,4 +99,4 @@
-         blo     1b                      @ if not, keep looping                  2S    1N 
-   
-         ldmia   sp!, {r4-r12, pc}       @ return
--		
-\ No newline at end of file
-+		
