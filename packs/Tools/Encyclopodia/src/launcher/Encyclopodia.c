@@ -1,5 +1,5 @@
 /*
- * Last updated: July 26, 2008
+ * Last updated: Aug 1, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -27,6 +27,8 @@ static PzWindow *fastlaunch()
 {
 	pz_warning("Note: %s requires large amounts of memory and may not work here.", "Encyclopodia");
 	pz_warning("You should try launching %s from Loader2 instead (see the \"loader.cfg\" file).", "Encyclopodia");
+	int launch = pz_errdialog(_("Launch app?"), _("If you are using a large library, you will get bzip errors. Do you wish to continue?"), 2, 0, _("No"), _("Yes"));
+	if (launch == 0) return NULL;
 	pz_exec_kill("/opt/Tools/Encyclopodia/Launch/Launch.sh");
 	return NULL;
 }
