@@ -1,4 +1,4 @@
-Last updated: July 31, 2008
+Last updated: Aug 3, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,11 @@ original/ported software.
 
 
 == Changelog ==
+
+Aug 3, 2008
+- Updated iAtari800 to K2;
+  rewrote optimized, hotdog version for iPods and
+  cleaned up, SDL version for Sansas
 
 July 31, 2008
 - Added iAtari800

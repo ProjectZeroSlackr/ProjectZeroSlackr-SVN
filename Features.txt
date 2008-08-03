@@ -1,4 +1,4 @@
-Last updated: July 31, 2008
+Last updated: Aug 3, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -51,7 +51,7 @@ Extras
 == Emulators ==
 iAtari800
 - Atari 800, 800XL, 130XE and 5200 emulator
-- Decent speed, not yet optimized
+- Almost/full speed, optimized for iPod, no sound
 - Bumpomov's Dogs, Claim Jumper, Dog Daze and
   Dog Daze Deluxe disk images/software included
 iBoy
@@ -62,7 +62,7 @@ iBoy
 iDarcNES
 - Nintendo Entertainment System (NES) and
   Sega Master System (SMS) emulator
-- Almost/full speed, very buggy
+- Almost/full speed, very buggy, no sound
 - Bomb Sweeper and Stars Fields PD roms included
 iGameGear
 - Sega Master System (SMS) and Sega Game Gear
@@ -75,7 +75,7 @@ igpSP
 - Super Wings PD rom included, BIOS file not included
 iPodMAME
 - Multiple Arcade Machine Emulator (MAME)
-- Almost/full speed, no menu
+- Almost/full speed, no sound, no menu
 - Old ROMs only - see romlist in documents
 - Alien Armada, Hello Pacman demo and Matrix Pacman
   demo included
