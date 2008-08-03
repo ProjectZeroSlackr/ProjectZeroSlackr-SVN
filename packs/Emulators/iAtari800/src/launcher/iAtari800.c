@@ -1,5 +1,5 @@
 /*
- * Last updated: July 31, 2008
+ * Last updated: Aug 3, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -21,13 +21,18 @@
 
 #include "browser-ext.h"
 
-#define REFRESH	1
+#define SCALING		1
+#define SMOOTHING	2
+#define COP			3
+#define REFRESH		4
 
 static PzModule *module;
 static PzConfig *config;
 static ttk_menu_item browser_extension;
 static const char *path, *dir;
-static const char *refresh_options[] = {"4", "5", "6", "7", "8", "9", "10", 0};
+static const char *scaling_options[] = {"Fullscreen", "Scaled", "Uncropped", 0};
+static const char *off_on_options[] = {"Off", "On", 0};
+static const char *refresh_options[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", 0};
 
 // Note that Atari files could also be in .exe or .bin or other formats
 // This is only used for the default handler
@@ -41,12 +46,35 @@ static int check_ext(const char *file)
 
 static PzWindow *load_file(const char *file)
 {
+	char scaling[12];
+	switch (pz_get_int_setting(config, SCALING))
+	{
+		case 0: snprintf(scaling, 12, "%s", "-fullscreen"); break;
+		case 1: snprintf(scaling, 12, "%s", "-scaled"); break;
+		case 2: snprintf(scaling, 12, "%s", "-uncropped"); break;
+	}
+	char smoothing[14];
+	if (pz_get_int_setting(config, SMOOTHING) == 1) {
+		snprintf(smoothing, 14, "%s", "-smoothing");
+	} else {
+		snprintf(smoothing, 14, "%s", "-no-smoothing");
+	}
+	char cop[8];
+	if (pz_get_int_setting(config, COP) == 1) {
+		snprintf(cop, 8, "%s", "-cop");
+	} else {
+		snprintf(cop, 8, "%s", "-no-cop");
+	}
 	char refresh_rate[4];
 	snprintf(refresh_rate, 4, "%i",
-		(pz_get_int_setting(config, REFRESH) + 4));
+		(pz_get_int_setting(config, REFRESH) + 1));
+	
 	const char *const cmd[] = {
 		"Launch.sh",
 		file,
+		scaling,
+		smoothing,
+		cop,
 		refresh_rate,
 		NULL
 	};
@@ -94,14 +122,27 @@ static void init_launch()
 	dir = "/opt/Emulators/iAtari800/Disks";
 	
 	config = pz_load_config("/opt/Emulators/iAtari800/Conf/Launch.conf");
+	if (!pz_get_setting(config, SCALING))
+		pz_set_int_setting (config, SCALING, 1); // Scaled
+	if (!pz_get_setting(config, SMOOTHING))
+		pz_set_int_setting (config, SMOOTHING, 1); // On
+	if (!pz_get_setting(config, COP))
+		pz_set_int_setting (config, COP, 1); // On
 	if (!pz_get_setting(config, REFRESH))
-		pz_set_int_setting (config, REFRESH, 6);
+		pz_set_int_setting (config, REFRESH, 4); // Almost full speed without being choppy
 	
 	pz_menu_add_stub_group("/Emulators/iAtari800", "Console");
 	pz_menu_add_action_group("/Emulators/iAtari800/#FastLaunch", "#FastLaunch", fastlaunch);
 	pz_menu_add_action_group("/Emulators/iAtari800/~ReadMe", "#FastLaunch", readme);
 	pz_menu_add_action_group("/Emulators/iAtari800/Disk Images", "Browse", browse_disks);
-	pz_menu_add_setting_group("/Emulators/iAtari800/Refresh rate", "~Settings", REFRESH, config, refresh_options);
+	pz_menu_add_setting_group("/Emulators/iAtari800/Scale type", "~Settings",
+		SCALING, config, scaling_options);
+	pz_menu_add_setting_group("/Emulators/iAtari800/Smoothing", "~Settings",
+		SMOOTHING, config, off_on_options);
+	pz_menu_add_setting_group("/Emulators/iAtari800/Use COP", "~Settings",
+		COP, config, off_on_options);
+	pz_menu_add_setting_group("/Emulators/iAtari800/Refresh rate", "~Settings",
+		REFRESH, config, refresh_options);
 	pz_menu_sort("/Emulators/iAtari800");
 	
 	// These do not cover all formats supported by Atari800 but just ones with unique Atari file extensions

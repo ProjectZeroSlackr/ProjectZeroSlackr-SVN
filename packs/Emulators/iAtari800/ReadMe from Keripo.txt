@@ -1,4 +1,4 @@
-Last updated: July 31, 2008
+Last updated: Aug 3, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -11,8 +11,12 @@ Overview:
 iAtari800
 - iAtari800 is a port of Atari800 to iPodLinux.
 - Atari800 is an Atari 800, 800XL, 130XE and 5200
-  emulator. The iPodLinux port is based on the SDL
-  port.
+  emulator. There are two iPodLinux ports; one based
+  on the SDL port using SDL and one written from
+  scratch by Keripo using hotdog.
+- ZeroSlackr uses the hotdog version as it is faster
+  and has more features; the Sansa uses the SDL version
+  instead
 For more information, see:
 - http://atari800.sourceforge.net/index.html
 - http://en.wikipedia.org/wiki/Atari_8-bit_family
@@ -39,8 +43,9 @@ Usage:
   for joystick "start" and "select". For input mapping,
   see "iAtari800 ReadMe from Keripo.txt" in the
   "Misc/Docs.tar.gz" archive.
-- Tweak the refresh rate setting through the
-  "Emulators > iAtari800 > Refresh rate" menu item.
+- Tweak the refresh rate, scaling, smoothing and COP
+  setting through the "Emulators > iAtari800" menu for
+  better gameplay.
 
 
 Original:
@@ -56,8 +61,8 @@ Original:
 ZS Version:
 - Modder: Keripo
 - Type: Porter
-- Date: July 31, 2008
-- Version: 2.0.3 K1, B X.X
+- Date: Aug 3, 2008
+- Version: 2.0.3 K2, B X.X
 
 Modifications:
 - ported to iPodLinux, made ZS friendly
@@ -70,10 +75,11 @@ Modifications:
 Launch Module:
 - FastLaunches iAtari800 with Dog Daze Deluxe disk image
 - launch disk images from file browser
-- changeable refresh rate setting
+- changeable launch settings
 
 To do:
-- add pixel blending for smoother screen
+- none; port complete
+- wait for hotdog to be ported to Sansa
 
 Changelog:
 [keep untouched till beta release]

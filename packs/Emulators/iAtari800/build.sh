@@ -3,7 +3,7 @@
 # iAtari800 Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 31, 2008
+# Last updated: Aug 3, 2008
 #
 echo ""
 echo "==========================================="
@@ -36,7 +36,13 @@ cd ..
 echo "> Symlinking libraries..."
 DIR=$(pwd)
 LIBSDIR=../../../../libs
-LIBS="SDL ttk launch"
+# My hotdog port is better than my SDL port
+# but hotdog hasn't been ported to SansaLinux yet
+if [ $SANSA ]; then
+	LIBS="SDL ttk launch"
+else
+	LIBS="hotdog ttk launch"
+fi
 for lib in $LIBS
 do
 	if [ ! -d $LIBSDIR/$lib ]; then
@@ -53,9 +59,16 @@ echo "> Compiling..."
 cd compiling
 cd src
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
-chmod ugo+rwx ./configure-ipod.sh
-echo "  - Running configure script..."
-./configure-ipod.sh >> ../../build.log 2>&1
+if [ $SANSA ]; then
+	chmod ugo+rwx ./configure-ipod-sdl.sh
+	echo "  - Running configure script..."
+	echo "    (SDL target for SansaLinux)"
+	./configure-ipod-sdl.sh >> ../../build.log 2>&1
+else
+	chmod ugo+rwx ./configure-ipod-hotdog.sh
+	echo "  - Running configure script..."
+	./configure-ipod-hotdog.sh >> ../../build.log 2>&1
+fi
 echo "  - make..."
 make >> ../../build.log
 cd ..
