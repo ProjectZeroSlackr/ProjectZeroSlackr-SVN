@@ -1,4 +1,4 @@
-Last updated: Aug 3, 2008
+Last updated: Aug 4, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,9 @@ original/ported software.
 
 
 == Changelog ==
+
+Aug 4, 2008
+- Added Frotz
 
 Aug 3, 2008
 - Updated iAtari800 to K2;
