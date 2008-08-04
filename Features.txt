@@ -1,4 +1,4 @@
-Last updated: Aug 3, 2008
+Last updated: Aug 4, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -81,6 +81,10 @@ iPodMAME
   demo included
 
 == Media ==
+Frotz
+- Z-machine interpreter for playing text-based
+  adventure games
+- Infocom's Zork I, II and II included
 Hotdog-Demos
 - Collection of demos for displaying capabilities
   of the iPod-optimized "hotdog" graphics engine
