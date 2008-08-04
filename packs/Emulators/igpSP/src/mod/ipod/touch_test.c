@@ -66,7 +66,7 @@ static int ipod_get_keytouch()
 	int touch;
 	
 	touch = 0xff;
-	if (IPOD_HW_VER != 0x4 && IPOD_HW_VER != 0x3) { // mini 1G or 3G
+	if (IPOD_HW_VER != 0x4 && IPOD_HW_VER != 0x3) { // Not mini 1G or 3G
 		int in, st;
 		in = inl(0x7000C140);
 		st = ((in & 0xff000000) >> 24);
