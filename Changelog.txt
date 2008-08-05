@@ -1,4 +1,4 @@
-Last updated: Aug 4, 2008
+Last updated: Aug 5, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,10 @@ original/ported software.
 
 
 == Changelog ==
+
+Aug 5, 2008
+- Added ncurses library; incomplete as need launcher
+  with text input for tests
 
 Aug 4, 2008
 - Added Frotz
