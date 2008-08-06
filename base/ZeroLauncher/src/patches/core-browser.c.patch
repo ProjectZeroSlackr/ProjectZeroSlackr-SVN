@@ -6,7 +6,7 @@ Index: core/browser.c
  #include <errno.h>
  #include "pz.h"
  
-+int MPD_ACTIVE = 0;
++int MPD_ACTIVE = 0, HAVE_NCURSES = 0;
 +
  static void wait_on_sigchld(int signal)
  { wait(NULL); }

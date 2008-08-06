@@ -1,5 +1,5 @@
 /*
- * Last updated: July 22, 2008
+ * Last updated: Aug 6, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -36,6 +36,7 @@
 
 // PZ2 core functions - see pz.h for more
 extern int MPD_ACTIVE;
+extern int HAVE_NCURSES;
 extern void setup_sigchld_handler();
 extern void pz_set_backlight_timer(int sec);
 extern TWindow *open_directory_title(const char *filename, const char *title);

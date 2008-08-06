@@ -3,7 +3,7 @@
 # Frotz Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Aug 4, 2008
+# Last updated: Aug 6, 2008
 #
 echo ""
 echo "==========================================="
@@ -24,11 +24,18 @@ BUILDDIR=$(pwd)
 echo "> Extracting source..."
 tar zxf ../src/orig/frotz-2.43.tar.gz
 mv frotz-2.43 compiling
+# Apply ZeroSlackr custom patches
+echo "> Applying ZeroSlackr patches..."
+cd compiling
+for file in ../../src/patches/*; do
+	patch -p0 -t -i $file >> ../build.log
+done
+cd ..
 # Symlink the libraries
 echo "> Symlinking libraries..."
 DIR=$(pwd)
 LIBSDIR=../../../../libs
-LIBS="ttk launch"
+LIBS="ncurses ttk launch"
 for lib in $LIBS
 do
 	if [ ! -d $LIBSDIR/$lib ]; then
@@ -47,14 +54,16 @@ echo "  be logged to the 'build.log' file."
 echo "  If building fails, check the log file."
 cd compiling
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
-# The ncurses version didn't seem to work though it may be
-# because I did not port ncurses properly, thus the "dumb" target
-# I also have no idea if sound works as I haven't tried any games with sound
-make dumb CC=arm-uclinux-elf-gcc LIB=-elf2flt SOUND_DEFS=-DOSS_SOUND SOUND_DEV=/dev/dsp >> ../build.log 2>&1
+# I have no idea if sound works as I haven't tried any games with sound
+echo "  - building dumb target..."
+make dumb CC=arm-uclinux-elf-gcc CONFIG_DIR=/opt/Media/Frotz/Conf SOUND_DEFS=-DOSS_SOUND SOUND_DEV=/dev/dsp LIB=-elf2flt >> ../build.log 2>&1
+echo "  - building ncurses target..."
+make CC=arm-uclinux-elf-gcc CONFIG_DIR=/opt/Media/Frotz/Conf SOUND_DEFS=-DOSS_SOUND SOUND_DEV=/dev/dsp INCL=-I../ncurses/include LIB="-L../ncurses/lib -elf2flt" CURSES=-lncurses CURSES_DEF=-DUSE_NCURSES_H >> ../build.log 2>&1
 cd ..
 # Copy over compiled file
 echo "> Copying over compiled files..."
 mkdir compiled
+cp -rf compiling/frotz compiled/Frotz
 cp -rf compiling/dfrotz compiled/DFrotz
 # Launch module
 echo "> Building ZeroLauncher launch module..."
@@ -69,12 +78,13 @@ cp -rf ../src/release ./
 cd release
 # Files
 PACK=ZeroSlackr/opt/Media/Frotz
-cp -rf ../compiled/DFrotz $PACK/
+cp -rf ../compiled/* $PACK/
 cp -rf ../launcher/* $PACK/Launch/
 # Documents
 DOCS=$PACK/Misc/Docs
 cp -rf "../../ReadMe from Keripo.txt" $PACK/
 cp -rf ../../License.txt $PACK/
+cp -rf ../../src/patches $PACK/Misc/Patches
 FILES="AUTHORS BUGS ChangeLog COPYING DUMB frotz.lsm HOW_TO_PLAY README TODO"
 for file in $FILES
 do
@@ -86,6 +96,9 @@ cd release
 sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # Archive documents
 cd $PACK/Misc
+tar -cf Patches.tar Patches
+gzip --best Patches.tar
+rm -rf Patches
 tar -cf Docs.tar Docs
 gzip --best Docs.tar
 rm -rf Docs

@@ -1,5 +1,5 @@
 /*
- * Last updated: Aug 4, 2008
+ * Last updated: Aug 6, 2008
  * ~Keripo
  *  
  * Copyright (C) 2008 Keripo
@@ -21,17 +21,35 @@
 
 #include "browser-ext.h"
 
+#define LAUNCHER 1
+
 static PzModule *module;
-static const char *path, *dir;
+static PzConfig *config;
+static const char *path_frotz, *path_dfrotz, *dir;
+static const char * launcher_options[] = {"Frotz", "DFrotz", 0};
+
+static int ncurses_check(ttk_menu_item *item)
+{
+	return HAVE_NCURSES;
+}
 
 static PzWindow *load_file(const char *file)
 {
-	const char *const cmd[] = {
-		"Terminal.sh", file, NULL};
-	return new_terminal_window_with(
-		path,
-		(char *const *)cmd
-	);
+	if (ncurses_check(NULL) && pz_get_int_setting(config, LAUNCHER) == 0) {
+		const char *const cmd[] = {
+			"Terminal-frotz.sh", file, NULL};
+		return new_terminal_window_with(
+			path_frotz,
+			(char *const *)cmd
+		);
+	} else {
+		const char *const cmd[] = {
+			"Terminal-dfrotz.sh", file, NULL};
+		return new_terminal_window_with(
+			path_dfrotz,
+			(char *const *)cmd
+		);
+	}
 }
 
 static PzWindow *load_file_handler(ttk_menu_item *item)
@@ -51,15 +69,29 @@ static PzWindow *readme()
 		"/opt/Media/Frotz/ReadMe from Keripo.txt");
 }
 
+static void cleanup()
+{
+	pz_save_config(config);
+	pz_free_config(config);
+	config = 0;
+}
+
 static void init_launch() 
 {
-	module = pz_register_module("Frotz", 0);
-	path = "/opt/Media/Frotz/Launch/Terminal.sh";
+	module = pz_register_module("Frotz", cleanup);
+	path_frotz = "/opt/Media/Frotz/Launch/Terminal-frotz.sh";
+	path_dfrotz = "/opt/Media/Frotz/Launch/Terminal-dfrotz.sh";
 	dir = "/opt/Media/Frotz/Games";
+	
+	config = pz_load_config("/opt/Media/Frotz/Conf/Launcher.conf");
+	if (!pz_get_setting(config, LAUNCHER))
+		pz_set_int_setting (config, LAUNCHER, 0);
 	
 	pz_menu_add_stub_group("/Media/Frotz", "Games");
 	pz_menu_add_action_group("/Media/Frotz/~ReadMe", "#Info", readme);
 	pz_menu_add_action_group("/Media/Frotz/Games", "Browse", browse_games);
+	pz_menu_add_setting_group("/Media/Frotz/Launcher", "~Settings", LAUNCHER, config, launcher_options);
+	pz_get_menu_item("/Media/Frotz/Launcher")->visible = ncurses_check;
 	pz_menu_sort("/Media/Frotz");
 }
 

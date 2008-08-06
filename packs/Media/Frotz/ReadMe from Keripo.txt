@@ -1,4 +1,4 @@
-Last updated: Aug 4, 2008
+Last updated: Aug 6, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -11,18 +11,21 @@ Overview:
 Frotz
 - Frotz is a Z-Machine interpreter for playing Infocom
   games and other text-based adventure games
-- The ZeroSlackr version uses the "dumb" console-text
-  build with the terminal module as the ncurses target
-  did not seem to work (may be ncurses problem). Sound
-  support is added but not tested.
+- ZeroSlackr uses both the ncurses and dumb targets.
+  Sound support is added but not tested.
 For more information, see:
 - http://frotz.homeunix.org/frotz/
 - http://en.wikipedia.org/wiki/Z-machine
 
 Usage:
-- Terminal launch games through "Media > Frotz > Games"
+- Terminal launch games through "Media > Frotz > Games".
+- If ncurses is installed, change launcher settings via
+  "Media > Frotz > Launcher"; note that the ncurses
+  version has screen clearing issues - this is a known
+  problem with the terminal module.
 - Make sure to read each game's Readmes for understanding
-  their commands
+  their commands. Zork-like games use commands such as
+  "north, pick up item, open chest", etc.
 - For more games, see the Interactive Fiction Archive:
   http://www.ifarchive.org or http://wurb.com/if/index
 
@@ -39,20 +42,20 @@ Original:
 ZS Version:
 - Modder: Keripo
 - Type: Porter
-- Date: Aug 4, 2008
+- Date: Aug 6, 2008
 - Version: B X.X
 
 Modifications:
-- uses dumb build with terminal module
+- uses ncurses or dumb build with terminal module
 - added Zork I, II and III games from Infocom
   (http://www.infocom-if.org/downloads/downloads.html)
 
 Launch Module:
-- terminal launches DFrotz with game file
+- terminal launches Frotz/DFrotz with game file
+- setting to choose to launch with either Frotz or DFrotz
 
 To do:
 - none
-- fix ncurses and use ncurses port?
 
 Changelog:
 [keep untouched till beta release]

@@ -1,0 +1,6 @@
+Module: ncurses
+Display-name: ncurses
+Description: ncurses library.
+Category: Base
+Author: GNU Project
+Dependencies: terminal

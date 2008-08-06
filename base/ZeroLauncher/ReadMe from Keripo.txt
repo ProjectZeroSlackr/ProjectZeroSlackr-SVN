@@ -1,4 +1,4 @@
-Last updated: July 16, 2008
+Last updated: Aug 6, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -62,7 +62,7 @@ SansaLinux:
 ZS Version:
 - Modder: Keripo
 - Type: Mod and ZS Recompile
-- Date: July 16, 2008
+- Date: Aug 6, 2008
 - Version: B X.X
 
 Modifications:
@@ -71,6 +71,7 @@ Modifications:
 - custom default settings
 - ZeroSlackr sub-menus
 - MPD check via mpdc module
+- Ncurses check
 - loads modules with ".zl" extension and "PackInfo" file
 - loads modules from predefined locations
   (see "Launch/Launch.sh")
@@ -105,6 +106,9 @@ Add-ons:
   > overclock iPod to 78MHz for smoother playback
   > source:
     http://so2.sys-techs.com/ipod/mpdmodule-src-0.4.tar.gz
+- Ncurses:
+  > provides terminfo files and enables check
+  > see ncurses in /lib for source code
 - podread:
   > ascii file handler
   > general code cleanup and modifications to
@@ -114,6 +118,7 @@ Add-ons:
     http://ipodlinux.org/modules/podread/podread-0.0.1-src.tar.gz
 
 To do:
+- include select ncurses tests/demos?
 - replace with Insune (hopefully)
 - USB support for Sansas (see SansaLinux website)
 

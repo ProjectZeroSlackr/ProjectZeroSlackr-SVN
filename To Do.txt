@@ -1,4 +1,4 @@
-Last updated: July 31, 2008
+Last updated: Aug 6, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -17,7 +17,6 @@ Misc:
    official integration into iPodLinux)
 - Add a "Known Issues" and "Works on" sections to
   "ReadMe from Keripo.txt"s
-- Port DSLinux stuff
 - Use Insune instead of PZ2 for ZeroLauncher
 
 Fixes:

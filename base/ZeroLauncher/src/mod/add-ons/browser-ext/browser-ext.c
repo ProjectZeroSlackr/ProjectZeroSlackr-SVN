@@ -1,5 +1,5 @@
 /*
- * Last updated: July 25, 2008
+ * Last updated: Aug 6, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -104,17 +104,14 @@ PzWindow *toggle_backlight_window()
 // CPU speed
 // See browser-ext.h for postscalar constants
 #define outl(a, b) \
-	(*(volatile unsigned int *)(b) = (a)) \
-
+	(*(volatile unsigned int *)(b) = (a))
 #define inl(a) \
-	(*(volatile unsigned int *)(a)) \
-
+	(*(volatile unsigned int *)(a))
 #define CLOCK_SCALER	0x60006034
 #define CLOCK_POLICY	0x60006020
 #define RUN_CLK(x) (0x20000000 | ((x) <<  4))
 #define RUN_GET(x) ((inl(CLOCK_POLICY) & 0x0fffff8f) | RUN_CLK(x))
 #define RUN_SET(x) outl(RUN_GET(x), CLOCK_POLICY)
-
 void set_cpu_speed(int postscalar)
 {
 	outl(inl(0x70000020) | (1 << 30), 0x70000020);
@@ -165,11 +162,8 @@ static PzWindow *load_pz_exec_kill_handler(ttk_menu_item * item)
 }
 static PzWindow *terminal_exec_binary(const char *file)
 {
-	const char *f = get_filename(file);
-	const char *d = get_dirname(file);
-	chdir(d);
-	char script[256];
-	snprintf(script, 256, "cd %s; exec %s; exit", d, f);
+	static char script[256];
+	snprintf(script, 256, "stty erase \"^H\"; %s", file);
 	const char *const cmd[] = {"sh", "-c", script, NULL};
 	return new_terminal_window_with(
 		"/bin/sh",
@@ -182,14 +176,14 @@ static PzWindow *load_terminal_handler(ttk_menu_item * item)
 }
 
 // Mini-browser mod (code from browser module)
+#ifndef MAXPATHLEN
+#define MAXPATHLEN 512
+#endif
 typedef struct _Entry_mod
 {
 	char *name;
 	mode_t mode;
 } Entry_mod;
-#ifndef MAXPATHLEN
-#define MAXPATHLEN 512
-#endif
 TWidget *read_directory_mod(const char *dirname,
 	int check(const char *file),TWindow *handler(ttk_menu_item *item))
 {

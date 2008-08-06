@@ -3,7 +3,7 @@
 # ZeroLauncher Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 18, 2008
+# Last updated: Aug 6, 2008
 #
 echo ""
 echo "==========================================="
@@ -47,7 +47,7 @@ cd ..
 echo "> Symlinking libraries..."
 DIR=$(pwd)
 LIBSDIR=../../../libs
-LIBS="ttk launch"
+LIBS="ncurses ttk launch"
 for lib in $LIBS
 do
 	if [ ! -d $LIBSDIR/$lib ]; then
@@ -106,6 +106,8 @@ do
 done
 mv -f $PACK/Add-ons/ZeroLauncher $PACK/Launch
 mv -f $PACK/Add-ons/mpd $PACK/../MPD/Launch
+cp -rf ../ncurses/installed/opt/Base/Ncurses $PACK/../
+mv -f $PACK/Add-ons/ncurses $PACK/../Ncurses/Launch
 # Documents
 echo "> Copying over documents..."
 DOCS=$PACK/Misc/Docs
