@@ -1,4 +1,4 @@
-Last updated: Aug 5, 2008
+Last updated: Aug 6, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -10,9 +10,13 @@ original/ported software.
 
 == Changelog ==
 
+Aug 6, 2008
+- Fixed browser-ext's terminal launch
+- Added pre-built ncurses library
+- Added ncurses Frotz
+
 Aug 5, 2008
-- Added ncurses library; incomplete as need launcher
-  with text input for tests
+- Added ncurses library
 
 Aug 4, 2008
 - Added Frotz

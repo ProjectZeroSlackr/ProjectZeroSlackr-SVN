@@ -1,4 +1,4 @@
-Last updated: July 14, 2008
+Last updated: Aug 6, 2008
 ~Keripo
 
 Build individual libraries running
@@ -24,6 +24,9 @@ http://sourceforge.net/projects/libpng/
 
 libtiff source download from
 ftp://ftp.remotesensing.org/pub/libtiff/
+
+ncurses source download from
+http://ftp.gnu.org/pub/gnu/ncurses/
 
 SDL source download from
 http://www.libsdl.org/download-1.2.php
@@ -54,15 +57,6 @@ f258/calico_pirate/keripoani.gif). I
 do not remember where the Ren picture
 is from but its probably from an old
 screenshot I took of a doujinshi.
-
-Note that the ttk compiling does not
-"make install" and that used libraries
-should be symlinked to the build
-directory when compiling applications.
-Also, if you are using Cygwin, ttk will
-automatically be patched since SDL
-does build workingly with Cygwin (e.g.
-"sdl-config" doesn't work on Cygwin).
 
 The "pz0" libraries should not be touched
 since they are precompiled (I've long

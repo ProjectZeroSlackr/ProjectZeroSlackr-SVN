@@ -1,0 +1,15 @@
+--- src/curses/ux_init.c	2002-10-27 20:55:57.000000000 -0400
++++ src/curses/ux_init.c	2008-08-04 13:11:15.968750000 -0400
+@@ -139,10 +139,12 @@
+     char *home;
+     char configfile[FILENAME_MAX + 1];
+ 
++	#if 0
+     if ((getuid() == 0) || (geteuid() == 0)) {
+         printf("I won't run as root!\n");
+         exit(1);
+     }
++	#endif
+ 
+     if ((home = getenv("HOME")) == NULL) {
+         printf("Hard drive on fire!\n");
