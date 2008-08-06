@@ -58,7 +58,7 @@ export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/b
 echo "  - building dumb target..."
 make dumb CC=arm-uclinux-elf-gcc CONFIG_DIR=/opt/Media/Frotz/Conf SOUND_DEFS=-DOSS_SOUND SOUND_DEV=/dev/dsp LIB=-elf2flt >> ../build.log 2>&1
 echo "  - building ncurses target..."
-make CC=arm-uclinux-elf-gcc CONFIG_DIR=/opt/Media/Frotz/Conf SOUND_DEFS=-DOSS_SOUND SOUND_DEV=/dev/dsp INCL=-I../ncurses/include LIB="-L../ncurses/lib -elf2flt" CURSES=-lncurses CURSES_DEF=-DUSE_NCURSES_H >> ../build.log 2>&1
+make CC=arm-uclinux-elf-gcc CONFIG_DIR=/opt/Media/Frotz/Conf SOUND_DEFS=-DOSS_SOUND SOUND_DEV=/dev/dsp INCL="-I../ncurses/include -I../ncurses/include/ncurses" LIB="-L../ncurses/lib -elf2flt" CURSES=-lncurses CURSES_DEF=-DUSE_NCURSES_H >> ../build.log 2>&1
 cd ..
 # Copy over compiled file
 echo "> Copying over compiled files..."
