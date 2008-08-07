@@ -1,5 +1,5 @@
 /*
- * Last updated: July 25, 2008
+ * Last updated: Aug 7, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -129,6 +129,7 @@ static void init_db()
 
 void init_mpd()
 {
+	set_cpu_speed(CPU_78MHz); // Overclock
 	switch (vfork()) {
 		case 0:
 			execl(path, path, conf, NULL);
@@ -150,6 +151,7 @@ void cleanup_mpd()
 	pz_free_config(config);
 	config = 0;
 	send_command("kill");
+	set_cpu_speed(CPU_72MHz);
 	MPD_ACTIVE = 0;
 }
 
@@ -174,8 +176,6 @@ static void init()
 		init_mpd();
 	}
 	pz_menu_sort("/Music");
-	
-	set_cpu_speed(CPU_78MHz); // Overclock
 }
 
 PZ_MOD_INIT(init)

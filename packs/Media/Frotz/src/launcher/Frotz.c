@@ -1,5 +1,5 @@
 /*
- * Last updated: Aug 6, 2008
+ * Last updated: Aug 7, 2008
  * ~Keripo
  *  
  * Copyright (C) 2008 Keripo
@@ -87,7 +87,7 @@ static void init_launch()
 	if (!pz_get_setting(config, LAUNCHER))
 		pz_set_int_setting (config, LAUNCHER, 0);
 	
-	pz_menu_add_stub_group("/Media/Frotz", "Games");
+	pz_menu_add_stub_group("/Media/Frotz", "Text Games");
 	pz_menu_add_action_group("/Media/Frotz/~ReadMe", "#Info", readme);
 	pz_menu_add_action_group("/Media/Frotz/Games", "Browse", browse_games);
 	pz_menu_add_setting_group("/Media/Frotz/Launcher", "~Settings", LAUNCHER, config, launcher_options);

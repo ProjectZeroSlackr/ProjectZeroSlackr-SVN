@@ -28,9 +28,6 @@ For more information, see:
 
 Usage:
 - Run the various demos in "Media > Hotdog-Demos".
-- Most demos exit using the hold switch or the menu
-  button; prim-demo doesn't have an exit function at
-  the moment and requires a force reboot.
 
 
 hotdog demos:
@@ -52,7 +49,7 @@ hotdog-ex:
 ZS Version:
 - Modder: Keripo
 - Type: Mod and ZS Recompile
-- Date: Apr 30, 2008
+- Date: Aug 7, 2008
 - Version: B X.X
 
 Modifications:
@@ -60,6 +57,7 @@ Modifications:
 
 Launch Module:
 - launches individual demos
+- view pictures from file browser via imagebits
 
 To do:
 - none; write own demos maybe

@@ -1,5 +1,5 @@
 /*
- * Last updated: July 27, 2008
+ * Last updated: Aug 7, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
 		exit(1);
 	} else {
 		ipod_set_cpu_speed(speed);
-		printf("CPU speed set to %iMHz.\n", speed);
+		printf("CPU speed set to %iMHz\n", speed);
 		exit(0);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Last updated: July 27, 2008
+ * Last updated: Aug 7, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -33,7 +33,7 @@ static PzWindow *exec_demo(const char *folder, const char *binary)
 		binary,
 		NULL
 	};
-	pz_execv_kill(
+	pz_execv(
 		path,
 		(char *const *)cmd
 	);
@@ -80,7 +80,7 @@ static int check_ext(const char *file)
 static PzWindow *load_file(const char *file)
 {
 	const char *const cmd[] = {"Imagebits.sh", file, NULL};
-	pz_execv_kill(
+	pz_execv(
 		path_imgbits,
 		(char *const *)cmd
 	);
@@ -105,24 +105,24 @@ static PzWindow *readme()
 
 static void init_launch() 
 {
-	module = pz_register_module ("Hotdog-Demos", 0);
+	module = pz_register_module("Hotdog-Demos", 0);
 	path = "/opt/Media/Hotdog-Demos/Launch/Launch.sh";
 	path_imgbits = "/opt/Media/Hotdog-Demos/Launch/Imagebits.sh";
 	dir_imgbits = "/opt/Media/Hotdog-Demos/Hotdog-EX/PNGs";
 	
-	pz_menu_add_stub_group ("/Media/Hotdog-Demos", "Demoscene");
-	pz_menu_add_action_group ("/Media/Hotdog-Demos/ReadMe", "#Info", readme);
+	pz_menu_add_stub_group("/Media/Hotdog-Demos", "Demos");
+	pz_menu_add_action_group("/Media/Hotdog-Demos/ReadMe", "#Info", readme);
 	// hotdog demos
-	pz_menu_add_action_group ("/Media/Hotdog-Demos/HD-Pong", "Games", hd_pong);
-	pz_menu_add_action_group ("/Media/Hotdog-Demos/Anim-Demo", "Interactive", anim_demo);
-	pz_menu_add_action_group ("/Media/Hotdog-Demos/Select-Demo", "Interactive", select_demo);
-	pz_menu_add_action_group ("/Media/Hotdog-Demos/Prim-Demo", "Static", prim_demo);
+	pz_menu_add_action_group("/Media/Hotdog-Demos/HD-Pong", "Interactive", hd_pong);
+	pz_menu_add_action_group("/Media/Hotdog-Demos/Anim-Demo", "Interactive", anim_demo);
+	pz_menu_add_action_group("/Media/Hotdog-Demos/Select-Demo", "Interactive", select_demo);
+	pz_menu_add_action_group("/Media/Hotdog-Demos/Prim-Demo", "Static", prim_demo);
 	// hotdog-ex demos
-	pz_menu_add_action_group ("/Media/Hotdog-Demos/Bouncy", "Interactive", bouncy);
-	pz_menu_add_action_group ("/Media/Hotdog-Demos/Bolly", "Static", bolly);
-	pz_menu_add_action_group ("/Media/Hotdog-Demos/Spinner", "Static", spinner);
-	pz_menu_add_action_group ("/Media/Hotdog-Demos/Imagebits", "Graphics", browse_imagebits);
-	pz_menu_sort ("/Media/Hotdog-Demos");
+	pz_menu_add_action_group("/Media/Hotdog-Demos/Bouncy", "Interactive", bouncy);
+	pz_menu_add_action_group("/Media/Hotdog-Demos/Bolly", "Static", bolly);
+	pz_menu_add_action_group("/Media/Hotdog-Demos/Spinner", "Static", spinner);
+	pz_menu_add_action_group("/Media/Hotdog-Demos/Imagebits", "Static", browse_imagebits);
+	pz_menu_sort("/Media/Hotdog-Demos");
 }
 
 PZ_MOD_INIT (init_launch)

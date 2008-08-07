@@ -1,5 +1,5 @@
 /*
- * Last updated: July 26, 2008
+ * Last updated: Aug 7, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -30,6 +30,16 @@ static int check_ext(const char *file)
 	return check_file_ext(file, ".sbg");
 }
 
+static int mpd_check()
+{
+	if (MPD_ACTIVE) {
+		pz_error("MPD is active. Please kill MPD first before running %s", "SBaGen");
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
 static void warning()
 {
 	pz_warning("WARNING! %s is a binaural beat generator and may have adverse effects on your brain!", "SBaGen");
@@ -40,12 +50,14 @@ static void warning()
 
 static PzWindow *load_file(const char *file)
 {
+	if (mpd_check())
+		return NULL;
 	warning();
 	const char *const cmd[] = {"Launch.sh", file, NULL};
-	pz_execv_kill(
+	pz_execv(
 		path,
 		(char *const *)cmd
-	);
+		);
 	return NULL;
 }
 

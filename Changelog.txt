@@ -1,4 +1,4 @@
-Last updated: Aug 6, 2008
+Last updated: Aug 7, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,9 @@ original/ported software.
 
 
 == Changelog ==
+
+Aug 7 2008
+- Various fixes, cleanups and resorting
 
 Aug 6, 2008
 - Fixed browser-ext's terminal launch

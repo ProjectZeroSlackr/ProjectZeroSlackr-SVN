@@ -1,5 +1,5 @@
 /*
- * Last updated: July 26, 2008
+ * Last updated: Aug 7, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -38,7 +38,7 @@ static PzWindow *readme()
 static void init_launch() 
 {
 	module = pz_register_module ("nano", 0);
-	pz_menu_add_stub_group("/Media/nano", "Demoscene");
+	pz_menu_add_stub_group("/Media/nano", "Demos");
 	pz_menu_add_action_group("/Media/nano/#FastLaunch", "#FastLaunch", fastlaunch);
 	pz_menu_add_action_group("/Media/nano/~ReadMe", "#FastLaunch", readme);
 	pz_menu_sort("/Media/nano");

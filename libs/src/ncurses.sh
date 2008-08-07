@@ -3,7 +3,7 @@
 # ncurses Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Aug 6, 2008
+# Last updated: Aug 7, 2008
 #
 # Because ncurses takes way too long to compile
 SKIP=1
@@ -16,6 +16,9 @@ if [ $SKIP == 1 ]; then
 	echo "[ncurses takes way too long to compile"
 	echo " from source - using pre-built files]"
 	cp -rf src/ncurses/pre-built ncurses
+	cd ncurses/include
+	ln -s . ncurses
+	cd ../..
 	echo ""
 	echo "==========================================="
 	exit
