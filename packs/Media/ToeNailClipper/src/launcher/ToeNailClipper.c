@@ -1,5 +1,5 @@
 /*
- * Last updated: July 26, 2008
+ * Last updated: Aug 7, 2008
  * ~Keripo
  *  
  * Copyright (C) 2007 Keripo
@@ -41,7 +41,7 @@ static PzWindow *readme()
 static void init_launch() 
 {
 	module = pz_register_module("ToeNailClipper", 0);
-	pz_menu_add_stub_group("/Media/ToeNailClipper", "Games");
+	pz_menu_add_stub_group("/Media/ToeNailClipper", "Text Games");
 	pz_menu_add_action_group("/Media/ToeNailClipper/#Terminal launch", "#FastLaunch", new_toenailclipper_window);
 	pz_menu_add_action_group("/Media/ToeNailClipper/~ReadMe", "#FastLaunch", readme);
 	pz_menu_sort("/Media/ToeNailClipper");

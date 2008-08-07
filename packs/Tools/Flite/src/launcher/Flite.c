@@ -189,7 +189,7 @@ static void init_launch()
 	if (pz_get_int_setting(config, FLITE_STARTUP) == 1)
 		init_flite();
 	
-	pz_menu_add_stub_group("/Tools/Flite", "Accessibility");
+	pz_menu_add_stub_group("/Tools/Flite", "Utilities");
 	pz_menu_add_action_group("/Tools/Flite/~ReadMe", "#Info", readme);
 	pz_menu_add_action_group("/Tools/Flite/Text", "Browse", browse_texts);
 	pz_get_menu_item("/Tools/Flite/Text")->visible = is_active;

@@ -1,4 +1,4 @@
-Last updated: Aug 6, 2008
+Last updated: Aug 7, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -32,16 +32,16 @@ Emulators:
 Tools:
 - LET Basic
 - Python
-- NCurses
-- iPod Toolchain
 - Lua
 
 Media:
 - iPod Midi Player
+- TinyGL demos
 
 Zillae:
 - PalmZilla
 - iZilla
+- Insune
 
 Misc:
 - iLoadz
@@ -49,13 +49,11 @@ Misc:
 
 Attempt:
 - iNeoGeo
-- iNES
+- InfoNES
 - Clone Keen
-- bb
-- aalib
 
 To port:
-- Ren'Py
-- DSLinux apps
+- Nethack
 - BSD Games
-- dc
+- Ren'Py
+- OpenBOR

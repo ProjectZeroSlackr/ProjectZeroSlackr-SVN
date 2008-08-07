@@ -1,5 +1,5 @@
 /*
- * Last updated: July 26, 2008
+ * Last updated: Aug 7, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -51,10 +51,22 @@ static int check_ext(const char *file)
 	return 0;
 }
 
+static int mpd_check()
+{
+	if (MPD_ACTIVE) {
+		pz_error("MPD is active. Please kill MPD first before running %s", "SBaGen");
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
 static PzWindow *load_file(const char *file)
 {
+	if (mpd_check())
+		return NULL;
 	const char *const cmd[] = {"Launch.sh", file, NULL};
-	pz_execv_kill(
+	pz_execv(
 		path,
 		(char *const *)cmd
 		);
