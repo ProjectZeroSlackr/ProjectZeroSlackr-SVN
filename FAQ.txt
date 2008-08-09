@@ -1,4 +1,4 @@
-Last updated: July 23, 2008
+Last updated: Aug 9, 2008
 ~Keripo
 
 
@@ -93,10 +93,28 @@ A: Using the "FastLaunch" option runs the application's
    KWrite on Linux, Notepad++ on Windows (note that Notepad/
    Wordpad will NOT work so do not use them!).   
 
+Q: A lot of times when I launch something in the console I
+   only see a blank screen with one line printed on the top.
+   What happened to all the other text?
+A: This is a known console issue. The old sash shell did not
+   have this problem but the new (and generally better)
+   minix shell will only show the rest of the lines once the
+   entire screen is filled (which often it is not unless a
+   lot more text is printed). One workaround to this is to
+   scroll using your scroll wheel a lot, printing out lots
+   of 'r's and 'l's, allowing you to fill up the screen and
+   hopefully catch a glimpse of what else was printed. This
+   issue also prevents me from porting/adding many ncurses
+   games and relying on the terminal module instead. I have
+   no idea how to fix this issue unfortunately, so please
+   bear with it.
+
 Q: Help, I get a "Can't write to log on /dev/tty5!" every
    time I boot into ZeroSlackr! How can I fix of this?
 A: This is a busybox-related issue but not one affecting
    anything (its just a warning message that can be ignored).
+   More text is actually printed but you only see that one
+   line due to the minix bug discribed in the above question.
    I might recompile busybox one day with the message
    removed, but later.
 

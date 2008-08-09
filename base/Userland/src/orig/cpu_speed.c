@@ -1,5 +1,5 @@
 /*
- * Last updated: Aug 7, 2008
+ * Last updated: Aug 8, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -22,11 +22,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define outl(a, b)		(*(volatile unsigned int *)(b) = (a))
+#define inl(a)			(*(volatile unsigned int *)(a))
+
 #define CLOCK_SCALER	0x60006034
 #define CLOCK_POLICY	0x60006020
-#define RUN_CLK(x) (0x20000000 | ((x) <<  4))
-#define RUN_GET(x) ((inl(CLOCK_POLICY) & 0x0fffff8f) | RUN_CLK(x))
-#define RUN_SET(x) outl(RUN_GET(x), CLOCK_POLICY)
+#define RUN_CLK(x)		(0x20000000 | ((x) <<  4))
+#define RUN_GET(x)		((inl(CLOCK_POLICY) & 0x0fffff8f) | RUN_CLK(x))
+#define RUN_SET(x)		outl(RUN_GET(x), CLOCK_POLICY)
+
+
 
 static void ipod_set_cpu_speed(int speed)
 {
@@ -41,9 +46,9 @@ static void ipod_set_cpu_speed(int speed)
 
 static void print_help()
 {
-	printf("Usage: cpu [SPEED]\n");
+	printf("Usage: cpu_speed [SPEED]\n");
 	printf("SPEED should be a multiple of 3 between 45 and 81 inclusively.\n");
-	printf("The Apple OS default is 66MHz and the iPodLinux default is 75MHz.\n");
+	printf("The Apple OS default is 66MHz, ZeroSlackr's default is 72MHz.\n");
 	printf("To prevent your iPod from overheating, avoid extended usage at 78MHz or higher.\n");
 }
 
