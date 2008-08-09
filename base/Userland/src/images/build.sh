@@ -3,7 +3,7 @@
 # Userland Image Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 17, 2008
+# Last updated: Aug 8, 2008
 #
 echo ""
 echo "==========================================="
@@ -43,7 +43,10 @@ tar -xzf ../../mod/zeroslackr-userland-mod.tar.gz
 echo "> Applying loop-mount modifications..."
 cp -rf ../../mod/loop-mount.sh etc
 cd etc
+chmod ugo+rwx ./loop-mount.sh
 ./loop-mount.sh
+cd ../bin
+chmod ugo+rwx *
 cd ../..
 echo "> Duplicating content..."
 cp -rf ipl-8mb/* ipl-16mb

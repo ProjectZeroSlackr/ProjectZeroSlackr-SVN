@@ -4,7 +4,7 @@
 
 # Format: $binary $romset_name
 killall -15 ZeroLauncher >> /dev/null 2>&1
-cpu 75
+cpu_speed 75
 if [ -z "$1" ]; then
 	cd /opt/Emulators/iPodMAME
 	exec /opt/Emulators/iPodMAME/iPodMAME aarmada

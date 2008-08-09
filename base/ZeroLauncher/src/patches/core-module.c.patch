@@ -14,8 +14,8 @@ Index: core/module.c
  #ifdef IPOD
 -    char *confdir = "/etc/podzilla";
 -    char *moddir = "/etc/podzilla/modules";
-+    char *confdir = "/usr/local";
-+    char *moddir = "/usr/local/etc";
++    char *confdir = "/sandbox";
++    char *moddir = "/sandbox/packs";
  #else
      char *confdir = malloc( MAXPATHLEN + 10 );
      char *moddir = malloc( MAXPATHLEN + 20 );

@@ -1,4 +1,4 @@
-Last updated: July 27, 2008
+Last updated: Aug 9, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -43,8 +43,7 @@ Usage:
   will also be accessible just like binaries in "/bin".
 - New schemes should be placed into "/usr/share/schemes" and
   new fonts should be placed into "/usr/share/fonts".
-- For path length reasons, all PZ2 module configurations are
-  saved in "/usr/local/etc".
+- All PZ2 module configurations are saved in "/sandbox".
 
 
 Original:
@@ -65,7 +64,7 @@ SansaLinux:
 ZS Version:
 - Modder: Keripo
 - Type: Recreated (except busybox binary)
-- Date: July 27, 2008
+- Date: Aug 9, 2008
 - Version: B X.X
 
 Modifications:
@@ -76,33 +75,31 @@ Modifications:
 - modified loop-mount userland:
   (see /docs/userland/Mod/*)
   - modified rc file (keeps launching ZeroLauncher)
-  - getLoader2AutoExec
-  - symlinked "cd" to minix and "killall" to busybox
-  - modified Podzilla0-Lite
-  - symlinked podzilla, zerolauncher and mpd binaries
+  - added getLoader2AutoExec, modified Podzilla0-Lite,
+    cpu_speed and backlight binaries to /bin
+  - added /sandbox
   - symlinks:
-	/bin/mpd -> /opt/Base/MPD/MPD-ke
-	/bin/podzilla -> /bin/zerolauncher
-	/bin/zerolauncher
-	  -> /opt/Base/ZeroLauncher/ZeroLauncher
-	/root -> /mnt/ZeroSlackr
-	/opt -> /root/opt
-	/usr -> /root/usr
-	/etc/rc.d -> /root/etc/rc.d
+    /bin/cd -> minix
+    /bin/killall -> busybox
+    /bin/sed -> busybox
+    /bin/mpd -> /opt/Base/MPD/MPD-ke
+    /bin/podzilla -> /bin/zerolauncher
+    /bin/zerolauncher
+      -> /opt/Base/ZeroLauncher/ZeroLauncher
+    /root -> /mnt/ZeroSlackr
+    /opt -> /root/opt
+    /usr -> /root/usr
+    /etc/rc.d -> /root/etc/rc.d
   - added fonts:
     (separate "font.lst" file for PZ0 based zillae)
-	- Encyclopodia:
-	  http://sourceforge.net/project/showfiles.php?group_id=146648
+    - Encyclopodia:
+      http://sourceforge.net/project/showfiles.php?group_id=146648
     - Snap: http://www.dansfloyd.com/floydzilla.html
     - other fonts from wiki scheme downloads
   - added schemes:
-    - Moonlight by Keripo
-    - Bloodcross by Keripo
-    - Halloween by Keripo (won't fix)
+    - 5-y.2-d, Moonlight, Bloodcross and Halloween by Keripo
     - schemes still on scheme page (has version #s)
     - schemes uploaded to wiki (has no version #, some repacked)
-  - added cpu and backlight binaries for controling CPU speed
-    and backlight/brightness
 
 To do:
 - none

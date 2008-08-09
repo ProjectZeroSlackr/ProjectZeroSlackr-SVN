@@ -1,5 +1,5 @@
 /*
- * Last updated: Aug 6, 2008
+ * Last updated: Aug 8, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -163,7 +163,8 @@ static PzWindow *load_pz_exec_kill_handler(ttk_menu_item * item)
 static PzWindow *terminal_exec_binary(const char *file)
 {
 	static char script[256];
-	snprintf(script, 256, "stty erase \"^H\"; %s", file);
+	snprintf(script, 256, "stty erase \"^H\"; %s;"
+		"read -p \"Press any key to exit...\"; exit", file);
 	const char *const cmd[] = {"sh", "-c", script, NULL};
 	return new_terminal_window_with(
 		"/bin/sh",
