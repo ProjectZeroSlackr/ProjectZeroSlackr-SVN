@@ -1,0 +1,6 @@
+Module: Moon-Buggy
+Display-name: Moon-Buggy
+Description: Fun little moon buggy driving and jumping game.
+Category: Media
+Author: Jochen Voss
+Dependencies: terminal

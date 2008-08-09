@@ -1,4 +1,4 @@
-Last updated: Aug 4, 2008
+Last updated: Aug 9, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -93,6 +93,8 @@ iDoom/hDoom
 - Hacked for PWAD support through using FreeDoom
 - Shareware IWAD (doom1.wad) and FreeDoom DeathMatch IWAD
   (freedm.wad) included
+Moon-Buggy
+- Simple text-based moon buggy driving/jumping game
 MV Player (Movie Player)
 - Compressed video player for iPodLinux
 - Video files must be converted in a special
@@ -117,7 +119,7 @@ TinySID
 - SID player for playback of Commodore 64 music
 - Sample Freeze SID file included
 ToeNailClipper
-- Simple console-based virtual toenail-clipping game
+- Simple text-based virtual toenail-clipping game
 XMP (Extended Module Player)
 - Module player supporting numerous formats
 - Autumn Depressions and Anticipation modules included
