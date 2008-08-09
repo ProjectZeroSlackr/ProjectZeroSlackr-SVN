@@ -1,4 +1,4 @@
-Last updated: Aug 7, 2008
+Last updated: Aug 9, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -53,7 +53,15 @@ Attempt:
 - Clone Keen
 
 To port:
-- Nethack
 - BSD Games
 - Ren'Py
 - OpenBOR
+
+Abandoned ports: (these worked but...)
+- Nethack (text-based dungeon game)
+  - screen too small
+  - file locking screws things up
+- Neko Project II (PC-98 emulator)
+  - emulation way too slow
+  - no method of text input
+

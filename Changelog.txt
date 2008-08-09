@@ -15,6 +15,7 @@ Aug 9, 2008
 - Moved backlight and cpu_speed binaries to userland
 - Added back /sandbox, store module confs there
 - Added minix screen printing bug to FAQ
+- Added Moon-buggy ncurses game
 
 Aug 7 2008
 - Various fixes, cleanups and resorting
