@@ -1,4 +1,4 @@
-Last updated: Aug 9, 2008
+Last updated: Aug 11, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -115,6 +115,9 @@ Podfather
 SBaGen
 - Binaural beat player, can play converted iDoser files
 - Sample beats included
+TinyGL-Demos
+- Collection of demos for displaying capabilities
+  of the ported TinyGL 3D-graphics engine
 TinySID
 - SID player for playback of Commodore 64 music
 - Sample Freeze SID file included

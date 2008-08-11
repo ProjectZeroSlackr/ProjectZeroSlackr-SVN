@@ -102,7 +102,7 @@ static void init_launch()
 	
 	browser_extension.name = N_("Open with SBaGen");
 	browser_extension.makesub = load_file_handler;
-	pz_browser_add_action (check_ext, &browser_extension);
+	pz_browser_add_action(check_ext, &browser_extension);
 	pz_browser_set_handler(check_ext, load_file);
 }
 

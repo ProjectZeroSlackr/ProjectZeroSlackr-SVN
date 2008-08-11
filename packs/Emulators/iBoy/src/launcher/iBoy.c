@@ -25,7 +25,7 @@ static PzModule *module;
 static ttk_menu_item browser_extension;
 static const char *path, *dir;
 
-static int check_ext(const char* file)
+static int check_ext(const char *file)
 {
 	return (
 		check_file_ext(file, ".gbc") ||

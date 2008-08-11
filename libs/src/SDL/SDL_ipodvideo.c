@@ -48,6 +48,11 @@
 
 #define _THIS SDL_VideoDevice *this
 
+#ifdef SANSA
+static SDL_Surface *SDL_VideoSurface_Rotated;
+static int rotate[176 * 220];
+#endif
+
 static int iPod_VideoInit (_THIS, SDL_PixelFormat *vformat);
 static SDL_Rect **iPod_ListModes (_THIS, SDL_PixelFormat *format, Uint32 flags);
 static SDL_Surface *iPod_SetVideoMode (_THIS, SDL_Surface *current, int width, int height, int bpp, Uint32 flags);
@@ -405,8 +410,7 @@ static SDL_Surface *iPod_SetVideoMode (_THIS, SDL_Surface *current, int width, i
 	Rmask = Gmask = Bmask = 0;
     }
 
-    current = SDL_VideoSurface = SDL_CreateRGBSurface (0, width + 4, height, (bpp<8)?8:bpp, Rmask, Gmask, Bmask, 0);
-    current->w = width;
+    current = SDL_VideoSurface = SDL_CreateRGBSurface (0, width + 4, height, (bpp<8)?8:bpp, Rmask, Gmask, Bmask, 0);    current->w = width;
     if (bpp <= 8)
         current->pitch = (lcd_width + 3) & ~3;
     else
@@ -423,6 +427,15 @@ static SDL_Surface *iPod_SetVideoMode (_THIS, SDL_Surface *current, int width, i
 	    }
 	}
     }
+
+#ifdef SANSA
+    SDL_VideoSurface_Rotated = SDL_VideoSurface;
+	SDL_VideoSurface_Rotated->refcount++;
+	int x, y;
+	for (y = 0; y < 220; y++)
+		for (x = 0; x < 176; x++)
+			rotate[x + y * 220] = y + (176 - x) * 220;
+#endif
 
     return current;
 }
@@ -555,8 +568,11 @@ extern void lcd_copy_buffer_rect(fb_data *dst, const fb_data *src,
 
 static void C_update_display(int mx, int my)
 {
-   int x,y;
-   fb_data *addr = (fb_data *)SDL_VideoSurface->pixels;
+   int i;
+   for (i = 0; i < 176 * 220)
+       SDL_VideoSurface_Rotated->pixels[i] = SDL_VideoSurface->pixels[rotate[i]];
+
+   fb_data *addr = (fb_data *)SDL_VideoSurface_Rotated->pixels;
    fb_data *ipod_scrDriver;
 
    ipod_scrDriver = LCD_FB_BASE_REG & 0x0fffffff;
