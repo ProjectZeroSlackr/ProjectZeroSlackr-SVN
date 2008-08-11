@@ -1,4 +1,4 @@
-Last updated: Aug 9, 2008
+Last updated: Aug 11, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,9 @@ original/ported software.
 
 
 == Changelog ==
+
+Aug 11, 2008
+- Added TinyGL lib and demos
 
 Aug 9, 2008
 - Renamed cpu binary to cpu_speed to avoid conflicts

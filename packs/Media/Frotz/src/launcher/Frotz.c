@@ -1,5 +1,5 @@
 /*
- * Last updated: Aug 7, 2008
+ * Last updated: Aug 9, 2008
  * ~Keripo
  *  
  * Copyright (C) 2008 Keripo
@@ -54,12 +54,13 @@ static PzWindow *load_file(const char *file)
 
 static PzWindow *load_file_handler(ttk_menu_item *item)
 {
-	return load_file(item->data);
+	return load_file((const char *)item->data); // Recast for browser_mod
 }
 
 static PzWindow *browse_games()
 {
-	return open_directory_title_mod(dir, "Z-Machine Games",
+	return open_directory_title_mod(
+		dir, "Z-Machine Games",
 		check_is_file, load_file_handler);
 }
 

@@ -1,5 +1,5 @@
 /*
- * Last updated: Aug 7, 2008
+ * Last updated: Aug 9, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -22,6 +22,7 @@
 #include "browser-ext.h"
 
 static PzModule *module;
+static ttk_menu_item browser_extension;
 static const char *path, *path_imgbits, *dir_imgbits;
 
 // Common
@@ -123,6 +124,10 @@ static void init_launch()
 	pz_menu_add_action_group("/Media/Hotdog-Demos/Spinner", "Static", spinner);
 	pz_menu_add_action_group("/Media/Hotdog-Demos/Imagebits", "Static", browse_imagebits);
 	pz_menu_sort("/Media/Hotdog-Demos");
+	
+	browser_extension.name = N_("View with Imagebits");
+	browser_extension.makesub = load_file_handler;
+	pz_browser_add_action(check_ext, &browser_extension);
 }
 
 PZ_MOD_INIT (init_launch)
