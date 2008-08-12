@@ -26,9 +26,9 @@ export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/b
 echo "  - Running configure script..."
 ./configure --prefix=$(pwd) >> build.log
 echo "  - make install..."
-make install CC=arm-uclinux-elf-gcc LDFLAGS="-L. libz.a -elf2flt" AR=arm-uclinux-elf-ar RANLIB=arm-uclinux-elf-ranlib EXE="" >> build.log
+make install CC=arm-uclinux-elf-gcc LDFLAGS="-L. libz.a -elf2flt" RANLIB=arm-uclinux-elf-ranlib EXE="" >> build.log
 echo "  - make minigzip..."
-make minigzip CC=arm-uclinux-elf-gcc LDFLAGS="-L. libz.a -elf2flt" AR=arm-uclinux-elf-ar RANLIB=arm-uclinux-elf-ranlib EXE="" >> build.log
+make minigzip CC=arm-uclinux-elf-gcc LDFLAGS="-L. libz.a -elf2flt" RANLIB=arm-uclinux-elf-ranlib EXE="" >> build.log
 echo ""
 cd ..
 LIB=zlib/lib/libz.a
