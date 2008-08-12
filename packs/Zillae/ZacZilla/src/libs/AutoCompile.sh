@@ -3,7 +3,7 @@
 # ZacZilla Library Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Feb 21, 2008
+# Last updated: Aug 12, 2008
 #
 # Basically straight from the ZacZilla wiki page:
 # http://ipodlinux.org/ZacZilla/Building
@@ -42,7 +42,6 @@ echo "  - Compiling mp4ff"
 tar zxf src/mp4ff.tar.gz >> logs/build-mp4ff.log 2>&1
 cd mp4ff
 mv src ipod
-cp -dpR ipod ipod-x11
 cd ipod
 make IPOD=1 >> ../../logs/build-mp4ff.log 2>&1
 cd ..
