@@ -1,4 +1,4 @@
-Last updated: Aug 11, 2008
+Last updated: Aug 13, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,12 @@ original/ported software.
 
 
 == Changelog ==
+
+Aug 13, 2008
+- Added hWolf3D
+
+Aug 12, 2008
+- Third and final stable snapshot pre-release
 
 Aug 11, 2008
 - Added TinyGL lib and demos

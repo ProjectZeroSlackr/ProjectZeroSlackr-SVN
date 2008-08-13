@@ -1,4 +1,4 @@
-Last updated: Aug 11, 2008
+Last updated: Aug 13, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -88,8 +88,13 @@ Frotz
 Hotdog-Demos
 - Collection of demos for displaying capabilities
   of the iPod-optimized "hotdog" graphics engine
+hWolf3D
+- Port of the classical id game Wolfenstein 3D and its
+  prequel Spear of Destiny
+- Wolfenstein 3D shareware files and Spear of Destiny demo
+  files included
 iDoom/hDoom
-- Port of the classical ID game Doom
+- Port of the classical id game Doom
 - Hacked for PWAD support through using FreeDoom
 - Shareware IWAD (doom1.wad) and FreeDoom DeathMatch IWAD
   (freedm.wad) included

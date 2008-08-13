@@ -1,4 +1,4 @@
-Last updated: Jun 23, 2008
+Last updated: Aug 13, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -32,9 +32,8 @@ hDoom
   blitting and using the sdldoom and iDoom source codes as
   reference.
 - hDoom runs at full speed and works on all colour iPods.
-  There is not yet support for monochrome iPods as Keripo has
-  been unable to find any testers (if you have a monochrome
-  iPod, please contact him).
+  There is no support for monochrome iPods as hotdog does
+  not seem to work on monochrome iPods.
 - hDoom allows for strafing via the scroll wheel and pixel
   blending has also been added for slightly smoother graphics.
   No key remapping feature (i.e. the "keys.key" that iDoom
