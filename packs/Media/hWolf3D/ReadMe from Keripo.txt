@@ -26,14 +26,14 @@ For more information, see:
 - http://en.wikipedia.org/wiki/Spear_of_Destiny_(computer_game)
 
 Usage:
-- FastLaunch either Wolf3D or SoD shareware or retail versions
-  through "Media > hWolf3D".
-- If you legally own data files for the retail versions, copy
-  those data files to the corresponding folder.
+- FastLaunch either Wolf3D or SoD shareware or retail
+  versions through "Media > hWolf3D".
+- If you legally own data files for the retail versions,
+  copy those data files to the corresponding folder.
 - Note that game saving and loading does NOT seem to work
-  takes over 10 minutes to save a game and the game save seems
-  corrupt). I do not know how to fix this unfortunately, so just
-  do not save your game.  
+  takes over 10 minutes to save a game and the game
+  save seems corrupt). I do not know how to fix this
+  unfortunately, so just do not save your game.  
 
 
 Original:
@@ -54,10 +54,14 @@ ZS Version:
 
 Modifications:
 - see hWolf3D-All-K.patch file
+- added Wolf3D and SoD shareware and demo files from
+  Liberated Games:
+  http://liberatedgames.org/game.php?game_id=17
+  http://liberatedgames.org/game.php?game_id=18
 
 Launch Module:
-- Checks for data files and FastLaunches Wolf3D or SoD shareware
-  or retail versions
+- Checks for data files and FastLaunches Wolf3D or SoD
+  shareware or retail versions
 
 To do:
 - fix game loading/saving?
