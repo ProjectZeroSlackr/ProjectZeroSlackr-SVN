@@ -1,4 +1,4 @@
-::Last updated: July 29, 2008
+::Last updated: Aug 12, 2008
 ::~Keripo
 
 @ECHO OFF
@@ -12,7 +12,7 @@ ECHO   already copied over "patch-files/rhapsody/pp5022.mi4"
 ECHO   to the root of your Sansa. If not, do so. You might
 ECHO   have to then run this script again.
 ECHO - patching Sansa with modified Rockbox bootloader...
-patch-files\sansapatcher-win.exe
+patch-files\sansapatcher-win.exe --install
 IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :SUCCESS
 GOTO :FAIL
 
@@ -37,7 +37,6 @@ ECHO   to the root of your Sansa and execute this script.
 ECHO =====================================================
 MD boot\patch
 MOVE /Y patch-files boot\patch\
-MOVE /Y rhapsody boot\patch\
 PAUSE
 MOVE /Y patch.sh boot\patch\
 MOVE /Y patch.bat boot\patch\
