@@ -1,5 +1,5 @@
 #!/bin/sh
-# Last updated: July 29, 2008
+# Last updated: Aug 12, 2008
 # ~Keripo
 
 echo "====================================================="
@@ -18,7 +18,7 @@ echo "  patching is successful, this script may report"
 echo "  failure"
 echo ""
 if [ `uname` == "Darwin" ]; then
-	./patch-files/sansapatcher-mac
+	./patch-files/sansapatcher-mac --install
 elif [ 'uname -m' == "x86-64" ]; then
 	echo "  Error: I currently do not have any 64-bit sansapatcher"
 	echo "  build. If you are able to compile on a 64-bit Linux"
@@ -27,7 +27,7 @@ elif [ 'uname -m' == "x86-64" ]; then
 	read -p "Press any key to exit . . ."
 	exit
 else
-	./patch-files/sansapatcher-linux-32
+	./patch-files/sansapatcher-linux-32 --install
 fi
 if [ $? != 0 ]; then
 	echo ""
@@ -55,7 +55,6 @@ else
 	echo "====================================================="
 	mkdir -p boot/patch
 	mv -f patch-files boot/patch/
-	mv -f rhapsody boot/patch/
 	read -p "Press any key to exit . . ."
 	mv -f patch.bat boot/patch/
 	mv -f patch.sh boot/patch/
