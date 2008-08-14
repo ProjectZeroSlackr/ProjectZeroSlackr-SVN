@@ -1,4 +1,4 @@
-Last updated: Aug 9, 2008
+Last updated: Aug 14, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -10,16 +10,19 @@ original/ported software.
 
 == To do ==
 
-Misc:
 - Full SansaLinux support:
-  (need kernel, bootloader, SDL, and more packs;
-   wait for Sebastian to finish porting hotdog and
-   official integration into iPodLinux)
+  - rebuilt the kernel with 2.4.32 source code
+    and with the Sansa recognized as a separate iPod
+	model (hw_ver = 0x8)
+  - redo entire userland/startup system (make more
+    like iPodLinux's ZeroSlackr's loop-mount startup)
+  - rebuilt bootloader (maybe add cmdline args via
+    different key prsses on startup?)
+  - port hotdog and the rest of the apps (unless
+    Sebastian finishes his port first)
 - Add a "Known Issues" and "Works on" sections to
   "ReadMe from Keripo.txt"s
 - Use Insune instead of PZ2 for ZeroLauncher
-
-Fixes:
 
 
 == To add ==

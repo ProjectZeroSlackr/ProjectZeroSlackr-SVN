@@ -1,4 +1,4 @@
-Last updated: July 29, 2008
+Last updated: Aug 14, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -29,10 +29,11 @@ moment. While the ZeroSlackr Framework is slightly
 different, the majority of things are the same for both
 the iPod and Sansa. Keep in mind that all documentation
 is written for the iPod and thus not everything will
-also apply/work for the Sansa (you will have to
-experiment a bit as I do not have a Sansa myself and
-thus cannot provide proper support for it). See
-Install-Sansa.txt for Sansa-specific instructions.
+also apply/work for the Sansa. The Sansa port is still
+being worked on, so the general framework may change
+many times. If you still want to try installing
+ZeroSlackr on your Sansa e200, see Install-Sansa.txt
+for Sansa-specific instructions.
 
 The core of the system is the ZeroSlackr Framework,
 consisting of a modified kernel, a modified,
@@ -77,11 +78,13 @@ me. If you are a happy end user, feel free to drop by in
 a ZeroSlackr forum thread and say a word of thanks. If you
 are feeling particularly nice, feel free to donate via
 ZeroSlackr's SourceForge page. I myself have been working
-on this through my 2GB iPod nano (for which I also rely on
-soley for music as well) but I do not currently have any
-plans on buying a new iPod nor iPhone/iPod Touch.
-I may buy a Sansa e200 as I am currently depending on
-others with the SansaLinux port. Donations would help.
+on this through my 2GB iPod nano (which is near battery-dead
+due to the hundreds of reboots and reformats) and more
+recently a Sansa e250 (thanks to the kindness of Larry
+Riedel). I do not, however, plan on buying a new iPod nor
+iPhone/iPod Touch so, unless other developers join, the
+project will end when my iPod dies (hopefully Project
+ZeroSlackr will be complete by then).
 
 Either way, I hope you enjoy using ZeroSlackr and remember
 to leave a word of thanks somewhere or, better yet, help

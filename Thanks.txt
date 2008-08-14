@@ -1,4 +1,4 @@
-Last updated: July 27, 2008
+Last updated: Aug 14, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -43,7 +43,11 @@ who wrote the original iPodLinux installation tutorial
 for nanos (before Arabfreak came and stole it) that
 started it all for me. He was "the one" back in the days.
 
-And of course, special, special, special thanks goes out
+A special, special, special thanks goes out to Larry
+Riedel who kindly sent me a Sansa e250 for SansaLinux
+testing. Yay for kindness!
+
+And of course, special, special, *special* thanks goes out
 to all iPodLinux/Rockbox developers and all the ZeroSlackr
 users out there! Thanks for all the fish!!!
 
