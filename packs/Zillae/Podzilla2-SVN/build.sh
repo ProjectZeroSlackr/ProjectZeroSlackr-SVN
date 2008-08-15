@@ -3,7 +3,7 @@
 # Podzilla2-SVN Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 18, 2008
+# Last updated: Aug 15, 2008
 #
 echo ""
 echo "==========================================="
@@ -104,7 +104,7 @@ for module in $PATCHED
 do
 	cp -rf ../compiling/PATCHED.txt $USRLIB/Unsorted/$module/
 done
-DEL="libstdcxx mymodule pthreadstubs sleep"
+DEL="libstdcxx mymodule pthreadstubs sleep steroids"
 for module in $DEL
 do
 	rm -rf $USRLIB/Unsorted/$module
@@ -114,7 +114,7 @@ for module in $ALL
 do
 	mv $USRLIB/Unsorted/$module $USRLIB/All/
 done
-ARCADE="bluecube invaders ipobble lights minesweeper othello pong steroids tictactoe tunnel vortex wumpus"
+ARCADE="bluecube invaders ipobble lights minesweeper othello pong tictactoe tunnel vortex wumpus"
 for module in $ARCADE
 do
 	mv $USRLIB/Unsorted/$module $USRLIB/Arcade/
