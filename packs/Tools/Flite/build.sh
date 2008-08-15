@@ -3,13 +3,21 @@
 # Flite Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 21, 2008
+# Last updated: Aug 15, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
 echo "Flite Auto-Building Script"
 echo ""
+# SansaLinux not supported yet
+if [ $SANSA ]; then
+	echo "[Flite does not run properly on"
+	echo " SansaLinux - skipping]"
+	echo ""
+	echo "==========================================="
+	exit
+fi
 # Cleanup
 if [ -d build ]; then
 	echo "> Removing old build directory..."
