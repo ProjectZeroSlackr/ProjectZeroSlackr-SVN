@@ -1,4 +1,4 @@
-Last updated: July 9, 2008
+Last updated: Aug 19, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -46,6 +46,8 @@ Usage:
   from real GBA game cartriages (downloading commercial
   roms that you do not own is ILLEGAL). Public domain roms can
   be found here: http://www.pdroms.de/files/gameboyadvance/
+  For instructions on dumping your own ROMs, see
+  "igpSP ReadMe from Keripo.txt" in "Misc/Docs.tar.gz" archive.
 
 
 Original:

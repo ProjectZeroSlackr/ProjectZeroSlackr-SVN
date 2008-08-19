@@ -1,4 +1,4 @@
-Last updated: July 9, 2008
+Last updated: Aug 19, 2008
 ~Keripo
 
 
@@ -97,6 +97,8 @@ There are, however, hundreds of free, public domain homebrew
 games written for the GBA that will work on igpSP. To download
 some of these free, public domain ROMs, visit PDRoms at
 http://www.pdroms.de/files/gameboyadvance/
+For instructions on dumping ROMS from your own cartridges,
+see http://www.gameboy-advance.net/gba_roms/make_gba_roms.htm
 
 Once you have your 'gba_bios.bin' and ROM dumps, copy the files
 along with the igpSP binaries and the 'game_config.txt' file
