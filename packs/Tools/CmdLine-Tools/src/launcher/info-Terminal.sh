@@ -3,9 +3,8 @@
 #exec >> /opt/Tools/CmdLine-Tools/Misc/info-Terminal.log 2>&1
 
 stty erase "^H"
-echo "> hostname, hostid, id"
+echo "> hostname, id"
 hostname
-hostid
 id
 read -p "Press any key to continue..."
 echo "> date, uptime"

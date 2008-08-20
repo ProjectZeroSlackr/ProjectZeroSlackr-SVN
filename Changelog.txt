@@ -1,4 +1,4 @@
-Last updated: Aug 19, 2008
+Last updated: Aug 20, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -11,6 +11,7 @@ original/ported software.
 == Changelog ==
 
 Aug 20, 2008
+- Removed unused/broken utils from busybox
 - Updated both CmdLine-Archivers and CmdLine-Tools
   with new busybox content
 
