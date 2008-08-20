@@ -1,58 +1,8 @@
 Index: core/ipod.c
 ===================================================================
---- core/ipod.c	(revision 2420)
+--- core/ipod.c	(revision 2423)
 +++ core/ipod.c	(working copy)
-@@ -61,7 +61,9 @@
- 
- static int ipod_ioctl(int request, int *arg)
- {
--#ifdef IPOD
-+#ifdef SANSA
-+	return 0;
-+#elif defined(IPOD)
- 	int fd;
- 
- 	fd = open(FB_DEV_NAME, O_NONBLOCK);
-@@ -90,16 +92,21 @@
- 
- static int ipod_set_contrast(int contrast)
- {
-+#ifndef SANSA
- 	contrast = ipod_constrain( 0, 128, contrast ); /* just in case */
- 	if (ipod_ioctl(FBIOSET_CONTRAST, (int *)(long)contrast) < 0) {
- 		return -1;
- 	}
- 
-+#endif
- 	return 0;
- }
- 
- int ipod_get_contrast( void ) 
- {
-+#ifdef SANSA
-+	return 0x7f;
-+#else
- 	int contrast;
- 
- 	if (ipod_ioctl(FBIOGET_CONTRAST, &contrast) < 0) {
-@@ -107,6 +114,7 @@
- 	}
- 
- 	return contrast;
-+#endif
- }
- 
- static int ipod_set_backlight(int backlight)
-@@ -206,7 +214,7 @@
-  */
- int ipod_set_blank_mode(int blank)
- {
--#ifdef IPOD
-+#if defined(IPOD) && !defined(SANSA)
- 	if (ipod_ioctl(FBIOBLANK, (int *) blank) < 0) {
- 		return -1;
- 	}
-@@ -217,7 +225,7 @@
+@@ -217,7 +217,7 @@
  
  void ipod_beep(void)
  {
@@ -61,7 +11,7 @@ Index: core/ipod.c
  	if (pz_ipod_get_hw_version() >= 0x40000) {
  		int i, j;
  		outl(inl(0x70000010) & ~0xc, 0x70000010);
-@@ -316,7 +324,9 @@
+@@ -316,7 +316,9 @@
  
  long pz_ipod_get_hw_version(void)
  {
@@ -72,7 +22,7 @@ Index: core/ipod.c
  	int i;
  	char cpuinfo[512];
  	char *ptr;
-@@ -346,7 +356,7 @@
+@@ -346,7 +348,7 @@
  
  void pz_ipod_go_to_diskmode()
  {
@@ -81,50 +31,41 @@ Index: core/ipod.c
  	unsigned char * storage_ptr;
  	unsigned int iram_len;
  
-@@ -389,6 +399,42 @@
+@@ -368,7 +370,8 @@
+ #ifdef IPOD
+     pz_uninit();
+     printf("\nPowering down.\nPress action to power on.\n");
+-    execl("/bin/poweroff", "poweroff", NULL);
++    const char *const cmd[] = {"sh", "-c", "poweroff; sleep 20s", NULL};
++    execv("/bin/sh", (char *const *)cmd); // Sleep to prevent re-entering ZeroLauncher
+     
+     printf("No poweroff binary available.  Rebooting.\n");
+     execl("/bin/reboot", "reboot", NULL);
+@@ -382,13 +385,22 @@
+ {
+ #ifdef IPOD
+     pz_uninit();
+-    execl("/bin/reboot", "reboot", NULL);
++    const char *const cmd[] = {"sh", "-c", "reboot; sleep 20s", NULL};
++    execv("/bin/sh", (char *const *)cmd); // Sleep to prevent re-entering ZeroLauncher
+     exit(0);
+ #else
+     pz_warning ("I don't think you want me to reboot your desktop...");
  #endif
  }
  
 +#ifdef SANSA
 +
 +// No USB support for SansaLinux, yet
-+
-+static int usb_check_connection()
-+{
-+	return 0;
-+}
-+
-+static int usb_get_usb2d_ident_reg()
-+{
-+	return 0;
-+}
-+
-+static int setup_usb(int arg0)
-+{
-+	return 0;
-+}
-+
-+static int usb_test_core(int arg0)
-+{
-+	return 0;
-+}
-+
-+int pz_ipod_usb_is_connected(void)
-+{
-+	return 0;
-+}
-+
-+int pz_ipod_fw_is_connected(void)
-+{
-+	return 0;
-+}
++int pz_ipod_usb_is_connected(void) { return 0; }
++int pz_ipod_fw_is_connected(void) { return 0; }
 +
 +#else
 +
  #ifdef IPOD
  static int usb_check_connection()
  {
-@@ -522,3 +568,5 @@
+@@ -522,3 +534,5 @@
  #endif
  	return 0;
  }

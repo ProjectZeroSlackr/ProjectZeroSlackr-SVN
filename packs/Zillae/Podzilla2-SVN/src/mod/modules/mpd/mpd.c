@@ -1,5 +1,5 @@
 /*
- * Last updated: Aug 7, 2008
+ * Last updated: Aug 20, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -145,14 +145,21 @@ void init_mpd()
 	while (send_command(""));
 }
 
+void kill_mpd()
+{
+	if (MPD_ACTIVE == 1) {
+		send_command("kill");
+		set_cpu_speed(CPU_72MHz); // ZeroLauncher default
+		MPD_ACTIVE = 0;
+	}
+}
+
 void cleanup_mpd()
 {
+	kill_mpd();
 	pz_save_config(config);
 	pz_free_config(config);
 	config = 0;
-	send_command("kill");
-	set_cpu_speed(CPU_72MHz);
-	MPD_ACTIVE = 0;
 }
 
 static void init()

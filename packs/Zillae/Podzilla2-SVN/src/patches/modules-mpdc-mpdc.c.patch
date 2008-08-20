@@ -1,19 +1,18 @@
 Index: modules/mpdc/mpdc.c
 ===================================================================
---- modules/mpdc/mpdc.c	(revision 2420)
+--- modules/mpdc/mpdc.c	(revision 2423)
 +++ modules/mpdc/mpdc.c	(working copy)
-@@ -28,6 +28,10 @@
+@@ -28,6 +28,9 @@
  #include "pz.h"
  #include "mpdc.h"
  
-+extern void cleanup_mpd();
 +extern void init_mpd();
 +extern int MPD_ACTIVE;
 +
  PzModule *module;
  
  mpd_Connection *mpdz = NULL;
-@@ -124,7 +128,7 @@
+@@ -124,7 +127,7 @@
  	static int warned_once = 0;
  	if ((mpdz = mpd_init_connection()) == NULL) {
  		if (!warned_once) {
@@ -22,7 +21,7 @@ Index: modules/mpdc/mpdc.c
  			warned_once = 1;
  		}
  		return -1;
-@@ -338,6 +342,9 @@
+@@ -338,6 +341,9 @@
  
  static int playing_visible(ttk_menu_item *item)
  {
@@ -32,7 +31,7 @@ Index: modules/mpdc/mpdc.c
  	int state;
  
  	if (mpdc_tickle() < 0)
-@@ -412,33 +419,84 @@
+@@ -412,33 +418,90 @@
      item->choicechanged = b; \
      item->choice = c; } while (0)
  
@@ -49,8 +48,14 @@ Index: modules/mpdc/mpdc.c
 +	if (MPD_ACTIVE) {
 +		MPD_ACTIVE = 0;
 +		cleanup_mpdc();
-+		cleanup_mpd();
-+		pz_message("MPD process killed.");
++		void (*cleanup_mpd)();
++		cleanup_mpd = pz_module_softdep("mpd", "kill_mpd");
++		if (cleanup_mpd) {
++			cleanup_mpd();
++			pz_message("MPD process killed.");
++		} else {
++			pz_message("Unknown error: kill_mpd function missing!");
++		}
 +		return TTK_MENU_UPALL;
 +	} else {
 +		pz_message("MPD not active.");
@@ -127,7 +132,7 @@ Index: modules/mpdc/mpdc.c
  
  	SETUP_MENUITEM("/Settings/Shuffle", set_shuffle, init_shuffle());
  	SETUP_MENUITEM("/Settings/Repeat", set_repeat, init_repeat());
-@@ -450,6 +508,7 @@
+@@ -450,6 +513,7 @@
  					      &widget_inf );
  	pz_add_header_widget( "MPD Icons", mpd_widg_icons_update,
  					   mpd_widg_icons_draw, NULL );
