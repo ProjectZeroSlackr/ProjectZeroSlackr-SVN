@@ -1,4 +1,4 @@
-Last updated: Aug 14, 2008
+Last updated: Aug 19, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -43,6 +43,8 @@ usage of the modified userland. The userland itself
 takes advantage of the loop-mount startup method by
 being contained as a filesystem image (rather than a
 partition), thus allowing a partitionless install.
+The SansaLinux version instead loads an initrd file
+during startup that contains the full userland content.
 The default launcher of ZeroSlackr is ZeroLauncher, a
 customized build of podzilla2 designed specifically
 for the launching of other applications.

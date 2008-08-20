@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # ZeroSlackr Framework's Loop-Mount Script
-# Last updated: July 24, 2008
+# Last updated: Aug 19, 2008
 # ~Keripo
 #
 # Note: This file must be saved in UNIX format.
@@ -13,17 +13,24 @@
 # "chmod ugo+rwx rc" (modified accordingly)
 
 # Loop-mount ZeroSlackr userland
-busybox mount -t ext3 -o loop,rw /boot/userland.ext3 /boot/mount
+busybox mount -t ext2 -o loop,rw /boot/userland.ext2 /boot/mount
 
 # Swap roots
 cd /boot/mount/
 busybox pivot_root . mnt
-clear
 
 # Execute normal rc file
-# Can't figure out minix's syntax for loops
+# Lots of lines are echo'd so that text is visible
+# rather than only the first line being shown
+# (due to an odd minix bug that I don't userstand)
 NUM="1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17"
 for n in $NUM; do
   echo 
 done
 sh /etc/rc
+
+# Just in case
+echo "Error!"
+echo "Loop-mount startup failed!"
+echo "Now rebooting..."
+busybox reboot

@@ -3,7 +3,7 @@
 # Userland Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 27, 2008
+# Last updated: Aug 19, 2008
 #
 echo ""
 echo "==========================================="
@@ -46,12 +46,23 @@ rm -rf release/ZeroSlackr/usr/share/fonts/fonts.lst
 cp -rf ../src/mod/fonts/* release/ZeroSlackr/usr/share/fonts/
 echo "> Extracting userland..."
 if [ $SANSA ]; then
-	tar -xf ../src/images/initrd-sansalinux-zs-2mb.tar.gz
-	mv initrd-sansalinux-zs-2mb release/initrd
+	cp -rf ../src/images/initrd.gz ./
+	gzip -df initrd.gz
+	mv initrd release/
 else
-	tar -xf ../src/images/userland-zs-8mb.ext3.tar.gz
-	mv userland-zs-8mb.ext3 release/boot/userland.ext3
+	cp -rf ../src/images/userland.ext2.gz ./
+	gzip -df userland.ext2.gz
+	mv userland.ext2 release/boot/
 fi
+cp -rf ../src/images/sandbox.ext3.gz ./
+gzip -df sandbox.ext3.gz
+mv sandbox.ext3 release/boot/
+echo "> Building backlight and cpu_speed..."
+export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
+arm-uclinux-elf-gcc ../src/mod/backlight.c -o backlight -elf2flt
+cp -rf backlight release/ZeroSlackr/usr/bin/
+arm-uclinux-elf-gcc ../src/mod/cpu_speed.c -o cpu_speed -elf2flt
+cp -rf cpu_speed release/ZeroSlackr/usr/bin/
 # Documents
 echo "> Copying documents..."
 cd release
@@ -61,7 +72,6 @@ cp -rf "../../ReadMe from Keripo.txt" $DOCS/
 cp -rf ../../License.txt $DOCS/
 cp -rf "../../src/images/Loop-mount Instructions.txt" $DOCS/
 mkdir $DOCS/Mod
-cp -rf ../../src/mod/loop-mount.sh $DOCS/Mod/
 cp -rf ../../src/mod/zeroslackr-userland-mod.tar.gz $DOCS/Mod/
 # Project ZeroSlackr documents
 cp -rf ../../../../Changelog.txt ./

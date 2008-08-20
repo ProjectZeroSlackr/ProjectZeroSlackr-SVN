@@ -1,46 +1,39 @@
-Last updated: July 17, 2008
+Last updated: Aug 19, 2008
 ~Keripo
 
 Note: This should only be done on Linux (e.g. Slax).
-It may not work on Mac OS X and will not work Windows/Cygwin.
+It will not work Windows/Cygwin or Mac OS X.
 
-This is for generating a userland loop-mount image from
-scratch. If you want to use pre-generated images, see the
-"build.sh" script. If you just want to edit your userland,
-skip to the "To mount and edit loop-mount image:" section.
+This is for generating the ext2/ext3 images from scratch
+(as opposed to using the convenient "build.sh" script).
+This includes iPodLinux ZeroSlackr's loop-mount userland
+image, SansaLinux ZeroSlackr's initrd image, and the
+sandbox image. If you just want to edit your sandbox,
+skip to the "To mount and edit filesystem image:" section.
 
-
-To create the loop-mount image from scratch:
-
-dd if=/dev/zero of=~/userland.ext3 bs=512 count=#
-(where # is: 16384 for 8MB, 32768 for 16MB, or 65536 for 32MB)
-mkfs.ext3 ~/userland.ext3 (answer "y")
-tune2fs -c 0 ~/userland.ext3
-
+To create a filesystem image from scratch:
+	dd if=/dev/zero of=userland.ext2 bs=512 count=#
+	(where # is: 4096 for 2MB, 8192 for 4MB, etc.)
+	mkfs.ext2 ~/userland.ext2 (answer "y")
+	tune2fs -c 0 ~/userland.ext2
+If you want to use ext3 instead (which is unnecessary),
+use "mkfs.ext3" instead of "mkfs.ext2". The userland
+and initrd uses ext2 (minimum size of 2MB) whereas the
+sandbox image uses ext3 (minimum size of 4MB).
 
 To mount and edit loop-mount image:
-
-mkdir ~/ipl-loop
-mount -t ext3 -o loop,rw ~/userland.ext3 ~/ipl-loop
-(edit content at ~/ipl-loop)
-(if you are making a userland image from scratch,
- best to do rm -rf ~/ipl-loop/* then add content
- i.e. extract/copy userland files to ~/ipl-loop/)
-umount ~/ipl-loop
-
-Note that the SansaLinux userland is ext2, thus you will
-need to replace "-t ext3" with "-t ext2" above. As well,
-SansaLinux's userland is slightly different from
-iPodLinux's and the below does not apply.
+	mkdir loop-fs
+	mount -t ext2 -o loop,rw userland.ext3 loop-fs
+	(edit content at loop-fs)
+	umount loop-fs
+For the actual files that are added, see the "build.sh"
+script and content found in the "src/mod" folder
 
 To make newly made loop-mount userland usable:
-
 If you want to use unmodified userland files, you will
 have to make the following changes to the "/etc/rc" file:
-
 1. Add the line "mount -t devfs devfs /dev"
    before the line "mount -t proc proc /proc"
-
 2. Change "mount -tvfat -osync,rw /dev/hda2 /mnt"
    to "mount -tvfat -oremount,sync,rw /dev/hda2 /mnt"
 
@@ -50,4 +43,8 @@ If you are using the 2.4.32 kernel with the cmdline patch
 applied (i.e. kernel builds found on the "Experimental
 Kernel" iPodLinux wiki page), you can pass the above
 command line as a kernel argument through Loader 2.
+SansaLinux boots from an initrd file (which contains the
+userland files) and reads files from the internal SD card;
+thus, the startup process is slightly different (see the
+SansaLinux rc file).
 

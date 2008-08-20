@@ -1,4 +1,4 @@
-Last updated: Aug 14, 2008
+Last updated: Aug 19, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,15 @@ original/ported software.
 
 
 == Changelog ==
+
+Aug 19, 2008
+- Revamped the userland again (hopefully for the
+  last time); updated busybox to SVN with a lot more
+  built-in utils, keep userland on a compact 2MB ext2
+  image and /sandbox on a separate 4MB ext3 image for
+  both iPodLinux and SansaLinux versions, updated
+  init and busybox binaries for iPodLinux loop-mount
+  boot - no more "Can't write to log..." warnings!
 
 Aug 14, 2008
 - SansaLinux now officially supported by Project
