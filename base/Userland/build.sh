@@ -3,7 +3,7 @@
 # Userland Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Aug 19, 2008
+# Last updated: Aug 20, 2008
 #
 echo ""
 echo "==========================================="
@@ -78,6 +78,9 @@ cp -rf ../../../../Changelog.txt ./
 cp -rf ../../../../FAQ.txt ./
 cp -rf ../../../../Features.txt ./
 cp -rf ../../../../Install.txt ./
+if [ $SANSA ]; then
+	cp -rf ../../../../Install-Sansa.txt ./
+fi
 cp -rf ../../../../License.txt ./
 cp -rf "../../../../ReadMe from Keripo.txt" ./
 cp -rf ../../../../Thanks.txt ./
