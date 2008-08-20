@@ -1,0 +1,49 @@
+Index: scripts/trylink
+===================================================================
+--- scripts/trylink	(revision 23078)
++++ scripts/trylink	(working copy)
+@@ -94,9 +94,9 @@
+ GC_SECTIONS=`(
+ . ./.config
+ if test x"$CONFIG_STATIC" = x"y"; then
+-    check_libc_is_glibc "" "-Wl,--gc-sections"
++    check_libc_is_glibc "" "-Wl"
+ else
+-    echo "-Wl,--gc-sections"
++    echo "-Wl"
+ fi
+ )`
+ 
+Index: libbb/vfork_daemon_rexec.c
+===================================================================
+--- libbb/vfork_daemon_rexec.c	(revision 23078)
++++ libbb/vfork_daemon_rexec.c	(working copy)
+@@ -210,6 +210,7 @@
+ }
+ 
+ #if !BB_MMU
++#if 0
+ void FAST_FUNC re_exec(char **argv)
+ {
+ 	/* high-order bit of first char in argv[0] is a hidden
+@@ -218,6 +219,7 @@
+ 	execv(bb_busybox_exec_path, argv);
+ 	bb_perror_msg_and_die("exec %s", bb_busybox_exec_path);
+ }
++#endif
+ 
+ void FAST_FUNC forkexit_or_rexec(char **argv)
+ {
+Index: init/init.c
+===================================================================
+--- init/init.c	(revision 23078)
++++ init/init.c	(working copy)
+@@ -149,7 +149,7 @@
+ 			} else {
+ 				log_fd = device_open(log_console, O_WRONLY | O_NONBLOCK | O_NOCTTY);
+ 				if (log_fd < 0) {
+-					bb_error_msg("can't log to %s", log_console);
++					//bb_error_msg("can't log to %s", log_console);
+ 					where = L_CONSOLE;
+ 				} else {
+ 					close_on_exec_on(log_fd);

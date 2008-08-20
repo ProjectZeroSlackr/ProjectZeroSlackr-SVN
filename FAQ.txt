@@ -1,18 +1,21 @@
-Last updated: Aug 9, 2008
+Last updated: Aug 19, 2008
 ~Keripo
 
 
 == Fast FAQ ==
 
 Note:
-These questions relate mostly for iPodLinux but some also
-apply to SansaLinux. If there are enough Sansa-specific
-questions need addressing, I'll write a separate FAQ.
+These questions are for the iPodLinux version of ZeroSlackr
+but many also apply to the SansaLinux version. For
+simplicity, "iPod" is used here instead of "iPod/Sansa e200"
+and "iPodLinux" instead of "iPodLinux/SansaLinux". A few
+things, however, are iPodLinux-specific, i.e. Installer 2 and
+Loader2 stuff.
 
 Q: What is Project ZeroSlackr?
 A: Read the "ReadMe from Keripo.txt" document.
 
-Q: When I run the "patch" script I am told by iPod patcher
+Q: When I run the "patch" script I am told by ipodpatcher
    that my iPod cannot be found when my iPod is clearly
    connected. Whats up with that?
 A: If ipodpatcher says your iPod isn't connected but it is,
@@ -21,6 +24,11 @@ A: If ipodpatcher says your iPod isn't connected but it is,
    privileges, iTunes is closed and your iPod shows up as
    a drive, it is possible that your iPod is not supported
    by iPodLinux. See the iPodLinux Generations wiki page.
+   For Sansas, SansaLinux currently only works on the
+   e200 V1 and and e200R V1 series. V2s are not supported
+   (as they contain different hardware) and will not be
+   supported unless the Rockbox project manages to get
+   things working. See "Install-Sansa.txt" for more info.
 
 Q: I've already installed iPodLinux through Installer 2.
    What will happen to my old installation?
@@ -57,7 +65,8 @@ A: Due to large number of SlackrPacks now and thus
    would not know how to fix such). The current solution
    to this is "reboot, reboot, reboot". See the iPodLinux
    "Key_Combinations" wiki page for information on how to
-   force reboot your iPod.
+   force reboot your iPod. On Sansas, hold the power button
+   for 10 seconds to force turn off your Sansa e200.
 
 Q: After I enabled MPD (iPodLinux's music player), I keep
    getting a launch confirmation pop-up every time I try
@@ -107,16 +116,9 @@ A: This is a known console issue. The old sash shell did not
    issue also prevents me from porting/adding many ncurses
    games and relying on the terminal module instead. I have
    no idea how to fix this issue unfortunately, so please
-   bear with it.
-
-Q: Help, I get a "Can't write to log on /dev/tty5!" every
-   time I boot into ZeroSlackr! How can I fix of this?
-A: This is a busybox-related issue but not one affecting
-   anything (its just a warning message that can be ignored).
-   More text is actually printed but you only see that one
-   line due to the minix bug discribed in the above question.
-   I might recompile busybox one day with the message
-   removed, but later.
+   bear with it. Interestingly, SansaLinux (which uses the
+   same binaries) does not have this issue, so it may be
+   kernel related.
 
 Q: I installed ZeroSlackr and it works great, but how do
    I access the Linux partition?
@@ -124,6 +126,8 @@ A: The ZeroSlackr Framework uses a userland disk image
    through the "loop-mount" boot method originally
    introduced by DataGhost (see iPodLinux's
    "Installation:_Winpod_without_datacorruption" wiki page).
+   SansaLinux has generally the same userland files (with
+   a few modifications stored instead on the initrd file.
    More information on it can be found in the ZeroSlackr
    Framework's userland readme ("/docs/userland/
    ReadMe from Keripo.txt"). For instructions on how to
@@ -190,8 +194,7 @@ A: Project ZeroSlackr is a custom iPodLinux installation
    I do make modifications that I believe are beneficial to
    the iPodLinux project, however, I do try to get the
    modifications committed upstream by the official
-   developers (i.e. see http://ipl.nonb.org/search?q=Keripo
-   if Trac wasn't down).
+   developers; see http://ipl.nonb.org/search?q=Keripo
 
 Q: Project ZeroSlackr is awesome! How can I thank you?
 A: If you're an experienced programmer, feel free to contact
@@ -227,7 +230,7 @@ A: Although Project ZeroSlackr currently supports a large
    new apps is low on my priority list, if there are already
    other ports on other handheld platforms and the hardware
    requirements are low enough (the iPod's processor maxs out
-   at 81MHz so only emulators of hardware with 20MHz processor
+   at 81MHz so only emulators of hardware with 16MHz processor
    or lower are plausible), I may consider doing new ports.
    I prefer SDL versions and can only port apps already ported
    to Linux and written in C/C++.
@@ -288,8 +291,9 @@ root
   files are usually stored in a normal iPodLinux installation,
   i.e. on an added ext2/ext3 Linux partition. ZeroSlackr does
   not use a Linux partition but rather stores the userland
-  files on an ext3 partition image that is mounted during
-  startup (the image file is found at "/boot/userland.ext3").
+  files on an ext2 partition image that is mounted during
+  startup (the image file is found at "/boot/userland.ext2").
+  For SansaLinux, the equivalent is the "/initrd" file.
   Due to symlinking in the userland image, you will usually
   not need to access the content of the file.
 - The "root of ZeroSlackr" is the content of the "ZeroSlackr"
@@ -298,7 +302,8 @@ root
 - To summarize, on a Windows computer:
     E:/ = iPod's root
     E:/ZeroSlackr/ = ZeroSlackr root
-    E:/boot/userland.ext3 = Linux root
+    E:/boot/userland.ext2 = Linux root
+	E:/boot/sandbox.ext3 = Linux sandbox
 - Sometimes ZeroSlackr's documentation will assume the iPod's
   root when referring to folder locations; sometimes it will
   assume the ZeroSlackr root. Overall:
@@ -308,14 +313,18 @@ root
 	/home     -> /ZeroSlackr/home
 	/opt      -> /ZeroSlackr/opt
 	/usr      -> /ZeroSlackr/usr
+	/sandbox  -> loop-mounted /boot/sandbox.ext3
   Such inconsistency can be attributed to laziness.
 loop-mount image
 - Special term Keripo uses to describe the userland image
   used by ZeroSlackr. Instead of using an actual Linux
-  partition to store the userland files, an ext3 partition
+  partition to store the userland files, an ext2 partition
   image containing the userland files is "loop-mounted"
   during startup. This allows for a partitionless install.
-- This image file is found at "/boot/userland.ext3"; see
+  For SansaLinux, an initrd file containing the userland
+  files is loaded during startup instead.
+- This image file is found at "/boot/userland.ext2" for
+  the iPodLinux version and "/initrd" for SansaLinux; see
   "Loop-mount Instructions.txt" in "/docs/userland" for
   instructions on editing the content of the file.
 

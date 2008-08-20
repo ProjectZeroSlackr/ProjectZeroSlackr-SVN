@@ -1,4 +1,4 @@
-Last updated: July 29, 2008
+Last updated: Aug 19, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -34,9 +34,6 @@ Usage:
   the iPodLinux wiki page: http://ipodlinux.org/Loader2
 - The iPodLinux kernel accepts most standard kernel arguments;
   see "/docs/kernel/Original/kernel-parameters.txt"
-- ZeroSlackr's userland uses getLoader2AutoExec instead of
-  getLoader2Args. For more information on how to use that,
-  read the comments of "loader.cfg".
 - Loader2 has also been patched to play a boot tune on startup.
   The default boot tune should be familiar to Final Fantasy
   gamers ; )

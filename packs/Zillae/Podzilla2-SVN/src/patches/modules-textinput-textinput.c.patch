@@ -7,7 +7,7 @@ Index: modules/textinput/textinput.c
  	int i;
  	ti_module = pz_register_module("textinput", 0);
 -	ti_conf = pz_load_config(pz_module_get_cfgpath(ti_module, "textinput.conf"));
-+	ti_conf = pz_load_config("/usr/local/etc/textinput/textinput.conf"); // Hardcoded as seems to have some weird saving issue for this module only ~Keripo
++	ti_conf = pz_load_config("/sandbox/textinput/textinput.conf"); // Hardcoded as seems to have some weird saving issue for this module only ~Keripo
  	for (i=0; i<64; i++) {
  		ti_tim_creators[i]=0;
  		ti_tim_ncreators[i]=0;
