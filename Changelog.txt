@@ -14,6 +14,10 @@ Aug 20, 2008
 - Removed unused/broken utils from busybox
 - Updated both CmdLine-Archivers and CmdLine-Tools
   with new busybox content
+- Fixed MPD module bug that was causing crashes on
+  Sansas, fixed mpdc dependency error when the MPD
+  module is missing
+- Returned backlight control to PZ2s for Sansas
 
 Aug 19, 2008
 - Revamped the userland again (hopefully for the
