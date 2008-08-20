@@ -1,4 +1,4 @@
-Last updated: July 22, 2008
+Last updated: Aug 20, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -18,7 +18,9 @@ have to "install" ZeroSlackr manually.
 
 Please note that ZeroSlackr can only be installed on
 FAT-formatted Winpods that is currently supported by
-iPodLinux.
+iPodLinux. If you have a Macpod, see the Rockbox wiki
+for converting instructions:
+http://www.rockbox.org/twiki/bin/view/Main/IpodConversionToFAT32
 
 iPodLinux currently supports/works on 5.5G iPod videos
 and older with the exception of the iPod shuffles.
