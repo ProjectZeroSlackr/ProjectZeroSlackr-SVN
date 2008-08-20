@@ -10,6 +10,10 @@ original/ported software.
 
 == Changelog ==
 
+Aug 20, 2008
+- Updated both CmdLine-Archivers and CmdLine-Tools
+  with new busybox content
+
 Aug 19, 2008
 - Revamped the userland again (hopefully for the
   last time); updated busybox to SVN with a lot more

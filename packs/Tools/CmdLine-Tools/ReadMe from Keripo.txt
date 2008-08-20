@@ -1,4 +1,4 @@
-Last updated: July 27, 2008
+Last updated: Aug 20, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -14,6 +14,9 @@ CmdLine-Tools
 - Some of these have been recompiled while others
   are directly copied from their pre-compiled sources
   since they do not require recompilation.
+- A few of them are no longer compiled as they are
+  included in busybox while quite few have been added
+  via busybox.
 - For information on what each binary does, see their
   respective links below.
 
@@ -22,10 +25,19 @@ Usage:
   binaries are accessible to the shell and terminal.
   Thus they can be used in shell scripts or via the
   terminal module.
+- Hold the centre/select button on a file or directory
+  in the file browser to set full permissions for it
+  (chmod ugo+rwx).
+- Hold the centre/select button on a text file in the
+  file browser to edit it with vi or convert it from
+  DOS format to UNIX format.
+- Show system info though
+  "Tools > CmdLine-Tools > System Info"
 - FastLaunch LOLCODE interpreter through
-  "Tools > LOLCODE > FastLaunch" to start interpreter (type
-  in the commands via terminal) or use
-  "Tools > LOLCODE > Scripts" to select script to run.
+  "Tools > CmdLine-Tools > LOLCODE FastLaunch" to start
+  the interpreter (type in the commands via terminal) or
+  use "Tools > CmdLine-Tools > LOLCODE Scripts" to select
+  script to run.
 - Files with a ".lol" extension have their default action
   set to the LOLCODE interpreter.
 
@@ -78,6 +90,8 @@ Launch Module:
   by the shell
 - "/opt/Tools/CmdLine-Tools/John" is set to $JOHN for John
   the ripper
+- file handler for chmod, vi and dos2unix
+- Show various system info through terminal
 - Fastlaunches LOLCODE interpreter through terminal
 - interpret LOLCODE scripts from file browser
 

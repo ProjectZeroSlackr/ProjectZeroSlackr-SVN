@@ -3,7 +3,16 @@
 # CmdLine-Tools Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 31, 2008
+# Last updated: Aug 20, 2008
+#
+# Note:
+# As of the userland busybox update of Aug 19, 2008,
+# many common tools can be linked to busybox. Thus,
+# separate binaries are no longer needed.
+# Here, grep, sed and diffutils are removed and
+# vi, dos2unix, chmod,
+# date, df, hostid, hostname, id, ps, rdate, and uptime
+# added to the launch modules
 #
 echo ""
 echo "==========================================="
@@ -27,9 +36,9 @@ BUILDDIR=$(pwd)
 # Extract source
 echo "> Extracting source..."
 tar zxf ../src/orig/Ipodgawk.tar.gz
-tar zxf ../src/orig/Ipodgrep.tar.gz
-tar zxf ../src/orig/Ipodsed.tar.gz
-tar zxf ../src/orig/diffutils-2.8.1.tar.gz
+#tar zxf ../src/orig/Ipodgrep.tar.gz
+#tar zxf ../src/orig/Ipodsed.tar.gz
+#tar zxf ../src/orig/diffutils-2.8.1.tar.gz
 tar zxf ../src/orig/john-1.7.2.tar.gz
 unzip -q ../src/orig/lolcode.zip -d ./
 # Symlink the libraries
@@ -50,16 +59,16 @@ do
 done
 # Compiling
 echo "> Compiling..."
-echo "  - diffutils"
-if [ $CYGWIN ]; then
-	echo "    Note: diffutils doesn't seem to"
-	echo "    compile nicely on Cygwin - skipping"
-else
-	cd diffutils-2.8.1
-	./configure CC=arm-elf-gcc LDFLAGS=-elf2flt --host=arm-elf >> ../diffutils.log 2>&1
-	make >> ../diffutils.log 2>&1
-	cd ..
-fi
+#echo "  - diffutils"
+#if [ $CYGWIN ]; then
+#	echo "    Note: diffutils doesn't seem to"
+#	echo "    compile nicely on Cygwin - skipping"
+#else
+#	cd diffutils-2.8.1
+#	./configure CC=arm-elf-gcc LDFLAGS=-elf2flt --host=arm-elf >> ../diffutils.log 2>&1
+#	make >> ../diffutils.log 2>&1
+#	cd ..
+#fi
 echo "  - cmdlineutils"
 svn co --quiet https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/apps/ipod/cmdlineutils
 svn co --quiet https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/libs/libipod
@@ -88,17 +97,17 @@ cd ..
 # Copy over compiled file
 echo "> Copying over compiled files..."
 mkdir compiled
-if [ $CYGWIN ]; then
-	echo "  Note: skipping diffutils"
-else
-	cp -rf diffutils-2.8.1/src/cmp compiled/
-	cp -rf diffutils-2.8.1/src/diff compiled/
-	cp -rf diffutils-2.8.1/src/diff3 compiled/
-	cp -rf diffutils-2.8.1/src/sdiff compiled/
-fi
+#if [ $CYGWIN ]; then
+#	echo "  Note: skipping diffutils"
+#else
+#	cp -rf diffutils-2.8.1/src/cmp compiled/
+#	cp -rf diffutils-2.8.1/src/diff compiled/
+#	cp -rf diffutils-2.8.1/src/diff3 compiled/
+#	cp -rf diffutils-2.8.1/src/sdiff compiled/
+#fi
 cp -rf gawk/gawk compiled/
-cp -rf grep/grep compiled/
-cp -rf sed/sed compiled/
+#cp -rf grep/grep compiled/
+#cp -rf sed/sed compiled/
 cp -rf cmdlineutils/asciichart compiled/
 # I've created my own "backlight" binary with brightness control
 # cp -rf cmdlineutils/backlight compiled/
