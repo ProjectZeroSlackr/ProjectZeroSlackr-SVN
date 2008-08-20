@@ -3,7 +3,12 @@
 # CmdLine-Archivers Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 31, 2008
+# Last updated: Aug 20, 2008
+#
+# Note:
+# As of the userland busybox update of Aug 19, 2008,
+# many common tools can be linked to busybox. Thus,
+# md5sum, sha1sum and sum added to the launch modules
 #
 echo ""
 echo "==========================================="

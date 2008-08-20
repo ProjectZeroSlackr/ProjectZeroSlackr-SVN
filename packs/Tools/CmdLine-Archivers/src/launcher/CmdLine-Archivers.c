@@ -1,5 +1,5 @@
 /*
- * Last updated: Jun 26, 2008
+ * Last updated: Aug 20, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -26,6 +26,7 @@
 
 static PzModule *module;
 static ttk_menu_item
+browser_extension_checksum,
 browser_extension_zip,
 browser_extension_unzip, browser_extension_unrar,
 browser_extension_tar_c, browser_extension_tar_d,
@@ -57,6 +58,19 @@ static int check_ext_gz(const char *file)
 	return check_file_ext(file, ".gz");
 }
 
+static PzWindow *checksum(const char *file)
+{
+	const char *const cmd[] = {"checksum.sh", file, NULL};
+	return new_terminal_window_with(
+		LAUNCHER "checksum.sh",
+		(char *const *)cmd
+	);
+}
+static PzWindow *load_file_handler_checksum(ttk_menu_item *item)
+{
+	return checksum(item->data);
+}
+
 static PzWindow *zip(const char *file)
 {
 	const char *f = get_filename(file);
@@ -65,7 +79,7 @@ static PzWindow *zip(const char *file)
 	pz_execv(
 		LAUNCHER "zip.sh",
 		(char *const *)cmd
-		);
+	);
 	return TTK_MENU_UPONE;
 }
 static PzWindow *load_file_handler_zip(ttk_menu_item *item)
@@ -81,7 +95,7 @@ static PzWindow *unzip(const char *file)
 	pz_execv(
 		LAUNCHER "unzip.sh",
 		(char *const *)cmd
-		);
+	);
 	return TTK_MENU_UPONE;
 }
 static PzWindow *load_file_handler_unzip(ttk_menu_item *item)
@@ -97,7 +111,7 @@ static PzWindow *unrar(const char *file)
 	pz_execv(
 		LAUNCHER "unrar.sh",
 		(char *const *)cmd
-		);
+	);
 	return TTK_MENU_UPONE;
 }
 static PzWindow *load_file_handler_unrar(ttk_menu_item *item)
@@ -113,7 +127,7 @@ static PzWindow *tar_c(const char *file)
 	pz_execv(
 		LAUNCHER "tar-c.sh",
 		(char *const *)cmd
-		);
+	);
 	return TTK_MENU_UPONE;
 }
 static PzWindow *load_file_handler_tar_c(ttk_menu_item *item)
@@ -127,9 +141,9 @@ static PzWindow *tar_d(const char *file)
 	const char *d = get_dirname(file);
 	const char *const cmd[] = {"tar-d.sh", d, f, NULL};
 	pz_execv(
-		LAUNCHER "tar.sh",
+		LAUNCHER "tar-d.sh",
 		(char *const *)cmd
-		);
+	);
 	return TTK_MENU_UPONE;
 }
 static PzWindow *load_file_handler_tar_d(ttk_menu_item *item)
@@ -145,7 +159,7 @@ static PzWindow *bzip2_c(const char *file)
 	pz_execv(
 		LAUNCHER "bzip2-c.sh",
 		(char *const *)cmd
-		);
+	);
 	return TTK_MENU_UPONE;
 }
 static PzWindow *load_file_handler_bzip2_c(ttk_menu_item *item)
@@ -161,7 +175,7 @@ static PzWindow *bzip2_d(const char *file)
 	pz_execv(
 		LAUNCHER "bzip2-d.sh",
 		(char *const *)cmd
-		);
+	);
 	return TTK_MENU_UPONE;
 }
 static PzWindow *load_file_handler_bzip2_d(ttk_menu_item *item)
@@ -177,7 +191,7 @@ static PzWindow *gzip_c(const char *file)
 	pz_execv(
 		LAUNCHER "gzip-c.sh",
 		(char *const *)cmd
-		);
+	);
 	return TTK_MENU_UPONE;
 }
 static PzWindow *load_file_handler_gzip_c(ttk_menu_item *item)
@@ -193,7 +207,7 @@ static PzWindow *gzip_d(const char *file)
 	pz_execv(
 		LAUNCHER "gzip-d.sh",
 		(char *const *)cmd
-		);
+	);
 	return TTK_MENU_UPONE;
 }
 static PzWindow *load_file_handler_gzip_d(ttk_menu_item *item)
@@ -207,32 +221,25 @@ static PzWindow *readme()
 		"/opt/Tools/CmdLine-Archivers/ReadMe from Keripo.txt");
 }
 
-static void cleanup()
-{
-	pz_browser_remove_handler(check_is_file);
-	pz_browser_remove_handler(check_nothing);
-	pz_browser_remove_handler(check_ext_zip);
-	pz_browser_remove_handler(check_ext_rar);
-	pz_browser_remove_handler(check_ext_tar);
-	pz_browser_remove_handler(check_ext_bz2);
-	pz_browser_remove_handler(check_ext_gz);
-}
-
 static void init_launch()
 {
-	module = pz_register_module("CmdLine-Archivers", cleanup);
+	module = pz_register_module("CmdLine-Archivers", 0);
 	
 	char path[256];
 	sprintf(
 		path, "%s:%s",
 		getenv("PATH"),
 		PATH
-		);	
+	);	
 	setenv("PATH", path, 1);
 	
-	pz_menu_add_stub_group("/Tools/CmdLine Archivers", "Utilities");
-	pz_menu_add_action_group("/Tools/CmdLine Archivers/~ReadMe", "Info", readme);
+	pz_menu_add_stub_group("/Tools/CmdLine-Archivers", "Utilities");
+	pz_menu_add_action_group("/Tools/CmdLine-Archivers/~ReadMe", "Info", readme);
 	pz_menu_sort("/Tools/CmdLine Archivers");
+	
+	browser_extension_checksum.name = N_("Calculate checksums");
+	browser_extension_checksum.makesub = load_file_handler_checksum;
+	pz_browser_add_action(check_is_file, &browser_extension_checksum);
 	
 	browser_extension_zip.name = N_("Compress (zip)");
 	browser_extension_zip.makesub = load_file_handler_zip;

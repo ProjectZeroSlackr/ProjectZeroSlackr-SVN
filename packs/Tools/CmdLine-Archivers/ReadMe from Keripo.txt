@@ -1,4 +1,4 @@
-Last updated: Jun 25, 2008
+Last updated: Aug 20, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -14,6 +14,7 @@ CmdLine-Archivers
 - Some of these have been recompiled while others
   are directly copied from their pre-compiled sources
   since they do not require recompilation.
+- md5sum, sha1sum and sum have been added via busybox.
 - For information on what each binary does, see their
   respective links below.
 
@@ -77,6 +78,7 @@ Modifications:
 
 Launch Module:
 - file handler for zip, unzip, unrar, tar, bzip2 and gzip
+- file handler for md5sum, sha1sum and sum
 - "/opt/Tools/CmdLine-Tools/Bin" added to $PATH for access
   by the shell
 
