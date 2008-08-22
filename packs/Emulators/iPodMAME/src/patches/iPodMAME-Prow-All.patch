@@ -1,7 +1,6 @@
-Index: Makefile.ipl
-===================================================================
---- Makefile.ipl	(revision 131)
-+++ Makefile.ipl	(working copy)
+diff -urN Makefile.ipl Makefile.ipl
+--- Makefile.ipl	2008-08-22 16:54:31.000000000 +0000
++++ Makefile.ipl	2008-08-22 17:11:45.000000000 +0000
 @@ -93,11 +93,11 @@
  endif
  else
@@ -16,7 +15,7 @@ Index: Makefile.ipl
  
  
  OBJS   = obj/mame.o obj/common.o obj/driver.o obj/cpuintrf.o obj/osdepend.o \
-@@ -119,17 +119,6 @@
+@@ -119,17 +119,8 @@
  	 obj/machine/mrdo.o obj/vidhrdw/mrdo.o obj/drivers/mrdo.o \
  	 obj/machine/docastle.o obj/vidhrdw/docastle.o obj/drivers/docastle.o \
  	 obj/machine/ladybug.o obj/vidhrdw/ladybug.o obj/sndhrdw/ladybug.o obj/drivers/ladybug.o \
@@ -31,15 +30,15 @@ Index: Makefile.ipl
 -# stuff that breaks the build. unused for now
 -UNUSED = \
 -	 src/I86/I86.o \
++	 obj/Z80/Z80.o obj/M6502/M6502.o \
++	 obj/I86/I86.o \
  	 obj/vidhrdw/qbert.o obj/sndhrdw/qbert.o obj/drivers/qbert.o \
  	 obj/drivers/galaxian.o \
  	obj/vidhrdw/cclimber.o obj/sndhrdw/cclimber.o obj/drivers/cclimber.o \
-@@ -163,6 +152,17 @@
+@@ -163,6 +154,15 @@
  	obj/vidhrdw/junglek.o obj/sndhrdw/junglek.o obj/drivers/junglek.o \
  	obj/machine/elevator.o obj/vidhrdw/elevator.o obj/drivers/elevator.o \
  	obj/machine/panic.o obj/vidhrdw/panic.o obj/drivers/panic.o \
-+	obj/I86/I86.o \
-+	obj/Z80/Z80.o obj/M6502/M6502.o 
 +
 +ifneq ($(IPOD),)
 +# add the optmized rotating blitter
@@ -52,426 +51,9 @@ Index: Makefile.ipl
   	 
  
  #VPATH = src src/Z80 src/M6502 src/I86
-Index: src/common.c
-===================================================================
---- src/common.c	(revision 131)
-+++ src/common.c	(working copy)
-@@ -345,12 +345,14 @@
- struct GfxElement *decodegfx(const unsigned char *src,const struct GfxLayout *gl)
- {
- 	int c;
--	struct osd_bitmap *bm;
-+	struct osd_bitmap *bm = 0;
- 	struct GfxElement *gfx;
- 
--
--	if ((bm = osd_create_bitmap(gl->width,gl->total * gl->height)) == 0)
--		return 0;
-+	// Only alloc a bitmap if needed (the galaxian stars don't need a bitmap)
-+	if (gl->width > 0 && gl->total * gl->height > 0) {
-+		if ((bm = osd_create_bitmap(gl->width,gl->total * gl->height)) == 0)
-+			return 0;
-+	}
- 	if ((gfx = malloc(sizeof(struct GfxElement))) == 0)
- 	{
- 		osd_free_bitmap(bm);
-@@ -374,7 +376,7 @@
- {
- 	if (gfx)
- 	{
--		osd_free_bitmap(gfx->gfxdata);
-+		if (gfx->gfxdata) osd_free_bitmap(gfx->gfxdata);
- 		free(gfx);
- 	}
- }
-Index: src/cpuintrf.c
-===================================================================
---- src/cpuintrf.c	(revision 131)
-+++ src/cpuintrf.c	(working copy)
-@@ -9,14 +9,10 @@
- ***************************************************************************/
- 
- #include "driver.h"
--#include "Z80.h"
--#include "M6502.h"
--
--
--/*
--extern void I86_Execute();
--extern void I86_Reset(unsigned char *mem,int cycles);
--*/
-+#include "Z80.h"
-+#include "M6502.h"
-+#include "I86.h"
-+
- 
- static int activecpu;
- 
-@@ -86,13 +82,11 @@
- 					ctxt->IPeriod = cycles;
- 					Reset6502(ctxt);
- 				}
--				break;
--			/*
-+				break;
- 			case CPU_I86:
- 				RAM = Machine->memory_region[Machine->drv->cpu[activecpu].memory_region];
- 				I86_Reset(RAM,cycles);
--				break;
--			*/
-+				break;
- 			
- 		}
- 	}
-@@ -141,12 +136,10 @@
- 					for (loops = 0;loops < Machine->drv->cpu[activecpu].interrupts_per_frame;loops++)
- 						Run6502((M6502 *)cpucontext[activecpu]);
- 					break;
--				/*
- 				case CPU_I86:
- 					for (loops = 0;loops < Machine->drv->cpu[activecpu].interrupts_per_frame;loops++)
- 						I86_Execute();
--					break;
--				*/
-+					break;
- 			}
- 		}
- 
-Index: src/driver.c
-===================================================================
---- src/driver.c	(revision 131)
-+++ src/driver.c	(working copy)
-@@ -111,7 +111,7 @@
- extern struct GameDriver mplanets_driver;
- extern struct GameDriver junglek_driver;
- extern struct GameDriver jungleh_driver;
--extern struct GameDriver elevator_driver;
-+//extern struct GameDriver elevator_driver;
- extern struct GameDriver panic_driver;
- 
- 
-@@ -151,7 +151,12 @@
- 	&gberet_driver,
- 	&rushatck_driver,
- 
--	/*
-+	&carnival_driver,
-+//	&elevator_driver,
-+	&wow_driver,
-+	&qbert_driver,
-+	&qbertjp_driver,
-+	
- 	&mrdot_driver,
- 	&docastle_driver,
- 	&mrlo_driver,
-@@ -166,7 +171,6 @@
- 	&dkong3_driver,
- 	&mario_driver,
- 	&bagman_driver,
--	&wow_driver,
- 	&robby_driver,
- 	&gorf_driver,
- 	
-@@ -206,7 +210,6 @@
- 	&pooyan_driver,
- 	&phoenix_driver,
- 	&pleiads_driver,
--	&carnival_driver,
- 	&invaders_driver,
- 	&earthinv_driver,
- 	&spaceatt_driver,
-@@ -227,13 +230,10 @@
- 	&venture_driver,
- 	&mtrap_driver,
- 	&pepper2_driver,
--	&qbert_driver,
--	&qbertjp_driver,
- 	&mplanets_driver,
- 	&junglek_driver,
- 	&jungleh_driver,
--	&elevator_driver,
- 	&panic_driver,
--	*/
-+	
- 	0	/* end of array */
- };
-Index: src/drivers/carnival.c
-===================================================================
---- src/drivers/carnival.c	(revision 131)
-+++ src/drivers/carnival.c	(working copy)
-@@ -220,38 +220,38 @@
- 
- ROM_START( carnival_rom )
- 	ROM_REGION(0x10000)	/* 64k for code */
--	ROM_LOAD( "651u33.cpu", 0x0000, 0x0400 )
--	ROM_CONTINUE(           0x4000, 0x0400 )
--	ROM_LOAD( "652u32.cpu", 0x0400, 0x0400 )
--	ROM_CONTINUE(           0x4400, 0x0400 )
--	ROM_LOAD( "653u31.cpu", 0x0800, 0x0400 )
--	ROM_CONTINUE(           0x4800, 0x0400 )
--	ROM_LOAD( "654u30.cpu", 0x0c00, 0x0400 )
--	ROM_CONTINUE(           0x4c00, 0x0400 )
--	ROM_LOAD( "655u29.cpu", 0x1000, 0x0400 )
--	ROM_CONTINUE(           0x5000, 0x0400 )
--	ROM_LOAD( "656u28.cpu", 0x1400, 0x0400 )
--	ROM_CONTINUE(           0x5400, 0x0400 )
--	ROM_LOAD( "657u27.cpu", 0x1800, 0x0400 )
--	ROM_CONTINUE(           0x5800, 0x0400 )
--	ROM_LOAD( "658u26.cpu", 0x1c00, 0x0400 )
--	ROM_CONTINUE(           0x5c00, 0x0400 )
--	ROM_LOAD( "659u8.cpu",  0x2000, 0x0400 )
--	ROM_CONTINUE(           0x6000, 0x0400 )
--	ROM_LOAD( "660u7.cpu",  0x2400, 0x0400 )
--	ROM_CONTINUE(           0x6400, 0x0400 )
--	ROM_LOAD( "661u6.cpu",  0x2800, 0x0400 )
--	ROM_CONTINUE(           0x6800, 0x0400 )
--	ROM_LOAD( "662u5.cpu",  0x2c00, 0x0400 )
--	ROM_CONTINUE(           0x6c00, 0x0400 )
--	ROM_LOAD( "663u4.cpu",  0x3000, 0x0400 )
--	ROM_CONTINUE(           0x7000, 0x0400 )
--	ROM_LOAD( "664u3.cpu",  0x3400, 0x0400 )
--	ROM_CONTINUE(           0x7400, 0x0400 )
--	ROM_LOAD( "665u2.cpu",  0x3800, 0x0400 )
--	ROM_CONTINUE(           0x7800, 0x0400 )
--	ROM_LOAD( "666u1.cpu",  0x3c00, 0x0400 )
--	ROM_CONTINUE(           0x7c00, 0x0400 )
-+	ROM_LOAD( "651u33.cpu", 0x4000, 0x0400 )
-+	//ROM_CONTINUE(           0x4000, 0x0400 )
-+	ROM_LOAD( "652u32.cpu", 0x4400, 0x0400 )
-+	//ROM_CONTINUE(           0x4400, 0x0400 )
-+	ROM_LOAD( "653u31.cpu", 0x4800, 0x0400 )
-+	//ROM_CONTINUE(           0x4800, 0x0400 )
-+	ROM_LOAD( "654u30.cpu", 0x4c00, 0x0400 )
-+	//ROM_CONTINUE(           0x4c00, 0x0400 )
-+	ROM_LOAD( "655u29.cpu", 0x5000, 0x0400 )
-+	//ROM_CONTINUE(           0x5000, 0x0400 )
-+	ROM_LOAD( "656u28.cpu", 0x5400, 0x0400 )
-+	//ROM_CONTINUE(           0x5400, 0x0400 )
-+	ROM_LOAD( "657u27.cpu", 0x5800, 0x0400 )
-+	//ROM_CONTINUE(           0x5800, 0x0400 )
-+	ROM_LOAD( "658u26.cpu", 0x5c00, 0x0400 )
-+	//ROM_CONTINUE(           0x5c00, 0x0400 )
-+	ROM_LOAD( "659u8.cpu",  0x6000, 0x0400 )
-+	//ROM_CONTINUE(           0x6000, 0x0400 )
-+	ROM_LOAD( "660u7.cpu",  0x6400, 0x0400 )
-+	//ROM_CONTINUE(           0x6400, 0x0400 )
-+	ROM_LOAD( "661u6.cpu",  0x6800, 0x0400 )
-+	//ROM_CONTINUE(           0x6800, 0x0400 )
-+	ROM_LOAD( "662u5.cpu",  0x6c00, 0x0400 )
-+	//ROM_CONTINUE(           0x6c00, 0x0400 )
-+	ROM_LOAD( "663u4.cpu",  0x7000, 0x0400 )
-+	//ROM_CONTINUE(           0x7000, 0x0400 )
-+	ROM_LOAD( "664u3.cpu",  0x7400, 0x0400 )
-+	//ROM_CONTINUE(           0x7400, 0x0400 )
-+	ROM_LOAD( "665u2.cpu",  0x7800, 0x0400 )
-+	//ROM_CONTINUE(           0x7800, 0x0400 )
-+	ROM_LOAD( "666u1.cpu",  0x7c00, 0x0400 )
-+	//ROM_CONTINUE(           0x7c00, 0x0400 )
- ROM_END
- 
- 
-Index: src/drivers/centiped.c
-===================================================================
---- src/drivers/centiped.c	(revision 131)
-+++ src/drivers/centiped.c	(working copy)
-@@ -341,15 +341,15 @@
- 
- ROM_START( centiped_rom )
- 	ROM_REGION(0x10000)	/* 64k for code */
--	ROM_LOAD( "%s.307", 0x2000, 0x0800 )
--	ROM_LOAD( "%s.308", 0x2800, 0x0800 )
--	ROM_LOAD( "%s.309", 0x3000, 0x0800 )
--	ROM_LOAD( "%s.310", 0x3800, 0x0800 )
--	ROM_LOAD( "%s.310", 0xf800, 0x0800 )	/* for the reset and interrupt vectors */
-+	ROM_LOAD( "136001-307.d1", 0x2000, 0x0800 )
-+	ROM_LOAD( "136001-308.e1", 0x2800, 0x0800 )
-+	ROM_LOAD( "136001-309.fh1", 0x3000, 0x0800 )
-+	ROM_LOAD( "136001-310.j1", 0x3800, 0x0800 )
-+	ROM_LOAD( "136001-310.j1", 0xf800, 0x0800 )	/* for the reset and interrupt vectors */
- 
- 	ROM_REGION(0x1000)	/* temporary space for graphics (disposed after conversion) */
--	ROM_LOAD( "%s.211", 0x0000, 0x0800 )
--	ROM_LOAD( "%s.212", 0x0800, 0x0800 )
-+	ROM_LOAD( "136001-211.f7", 0x0000, 0x0800 )
-+	ROM_LOAD( "136001-212.hj7", 0x0800, 0x0800 )
- ROM_END
- 
- 
-Index: src/drivers/junglek.c
-===================================================================
---- src/drivers/junglek.c	(revision 131)
-+++ src/drivers/junglek.c	(working copy)
-@@ -103,6 +103,7 @@
- 
- 
- 
-+#if 0
- static struct MemoryReadAddress sound_readmem[] =
- {
- 	{ 0x4000, 0x43ff, MRA_RAM },
-@@ -122,6 +123,7 @@
- 	{ 0x0000, 0x0fff, MWA_ROM },
- 	{ -1 }	/* end of table */
- };
-+#endif
- 
- 
- 
-Index: src/drivers/milliped.c
-===================================================================
---- src/drivers/milliped.c	(revision 131)
-+++ src/drivers/milliped.c	(working copy)
-@@ -257,15 +257,15 @@
- 
- ROM_START( milliped_rom )
- 	ROM_REGION(0x10000)	/* 64k for code */
--	ROM_LOAD( "%s.104", 0x4000, 0x1000 )
--	ROM_LOAD( "%s.103", 0x5000, 0x1000 )
--	ROM_LOAD( "%s.102", 0x6000, 0x1000 )
--	ROM_LOAD( "%s.101", 0x7000, 0x1000 )
--	ROM_LOAD( "%s.101", 0xf000, 0x1000 )	/* for the reset and interrupt vectors */
-+	ROM_LOAD( "136013-104.1mn", 0x4000, 0x1000 )
-+	ROM_LOAD( "136013-103.1l", 0x5000, 0x1000 )
-+	ROM_LOAD( "136013-102.1jk", 0x6000, 0x1000 )
-+	ROM_LOAD( "136013-101.1h", 0x7000, 0x1000 )
-+	ROM_LOAD( "136013-101.1h", 0xf000, 0x1000 )	/* for the reset and interrupt vectors */
- 
- 	ROM_REGION(0x1000)	/* temporary space for graphics (disposed after conversion) */
--	ROM_LOAD( "%s.106", 0x0000, 0x0800 )
--	ROM_LOAD( "%s.107", 0x0800, 0x0800 )
-+	ROM_LOAD( "136013-106.5p", 0x0000, 0x0800 )
-+	ROM_LOAD( "136013-107.5r", 0x0800, 0x0800 )
- ROM_END
- 
- 
-Index: src/drivers/mooncrst.c
-===================================================================
---- src/drivers/mooncrst.c	(revision 131)
-+++ src/drivers/mooncrst.c	(working copy)
-@@ -231,14 +231,14 @@
- 
- ROM_START( fantazia_rom )
- 	ROM_REGION(0x10000)	/* 64k for code */
--	ROM_LOAD( "F01.bin", 0x0000, 0x0800 )
--	ROM_LOAD( "F02.bin", 0x0800, 0x0800 )
--	ROM_LOAD( "F03.bin", 0x1000, 0x0800 )
--	ROM_LOAD( "F04.bin", 0x1800, 0x0800 )
--	ROM_LOAD( "F09.bin", 0x2000, 0x0800 )
--	ROM_LOAD( "F10.bin", 0x2800, 0x0800 )
--	ROM_LOAD( "F11.bin", 0x3000, 0x0800 )
--	ROM_LOAD( "F12.bin", 0x3800, 0x0800 )
-+	ROM_LOAD( "f01.bin", 0x0000, 0x0800 )
-+	ROM_LOAD( "f02.bin", 0x0800, 0x0800 )
-+	ROM_LOAD( "f03.bin", 0x1000, 0x0800 )
-+	ROM_LOAD( "f04.bin", 0x1800, 0x0800 )
-+	ROM_LOAD( "f09.bin", 0x2000, 0x0800 )
-+	ROM_LOAD( "f10.bin", 0x2800, 0x0800 )
-+	ROM_LOAD( "f11.bin", 0x3000, 0x0800 )
-+	ROM_LOAD( "f12.bin", 0x3800, 0x0800 )
- 
- 	ROM_REGION(0x2000)	/* temporary space for graphics (disposed after conversion) */
- 	ROM_LOAD( "1h_1_10.bin", 0x0000, 0x0800 )
-Index: src/drivers/mplanets.c
-===================================================================
---- src/drivers/mplanets.c	(revision 131)
-+++ src/drivers/mplanets.c	(working copy)
-@@ -250,19 +250,19 @@
- 
- ROM_START( mplanets_rom )
- 	ROM_REGION(0x10000)     /* 64k for code */
--	ROM_LOAD( "ROM0",  0xe000, 0x2000 )
--	ROM_LOAD( "ROM1",  0xc000, 0x2000 )
--	ROM_LOAD( "ROM2",  0xa000, 0x2000 )
--	ROM_LOAD( "ROM3",  0x8000, 0x2000 )
--	ROM_LOAD( "ROM4",  0x6000, 0x2000 )
-+	ROM_LOAD( "rom0",  0xe000, 0x2000 )
-+	ROM_LOAD( "rom1",  0xc000, 0x2000 )
-+	ROM_LOAD( "rom2",  0xa000, 0x2000 )
-+	ROM_LOAD( "rom3",  0x8000, 0x2000 )
-+	ROM_LOAD( "rom4",  0x6000, 0x2000 )
- 
- 	ROM_REGION(0xA000)      /* temporary space for graphics */
--	ROM_LOAD( "BG0",  0x0000, 0x1000 )
--	ROM_LOAD( "BG1",  0x1000, 0x1000 )
--	ROM_LOAD( "FG3",  0x2000, 0x2000 )       /* sprites */
--	ROM_LOAD( "FG2",  0x4000, 0x2000 )       /* sprites */
--	ROM_LOAD( "FG1",  0x6000, 0x2000 )       /* sprites */
--	ROM_LOAD( "FG0",  0x8000, 0x2000 )       /* sprites */
-+	ROM_LOAD( "bg0",  0x0000, 0x1000 )
-+	ROM_LOAD( "bg1",  0x1000, 0x1000 )
-+	ROM_LOAD( "fg3",  0x2000, 0x2000 )       /* sprites */
-+	ROM_LOAD( "fg2",  0x4000, 0x2000 )       /* sprites */
-+	ROM_LOAD( "fg1",  0x6000, 0x2000 )       /* sprites */
-+	ROM_LOAD( "fg0",  0x8000, 0x2000 )       /* sprites */
- ROM_END
- 
- static unsigned short mplanets_colors[]={
-@@ -310,7 +310,7 @@
- 
- 	input_ports, dsw,
- 
--	(char *)mplanets_colors,
-+	(unsigned char *)mplanets_colors,
- 	0,0,    /* palette, colortable */
- 
- 	{ 0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,	/* numbers */
-Index: src/drivers/qbert.c
-===================================================================
---- src/drivers/qbert.c	(revision 131)
-+++ src/drivers/qbert.c	(working copy)
-@@ -343,7 +343,7 @@
- 
- 	input_ports, dsw,
- 
--	(char *)qbert_colors,
-+	(unsigned char *)qbert_colors,
- 	0,0,    /* palette, colortable */
- 
- 	{ 0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,	/* numbers */
-@@ -366,7 +366,7 @@
- 
- 	input_ports, dsw,
- 
--	(char *)qbert_colors,
-+	(unsigned char *)qbert_colors,
- 	0,0,    /* palette, colortable */
- 
- 	{ 0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,	/* numbers */
-Index: src/drivers/venture.c
-===================================================================
---- src/drivers/venture.c	(revision 131)
-+++ src/drivers/venture.c	(working copy)
-@@ -324,17 +324,17 @@
- 
- ROM_START( venture_rom )
- 	ROM_REGION(0x10000)	/* 64k for code */
--	ROM_LOAD( "13A-CPU", 0x8000, 0x1000 )
--	ROM_LOAD( "12A-CPU", 0x9000, 0x1000 )
--	ROM_LOAD( "11A-CPU", 0xA000, 0x1000 )
--	ROM_LOAD( "10A-CPU", 0xB000, 0x1000 )
--	ROM_LOAD( "9A-CPU",  0xC000, 0x1000 )
--	ROM_LOAD( "8A-CPU",  0xD000, 0x1000 )
--	ROM_LOAD( "7A-CPU",  0xE000, 0x1000 )
--	ROM_LOAD( "6A-CPU",  0xF000, 0x1000 )
-+	ROM_LOAD( "13a-cpu", 0x8000, 0x1000 )
-+	ROM_LOAD( "12a-cpu", 0x9000, 0x1000 )
-+	ROM_LOAD( "11a-cpu", 0xA000, 0x1000 )
-+	ROM_LOAD( "10a-cpu", 0xB000, 0x1000 )
-+	ROM_LOAD( "9a-cpu",  0xC000, 0x1000 )
-+	ROM_LOAD( "8a-cpu",  0xD000, 0x1000 )
-+	ROM_LOAD( "7a-cpu",  0xE000, 0x1000 )
-+	ROM_LOAD( "6a-cpu",  0xF000, 0x1000 )
- 
- 	ROM_REGION(0x0800)	/* temporary space for graphics (disposed after conversion) */
--	ROM_LOAD( "11D-CPU", 0x0000, 0x0800 )
-+	ROM_LOAD( "11d-cpu", 0x0000, 0x0800 )
- ROM_END
- 
- ROM_START( mtrap_rom )
-Index: src/I86/I86.c
-===================================================================
---- src/I86/I86.c	(revision 131)
-+++ src/I86/I86.c	(working copy)
+diff -urN src/I86/I86.c src/I86/I86.c
+--- src/I86/I86.c	2008-08-22 16:54:29.000000000 +0000
++++ src/I86/I86.c	2008-08-22 16:54:32.000000000 +0000
 @@ -24,6 +24,7 @@
  #include "global.h"
  
@@ -659,10 +241,9 @@ Index: src/I86/I86.c
      else init=1; 
  
      while(instr_count--)
-Index: src/I86/I86.h
-===================================================================
---- src/I86/I86.h	(revision 131)
-+++ src/I86/I86.h	(working copy)
+diff -urN src/I86/I86.h src/I86/I86.h
+--- src/I86/I86.h	2008-08-22 16:54:29.000000000 +0000
++++ src/I86/I86.h	2008-08-22 16:54:32.000000000 +0000
 @@ -2,6 +2,7 @@
  #define CPU_H
  
@@ -679,10 +260,411 @@ Index: src/I86/I86.h
 +void I86_Reset(unsigned char *mem,int cycles);
 +
  #endif
-Index: src/inifile/ini.c
-===================================================================
---- src/inifile/ini.c	(revision 131)
-+++ src/inifile/ini.c	(working copy)
+diff -urN src/common.c src/common.c
+--- src/common.c	2008-08-22 16:54:31.000000000 +0000
++++ src/common.c	2008-08-22 16:56:45.000000000 +0000
+@@ -345,12 +345,15 @@
+ struct GfxElement *decodegfx(const unsigned char *src,const struct GfxLayout *gl)
+ {
+ 	int c;
+-	struct osd_bitmap *bm;
++	struct osd_bitmap *bm = 0;
+ 	struct GfxElement *gfx;
+ 
+ 
+-	if ((bm = osd_create_bitmap(gl->width,gl->total * gl->height)) == 0)
+-		return 0;
++	// Only alloc a bitmap if needed (the galaxian stars don't need a bitmap)
++	if (gl->width > 0 && gl->total * gl->height > 0) {
++ 		if ((bm = osd_create_bitmap(gl->width,gl->total * gl->height)) == 0)
++ 			return 0;
++ 	}
+ 	if ((gfx = malloc(sizeof(struct GfxElement))) == 0)
+ 	{
+ 		osd_free_bitmap(bm);
+@@ -374,7 +377,7 @@
+ {
+ 	if (gfx)
+ 	{
+-		osd_free_bitmap(gfx->gfxdata);
++		if (gfx->gfxdata) osd_free_bitmap(gfx->gfxdata);
+ 		free(gfx);
+ 	}
+ }
+diff -urN src/cpuintrf.c src/cpuintrf.c
+--- src/cpuintrf.c	2008-08-22 16:54:31.000000000 +0000
++++ src/cpuintrf.c	2008-08-22 16:58:35.000000000 +0000
+@@ -9,9 +9,10 @@
+ ***************************************************************************/
+ 
+ #include "driver.h"
+-#include "Z80.h"
+-#include "M6502.h"
+-
++#include "Z80.h"
++#include "M6502.h"
++#include "I86.h"
++
+ 
+ /*
+ extern void I86_Execute();
+@@ -72,7 +73,7 @@
+ 					ctxt->iperiod = cycles;
+ 					ctxt->irq = Z80_IGNORE_INT;
+ 				}
+-				break;
++				break;
+ 			
+ 			case CPU_M6502:
+ 				{
+@@ -86,13 +87,11 @@
+ 					ctxt->IPeriod = cycles;
+ 					Reset6502(ctxt);
+ 				}
+-				break;
+-			/*
++				break;
+ 			case CPU_I86:
+ 				RAM = Machine->memory_region[Machine->drv->cpu[activecpu].memory_region];
+ 				I86_Reset(RAM,cycles);
+-				break;
+-			*/
++				break;
+ 			
+ 		}
+ 	}
+@@ -141,12 +140,10 @@
+ 					for (loops = 0;loops < Machine->drv->cpu[activecpu].interrupts_per_frame;loops++)
+ 						Run6502((M6502 *)cpucontext[activecpu]);
+ 					break;
+-				/*
+ 				case CPU_I86:
+ 					for (loops = 0;loops < Machine->drv->cpu[activecpu].interrupts_per_frame;loops++)
+ 						I86_Execute();
+-					break;
+-				*/
++					break;
+ 			}
+ 		}
+ 
+@@ -169,7 +166,7 @@
+ 		case CPU_M6502:
+ 			return ((M6502 *)cpucontext[activecpu])->PC.W;
+ 			break;
+-		
++		
+ 
+ 		default:
+ 	if (errorlog) fprintf(errorlog,"cpu_getpc: unsupported CPU type %02x\n",Machine->drv->cpu[activecpu].cpu_type);
+diff -urN src/driver.c src/driver.c
+--- src/driver.c	2008-08-22 16:54:31.000000000 +0000
++++ src/driver.c	2008-08-22 16:54:32.000000000 +0000
+@@ -111,7 +111,7 @@
+ extern struct GameDriver mplanets_driver;
+ extern struct GameDriver junglek_driver;
+ extern struct GameDriver jungleh_driver;
+-extern struct GameDriver elevator_driver;
++//extern struct GameDriver elevator_driver;
+ extern struct GameDriver panic_driver;
+ 
+ 
+@@ -151,7 +151,12 @@
+ 	&gberet_driver,
+ 	&rushatck_driver,
+ 
+-	/*
++	&carnival_driver,
++//	&elevator_driver,
++	&wow_driver,
++	&qbert_driver,
++	&qbertjp_driver,
++	
+ 	&mrdot_driver,
+ 	&docastle_driver,
+ 	&mrlo_driver,
+@@ -166,7 +171,6 @@
+ 	&dkong3_driver,
+ 	&mario_driver,
+ 	&bagman_driver,
+-	&wow_driver,
+ 	&robby_driver,
+ 	&gorf_driver,
+ 	
+@@ -206,7 +210,6 @@
+ 	&pooyan_driver,
+ 	&phoenix_driver,
+ 	&pleiads_driver,
+-	&carnival_driver,
+ 	&invaders_driver,
+ 	&earthinv_driver,
+ 	&spaceatt_driver,
+@@ -227,13 +230,10 @@
+ 	&venture_driver,
+ 	&mtrap_driver,
+ 	&pepper2_driver,
+-	&qbert_driver,
+-	&qbertjp_driver,
+ 	&mplanets_driver,
+ 	&junglek_driver,
+ 	&jungleh_driver,
+-	&elevator_driver,
+ 	&panic_driver,
+-	*/
++	
+ 	0	/* end of array */
+ };
+diff -urN src/drivers/carnival.c src/drivers/carnival.c
+--- src/drivers/carnival.c	2008-08-22 16:54:31.000000000 +0000
++++ src/drivers/carnival.c	2008-08-22 17:00:54.000000000 +0000
+@@ -220,38 +220,22 @@
+ 
+ ROM_START( carnival_rom )
+ 	ROM_REGION(0x10000)	/* 64k for code */
+-	ROM_LOAD( "651u33.cpu", 0x0000, 0x0400 )
+-	ROM_CONTINUE(           0x4000, 0x0400 )
+-	ROM_LOAD( "652u32.cpu", 0x0400, 0x0400 )
+-	ROM_CONTINUE(           0x4400, 0x0400 )
+-	ROM_LOAD( "653u31.cpu", 0x0800, 0x0400 )
+-	ROM_CONTINUE(           0x4800, 0x0400 )
+-	ROM_LOAD( "654u30.cpu", 0x0c00, 0x0400 )
+-	ROM_CONTINUE(           0x4c00, 0x0400 )
+-	ROM_LOAD( "655u29.cpu", 0x1000, 0x0400 )
+-	ROM_CONTINUE(           0x5000, 0x0400 )
+-	ROM_LOAD( "656u28.cpu", 0x1400, 0x0400 )
+-	ROM_CONTINUE(           0x5400, 0x0400 )
+-	ROM_LOAD( "657u27.cpu", 0x1800, 0x0400 )
+-	ROM_CONTINUE(           0x5800, 0x0400 )
+-	ROM_LOAD( "658u26.cpu", 0x1c00, 0x0400 )
+-	ROM_CONTINUE(           0x5c00, 0x0400 )
+-	ROM_LOAD( "659u8.cpu",  0x2000, 0x0400 )
+-	ROM_CONTINUE(           0x6000, 0x0400 )
+-	ROM_LOAD( "660u7.cpu",  0x2400, 0x0400 )
+-	ROM_CONTINUE(           0x6400, 0x0400 )
+-	ROM_LOAD( "661u6.cpu",  0x2800, 0x0400 )
+-	ROM_CONTINUE(           0x6800, 0x0400 )
+-	ROM_LOAD( "662u5.cpu",  0x2c00, 0x0400 )
+-	ROM_CONTINUE(           0x6c00, 0x0400 )
+-	ROM_LOAD( "663u4.cpu",  0x3000, 0x0400 )
+-	ROM_CONTINUE(           0x7000, 0x0400 )
+-	ROM_LOAD( "664u3.cpu",  0x3400, 0x0400 )
+-	ROM_CONTINUE(           0x7400, 0x0400 )
+-	ROM_LOAD( "665u2.cpu",  0x3800, 0x0400 )
+-	ROM_CONTINUE(           0x7800, 0x0400 )
+-	ROM_LOAD( "666u1.cpu",  0x3c00, 0x0400 )
+-	ROM_CONTINUE(           0x7c00, 0x0400 )
++	ROM_LOAD( "651u33.cpu", 0x4000, 0x0400 )
++	ROM_LOAD( "652u32.cpu", 0x4400, 0x0400 )
++	ROM_LOAD( "653u31.cpu", 0x4800, 0x0400 )
++	ROM_LOAD( "654u30.cpu", 0x4c00, 0x0400 )
++	ROM_LOAD( "655u29.cpu", 0x5000, 0x0400 )
++	ROM_LOAD( "656u28.cpu", 0x5400, 0x0400 )
++	ROM_LOAD( "657u27.cpu", 0x5800, 0x0400 )
++	ROM_LOAD( "658u26.cpu", 0x5c00, 0x0400 )
++	ROM_LOAD( "659u8.cpu",  0x6000, 0x0400 )
++	ROM_LOAD( "660u7.cpu",  0x6400, 0x0400 )
++	ROM_LOAD( "661u6.cpu",  0x6800, 0x0400 )
++	ROM_LOAD( "662u5.cpu",  0x6c00, 0x0400 )
++	ROM_LOAD( "663u4.cpu",  0x7000, 0x0400 )
++	ROM_LOAD( "664u3.cpu",  0x7400, 0x0400 )
++	ROM_LOAD( "665u2.cpu",  0x7800, 0x0400 )
++	ROM_LOAD( "666u1.cpu",  0x7c00, 0x0400 )
+ ROM_END
+ 
+ 
+diff -urN src/drivers/centiped.c src/drivers/centiped.c
+--- src/drivers/centiped.c	2008-08-22 16:54:31.000000000 +0000
++++ src/drivers/centiped.c	2008-08-22 17:01:45.000000000 +0000
+@@ -341,15 +341,15 @@
+ 
+ ROM_START( centiped_rom )
+ 	ROM_REGION(0x10000)	/* 64k for code */
+-	ROM_LOAD( "%s.307", 0x2000, 0x0800 )
+-	ROM_LOAD( "%s.308", 0x2800, 0x0800 )
+-	ROM_LOAD( "%s.309", 0x3000, 0x0800 )
+-	ROM_LOAD( "%s.310", 0x3800, 0x0800 )
+-	ROM_LOAD( "%s.310", 0xf800, 0x0800 )	/* for the reset and interrupt vectors */
++	ROM_LOAD( "136001-307.d1", 0x2000, 0x0800 )
++	ROM_LOAD( "136001-308.e1", 0x2800, 0x0800 )
++	ROM_LOAD( "136001-309.fh1", 0x3000, 0x0800 )
++	ROM_LOAD( "136001-310.j1", 0x3800, 0x0800 )
++	ROM_LOAD( "136001-310.j1", 0xf800, 0x0800 )	/* for the reset and interrupt vectors */
+ 
+ 	ROM_REGION(0x1000)	/* temporary space for graphics (disposed after conversion) */
+-	ROM_LOAD( "%s.211", 0x0000, 0x0800 )
+-	ROM_LOAD( "%s.212", 0x0800, 0x0800 )
++	ROM_LOAD( "136001-211.f7", 0x0000, 0x0800 )
++	ROM_LOAD( "136001-212.hj7", 0x0800, 0x0800 )
+ ROM_END
+ 
+ 
+diff -urN src/drivers/junglek.c src/drivers/junglek.c
+--- src/drivers/junglek.c	2008-08-22 16:54:31.000000000 +0000
++++ src/drivers/junglek.c	2008-08-22 17:02:29.000000000 +0000
+@@ -103,6 +103,7 @@
+ 
+ 
+ 
++#if 0
+ static struct MemoryReadAddress sound_readmem[] =
+ {
+ 	{ 0x4000, 0x43ff, MRA_RAM },
+@@ -122,6 +123,7 @@
+ 	{ 0x0000, 0x0fff, MWA_ROM },
+ 	{ -1 }	/* end of table */
+ };
++#endif
+ 
+ 
+ 
+diff -urN src/drivers/milliped.c src/drivers/milliped.c
+--- src/drivers/milliped.c	2008-08-22 16:54:31.000000000 +0000
++++ src/drivers/milliped.c	2008-08-22 17:03:29.000000000 +0000
+@@ -257,15 +257,15 @@
+ 
+ ROM_START( milliped_rom )
+ 	ROM_REGION(0x10000)	/* 64k for code */
+-	ROM_LOAD( "%s.104", 0x4000, 0x1000 )
+-	ROM_LOAD( "%s.103", 0x5000, 0x1000 )
+-	ROM_LOAD( "%s.102", 0x6000, 0x1000 )
+-	ROM_LOAD( "%s.101", 0x7000, 0x1000 )
+-	ROM_LOAD( "%s.101", 0xf000, 0x1000 )	/* for the reset and interrupt vectors */
++	ROM_LOAD( "136013-104.1mn", 0x4000, 0x1000 )
++	ROM_LOAD( "136013-103.1l", 0x5000, 0x1000 )
++	ROM_LOAD( "136013-102.1jk", 0x6000, 0x1000 )
++	ROM_LOAD( "136013-101.1h", 0x7000, 0x1000 )
++	ROM_LOAD( "136013-101.1h", 0xf000, 0x1000 )	/* for the reset and interrupt vectors */
+ 
+ 	ROM_REGION(0x1000)	/* temporary space for graphics (disposed after conversion) */
+-	ROM_LOAD( "%s.106", 0x0000, 0x0800 )
+-	ROM_LOAD( "%s.107", 0x0800, 0x0800 )
++	ROM_LOAD( "136013-106.5p", 0x0000, 0x0800 )
++	ROM_LOAD( "136013-107.5r", 0x0800, 0x0800 )
+ ROM_END
+ 
+ 
+diff -urN src/drivers/mooncrst.c src/drivers/mooncrst.c
+--- src/drivers/mooncrst.c	2008-08-22 16:54:31.000000000 +0000
++++ src/drivers/mooncrst.c	2008-08-22 17:04:02.000000000 +0000
+@@ -231,14 +231,14 @@
+ 
+ ROM_START( fantazia_rom )
+ 	ROM_REGION(0x10000)	/* 64k for code */
+-	ROM_LOAD( "F01.bin", 0x0000, 0x0800 )
+-	ROM_LOAD( "F02.bin", 0x0800, 0x0800 )
+-	ROM_LOAD( "F03.bin", 0x1000, 0x0800 )
+-	ROM_LOAD( "F04.bin", 0x1800, 0x0800 )
+-	ROM_LOAD( "F09.bin", 0x2000, 0x0800 )
+-	ROM_LOAD( "F10.bin", 0x2800, 0x0800 )
+-	ROM_LOAD( "F11.bin", 0x3000, 0x0800 )
+-	ROM_LOAD( "F12.bin", 0x3800, 0x0800 )
++	ROM_LOAD( "f01.bin", 0x0000, 0x0800 )
++	ROM_LOAD( "f02.bin", 0x0800, 0x0800 )
++	ROM_LOAD( "f03.bin", 0x1000, 0x0800 )
++	ROM_LOAD( "f04.bin", 0x1800, 0x0800 )
++	ROM_LOAD( "f09.bin", 0x2000, 0x0800 )
++	ROM_LOAD( "f10.bin", 0x2800, 0x0800 )
++	ROM_LOAD( "f11.bin", 0x3000, 0x0800 )
++	ROM_LOAD( "f12.bin", 0x3800, 0x0800 )
+ 
+ 	ROM_REGION(0x2000)	/* temporary space for graphics (disposed after conversion) */
+ 	ROM_LOAD( "1h_1_10.bin", 0x0000, 0x0800 )
+diff -urN src/drivers/mplanets.c src/drivers/mplanets.c
+--- src/drivers/mplanets.c	2008-08-22 16:54:31.000000000 +0000
++++ src/drivers/mplanets.c	2008-08-22 16:54:32.000000000 +0000
+@@ -250,19 +250,19 @@
+ 
+ ROM_START( mplanets_rom )
+ 	ROM_REGION(0x10000)     /* 64k for code */
+-	ROM_LOAD( "ROM0",  0xe000, 0x2000 )
+-	ROM_LOAD( "ROM1",  0xc000, 0x2000 )
+-	ROM_LOAD( "ROM2",  0xa000, 0x2000 )
+-	ROM_LOAD( "ROM3",  0x8000, 0x2000 )
+-	ROM_LOAD( "ROM4",  0x6000, 0x2000 )
++	ROM_LOAD( "rom0",  0xe000, 0x2000 )
++	ROM_LOAD( "rom1",  0xc000, 0x2000 )
++	ROM_LOAD( "rom2",  0xa000, 0x2000 )
++	ROM_LOAD( "rom3",  0x8000, 0x2000 )
++	ROM_LOAD( "rom4",  0x6000, 0x2000 )
+ 
+ 	ROM_REGION(0xA000)      /* temporary space for graphics */
+-	ROM_LOAD( "BG0",  0x0000, 0x1000 )
+-	ROM_LOAD( "BG1",  0x1000, 0x1000 )
+-	ROM_LOAD( "FG3",  0x2000, 0x2000 )       /* sprites */
+-	ROM_LOAD( "FG2",  0x4000, 0x2000 )       /* sprites */
+-	ROM_LOAD( "FG1",  0x6000, 0x2000 )       /* sprites */
+-	ROM_LOAD( "FG0",  0x8000, 0x2000 )       /* sprites */
++	ROM_LOAD( "bg0",  0x0000, 0x1000 )
++	ROM_LOAD( "bg1",  0x1000, 0x1000 )
++	ROM_LOAD( "fg3",  0x2000, 0x2000 )       /* sprites */
++	ROM_LOAD( "fg2",  0x4000, 0x2000 )       /* sprites */
++	ROM_LOAD( "fg1",  0x6000, 0x2000 )       /* sprites */
++	ROM_LOAD( "fg0",  0x8000, 0x2000 )       /* sprites */
+ ROM_END
+ 
+ static unsigned short mplanets_colors[]={
+@@ -310,7 +310,7 @@
+ 
+ 	input_ports, dsw,
+ 
+-	(char *)mplanets_colors,
++	(unsigned char *)mplanets_colors,
+ 	0,0,    /* palette, colortable */
+ 
+ 	{ 0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,	/* numbers */
+diff -urN src/drivers/qbert.c src/drivers/qbert.c
+--- src/drivers/qbert.c	2008-08-22 16:54:31.000000000 +0000
++++ src/drivers/qbert.c	2008-08-22 16:54:32.000000000 +0000
+@@ -343,7 +343,7 @@
+ 
+ 	input_ports, dsw,
+ 
+-	(char *)qbert_colors,
++	(unsigned char *)qbert_colors,
+ 	0,0,    /* palette, colortable */
+ 
+ 	{ 0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,	/* numbers */
+@@ -366,7 +366,7 @@
+ 
+ 	input_ports, dsw,
+ 
+-	(char *)qbert_colors,
++	(unsigned char *)qbert_colors,
+ 	0,0,    /* palette, colortable */
+ 
+ 	{ 0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,	/* numbers */
+diff -urN src/drivers/venture.c src/drivers/venture.c
+--- src/drivers/venture.c	2008-08-22 16:54:31.000000000 +0000
++++ src/drivers/venture.c	2008-08-22 17:04:55.000000000 +0000
+@@ -324,17 +324,17 @@
+ 
+ ROM_START( venture_rom )
+ 	ROM_REGION(0x10000)	/* 64k for code */
+-	ROM_LOAD( "13A-CPU", 0x8000, 0x1000 )
+-	ROM_LOAD( "12A-CPU", 0x9000, 0x1000 )
+-	ROM_LOAD( "11A-CPU", 0xA000, 0x1000 )
+-	ROM_LOAD( "10A-CPU", 0xB000, 0x1000 )
+-	ROM_LOAD( "9A-CPU",  0xC000, 0x1000 )
+-	ROM_LOAD( "8A-CPU",  0xD000, 0x1000 )
+-	ROM_LOAD( "7A-CPU",  0xE000, 0x1000 )
+-	ROM_LOAD( "6A-CPU",  0xF000, 0x1000 )
++	ROM_LOAD( "13a-cpu", 0x8000, 0x1000 )
++	ROM_LOAD( "12a-cpu", 0x9000, 0x1000 )
++	ROM_LOAD( "11a-cpu", 0xA000, 0x1000 )
++	ROM_LOAD( "10a-cpu", 0xB000, 0x1000 )
++	ROM_LOAD( "9a-cpu",  0xC000, 0x1000 )
++	ROM_LOAD( "8a-cpu",  0xD000, 0x1000 )
++	ROM_LOAD( "7a-cpu",  0xE000, 0x1000 )
++	ROM_LOAD( "6a-cpu",  0xF000, 0x1000 )
+ 
+ 	ROM_REGION(0x0800)	/* temporary space for graphics (disposed after conversion) */
+-	ROM_LOAD( "11D-CPU", 0x0000, 0x0800 )
++	ROM_LOAD( "11d-cpu", 0x0000, 0x0800 )
+ ROM_END
+ 
+ ROM_START( mtrap_rom )
+diff -urN src/inifile/ini.c src/inifile/ini.c
+--- src/inifile/ini.c	2008-08-22 16:54:28.000000000 +0000
++++ src/inifile/ini.c	2008-08-22 16:54:32.000000000 +0000
 @@ -355,6 +355,8 @@
  	// check for a # sign in it, set it to a NULL
  	x = strchr( buf, '#' );
@@ -692,10 +674,9 @@ Index: src/inifile/ini.c
  		*x = '\0';
  	}
  
-Index: src/inifile/mameconf.c
-===================================================================
---- src/inifile/mameconf.c	(revision 131)
-+++ src/inifile/mameconf.c	(working copy)
+diff -urN src/inifile/mameconf.c src/inifile/mameconf.c
+--- src/inifile/mameconf.c	2008-08-22 16:54:28.000000000 +0000
++++ src/inifile/mameconf.c	2008-08-22 16:54:32.000000000 +0000
 @@ -17,6 +17,8 @@
  
  /* lets make it easy to find the conf file. */
@@ -753,10 +734,9 @@ Index: src/inifile/mameconf.c
  
  	/* read in the frameskip setting */
  	if( ini_Exists( theConfFile, gamename, "frameskip" ))
-Index: src/ipl/asm_rot.S
-===================================================================
---- src/ipl/asm_rot.S	(revision 131)
-+++ src/ipl/asm_rot.S	(working copy)
+diff -urN src/ipl/asm_rot.S src/ipl/asm_rot.S
+--- src/ipl/asm_rot.S	2008-08-22 16:54:29.000000000 +0000
++++ src/ipl/asm_rot.S	2008-08-22 16:54:32.000000000 +0000
 @@ -99,4 +99,4 @@
          blo     1b                      @ if not, keep looping                  2S    1N 
    
@@ -764,10 +744,9 @@ Index: src/ipl/asm_rot.S
 -		
 \ No newline at end of file
 +		
-Index: src/ipl/cop.h
-===================================================================
---- src/ipl/cop.h	(revision 0)
-+++ src/ipl/cop.h	(revision 0)
+diff -urN src/ipl/cop.h src/ipl/cop.h
+--- src/ipl/cop.h	2008-08-22 16:54:29.000000000 +0000
++++ src/ipl/cop.h	2008-08-22 16:54:32.000000000 +0000
 @@ -0,0 +1,18 @@
 +#ifndef __COP_H_
 +#define __COP_H_
@@ -787,10 +766,9 @@ Index: src/ipl/cop.h
 +#define inl(a)		(*(volatile unsigned int *)(a))
 +
 +#endif
-Index: src/ipl/ipodlinux.c
-===================================================================
---- src/ipl/ipodlinux.c	(revision 131)
-+++ src/ipl/ipodlinux.c	(working copy)
+diff -urN src/ipl/ipodlinux.c src/ipl/ipodlinux.c
+--- src/ipl/ipodlinux.c	2008-08-22 16:54:29.000000000 +0000
++++ src/ipl/ipodlinux.c	2008-08-22 16:54:32.000000000 +0000
 @@ -62,6 +62,7 @@
  #include <time.h>
  #include <termios.h>
@@ -1899,25 +1877,22 @@ Index: src/ipl/ipodlinux.c
  		b_u = IPOD_KEYPAD_NEXT;
  		b_d = IPOD_KEYPAD_PREV;
  		b_l = IPOD_KEYPAD_MENU;
-Index: src/ipl/osdep2.h
-===================================================================
---- src/ipl/osdep2.h	(revision 131)
-+++ src/ipl/osdep2.h	(working copy)
-@@ -28,7 +28,10 @@
+diff -urN src/ipl/osdep2.h src/ipl/osdep2.h
+--- src/ipl/osdep2.h	2008-08-22 16:54:29.000000000 +0000
++++ src/ipl/osdep2.h	2008-08-22 16:54:32.000000000 +0000
+@@ -28,6 +28,9 @@
  #define BLIT_FAST		(0x40)	/* asm-based routine */
  #define BLIT_AUTO		(0x80)	/* use whatever is appropriate */
  
 +#define BLIT_SCALE		(0x100)	/* scale */
 +#define BLIT_SCALE_ASPECT	(0x200)	/* scale (keep aspect ratio) */
- 
 +
+ 
  /* vid mode */
  #define GEN_MONO        (1)
- #define GEN_COLOR       (2)
-Index: src/sndhrdw/junglek.c
-===================================================================
---- src/sndhrdw/junglek.c	(revision 131)
-+++ src/sndhrdw/junglek.c	(working copy)
+diff -urN src/sndhrdw/junglek.c src/sndhrdw/junglek.c
+--- src/sndhrdw/junglek.c	2008-08-22 16:54:30.000000000 +0000
++++ src/sndhrdw/junglek.c	2008-08-22 17:06:09.000000000 +0000
 @@ -5,6 +5,7 @@
  
  
@@ -1934,10 +1909,18 @@ Index: src/sndhrdw/junglek.c
  
  
  
-Index: src/sndhrdw/mooncrst.c
-===================================================================
---- src/sndhrdw/mooncrst.c	(revision 131)
-+++ src/sndhrdw/mooncrst.c	(working copy)
+diff -urN src/sndhrdw/mooncrst.c src/sndhrdw/mooncrst.c
+--- src/sndhrdw/mooncrst.c	2008-08-22 16:54:30.000000000 +0000
++++ src/sndhrdw/mooncrst.c	2008-08-22 17:07:26.000000000 +0000
+@@ -2,7 +2,7 @@
+ #include <math.h>
+ 
+ 
+-#define SOUND_CLOCK 1536000 /* 1.536 Mhz */
++#define SOUND_CLOCK 1536000 /* 1.536 Mhz */
+ #define PI 3.1415
+ 
+ #define TONE_LENGTH 2000
 @@ -12,8 +12,8 @@
  #define WAVE_AMPLITUDE 70
  
@@ -1949,18 +1932,15 @@ Index: src/sndhrdw/mooncrst.c
  
  
  
-@@ -35,9 +35,9 @@
+@@ -35,7 +35,7 @@
  
  int mooncrst_sh_start(void)
  {
 -	int i;
-+/*	int i;
-+
++	//int i;
  
--/*
+ /*
  	if ((tone = malloc(TONE_LENGTH)) == 0)
- 		return 1;
- 	if ((noise = malloc(NOISE_LENGTH)) == 0)
 @@ -61,8 +61,8 @@
  
  void mooncrst_sh_stop(void)
@@ -1972,10 +1952,9 @@ Index: src/sndhrdw/mooncrst.c
  }
  
  
-Index: src/sndhrdw/phoenix.c
-===================================================================
---- src/sndhrdw/phoenix.c	(revision 131)
-+++ src/sndhrdw/phoenix.c	(working copy)
+diff -urN src/sndhrdw/phoenix.c src/sndhrdw/phoenix.c
+--- src/sndhrdw/phoenix.c	2008-08-22 16:54:30.000000000 +0000
++++ src/sndhrdw/phoenix.c	2008-08-22 17:07:47.000000000 +0000
 @@ -3,8 +3,8 @@
  
  
@@ -1987,10 +1966,9 @@ Index: src/sndhrdw/phoenix.c
  
  /* values needed by phoenix_sh_update */
  static int sound_a_play = 0;
-Index: src/vidhrdw/rallyx.c
-===================================================================
---- src/vidhrdw/rallyx.c	(revision 131)
-+++ src/vidhrdw/rallyx.c	(working copy)
+diff -urN src/vidhrdw/rallyx.c src/vidhrdw/rallyx.c
+--- src/vidhrdw/rallyx.c	2008-08-22 16:54:29.000000000 +0000
++++ src/vidhrdw/rallyx.c	2008-08-22 17:08:21.000000000 +0000
 @@ -23,7 +23,7 @@
  											/* to speed up video refresh */
  static unsigned char dirtybuffer2[VIDEO_RAM_SIZE];	/* keep track of modified portions of the screen */
