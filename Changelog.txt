@@ -20,6 +20,7 @@ Aug 22, 2008
   SansaLinux, but much tweaking/changes will be needed
 - Still need to recompile the kernel with different
   input mapping
+- Fixed iPodMAME patch file
 
 Aug 20, 2008
 - Removed unused/broken utils from busybox
