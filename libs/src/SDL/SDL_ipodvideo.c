@@ -1,5 +1,5 @@
 /*
-  * Last updated: July 18, 2008
+  * Last updated: Aug 21, 2008
   * ~Keripo
   *
   * Original file borrowed from
@@ -546,25 +546,14 @@ static void iPod_PumpEvents (_THIS)
 #ifdef SANSA
 
 // Rockbox's lcd-as-memframe.S has the actual blitting code
-
 #define LCD_FB_BASE_REG (*(volatile unsigned long *)(0xc2000028))
-typedef unsigned short fb_data;
-
-extern void lcd_copy_buffer_rect(fb_data *dst, const fb_data *src,
-                                 int width, int height);
-
-static void C_update_display(int mx, int my)
-{
-   fb_data *addr = (fb_data *)SDL_VideoSurface->pixels;
-   fb_data *ipod_scrDriver;
-
-   ipod_scrDriver = LCD_FB_BASE_REG & 0x0fffffff;
-   lcd_copy_buffer_rect(ipod_scrDriver, addr, 176*220, 1);
-}
-
+typedef unsigned short fb_data; // uint16
+extern void lcd_copy_buffer_rect(fb_data *dst, const fb_data *src, int width, int height);
 static void iPod_UpdateRects (_THIS, int nrects, SDL_Rect *rects) 
 {
-   C_update_display (lcd_width - 1, lcd_height - 1);
+	fb_data *addr = (fb_data *)SDL_VideoSurface->pixels;
+	fb_data *ipod_scrDriver = LCD_FB_BASE_REG & 0x0fffffff;
+	lcd_copy_buffer_rect(ipod_scrDriver, addr, 176 * 220, 1);
 }
 
 #else
