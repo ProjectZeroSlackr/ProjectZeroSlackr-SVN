@@ -3,7 +3,7 @@
 # SDL_image Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 24, 2008
+# Last updated: Aug 22, 2008
 #
 # Cygwin check
 if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
@@ -15,12 +15,7 @@ if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
 	echo "[SDL_image doesn't seem to compile nicely"
 	echo " on Cygwin - using pre-built files]"
 	mkdir SDL_image
-	cp -rf src/SDL_image/pre-built/include SDL_image/
-	if [ $SANSA ]; then
-		cp -rf src/SDL_image/pre-built/lib-sansalinux SDL_image/lib
-	else
-		cp -rf src/SDL_image/pre-built/lib SDL_image/
-	fi
+	cp -rf src/SDL_image/pre-built SDL_image
 	echo ""
 	echo "==========================================="
 	exit

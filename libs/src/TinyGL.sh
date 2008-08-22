@@ -3,7 +3,7 @@
 # TinyGL Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Aug 9, 2008
+# Last updated: Aug 22, 2008
 #
 # Requires hotdog
 LIBS="hotdog"
@@ -19,14 +19,6 @@ echo "==========================================="
 echo ""
 echo "TinyGL Auto-Compiling Script"
 echo ""
-# SansaLinux not supported yet
-if [ $SANSA ]; then
-	echo "[TinyGL compiling not yet"
-	echo " supported for SansaLinux - skipping]"
-	echo ""
-	echo "==========================================="
-	exit
-fi
 # Cleanup
 if [ -d TinyGL ]; then
 	echo "> Removing old TinyGL directory..."

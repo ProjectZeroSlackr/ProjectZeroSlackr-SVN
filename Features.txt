@@ -1,4 +1,4 @@
-Last updated: Aug 13, 2008
+Last updated: Aug 22, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,7 +9,7 @@ original/ported software.
 
 Note that not all features/applications/content listed
 below are available for/compatible with all iPod models.
-Most applications currently do not work on Sansa e200s.
+Some applications currently do not work on Sansa e200s.
 See each Slackr pack's "ReadMe from Keripo.txt" for
 more information on the application's background and
 usage instructions.

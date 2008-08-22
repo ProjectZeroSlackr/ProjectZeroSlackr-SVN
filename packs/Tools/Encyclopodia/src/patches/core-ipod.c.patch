@@ -11,18 +11,7 @@ Index: core/ipod.c
  	if (pz_ipod_get_hw_version() >= 0x40000) {
  		int i, j;
  		outl(inl(0x70000010) & ~0xc, 0x70000010);
-@@ -316,7 +316,9 @@
- 
- long pz_ipod_get_hw_version(void)
- {
--#ifdef IPOD
-+#ifdef SANSA
-+	return 0x6;
-+#elif defined(IPOD)
- 	int i;
- 	char cpuinfo[512];
- 	char *ptr;
-@@ -346,7 +348,7 @@
+@@ -346,7 +346,7 @@
  
  void pz_ipod_go_to_diskmode()
  {
@@ -31,7 +20,7 @@ Index: core/ipod.c
  	unsigned char * storage_ptr;
  	unsigned int iram_len;
  
-@@ -368,7 +370,8 @@
+@@ -368,7 +368,8 @@
  #ifdef IPOD
      pz_uninit();
      printf("\nPowering down.\nPress action to power on.\n");
@@ -41,7 +30,7 @@ Index: core/ipod.c
      
      printf("No poweroff binary available.  Rebooting.\n");
      execl("/bin/reboot", "reboot", NULL);
-@@ -382,13 +385,22 @@
+@@ -382,13 +383,22 @@
  {
  #ifdef IPOD
      pz_uninit();
@@ -65,7 +54,7 @@ Index: core/ipod.c
  #ifdef IPOD
  static int usb_check_connection()
  {
-@@ -522,3 +534,5 @@
+@@ -522,3 +532,5 @@
  #endif
  	return 0;
  }

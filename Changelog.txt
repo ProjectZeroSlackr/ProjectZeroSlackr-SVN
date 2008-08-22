@@ -1,4 +1,4 @@
-Last updated: Aug 20, 2008
+Last updated: Aug 22, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,17 @@ original/ported software.
 
 
 == Changelog ==
+
+Aug 22, 2008
+- Added hotdog port for SansaLinux, cleaned up SDL
+  port for Sansalinux - now both recognize the Sansa
+  as a separate iPod model (hardware version of 0x0)
+  so future binaries will work on both iPods and
+  Sansa e200s
+- Allow many graphical apps to now compile for
+  SansaLinux, but much tweaking/changes will be needed
+- Still need to recompile the kernel with different
+  input mapping
 
 Aug 20, 2008
 - Removed unused/broken utils from busybox
