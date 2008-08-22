@@ -16,10 +16,12 @@ Aug 22, 2008
   as a separate iPod model (hardware version of 0x0)
   so future binaries will work on both iPods and
   Sansa e200s
-- Allow many graphical apps to now compile for
+- Allowed some graphical apps to now compile for
   SansaLinux, but much tweaking/changes will be needed
+  (mostly input remapping)
 - Still need to recompile the kernel with different
   input mapping
+- Need a properly compiled libSDL.a for TTK
 - Fixed iPodMAME patch file
 
 Aug 20, 2008

@@ -3,17 +3,17 @@
 # iBoy Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 21, 2008
+# Last updated: Aug 22, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
 echo "iBoy Auto-Building Script"
 echo ""
-# SansaLinux not supported yet
+# SansaLinux not supported
 if [ $SANSA ]; then
-	echo "[iBoy compiling not yet"
-	echo " supported for SansaLinux - skipping]"
+	echo "[iBoy will not be supported for"
+	echo " SansaLinux - skipping]"
 	echo ""
 	echo "==========================================="
 	exit

@@ -10,6 +10,14 @@ echo "==========================================="
 echo ""
 echo "iPodMAME Auto-Building Script"
 echo ""
+# SansaLinux not supported yet
+if [ $SANSA ]; then
+	echo "[iPodMAME is not supported for SansaLinux"
+	echo " yet - skipping]"
+	echo ""
+	echo "==========================================="
+	exit
+fi
 # Cleanup
 if [ -d build ]; then
 	echo "> Removing old build directory..."

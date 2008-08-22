@@ -41,7 +41,8 @@ else
 fi
 echo "> Patching for SansaLinux..."
 patch -p0 -t -i ../src/ttk/ttk-sansalinux.patch >> build.log
-cp -rf ../src/ttk/libSDL.a libs/SDL/
+if [ $SANSA ]; then
+	cp -rf ../src/ttk/libSDL-sansa.a libs/SDL/libSDL.a
 fi
 #patch -p0 -t -i ../src/ttk/ttk-Ren-icon.patch >> build.log
 echo "> Compiling..."

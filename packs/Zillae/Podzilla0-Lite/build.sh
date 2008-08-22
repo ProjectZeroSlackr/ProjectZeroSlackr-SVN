@@ -3,17 +3,17 @@
 # Podzilla0-Lite Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 18, 2008
+# Last updated: Aug 22, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
 echo "Podzilla0-Lite Auto-Building Script"
 echo ""
-# SansaLinux not supported yet
+# SansaLinux not supported
 if [ $SANSA ]; then
-	echo "[Podzilla0-Lite compiling not yet"
-	echo " supported for SansaLinux - skipping]"
+	echo "[Podzilla0-Lite will not be supported for"
+	echo " SansaLinux - skipping]"
 	echo ""
 	echo "==========================================="
 	exit
