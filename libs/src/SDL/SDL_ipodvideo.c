@@ -555,7 +555,6 @@ extern void lcd_copy_buffer_rect(fb_data *dst, const fb_data *src,
 
 static void C_update_display(int mx, int my)
 {
-   int x,y;
    fb_data *addr = (fb_data *)SDL_VideoSurface->pixels;
    fb_data *ipod_scrDriver;
 
