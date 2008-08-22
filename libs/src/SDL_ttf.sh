@@ -3,7 +3,7 @@
 # SDL_ttf Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 24, 2008
+# Last updated: Aug 22, 2008
 #
 # Cygwin check
 if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
@@ -15,12 +15,7 @@ if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
 	echo "[SDL_ttf doesn't seem to compile nicely on"
 	echo " Cygwin - using pre-built files]"
 	mkdir SDL_ttf
-	cp -rf src/SDL_ttf/pre-built/include SDL_ttf/
-	if [ $SANSA ]; then
-		cp -rf src/SDL_ttf/pre-built/lib-sansalinux SDL_ttf/lib
-	else
-		cp -rf src/SDL_ttf/pre-built/lib SDL_ttf/
-	fi
+	cp -rf src/SDL_ttf/pre-built SDL_ttf
 	echo ""
 	echo "==========================================="
 	exit

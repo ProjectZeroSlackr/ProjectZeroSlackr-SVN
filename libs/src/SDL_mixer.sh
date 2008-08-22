@@ -3,7 +3,7 @@
 # SDL_mixer Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 24, 2008
+# Last updated: Aug 22, 2008
 #
 # Cygwin check
 if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
@@ -15,12 +15,7 @@ if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
 	echo "[SDL_mixer doesn't seem to compile nicely"
 	echo " on Cygwin - using pre-built files]"
 	mkdir SDL_mixer
-	cp -rf src/SDL_mixer/pre-built/include SDL_mixer/
-	if [ $SANSA ]; then
-		cp -rf src/SDL_mixer/pre-built/lib-sansalinux SDL_mixer/lib
-	else
-		cp -rf src/SDL_mixer/pre-built/lib SDL_mixer/
-	fi
+	cp -rf src/SDL_mixer/pre-built SDL_mixer
 	echo ""
 	echo "==========================================="
 	exit

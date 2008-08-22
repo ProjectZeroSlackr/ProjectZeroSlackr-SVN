@@ -3,7 +3,7 @@
 # ttk Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 30, 2008
+# Last updated: Aug 22, 2008
 #
 echo ""
 echo "==========================================="
@@ -39,20 +39,14 @@ else
 	echo "> Patching with Noblesse icon..."
 	patch -p0 -t -i ../src/ttk/ttk-Noblesse-icon.patch >> build.log
 fi
-if [ $SANSA ]; then
-	echo "> Patching for SansaLinux..."
-	patch -p0 -t -i ../src/ttk/ttk-sansalinux.patch >> build.log
-	cp -rf ../src/ttk/libSDL-sansa.a libs/SDL/libSDL.a
+echo "> Patching for SansaLinux..."
+patch -p0 -t -i ../src/ttk/ttk-sansalinux.patch >> build.log
+cp -rf ../src/ttk/libSDL.a libs/SDL/
 fi
 #patch -p0 -t -i ../src/ttk/ttk-Ren-icon.patch >> build.log
 echo "> Compiling..."
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
-if [ $SANSA ]; then
-	echo "  (building for SansaLinux)"
-	make NOMWIN=1 NOX11=1 NOHDOG=1 SANSA=1 >> build.log 2>&1
-else
-	make NOMWIN=1 NOX11=1 NOHDOG=1 >> build.log 2>&1
-fi
+make NOMWIN=1 NOX11=1 NOHDOG=1 >> build.log 2>&1
 echo ""
 cd ..
 LIB=ttk/build/ipod-sdl/libttk.a

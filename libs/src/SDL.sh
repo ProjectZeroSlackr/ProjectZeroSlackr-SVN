@@ -3,7 +3,7 @@
 # SDL Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 29, 2008
+# Last updated: Aug 22, 2008
 #
 # Cygwin check
 if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
@@ -15,12 +15,7 @@ if uname -o 2>/dev/null | grep -i "Cygwin" >/dev/null; then
 	echo "[SDL doesn't seem to compile nicely on"
 	echo " Cygwin - using pre-built files]"
 	mkdir SDL
-	cp -rf src/SDL/pre-built/include SDL/
-	if [ $SANSA ]; then
-		cp -rf src/SDL/pre-built/lib-sansalinux SDL/lib
-	else
-		cp -rf src/SDL/pre-built/lib SDL/
-	fi
+	cp -rf src/SDL/pre-built SDL
 	echo ""
 	echo "==========================================="
 	exit
@@ -41,28 +36,19 @@ tar -xf src/SDL/SDL-1.2.13.tar.gz
 mv SDL-1.2.13 SDL
 # Compiling
 cd SDL
-if [ $SANSA ]; then
-	echo "> Adding SansaLinux port..."
-	cp -rf ../src/SDL/SDL_ipodvideo.c src/video/ipod/
-	cp -rf ../src/SDL/lcd-as-memframe.S src/video/ipod/
-else
-	echo "> Updating iPodLinux port..."
-	cp -rf ../src/SDL/SDL_ipodvideo.c src/video/ipod/
-fi
+echo "> Updating iPodLinux port and"
+echo "  adding SansaLinux port..."
+cp -rf ../src/SDL/SDL_ipodvideo.c src/video/ipod/
+cp -rf ../src/SDL/lcd-as-memframe.S src/video/ipod/
 echo "> Compiling..."
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
 echo "  - Running configure script..."
 ./configure CFLAGS="-D__unix__" --host=arm-uclinux-elf LDFLAGS=-Wl,-elf2flt --enable-ipod --disable-cdrom --disable-video-opengl --disable-threads --prefix=$(pwd) >> build.log 2>&1
-if [ $SANSA ]; then
-	echo "  - Patching for SansaLinux..."
-	patch -p0 -t -i ../src/SDL/Makefile-sansalinux.patch >> build.log
-	patch -p0 -t -i ../src/SDL/build-deps-sansalinux.patch >> build.log
-	echo "  - make install..."
-	make install SANSA=1 >> build.log 2>&1
-else
-	echo "  - make install..."
-	make install >> build.log 2>&1
-fi
+echo "  - Patching for SansaLinux..."
+patch -p0 -t -i ../src/SDL/Makefile-sansalinux.patch >> build.log
+patch -p0 -t -i ../src/SDL/build-deps-sansalinux.patch >> build.log
+echo "  - make install..."
+make install >> build.log 2>&1
 echo "  - Patching for removal of iconv support"
 patch -p0 -t -i ../src/SDL/SDL_config.h.patch >> build.log 2>&1
 echo ""

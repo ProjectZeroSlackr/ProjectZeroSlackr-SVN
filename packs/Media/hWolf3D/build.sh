@@ -3,21 +3,13 @@
 # hWolf3D Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Aug 13, 2008
+# Last updated: Aug 21, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
 echo "hWolf3D Auto-Building Script"
 echo ""
-# SansaLinux not supported yet
-if [ $SANSA ]; then
-	echo "[hWolf3D compiling not yet"
-	echo " supported for SansaLinux - skipping]"
-	echo ""
-	echo "==========================================="
-	exit
-fi
 # Cleanup
 if [ -d build ]; then
 	echo "> Removing old build directory..."

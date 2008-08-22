@@ -3,21 +3,13 @@
 # iGameGear Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 31, 2008
+# Last updated: Aug 22, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
 echo "iGameGear Auto-Building Script"
 echo ""
-# SansaLinux not supported yet
-if [ $SANSA ]; then
-	echo "[iGameGear compiling not yet"
-	echo " supported for SansaLinux - skipping]"
-	echo ""
-	echo "==========================================="
-	exit
-fi
 # Cleanup
 if [ -d build ]; then
 	echo "> Removing old build directory..."

@@ -3,21 +3,13 @@
 # hotdog Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 24, 2008
+# Last updated: Aug 22, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
 echo "hotdog Auto-Compiling Script"
 echo ""
-# SansaLinux not supported yet
-if [ $SANSA ]; then
-	echo "[hotdog compiling not yet"
-	echo " supported for SansaLinux - skipping]"
-	echo ""
-	echo "==========================================="
-	exit
-fi
 # Cleanup
 if [ -d hotdog ]; then
 	echo "> Removing old hotdog directory..."
@@ -27,8 +19,11 @@ fi
 echo "> Updating SVN..."
 svn co --quiet https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/libs/hotdog/ hotdog
 # Compiling
-echo "> Compiling..."
 cd hotdog
+echo "> Patching for SansaLinux..."
+patch -p0 -t -i ../src/hotdog/hotdog-sansalinux.patch >> build.log
+cp -rf ../src/hotdog/hotdog_lcd_sansa.S ./
+echo "> Compiling..."
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
 make IPOD=1 >> build.log
 echo ""
