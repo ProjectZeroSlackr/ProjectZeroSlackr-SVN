@@ -1,6 +1,7 @@
-diff -urN Makefile.ipl Makefile.ipl
---- Makefile.ipl	2008-08-22 16:54:31.000000000 +0000
-+++ Makefile.ipl	2008-08-22 17:11:45.000000000 +0000
+Index: Makefile.ipl
+===================================================================
+--- Makefile.ipl	(revision 131)
++++ Makefile.ipl	(working copy)
 @@ -93,11 +93,11 @@
  endif
  else
@@ -51,9 +52,1230 @@ diff -urN Makefile.ipl Makefile.ipl
   	 
  
  #VPATH = src src/Z80 src/M6502 src/I86
-diff -urN src/I86/I86.c src/I86/I86.c
---- src/I86/I86.c	2008-08-22 16:54:29.000000000 +0000
-+++ src/I86/I86.c	2008-08-22 16:54:32.000000000 +0000
+Index: src/inifile/ini.c
+===================================================================
+--- src/inifile/ini.c	(revision 131)
++++ src/inifile/ini.c	(working copy)
+@@ -355,6 +355,8 @@
+ 	// check for a # sign in it, set it to a NULL
+ 	x = strchr( buf, '#' );
+ 	if( x != NULL ) {
++		// trim seems broken so do nothing if line starts with comment
++		if( x == buf ) continue;
+ 		*x = '\0';
+ 	}
+ 
+Index: src/inifile/mameconf.c
+===================================================================
+--- src/inifile/mameconf.c	(revision 131)
++++ src/inifile/mameconf.c	(working copy)
+@@ -17,6 +17,8 @@
+ 
+ /* lets make it easy to find the conf file. */
+ static char *searchpath[] = {
++	"Conf/ipodmame.ini",
++	"/opt/Emulators/Conf/ipodmame.ini",
+ 	"/mnt/ipodmame.ini",
+ 	"/mnt/ipodmame/ipodmame.ini",
+ 	"/hp/ipodmame.ini",
+@@ -100,6 +102,8 @@
+ 	{ "HALF",	BLIT_HALVE	},
+ 	{ "FAST",	BLIT_FAST	},
+ 	{ "SLOW",	BLIT_SLOW	},
++	{ "SCALE",	BLIT_SCALE	},
++	{ "SCALE_ASPECT",BLIT_SCALE_ASPECT},
+ 
+ 	/* screensizes for Desktop */
+ 	{ "1G",		GEN_MONO	},
+@@ -162,10 +166,8 @@
+  */
+ void mc_secondary_configure( char * gamename )
+ {
+-#ifdef NEVER
+ 	int x,v;
+ 	char * temp2;
+-#endif
+ 	char * temp1;
+ 
+ 	if( !theConfFile ) return;
+@@ -173,25 +175,21 @@
+ 
+ 	printf( "\nConfiguring for %s\n", gamename );
+ 
+-#ifdef NEVER /* i think we want to automatically do it, actually */
+ 	/* read in the screenmode entry */
+ 	temp1 = ini_Query( theConfFile, gamename, "screenmode" );
+ 	temp2 = ini_Query( theConfFile, "screenmodes", temp1 );
+ 	/* need to extract all of the elements out of 'temp2' */
+-	whichBlit = 0;
+ 	if( temp1 && temp2 ) {
+-#ifndef IPOD
++		whichBlit = 0;
+ 		printf( "XXX Screenmode %s: %s\n", temp1, temp2 );
+-#endif
+ 		for( x=0 
+ 			; (v=ini_QueryArrayToken( theConfFile, "screenmodes", temp1, x, tokens)) 
+ 			; x++)
+ 		{
+ 			whichBlit |= v;
+-printf( ">> %x %x\n", whichBlit, v );
++			printf( ">> %x %x\n", whichBlit, v );
+ 		}
+ 	}
+-#endif
+ 
+ 	/* read in the frameskip setting */
+ 	if( ini_Exists( theConfFile, gamename, "frameskip" ))
+Index: src/ipl/osdep2.h
+===================================================================
+--- src/ipl/osdep2.h	(revision 131)
++++ src/ipl/osdep2.h	(working copy)
+@@ -28,7 +28,10 @@
+ #define BLIT_FAST		(0x40)	/* asm-based routine */
+ #define BLIT_AUTO		(0x80)	/* use whatever is appropriate */
+ 
++#define BLIT_SCALE		(0x100)	/* scale */
++#define BLIT_SCALE_ASPECT	(0x200)	/* scale (keep aspect ratio) */
+ 
++
+ /* vid mode */
+ #define GEN_MONO        (1)
+ #define GEN_COLOR       (2)
+Index: src/ipl/asm_rot.S
+===================================================================
+--- src/ipl/asm_rot.S	(revision 131)
++++ src/ipl/asm_rot.S	(working copy)
+@@ -99,4 +99,4 @@
+         blo     1b                      @ if not, keep looping                  2S    1N 
+   
+         ldmia   sp!, {r4-r12, pc}       @ return
+-		
+\ No newline at end of file
++		
+Index: src/ipl/ipodlinux.c
+===================================================================
+--- src/ipl/ipodlinux.c	(revision 131)
++++ src/ipl/ipodlinux.c	(working copy)
+@@ -62,6 +62,7 @@
+ #include <time.h>
+ #include <termios.h>
+ #include <string.h>
++#include <unistd.h>
+ #include "osdepend.h"
+ #include "mame.h"
+ #include "driver.h"
+@@ -74,22 +75,35 @@
+ #endif
+ #include "mameconf.h"
+ 
+-
+ /* ipod and screen information */
+ int ipod_hwver   = 0;
+-int ipod_lcdtype = 0;
++int ipod_bpp     = 0;
+ int ipod_lcdw    = 320;
+ int ipod_lcdh    = 240;
+ 
+ /* hotdog and bitmap storage */
+ hd_engine *engine = 0;
+-hd_object *hd_obj_canvas = 0;
+-unsigned int *lcd_framebuffer = NULL;
+ 
+ #ifdef IPOD
+-uint32 * hotdog_screen = NULL;
+ 
++#define COP_STATUS		0x40015024
++#define COP_DMA_BUFFER	0x40000040
++#define COP_HANDLER		0x4001501C
++#define COP_STATE		0x40015020
+ 
++#define COP_RUNNING		(1 << 0)
++#define COP_BUSY		(1 << 1)
++#define COP_FRAME_READY	(1 << 2)
++
++#define outl(a, b)	(*(volatile unsigned int *)(b) = (a))
++#define inl(a)		(*(volatile unsigned int *)(a))
++
++uint16 * hotdog_screen = NULL;
++
++//#ifdef USE_COP
++void cop_displayloop_photo(void);
++//#endif
++
+ /* this isn't available anywhere, but we need it... */
+ #ifndef inl
+ #define inl(p) (*(volatile unsigned long *) (p))
+@@ -102,9 +116,6 @@
+ SDL_Surface *screen = NULL;
+ #endif
+ 
+-/* this isn't exported from hotdog. :( */
+-hd_object *HD_Canvas_Create(uint32 width,uint32 height);
+-
+ extern void clearbitmap(struct osd_bitmap* bitmap);
+ 
+ /* Cheap hack to dump the framebuffer data to a file */
+@@ -121,17 +132,49 @@
+ int input_bank = 0;
+ 
+ int bankcolors[8] = {
+- 	/* black,   red,        green,      blue */
++ 	/* black,   green,      red,        blue */
+ 	0xff000000, 0xff00ff00, 0xffff0000, 0xff0000ff,
+ 	
+ 	0xffffffff, 0xffffff00, 0xff00ffff, 0xffff00ff
+ }; 
+ 
+-unsigned int pallette[16];
++uint16 bankcolors16[8];
+ 
++/* colour palette */
++unsigned int *pallette = NULL;
++uint16 *pal16 = NULL;
++
+ /* ASM rotating blitter */
+ extern void _MAME_Rotate (unsigned int *dest, int sw, int sh, int dy, int dx, int dw, int dh, unsigned int palette[], unsigned char *src, int scale);
+ 
++void blitter_norm(void);
++void blitter_norm_16(void);
++void blitter_rot(void);
++void blitter_rot_16(void);
++void blitter_half(void);
++void blitter_half_16(void);
++void blitter_half_rot(void);
++void blitter_half_rot_16(void);
++void blitter_scale_rot_init(void);
++void blitter_scale_rot_aspect_init(void);
++void blitter_scale_rot_main(void);
++void blitter_scale_rot_main_16(void);
++void blitter_scale_init(void);
++void blitter_scale_aspect_init(void);
++void blitter_scale_main(void);
++void blitter_scale_main_16(void);
++int ipod_xoffs = 0;
++int ipod_yoffs = 0;
++int src_xoffs = 0;
++int src_yoffs = 0;
++int gamew = 0;
++int gameh = 0;
++unsigned char **bl_src_lines = NULL;
++unsigned char *bl_src_org = NULL;
++unsigned int *bl_src_cols = NULL;
++unsigned int *bl_dst_org = NULL;
++uint16 *bl_dst_org_16 = NULL;
++void (*blitter_fn)(void) = blitter_scale_init;
+ 
+ /* --------------------- iPod specific stuff ----------------------------- */
+ 
+@@ -157,8 +200,59 @@
+         tcsetattr(0,TCSANOW,&stored_settings);
+ }
+ 
++//#ifdef USE_COP
++int cop_execute(void (*function)())
++{
++		outl((unsigned int)function, COP_HANDLER);
++		outl(0x0, 0x60007004);
++		return 1;	
++}
++//#endif
++
+ #endif
+ 
++/* auto blitter selection */
++int auto_blit(int w)
++{
++	// remove the auto flag and rotation
++	w &= ~(BLIT_AUTO | BLIT_ROTCW90 | BLIT_ROTCW180 | BLIT_ROTCW270);
++	// see if native size will fit
++	if(gamew <= ipod_lcdw && gameh <= ipod_lcdh)
++		return BLIT_NORM;
++	else if(gamew <= ipod_lcdh && gameh <= ipod_lcdw)
++		return BLIT_ROTCW90;
++	else {
++		// maybe the game will scale by 2
++		if((gamew / 2 == ipod_lcdw && gameh / 2 == ipod_lcdh))
++			return BLIT_HALVE;
++		else if((gamew / 2 == ipod_lcdh && gameh / 2 == ipod_lcdw))
++			return BLIT_HALVE | BLIT_ROTCW90;
++	}
++	// if auto half size
++	if(w & BLIT_HALVE) {
++		// remove scale flags
++		w &= ~(BLIT_SCALE | BLIT_SCALE_ASPECT);
++		// rotate if the half game won't fit upright
++		if(gameh / 2 > ipod_lcdh)
++			w |= BLIT_ROTCW90;
++	} else {
++		// use auto scale (either aspect or non-aspect scale)
++		if(w & BLIT_SCALE_ASPECT) {
++			// keep aspect ratio, so remove scale flag
++			w &= ~BLIT_SCALE;
++			// maybe the game will scale by half
++			if((gamew / 2 == ipod_lcdw && gameh / 2 <= ipod_lcdh) || (gamew / 2 <= ipod_lcdw && gameh / 2 == ipod_lcdh))
++				return BLIT_HALVE;
++			else if((gamew / 2 == ipod_lcdh && gameh / 2 <= ipod_lcdw) || (gamew / 2 <= ipod_lcdh && gameh / 2 == ipod_lcdw))
++				return BLIT_HALVE | BLIT_ROTCW90;
++		} else
++			w |= BLIT_SCALE;	// at this point make sure scale is used
++		// if the game is taller than wide, rotate
++		if(gameh > gamew)
++			w |= BLIT_ROTCW90;
++	}
++	return w;
++}
+ 
+ /* -- supported MAME callbacks ------------------------------------------ */
+ 
+@@ -172,13 +266,25 @@
+  */
+ int osd_init (int argc, char *argv[])
+ {
++	// save the blit speed flags
++	int blitSpeed = whichBlit & (BLIT_SLOW | BLIT_FAST);
++	whichBlit &= ~(BLIT_SLOW | BLIT_FAST);
++	
++	/* visible area of the game */
++	src_xoffs = Machine->drv->visible_area.min_x;
++	src_yoffs = Machine->drv->visible_area.min_y;
++	gamew = Machine->drv->visible_area.max_x - src_xoffs + 1;
++	gameh = Machine->drv->visible_area.max_y - src_yoffs + 1;
++
+         /* grab screen info, shove it into the globals */
+ #ifdef IPOD
++	int ipod_lcdtype;
+ 	(void)argc;
+ 	(void)argv;
+ 
+ 	HD_LCD_Init();
+         HD_LCD_GetInfo( &ipod_hwver, &ipod_lcdw, &ipod_lcdh, &ipod_lcdtype );
++        ipod_bpp = HD_LCD_BPP(ipod_lcdtype);
+ 	
+ #else
+ 	int i;
+@@ -195,37 +301,117 @@
+ 			}
+ 		}
+ 	}
++	ipod_bpp = 16;
+ 	printf( "Running at a resolution of %d x %d\n", ipod_lcdw, ipod_lcdh );
++	printf( "Game resolution of %d x %d, visible area %d x %d\n", Machine->drv->screen_width, Machine->drv->screen_height, gamew, gameh );
++	printf( "Number of colours %d (len %d)\n", Machine->drv->total_colors, Machine->drv->color_table_len );
+ #endif
++	
++	// if auto flag exists
++	if(whichBlit & BLIT_AUTO) {
++		whichBlit = auto_blit( whichBlit );
++		// TODO: what about non-internal input? it might need rotated
++#ifndef IPOD
++		printf( "Auto selected blit flags %08x\n", whichBlit );
++#endif
++	}
++	
++	// if half size
++	if( whichBlit & BLIT_HALVE ) {
++		// ensure no scaling flags
++		whichBlit &= ~(BLIT_SCALE | BLIT_SCALE_ASPECT);
++		// set game size to half
++		gamew /= 2;
++		gameh /= 2;
++	}
++	
++	// if not using scale
++	if( !(whichBlit & (BLIT_SCALE_ASPECT | BLIT_SCALE)) ) {
++		int canv_w, canv_h;
++		// set canvas size to the game size
++		if( whichBlit & BLIT_ROTCW90 ) {
++			// clip game to ipod size
++			if( gamew > ipod_lcdh ) gamew = ipod_lcdh;
++			if( gameh > ipod_lcdw ) gameh = ipod_lcdw;
++			canv_w = gameh;
++			canv_h = gamew;
++		} else {
++			// clip game to ipod size
++			if( gamew > ipod_lcdw ) gamew = ipod_lcdw;
++			if( gameh > ipod_lcdh ) gameh = ipod_lcdh;
++			canv_w = gamew;
++			canv_h = gameh;
++		}
++	
++		// set the canvas offset to centre the image
++		ipod_xoffs = (ipod_lcdw - canv_w) / 2;
++		ipod_yoffs = (ipod_lcdh - canv_h) / 2;
++		
++		/* adjust x offset if rotated to upper-right pixel (relative to ipod held upright), that
++		   is where the first (upper left) pixel of the game will be drawn */
++		if( whichBlit & BLIT_ROTCW90 )
++			ipod_xoffs += canv_w - 1;
++		
++#ifndef IPOD
++		printf("Output resolution %d x %d (LCD offset %d x %d)\n", canv_w, canv_h, ipod_xoffs, ipod_yoffs);
++#endif
++	} else {
++		// if keep aspect, clear scale flag
++		if( whichBlit & BLIT_SCALE_ASPECT ) whichBlit &= ~BLIT_SCALE;
++	}
++	
++	/* rotate 90 CW */
++	if( whichBlit == BLIT_ROTCW90 ) {
++		blitter_fn = ipod_bpp == 16 ? blitter_rot_16 : blitter_rot;
++	/* halve it */ /* used on iPod Photo */
++	} else if( whichBlit == BLIT_HALVE ) {
++		blitter_fn = ipod_bpp == 16 ? blitter_half_16 : blitter_half;
++	/* scale */ /* used on iPod Photo */
++	} else if( whichBlit == BLIT_SCALE ) {
++		blitter_fn = blitter_scale_init;
++	/* new scale */ /* used on iPod Photo */
++	} else if( whichBlit == BLIT_SCALE_ASPECT ) {
++		blitter_fn = blitter_scale_aspect_init;
++	/* new scale and rotate */
++	} else if( whichBlit == (BLIT_ROTCW90 | BLIT_SCALE) ) {
++		blitter_fn = blitter_scale_rot_init;
++	/* rotate 90 CW and scale */ /* used on iPod Photo */
++	} else if( whichBlit == (BLIT_ROTCW90 | BLIT_SCALE_ASPECT) ) {
++		blitter_fn = blitter_scale_rot_aspect_init;
++	/* rotate 90 CW, and halve it. */
++	} else if( whichBlit == (BLIT_ROTCW90 | BLIT_HALVE) ) {
++		blitter_fn = ipod_bpp == 16 ? blitter_half_rot_16 : blitter_half_rot;
++	/* normal - no scale nor rotate */
++	} else {
++		blitter_fn = ipod_bpp == 16 ? blitter_norm_16 : blitter_norm;
++	}
+ 
+-	/* determine which blit routine to use ... */
+-	/* eventually, this should work off of a config file or somesuch  */
+-	if( ipod_lcdw >= 320 )       whichBlit = BLIT_ROTCW90;
+-	else if( ipod_lcdw >= 220 )  whichBlit = BLIT_HALVE;
+-	else                         whichBlit = BLIT_ROTCW90 | BLIT_HALVE;
+-
+-	play_sound = 0;
+-	use_joystick = 0;
+-	first_free_pen = 0;
+-
+-
++	// Set the speed flags
++	whichBlit |= blitSpeed;
++	
+ 	/* set up the screen canvas */
+ #ifndef IPOD
+ 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+                 fprintf(stderr,"Unable to init SDL: %s\n",SDL_GetError());
+-                exit(1);
++                osd_exit();
++                return OSD_NOTOK;
+         }
+         atexit(SDL_Quit);
+ 
+-        screen = SDL_SetVideoMode(ipod_lcdw, ipod_lcdh, 16 ,SDL_SWSURFACE);
++        screen = SDL_SetVideoMode(ipod_lcdw, ipod_lcdh, 16, SDL_SWSURFACE);
+         if (screen == NULL) {
+                 fprintf(stderr,"Unable to init SDL video: %s\n",SDL_GetError());
+-                exit(1);
++                osd_exit();
++                return OSD_NOTOK;
+         }
+ 
+         /* Initialize the hotdog engine object */
+         engine = HD_Initialize( ipod_lcdw, ipod_lcdh, 16, 
+ 				    screen->pixels, update);
++	if( !engine ) { 
++		osd_exit();
++		return OSD_NOTOK;
++	}
+ #endif
+ 
+ #ifdef IPOD
+@@ -233,23 +419,51 @@
+         set_keypress();
+ 
+         /* allocate some buffers */
+-	hotdog_screen = malloc( ipod_lcdw * ipod_lcdh * sizeof( uint32 ));
+-	if( !hotdog_screen ) { /* do something and exit */ }
++	hotdog_screen = malloc( ipod_lcdw * ipod_lcdh * sizeof( uint16 ));
++	if( !hotdog_screen ) { 
++		osd_exit();
++		return OSD_NOTOK;
++	}
+ 
+         /* Initialize the hotdog engine object */
+         engine = HD_Initialize(ipod_lcdw, ipod_lcdh, 16, hotdog_screen, update);
+-#endif
++	if( !engine ) { 
++		osd_exit();
++		return OSD_NOTOK;
++	}
+ 
+-	/* set up our frame buffers */
+-        lcd_framebuffer = malloc( ipod_lcdw*ipod_lcdh* sizeof( int ));
+-	if( !lcd_framebuffer ) { /* do something and exit */ }
++	// if fast, start COP
++	if (whichBlit & BLIT_FAST ) {
++		outl(COP_RUNNING, COP_STATUS);
++		cop_execute(cop_displayloop_photo);
++	}
+ 
+-        /* Create a hotdog canvas object */
+-        hd_obj_canvas = HD_Canvas_Create(ipod_lcdw, ipod_lcdh);
++#endif
+ 
+-        /* Register the canvas object with the hotdog engine object */
+-        HD_Register(engine, hd_obj_canvas);
++	play_sound = 0;
++	use_joystick = 0;
++	first_free_pen = 0;
++	
++	/* alloc the palette */
++	if( ipod_bpp == 16 )
++		pal16 = malloc(Machine->drv->total_colors * sizeof(uint));
++	else
++		pallette = malloc(Machine->drv->total_colors * sizeof(unsigned int));
+ 
++	/* pre-calculate the dest starting offset */
++	if( ipod_bpp == 16 ) {
++		bl_dst_org_16 = engine->screen.framebuffer + ipod_xoffs + ipod_yoffs * ipod_lcdw;
++		
++		/* make the 16 bit bank colours */
++		int i;
++		for( i = 0; i < 8; i++ ) {
++			bankcolors16[i]  = ((bankcolors[i] & 0x00FF0000) >> (16+3)) << 11; // R
++			bankcolors16[i] |= ((bankcolors[i] & 0x0000FF00) >> (8+2)) << 5;  // G
++			bankcolors16[i] |= ((bankcolors[i] & 0x000000FF) >> (3));    // B
++		}
++	} else
++		bl_dst_org = HD_SRF_PIXELS(engine->buffer) + ipod_xoffs + ipod_yoffs * ipod_lcdw;
++	
+ 	return (OSD_OK);
+ }
+ 
+@@ -260,12 +474,26 @@
+ void osd_exit (void)
+ {
+ #ifdef IPOD
+-        HD_Destroy(hd_obj_canvas); /* Destroy the canvas */
++	if( whichBlit & BLIT_FAST ) {
++		// clear the running flag and set frame ready to exit the COP render function
++		outl(COP_FRAME_READY, COP_STATUS);
++		// wait a bit for it to exit
++		usleep(10000);
++	}
++ #endif
++ 
++        HD_Deinitialize( engine ); /* hotdog will check for NULL */
++#ifdef IPOD
+         HD_LCD_Quit();
+         reset_keypress();
+ 	if( hotdog_screen )   free( hotdog_screen );
++#else
++	if( screen ) free( screen );
+ #endif
+-	if( lcd_framebuffer ) free( lcd_framebuffer );
++	if( bl_src_lines ) free( bl_src_lines );
++	if( bl_src_cols ) free( bl_src_cols );
++	if( pallette ) free( pallette );
++	if( pal16 ) free( pal16 );
+ }
+ 
+ 
+@@ -311,8 +539,8 @@
+ 
+ void osd_free_bitmap (struct osd_bitmap *bitmap)
+ {
+-	(void)bitmap;
+ 	free (bitmap->private);
++	free (bitmap);
+ }
+ 
+ 
+@@ -331,6 +559,9 @@
+ {
+ 	display_bitmap = osd_create_bitmap(width,height);
+ 
++	/* pre-calculate the source offset */
++	bl_src_org = (unsigned char*)display_bitmap->private + (src_yoffs * display_bitmap->width) + src_xoffs;
++	
+ 	return (display_bitmap);
+ }
+ 
+@@ -352,8 +583,18 @@
+  */
+ int osd_obtain_pen (unsigned char red, unsigned char green, unsigned char blue)
+ {				
+-	/* Bitshifting voodoo, courtesy of linuxstb */
+-	pallette[first_free_pen++] = 0xff000000 
++#ifndef IPOD
++	if(first_free_pen >= Machine->drv->total_colors)
++		printf("bad obtain pen %d\n", first_free_pen);
++	//else if(first_free_pen == Machine->drv->total_colors - 1)
++	//	printf("obtain last pen %d\n", first_free_pen);
++#endif
++
++	if( ipod_bpp == 16 )
++		pal16[first_free_pen++] = ((red >> 3) << 11) | ((green >> 2) << 5) | (blue >> 3);
++	else
++		/* Bitshifting voodoo, courtesy of linuxstb */
++		pallette[first_free_pen++] = 0xff000000 
+ 				   | (red << 16) 
+ 				   | (green << 8) 
+ 				   | blue; 
+@@ -375,6 +616,37 @@
+ #endif
+ }
+ 
++/* paint the box to indicate alternate input bank
++ * TODO: maybe this should become it's own hotdog surface? then
++ * it could always paint in the upper left corner */
++void draw_blink_box( int color )
++{
++	/* i'm torn on this.  I want more than one pixel to be blinking, and
++	i'd prefer it to be one pixel in from each border, but I think
++	this should be fine.  I also was thinking of doing 
++		int * f = lcd_framebuffer;
++		*f++ = menucolor;
++		*f = menucolor;
++		f+= ipod_lcdw = menucolor
++		...
++	But i think this way wastes just a few more cycles, but maes for
++	nicer code.
++	*/
++	//unsigned int *lcd_framebuffer = HD_SRF_PIXELS(hd_obj_canvas->canvas);
++	if( ipod_bpp == 16 ) {
++		uint16 *b = engine->screen.framebuffer;
++		b[ 0 ] =
++			b[ 1 ] = 
++			b[ ipod_lcdw ] = 
++			b[ ipod_lcdw+1 ] = bankcolors16[color];
++	} else {
++		unsigned int *lcd_framebuffer = HD_SRF_PIXELS(engine->buffer);
++		lcd_framebuffer[ 0 ] =
++			lcd_framebuffer[ 1 ] = 
++			lcd_framebuffer[ HD_SRF_WIDTH(engine->buffer) ] = 
++			lcd_framebuffer[ HD_SRF_WIDTH(engine->buffer)+1 ] = bankcolors[color];
++	}
++}
+ 
+ /* 
+  * This is the main update function. It rotates the pixel data
+@@ -386,150 +658,400 @@
+  */
+ void osd_update_display (void)
+ {
+-	int r,c;
+-	int menucolor;
+-	unsigned int* dst;
+-	unsigned char* line = display_bitmap->private;
++#ifdef IPOD
++	// Wait for COP to finish previous frame
++	if( whichBlit & BLIT_FAST )
++		while ((inl(COP_STATUS) & COP_FRAME_READY));
++#endif
++	
++	blitter_fn();
+ 
+-	/* centering positioning of the bitmap */
+-	int gamew = Machine->drv->screen_width;
+-	int gameh = Machine->drv->screen_height;
+-        int ipod_xoffs = (ipod_lcdw-gameh)>>1;
+-        int ipod_yoffs = (ipod_lcdh-gamew)>>1;
++	if( input_bank ) {
++		int menucolor = 0;
++		/* blink corner pixels if we're in an alternate input bank */
++		if( blinker_step++ & 4 ) {
++	
++			if( inputMechanism == INPMECH_INTERNAL ) {
++				blinker_color++;
++				menucolor = 4+((blinker_color>>3) & 3);
++	
++			} else {
++				menucolor = input_bank;
++			}
++		}
++		draw_blink_box( menucolor );
++	}
+ 
++#ifndef IPOD
++	if( SDL_MUSTLOCK( screen ))
++		SDL_LockSurface( screen );
+ 
+-	/* this should be replaced with a proper hd rotate/scale/blit
+-	   but for now, this version is okay.  Even once that version
+-	   is implemented, these should still be allowed.
+-	   (meaning, do not remove this code. ;) 
+-	*/
++	SDL_UpdateRect( SDL_GetVideoSurface(), 0, 0, ipod_lcdw, ipod_lcdh );
+ 
+-	/* rotate 90 CW */
+-	if( whichBlit == BLIT_ROTCW90 ) {
+-#ifdef IPOD
+-		/* Josh's optmized rotating blitter */
+-		_MAME_Rotate( lcd_framebuffer, 
+-				display_bitmap->width, display_bitmap->height, 
+-				ipod_yoffs, ipod_xoffs, 
+-				ipod_lcdw, ipod_lcdh, pallette, line, 0);
++	if( SDL_MUSTLOCK( screen ))
++		SDL_UnlockSurface( screen );
+ #else
+-		for( r=display_bitmap->height-1 ; r >= 0 ; r--) {
++	// If FAST, use COP
++	if( whichBlit & BLIT_FAST )
++		outl(inl(COP_STATUS) | COP_FRAME_READY, COP_STATUS);
++	else
++		HD_LCD_Update(engine->screen.framebuffer, 0, 0, ipod_lcdw, ipod_lcdh);
++#endif
++}
+ 
+-			/* This loop rotates the pixels */
+-			dst = &lcd_framebuffer[ipod_yoffs*ipod_lcdw+ipod_xoffs+r];
++#ifdef IPOD
++void cop_displayloop_photo(void)
++{
++	while (inl(COP_STATUS) & COP_RUNNING) {
++		// wait for a frame
++		while (!(inl(COP_STATUS) & COP_FRAME_READY));
++		//outl(inl(COP_STATUS) | COP_BUSY, COP_STATUS);
++		// render the frame
++		HD_LCD_Update(engine->screen.framebuffer, 0, 0, ipod_lcdw, ipod_lcdh);
++		// clear busy and frame ready
++		outl(inl(COP_STATUS) & ~(COP_BUSY | COP_FRAME_READY), COP_STATUS);
++	}
++}
++#endif
+ 
+-			for( c=0 ; c<display_bitmap->width ; c++ ) {
+-				*dst = pallette[*(line++)];
+-				dst+= ipod_lcdw;
+-			}
+-		} 
+-#endif	
++void blitter_scale_calc_lines(int scalex, int scaley)
++{
++	int i;
++	unsigned char* src_org = display_bitmap->private;
++	src_org += (src_yoffs * display_bitmap->width) + src_xoffs;
++	bl_src_lines = malloc(gameh * sizeof(unsigned char*));
++	bl_src_cols = malloc(gamew * sizeof(unsigned int));
++	for(i = 0; i < gameh; i++)
++		bl_src_lines[i] = &src_org[i * scaley / 1024 * display_bitmap->width];
++	for(i = 0; i < gamew; i++)
++		bl_src_cols[i] = i * scalex / 1024;
++}
++
++void blitter_scale_calc(int dstw, int dsth, int keep_aspect)
++{
++	int scalex = gamew * 1024 / dstw;
++	int scaley = gameh * 1024 / dsth;
++	if(keep_aspect) {
++		if(scalex > scaley)
++			scaley = scalex;
++		else
++			scalex = scaley;
+ 	}
++	if(scalex < 1) scalex = 1;
++	if(scaley < 1) scaley = 1;
++	gamew = (gamew * 1024) / scalex;
++	gameh = (gameh * 1024) / scaley;
++#ifndef IPOD
++	printf("scaled resolution %d x %d", gamew, gameh);
++#endif
++	// do the line calculation
++	blitter_scale_calc_lines(scalex, scaley);
++}
+ 
++void blitter_scale_init_calc(int keep_aspect)
++{
++	blitter_scale_calc(ipod_lcdw, ipod_lcdh, keep_aspect);
++#ifndef IPOD
++	printf(" (LCD offset %d x %d)\n", (ipod_lcdw - gamew) / 2, (ipod_lcdh - gameh) / 2);
++#endif
++	// pre-calculate the offsets
++	ipod_xoffs = (ipod_lcdw - gamew) / 2;	
++	ipod_yoffs = (ipod_lcdh - gameh) / 2;
++	// update the blit function and render this frame
++	if( ipod_bpp == 16 ) {
++		bl_dst_org_16 = engine->screen.framebuffer + ipod_xoffs + ipod_yoffs * ipod_lcdw;
++		blitter_fn = blitter_scale_main_16;
++	} else {
++		bl_dst_org = HD_SRF_PIXELS(engine->buffer) + ipod_xoffs + ipod_yoffs * ipod_lcdw;
++		blitter_fn = blitter_scale_main;
++	}
++	blitter_fn();
++}
+ 
+-	/* halve it */ /* used on iPod Photo */
+-	if( whichBlit == BLIT_HALVE ) {
+-	        /* it's a smaller screen, rotate/copy/blit it, half-size */
+-	        ipod_xoffs = (ipod_lcdw-(gamew>>1))>>1;
+-		ipod_yoffs = (ipod_lcdh-(gameh>>1))>>1;
++void blitter_scale_init(void)
++{
++	blitter_scale_init_calc(0);
++}
+ 
+-		for( r=display_bitmap->height-1 ; r>=0 ; r--  ) {
+-			/* this can probably be optimized. */
+-			dst = &lcd_framebuffer[ 
+-				ipod_xoffs +
+-				(ipod_lcdh - (ipod_yoffs + (r>>1)))*ipod_lcdw ];
++void blitter_scale_aspect_init(void)
++{
++	blitter_scale_init_calc(1);
++}
+ 
+-			for( c=0 ; c<(gamew>>1) ; c++ ) {
+-				*(dst++) = pallette[ *line ];
+-				line += 2;
+-			}
+-		}
++void blitter_scale_main(void)
++{
++	int r,c;
++	unsigned char **src_lines = bl_src_lines;
++	unsigned char *src_org;
++	unsigned int *src_col;
++	unsigned int *dst_org = bl_dst_org;
++	unsigned int *dst;
++	for(r = gameh; r > 0 ;r--, dst_org += ipod_lcdw) {
++		for(c = gamew, dst = dst_org, src_org = *src_lines++, src_col = bl_src_cols; c > 0; c--)
++			*dst++ = pallette[src_org[*src_col++]];
+ 	}
++}
+ 
+-	/* rotate 90 CW, and halve it. */
+-	if( whichBlit == (BLIT_ROTCW90 | BLIT_HALVE) ) {
+-#ifdef NEVERIPOD
+-	        _MAME_Rotate (lcd_framebuffer, 
+-				display_bitmap->width, display_bitmap->height, 
+-				ipod_yoffs, ipod_xoffs, 
+-				ipod_lcdw, ipod_lcdh, pallette, line, 1);
+-#else
+-		int m2, gw2;
+-		/* it's a smaller screen, rotate/copy/blit it, half-size */
+-		ipod_xoffs = (ipod_lcdw-(gameh>>1))>>1;
+-		ipod_yoffs = (ipod_lcdh-(gamew>>1))>>1;
++void blitter_scale_main_16(void)
++{
++	int r,c;
++	unsigned char **src_lines = bl_src_lines;
++	unsigned char *src_org;
++	unsigned int *src_col;
++	uint16 *dst_org = bl_dst_org_16;
++	uint16 *dst;
++	for(r = gameh; r > 0 ;r--, dst_org += ipod_lcdw) {
++		for(c = gamew, dst = dst_org, src_org = *src_lines++, src_col = bl_src_cols; c > 0; c--)
++			*dst++ = pal16[src_org[*src_col++]];
++	}
++}
+ 
+-		/* pull this out.. optimizer might do this anyway */
+-		m2 = (ipod_yoffs*ipod_lcdw)+ipod_xoffs;
+-		gw2 = gamew>>1;
+-		
++void blitter_scale_rot_calc(int keep_aspect)
++{
++	blitter_scale_calc(ipod_lcdh, ipod_lcdw, keep_aspect);
++#ifndef IPOD
++	printf(" (LCD offset %d x %d)\n", (ipod_lcdw - gameh) / 2, (ipod_lcdh - gamew) / 2);
++#endif
++	// pre-calculate the offsets
++	ipod_xoffs = ipod_lcdw - ((ipod_lcdw - gameh) / 2) - 1;
++	ipod_yoffs = (ipod_lcdh - gamew) / 2;
++	// update the blit function and render this frame
++	if( ipod_bpp == 16 ) {
++		bl_dst_org_16 = engine->screen.framebuffer + ipod_xoffs + ipod_yoffs * ipod_lcdw;
++		blitter_fn = blitter_scale_rot_main_16;
++	} else {
++		bl_dst_org = HD_SRF_PIXELS(engine->buffer) + ipod_xoffs + ipod_yoffs * ipod_lcdw;
++		blitter_fn = blitter_scale_rot_main;
++	}
++	blitter_fn();
++}
+ 
+-		for( r=display_bitmap->height-1 ; r>=0 ; r-=2 ) {
+-			dst = &lcd_framebuffer[ m2 + (r>>1) ];
++void blitter_scale_rot_init(void)
++{
++	blitter_scale_rot_calc(0);
++}
+ 
+-			for( c=0 ; c<display_bitmap->width ; c++ ) {
+-				if(c < gw2)  *dst = pallette[ *line ];
+-				dst += ipod_lcdw;
+-				line += 2;
+-			}
+-		}
+-#endif
+-	} 
++void blitter_scale_rot_aspect_init(void)
++{
++	blitter_scale_rot_calc(1);
++}
+ 
++void blitter_scale_rot_main(void)
++{
++	int r,c;
++	unsigned char **src_lines = bl_src_lines;
++	unsigned char *src_org;
++	unsigned int *src_col;
++	unsigned int *dst_org = bl_dst_org;
++	unsigned int *dst;
++	for(r = gameh; r > 0; r--) {
++		for(c = gamew, dst = dst_org--, src_org = *src_lines++, src_col = bl_src_cols; c > 0; c--, dst += ipod_lcdw)
++			*dst = pallette[src_org[*src_col++]];
++	}
++}
+ 
+-	/* blink corner pixels if we're in an alternate input bank */
+-	blinker_step++;
+-	menucolor = 0;
+-	if( input_bank && blinker_step & 4 ) {
++void blitter_scale_rot_main_16(void)
++{
++	int r,c;
++	unsigned char **src_lines = bl_src_lines;
++	unsigned char *src_org;
++	unsigned int *src_col;
++	uint16 *dst_org = bl_dst_org_16;
++	uint16 *dst;
++	for(r = gameh; r > 0; r--) {
++		for(c = gamew, dst = dst_org--, src_org = *src_lines++, src_col = bl_src_cols; c > 0; c--, dst += ipod_lcdw)
++			*dst = pal16[src_org[*src_col++]];
++	}
++}
+ 
+-		if( inputMechanism == INPMECH_INTERNAL ) {
+-			blinker_color++;
+-			menucolor = bankcolors[ 4+((blinker_color>>3) & 3) ];
++/*void blitter_scale_rot(void)
++{
++	int r,c;
++	unsigned char* src_org = display_bitmap->private;
++	unsigned char* src;
++	unsigned int *dst_org = HD_SRF_PIXELS(hd_obj_canvas->canvas) + ipod_yoffs * ipod_lcdw + ipod_lcdw - ipod_xoffs;
++	unsigned int *dst;
++	int sx = 0;
++	int sy = 0;
++	src_org += (src_yoffs * display_bitmap->width) + src_xoffs;
+ 
+-		} else {
+-			if( blinker_step & 4) {
+-				menucolor = bankcolors[ input_bank ];
+-			}
++	for( r=gameh ; r>0 ; r--,src_org+=display_bitmap->width ) {
++		if(sy >= bl_skip) {
++			sy %= bl_skip;
++			continue;
++		} else
++			sy+=32;
++		dst = --dst_org;
++		for( c=gamew, sx=0, src=src_org ; c>0 ; c--,src++ ) {
++			if(sx >= bl_skip) {
++				sx %= bl_skip;
++				continue;
++			} else
++				sx += 32;
++			*dst = pallette[ *src ];
++			dst += ipod_lcdw;
+ 		}
+ 	}
+-	/* i'm torn on this.  I want more than one pixel to be blinking, and
+-	   i'd prefer it to be one pixel in from each border, but I think
+-	   this should be fine.  I also was thinking of doing 
+-		int * f = lcd_framebuffer;
+-		*f++ = menucolor;
+-		*f = menucolor;
+-		f+= ipod_lcdw = menucolor
+-		...
+-	   But i think this way wastes just a few more cycles, but maes for
+-	   nicer code.
+-	*/
+-	lcd_framebuffer[ 0 ] =
+-		lcd_framebuffer[ 1 ] = 
+-		lcd_framebuffer[ ipod_lcdw ] = 
+-		lcd_framebuffer[ ipod_lcdw+1 ] = menucolor;
++}*/
+ 
++/*void blitter_scale(void)
++{
++	int r,c;
++	unsigned char* src_org = display_bitmap->private;
++	unsigned char* src = display_bitmap->private;
++	unsigned int *dst_org = HD_SRF_PIXELS(hd_obj_canvas->canvas) + ipod_xoffs + ipod_yoffs * ipod_lcdw;
++	unsigned int *dst;
++	int sx = 0;
++	int sy = 0;
++	src_org += (src_yoffs * display_bitmap->width) + src_xoffs;
+ 
+-	hd_obj_canvas->dirty = 1;	 /* set the canvas to "dirty" */
++	for( r=gameh ; r>0 ; r--,src_org+=display_bitmap->width ) {
++		if(sy >= bl_skip) {
++			src += display_bitmap->width;
++			sy %= bl_skip;
++			continue;
++		} else
++			sy+=32;
++		dst = dst_org;
++		dst_org += ipod_lcdw;
++		for( c=gamew, sx=0, src=src_org ; c>0 ; c--,src++ ) {
++			if(sx >= bl_skip) {
++				sx %= bl_skip;
++				continue;
++			} else
++				sx+=32;
++			*dst++ = pallette[ *src ];
++		}
++	}
++}*/
+ 
+-	/* copy the pixel data to the canvas */
+-	memcpy(HD_SRF_PIXELS(hd_obj_canvas->canvas), lcd_framebuffer, 
+-		4 * ipod_lcdw * ipod_lcdh);
++/* Half blit with no rotation, gamew and gameh assumed to be halved
++ * the canvas is assumed to be the halved gamew x gameh */
++void blitter_half(void)
++{
++	int r, c;
++	unsigned int *dst_org = bl_dst_org;
++	unsigned int *dst;
++	unsigned char *src_org = bl_src_org;
++	unsigned char *src;
++	for(r = gameh; r > 0; r--, src_org += display_bitmap->width << 1, dst_org += ipod_lcdw) {
++		for(c = gamew, dst = dst_org, src = src_org; c > 0; c--, src += 2)
++			*dst++ = pallette[*src];
++	}
++}
+ 
+-#ifndef IPOD
+-	if( SDL_MUSTLOCK( screen ))
+-		SDL_LockSurface( screen );
+-#endif
+-	
+-	/* render the canvas to the screen */
+-	HD_Render(engine);
++void blitter_half_16(void)
++{
++	int r, c;
++	uint16 *dst_org = bl_dst_org_16;
++	uint16 *dst;
++	unsigned char *src_org = bl_src_org;
++	unsigned char *src;
++	for(r = gameh; r > 0; r--, src_org += display_bitmap->width << 1, dst_org += ipod_lcdw) {
++		for(c = gamew, dst = dst_org, src = src_org; c > 0; c--, src += 2)
++			*dst++ = pal16[*src];
++	}
++}
+ 
+-#ifndef IPOD
+-	if( SDL_MUSTLOCK( screen ))
+-		SDL_UnlockSurface( screen );
++/* Half blit rotated, gamew and gameh assumed to be halved
++ * the canvas is assumed to be the halved gameh x gamew */
++void blitter_half_rot(void)
++{
++#ifdef NEVERIPOD
++	_MAME_Rotate (HD_SRF_PIXELS(engine->buffer), 
++			display_bitmap->width, display_bitmap->height, 
++			ipod_yoffs, ipod_xoffs, 
++			ipod_lcdw, ipod_lcdh, pallette, line, 1);
++#else
++	int r, c;
++	unsigned int *dst_org = bl_dst_org;
++	unsigned int *dst;
++	unsigned char *src_org = bl_src_org;
++	unsigned char *src;
++	for(r = gameh; r > 0; r--, dst_org--, src_org += display_bitmap->width << 1) {
++		for(c = gamew, dst = dst_org, src = src_org; c > 0; c--, src += 2, dst += ipod_lcdw)
++			*dst = pallette[*src];
++	}
+ #endif
+ }
+ 
++void blitter_half_rot_16(void)
++{
++	int r, c;
++	uint16 *dst_org = bl_dst_org_16;
++	uint16 *dst;
++	unsigned char *src_org = bl_src_org;
++	unsigned char *src;
++	for(r = gameh; r > 0; r--, dst_org--, src_org += display_bitmap->width << 1) {
++		for(c = gamew, dst = dst_org, src = src_org; c > 0; c--, src += 2, dst += ipod_lcdw)
++			*dst = pal16[*src];
++	}
++}
++
++/* Normal no scale nor rotate */
++void blitter_norm(void)
++{
++	int r, c;
++	unsigned int *dst_org = bl_dst_org;
++	unsigned int *dst;
++	unsigned char *src_org = bl_src_org;
++	unsigned char *src;
++	for(r = gameh; r > 0; r--, src_org += display_bitmap->width, dst_org += ipod_lcdw) {
++		for(c = gamew, src = src_org, dst = dst_org; c > 0; c--)
++			*dst++ = pallette[*src++];
++	}
++}
++
++void blitter_norm_16(void)
++{
++	int r, c;
++	uint16 *dst_org = bl_dst_org_16;
++	uint16 *dst;
++	unsigned char *src_org = bl_src_org;
++	unsigned char *src;
++	for(r = gameh, dst = engine->screen.framebuffer; r > 0; r--, src_org += display_bitmap->width, dst_org += ipod_lcdw) {
++		for(c = gamew, src = src_org, dst = dst_org; c > 0; c--)
++			*dst++ = pal16[*src++];
++	}
++}
++
++/* Normal rotate (no change in size)
++ * the canvas is assumed to be gameh x gamew */
++void blitter_rot(void)
++{
++#ifdef NEVERIPOD
++	/* Josh's optmized rotating blitter */
++	/* Unfortunately I don't think this will work anymore since the visible area may be less than display_bitmap->width */
++	_MAME_Rotate( HD_SRF_PIXELS(engine->buffer), 
++			display_bitmap->width, display_bitmap->height, 
++			ipod_yoffs, ipod_xoffs, 
++			ipod_lcdw, ipod_lcdh, pallette, display_bitmap->private, 0);
++#else
++	int r, c;
++	unsigned int *dst_org = bl_dst_org;
++	unsigned int *dst;
++	unsigned char *src_org = bl_src_org;
++	unsigned char *src;
++	for(r = gameh; r > 0; r--, dst_org--, src_org += display_bitmap->width) {
++		for(c = gamew, dst = dst_org, src = src_org; c > 0; c--, dst += ipod_lcdw)
++			*dst = pallette[*src++];
++	}
++#endif	
++}
+ 	
++void blitter_rot_16(void)
++{
++	int r, c;
++	uint16 *dst_org = bl_dst_org_16;
++	uint16 *dst;
++	unsigned char *src_org = bl_src_org;
++	unsigned char *src;
++	for(r = gameh; r > 0; r--, dst_org--, src_org += display_bitmap->width) {
++		for(c = gamew, dst = dst_org, src = src_org; c > 0; c--, dst += ipod_lcdw)
++			*dst = pal16[*src++];
++	}
++}
++	
+ /* 
+  * Here's a dirty hack to take a quick screenshot. Just
+  * set a static frame counter, and take the shot when
+@@ -555,12 +1077,17 @@
+ 	return 0;
+ }
+ 
+-
++/* switch to a new input bank
++ * b should be one of the INPUT_??? constants
++ */
+ void change_input_bank( int b )
+ {
+ 	input_bank = -(1+b);
+ 	if( input_bank > 3 ) input_bank = 0;
+ 	if( input_bank < 0 ) input_bank = 0;
++	/* really this just needs to ensure the blink box erases when
++	   switching back to bank 0 */
++	draw_blink_box( 0 );
+ }
+ 
+ 
+@@ -624,20 +1151,24 @@
+ #endif
+ 
+ 
+-	/* check for the hold switch toggling */
+-	/* generate the event when the user switches from Orange->off */
+-	if( (hold == 0) && (lasthold == 1) )
++	/* if the hold state changed */
++	if( hold != lasthold )
+ 	{
+-		/* trigger hold event -> switch input banks */
+-		change_input_bank( inputBanks[ input_bank ].hold );
+-
+-		/* just in case someone made a bad ini file... */
+-		if( input_bank > 3 ) input_bank = 0;
++		/* check for the hold switch toggling */
++		/* generate the event when the user switches from Orange->off */
++		if( (hold == 0) && (lasthold == 1) )
++		{
++			/* trigger hold event -> switch input banks */
++			change_input_bank( inputBanks[ input_bank ].hold );
+ #ifndef IPOD
+-		fprintf( stderr, "Switching to bank %d\n", input_bank );
++			fprintf( stderr, "Switching to bank %d\n", input_bank );
+ #endif
++		}
++		lasthold = hold;
++		/* any time the hold changed then ignore the button value, my iPod photo seems
++		   to sometimes generate unexpected button values */
++		return( 0 );
+ 	}
+-	lasthold = hold;
+ 
+ 	/* check for bank changes from other button inputs (non OSD events) */
+ 	if( (button & IPOD_KEYPAD_MENU) && (inputBanks[ input_bank ].menu < 0) ) {
+@@ -668,7 +1199,7 @@
+ 	/* now the check to see if various inputs on the emulated 
+ 	    system have been triggered 
+ 	*/
+-	if( (button & IPOD_KEYPAD_MENU) && (request == inputBanks[ input_bank ].menu )) return( 1 );
++	if( (button & IPOD_KEYPAD_MENU) && (request == inputBanks[ input_bank ].menu) ) return( 1 );
+ 	if( (button & IPOD_KEYPAD_PREV) && (request == inputBanks[ input_bank ].prev) ) return( 1 );
+ 	if( (button & IPOD_KEYPAD_NEXT) && (request == inputBanks[ input_bank ].next) ) return( 1 );
+ 	if( (button & IPOD_KEYPAD_PLAY) && (request == inputBanks[ input_bank ].play) ) return( 1 );
+@@ -729,11 +1260,18 @@
+ 	}
+ #endif
+ 
+-	if( (hold == 0) && (lasthold == 1) )
++	/* if the hold state changed */
++	if( hold != lasthold )
+ 	{
+-		input_bank ^= 1; // (input_bank+1) & 0x03;
++		if( (hold == 0) && (lasthold == 1) )
++		{
++			input_bank ^= 1; // (input_bank+1) & 0x03;
++		}
++		lasthold = hold;
++		/* any time the hold changed then ignore the button value, my iPod photo seems
++		   to sometimes generate unexpected button values */
++		return( 0 );
+ 	}
+-	lasthold = hold;
+ 
+ 	if( input_bank > 0 ) {
+ 		switch( request ) {
+@@ -765,15 +1303,14 @@
+ 		}
+ 
+ 		/* exit menu */
+-		if( 
+-		     (button == IPOD_KEYPAD_ACTION) ) {
+-			input_bank = INPUT_DEFAULT;
++		if( button == IPOD_KEYPAD_ACTION ) {
++		     	change_input_bank( INPUT_DEFAULT );
+ 			return( 0 );
+ 		}
+ 	}
+ 
+ 	/* rotate the input */
+-	if( (whichBlit & BLIT_ROTCW90) == BLIT_ROTCW90 ) {
++	if( whichBlit & BLIT_ROTCW90 ) {
+ 		b_u = IPOD_KEYPAD_NEXT;
+ 		b_d = IPOD_KEYPAD_PREV;
+ 		b_l = IPOD_KEYPAD_MENU;
+Index: src/I86/I86.c
+===================================================================
+--- src/I86/I86.c	(revision 131)
++++ src/I86/I86.c	(working copy)
 @@ -24,6 +24,7 @@
  #include "global.h"
  
@@ -241,9 +1463,10 @@ diff -urN src/I86/I86.c src/I86/I86.c
      else init=1; 
  
      while(instr_count--)
-diff -urN src/I86/I86.h src/I86/I86.h
---- src/I86/I86.h	2008-08-22 16:54:29.000000000 +0000
-+++ src/I86/I86.h	2008-08-22 16:54:32.000000000 +0000
+Index: src/I86/I86.h
+===================================================================
+--- src/I86/I86.h	(revision 131)
++++ src/I86/I86.h	(working copy)
 @@ -2,6 +2,7 @@
  #define CPU_H
  
@@ -260,9 +1483,102 @@ diff -urN src/I86/I86.h src/I86/I86.h
 +void I86_Reset(unsigned char *mem,int cycles);
 +
  #endif
-diff -urN src/common.c src/common.c
---- src/common.c	2008-08-22 16:54:31.000000000 +0000
-+++ src/common.c	2008-08-22 16:56:45.000000000 +0000
+Index: src/vidhrdw/rallyx.c
+===================================================================
+--- src/vidhrdw/rallyx.c	(revision 131)
++++ src/vidhrdw/rallyx.c	(working copy)
+@@ -23,7 +23,7 @@
+ 											/* to speed up video refresh */
+ static unsigned char dirtybuffer2[VIDEO_RAM_SIZE];	/* keep track of modified portions of the screen */
+ 											/* to speed up video refresh */
+-static struct osd_bitmap *tmpbitmap;
++struct osd_bitmap *tmpbitmap;
+ 
+ 
+ 
+Index: src/sndhrdw/mooncrst.c
+===================================================================
+--- src/sndhrdw/mooncrst.c	(revision 131)
++++ src/sndhrdw/mooncrst.c	(working copy)
+@@ -2,7 +2,7 @@
+ #include <math.h>
+ 
+ 
+-#define SOUND_CLOCK 1536000 /* 1.536 Mhz */
++#define SOUND_CLOCK 1536000 /* 1.536 Mhz */
+ #define PI 3.1415
+ 
+ #define TONE_LENGTH 2000
+@@ -12,8 +12,8 @@
+ #define WAVE_AMPLITUDE 70
+ 
+ 
+-static char *tone;
+-static char *noise;
++static char *tone = NULL;
++static char *noise = NULL;
+ 
+ 
+ 
+@@ -35,7 +35,7 @@
+ 
+ int mooncrst_sh_start(void)
+ {
+-	int i;
++	//int i;
+ 
+ /*
+ 	if ((tone = malloc(TONE_LENGTH)) == 0)
+@@ -61,8 +61,8 @@
+ 
+ void mooncrst_sh_stop(void)
+ {
+-	free(noise);
+-	free(tone);
++	if(noise) free(noise);
++	if(tone) free(tone);
+ }
+ 
+ 
+Index: src/sndhrdw/phoenix.c
+===================================================================
+--- src/sndhrdw/phoenix.c	(revision 131)
++++ src/sndhrdw/phoenix.c	(working copy)
+@@ -3,8 +3,8 @@
+ 
+ 
+ /* I played around with these until they sounded ok */
+-static max_freq = 22500;
+-static dec_freq = 1500;
++static int max_freq = 22500;
++static int dec_freq = 1500;
+ 
+ /* values needed by phoenix_sh_update */
+ static int sound_a_play = 0;
+Index: src/sndhrdw/junglek.c
+===================================================================
+--- src/sndhrdw/junglek.c	(revision 131)
++++ src/sndhrdw/junglek.c	(working copy)
+@@ -5,6 +5,7 @@
+ 
+ 
+ 
++#if 0
+ static int junglek_portB_r(int offset)
+ {
+ 	int clockticks,clock;
+@@ -17,6 +18,7 @@
+ 
+ 	return clock;
+ }
++#endif
+ 
+ 
+ 
+Index: src/common.c
+===================================================================
+--- src/common.c	(revision 131)
++++ src/common.c	(working copy)
 @@ -345,12 +345,15 @@
  struct GfxElement *decodegfx(const unsigned char *src,const struct GfxLayout *gl)
  {
@@ -276,25 +1592,27 @@ diff -urN src/common.c src/common.c
 -		return 0;
 +	// Only alloc a bitmap if needed (the galaxian stars don't need a bitmap)
 +	if (gl->width > 0 && gl->total * gl->height > 0) {
-+ 		if ((bm = osd_create_bitmap(gl->width,gl->total * gl->height)) == 0)
-+ 			return 0;
-+ 	}
++		if ((bm = osd_create_bitmap(gl->width,gl->total * gl->height)) == 0)
++			return 0;
++	}
  	if ((gfx = malloc(sizeof(struct GfxElement))) == 0)
  	{
  		osd_free_bitmap(bm);
-@@ -374,7 +377,7 @@
+@@ -374,7 +377,8 @@
  {
  	if (gfx)
  	{
 -		osd_free_bitmap(gfx->gfxdata);
-+		if (gfx->gfxdata) osd_free_bitmap(gfx->gfxdata);
++		if (gfx->gfxdata)
++			osd_free_bitmap(gfx->gfxdata);
  		free(gfx);
  	}
  }
-diff -urN src/cpuintrf.c src/cpuintrf.c
---- src/cpuintrf.c	2008-08-22 16:54:31.000000000 +0000
-+++ src/cpuintrf.c	2008-08-22 16:58:35.000000000 +0000
-@@ -9,9 +9,10 @@
+Index: src/cpuintrf.c
+===================================================================
+--- src/cpuintrf.c	(revision 131)
++++ src/cpuintrf.c	(working copy)
+@@ -9,10 +9,11 @@
  ***************************************************************************/
  
  #include "driver.h"
@@ -304,10 +1622,11 @@ diff -urN src/cpuintrf.c src/cpuintrf.c
 +#include "Z80.h"
 +#include "M6502.h"
 +#include "I86.h"
-+
  
++
  /*
  extern void I86_Execute();
+ extern void I86_Reset(unsigned char *mem,int cycles);
 @@ -72,7 +73,7 @@
  					ctxt->iperiod = cycles;
  					ctxt->irq = Z80_IGNORE_INT;
@@ -317,37 +1636,41 @@ diff -urN src/cpuintrf.c src/cpuintrf.c
  			
  			case CPU_M6502:
  				{
-@@ -86,13 +87,11 @@
+@@ -86,13 +87,13 @@
  					ctxt->IPeriod = cycles;
  					Reset6502(ctxt);
  				}
 -				break;
 -			/*
 +				break;
++			// /*
  			case CPU_I86:
  				RAM = Machine->memory_region[Machine->drv->cpu[activecpu].memory_region];
  				I86_Reset(RAM,cycles);
 -				break;
 -			*/
 +				break;
++			// */
  			
  		}
  	}
-@@ -141,12 +140,10 @@
+@@ -141,12 +142,12 @@
  					for (loops = 0;loops < Machine->drv->cpu[activecpu].interrupts_per_frame;loops++)
  						Run6502((M6502 *)cpucontext[activecpu]);
  					break;
 -				/*
++				// /*
  				case CPU_I86:
  					for (loops = 0;loops < Machine->drv->cpu[activecpu].interrupts_per_frame;loops++)
  						I86_Execute();
 -					break;
 -				*/
 +					break;
++				// */
  			}
  		}
  
-@@ -169,7 +166,7 @@
+@@ -169,7 +170,7 @@
  		case CPU_M6502:
  			return ((M6502 *)cpucontext[activecpu])->PC.W;
  			break;
@@ -356,9 +1679,10 @@ diff -urN src/cpuintrf.c src/cpuintrf.c
  
  		default:
  	if (errorlog) fprintf(errorlog,"cpu_getpc: unsupported CPU type %02x\n",Machine->drv->cpu[activecpu].cpu_type);
-diff -urN src/driver.c src/driver.c
---- src/driver.c	2008-08-22 16:54:31.000000000 +0000
-+++ src/driver.c	2008-08-22 16:54:32.000000000 +0000
+Index: src/driver.c
+===================================================================
+--- src/driver.c	(revision 131)
++++ src/driver.c	(working copy)
 @@ -111,7 +111,7 @@
  extern struct GameDriver mplanets_driver;
  extern struct GameDriver junglek_driver;
@@ -413,9 +1737,37 @@ diff -urN src/driver.c src/driver.c
 +	
  	0	/* end of array */
  };
-diff -urN src/drivers/carnival.c src/drivers/carnival.c
---- src/drivers/carnival.c	2008-08-22 16:54:31.000000000 +0000
-+++ src/drivers/carnival.c	2008-08-22 17:00:54.000000000 +0000
+Index: src/drivers/milliped.c
+===================================================================
+--- src/drivers/milliped.c	(revision 131)
++++ src/drivers/milliped.c	(working copy)
+@@ -257,15 +257,15 @@
+ 
+ ROM_START( milliped_rom )
+ 	ROM_REGION(0x10000)	/* 64k for code */
+-	ROM_LOAD( "%s.104", 0x4000, 0x1000 )
+-	ROM_LOAD( "%s.103", 0x5000, 0x1000 )
+-	ROM_LOAD( "%s.102", 0x6000, 0x1000 )
+-	ROM_LOAD( "%s.101", 0x7000, 0x1000 )
+-	ROM_LOAD( "%s.101", 0xf000, 0x1000 )	/* for the reset and interrupt vectors */
++	ROM_LOAD( "136013-104.1mn", 0x4000, 0x1000 )
++	ROM_LOAD( "136013-103.1l", 0x5000, 0x1000 )
++	ROM_LOAD( "136013-102.1jk", 0x6000, 0x1000 )
++	ROM_LOAD( "136013-101.1h", 0x7000, 0x1000 )
++	ROM_LOAD( "136013-101.1h", 0xf000, 0x1000 )	/* for the reset and interrupt */
+ 
+ 	ROM_REGION(0x1000)	/* temporary space for graphics (disposed after conversion) */
+-	ROM_LOAD( "%s.106", 0x0000, 0x0800 )
+-	ROM_LOAD( "%s.107", 0x0800, 0x0800 )
++	ROM_LOAD( "136013-106.5p", 0x0000, 0x0800 )
++	ROM_LOAD( "136013-107.5r", 0x0800, 0x0800 )
+ ROM_END
+ 
+ 
+Index: src/drivers/carnival.c
+===================================================================
+--- src/drivers/carnival.c	(revision 131)
++++ src/drivers/carnival.c	(working copy)
 @@ -220,38 +220,22 @@
  
  ROM_START( carnival_rom )
@@ -471,80 +1823,10 @@ diff -urN src/drivers/carnival.c src/drivers/carnival.c
  ROM_END
  
  
-diff -urN src/drivers/centiped.c src/drivers/centiped.c
---- src/drivers/centiped.c	2008-08-22 16:54:31.000000000 +0000
-+++ src/drivers/centiped.c	2008-08-22 17:01:45.000000000 +0000
-@@ -341,15 +341,15 @@
- 
- ROM_START( centiped_rom )
- 	ROM_REGION(0x10000)	/* 64k for code */
--	ROM_LOAD( "%s.307", 0x2000, 0x0800 )
--	ROM_LOAD( "%s.308", 0x2800, 0x0800 )
--	ROM_LOAD( "%s.309", 0x3000, 0x0800 )
--	ROM_LOAD( "%s.310", 0x3800, 0x0800 )
--	ROM_LOAD( "%s.310", 0xf800, 0x0800 )	/* for the reset and interrupt vectors */
-+	ROM_LOAD( "136001-307.d1", 0x2000, 0x0800 )
-+	ROM_LOAD( "136001-308.e1", 0x2800, 0x0800 )
-+	ROM_LOAD( "136001-309.fh1", 0x3000, 0x0800 )
-+	ROM_LOAD( "136001-310.j1", 0x3800, 0x0800 )
-+	ROM_LOAD( "136001-310.j1", 0xf800, 0x0800 )	/* for the reset and interrupt vectors */
- 
- 	ROM_REGION(0x1000)	/* temporary space for graphics (disposed after conversion) */
--	ROM_LOAD( "%s.211", 0x0000, 0x0800 )
--	ROM_LOAD( "%s.212", 0x0800, 0x0800 )
-+	ROM_LOAD( "136001-211.f7", 0x0000, 0x0800 )
-+	ROM_LOAD( "136001-212.hj7", 0x0800, 0x0800 )
- ROM_END
- 
- 
-diff -urN src/drivers/junglek.c src/drivers/junglek.c
---- src/drivers/junglek.c	2008-08-22 16:54:31.000000000 +0000
-+++ src/drivers/junglek.c	2008-08-22 17:02:29.000000000 +0000
-@@ -103,6 +103,7 @@
- 
- 
- 
-+#if 0
- static struct MemoryReadAddress sound_readmem[] =
- {
- 	{ 0x4000, 0x43ff, MRA_RAM },
-@@ -122,6 +123,7 @@
- 	{ 0x0000, 0x0fff, MWA_ROM },
- 	{ -1 }	/* end of table */
- };
-+#endif
- 
- 
- 
-diff -urN src/drivers/milliped.c src/drivers/milliped.c
---- src/drivers/milliped.c	2008-08-22 16:54:31.000000000 +0000
-+++ src/drivers/milliped.c	2008-08-22 17:03:29.000000000 +0000
-@@ -257,15 +257,15 @@
- 
- ROM_START( milliped_rom )
- 	ROM_REGION(0x10000)	/* 64k for code */
--	ROM_LOAD( "%s.104", 0x4000, 0x1000 )
--	ROM_LOAD( "%s.103", 0x5000, 0x1000 )
--	ROM_LOAD( "%s.102", 0x6000, 0x1000 )
--	ROM_LOAD( "%s.101", 0x7000, 0x1000 )
--	ROM_LOAD( "%s.101", 0xf000, 0x1000 )	/* for the reset and interrupt vectors */
-+	ROM_LOAD( "136013-104.1mn", 0x4000, 0x1000 )
-+	ROM_LOAD( "136013-103.1l", 0x5000, 0x1000 )
-+	ROM_LOAD( "136013-102.1jk", 0x6000, 0x1000 )
-+	ROM_LOAD( "136013-101.1h", 0x7000, 0x1000 )
-+	ROM_LOAD( "136013-101.1h", 0xf000, 0x1000 )	/* for the reset and interrupt vectors */
- 
- 	ROM_REGION(0x1000)	/* temporary space for graphics (disposed after conversion) */
--	ROM_LOAD( "%s.106", 0x0000, 0x0800 )
--	ROM_LOAD( "%s.107", 0x0800, 0x0800 )
-+	ROM_LOAD( "136013-106.5p", 0x0000, 0x0800 )
-+	ROM_LOAD( "136013-107.5r", 0x0800, 0x0800 )
- ROM_END
- 
- 
-diff -urN src/drivers/mooncrst.c src/drivers/mooncrst.c
---- src/drivers/mooncrst.c	2008-08-22 16:54:31.000000000 +0000
-+++ src/drivers/mooncrst.c	2008-08-22 17:04:02.000000000 +0000
+Index: src/drivers/mooncrst.c
+===================================================================
+--- src/drivers/mooncrst.c	(revision 131)
++++ src/drivers/mooncrst.c	(working copy)
 @@ -231,14 +231,14 @@
  
  ROM_START( fantazia_rom )
@@ -568,9 +1850,10 @@ diff -urN src/drivers/mooncrst.c src/drivers/mooncrst.c
  
  	ROM_REGION(0x2000)	/* temporary space for graphics (disposed after conversion) */
  	ROM_LOAD( "1h_1_10.bin", 0x0000, 0x0800 )
-diff -urN src/drivers/mplanets.c src/drivers/mplanets.c
---- src/drivers/mplanets.c	2008-08-22 16:54:31.000000000 +0000
-+++ src/drivers/mplanets.c	2008-08-22 16:54:32.000000000 +0000
+Index: src/drivers/mplanets.c
+===================================================================
+--- src/drivers/mplanets.c	(revision 131)
++++ src/drivers/mplanets.c	(working copy)
 @@ -250,19 +250,19 @@
  
  ROM_START( mplanets_rom )
@@ -611,9 +1894,30 @@ diff -urN src/drivers/mplanets.c src/drivers/mplanets.c
  	0,0,    /* palette, colortable */
  
  	{ 0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,	/* numbers */
-diff -urN src/drivers/qbert.c src/drivers/qbert.c
---- src/drivers/qbert.c	2008-08-22 16:54:31.000000000 +0000
-+++ src/drivers/qbert.c	2008-08-22 16:54:32.000000000 +0000
+Index: src/drivers/junglek.c
+===================================================================
+--- src/drivers/junglek.c	(revision 131)
++++ src/drivers/junglek.c	(working copy)
+@@ -103,6 +103,7 @@
+ 
+ 
+ 
++#if 0
+ static struct MemoryReadAddress sound_readmem[] =
+ {
+ 	{ 0x4000, 0x43ff, MRA_RAM },
+@@ -122,6 +123,7 @@
+ 	{ 0x0000, 0x0fff, MWA_ROM },
+ 	{ -1 }	/* end of table */
+ };
++#endif
+ 
+ 
+ 
+Index: src/drivers/qbert.c
+===================================================================
+--- src/drivers/qbert.c	(revision 131)
++++ src/drivers/qbert.c	(working copy)
 @@ -343,7 +343,7 @@
  
  	input_ports, dsw,
@@ -632,9 +1936,10 @@ diff -urN src/drivers/qbert.c src/drivers/qbert.c
  	0,0,    /* palette, colortable */
  
  	{ 0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,	/* numbers */
-diff -urN src/drivers/venture.c src/drivers/venture.c
---- src/drivers/venture.c	2008-08-22 16:54:31.000000000 +0000
-+++ src/drivers/venture.c	2008-08-22 17:04:55.000000000 +0000
+Index: src/drivers/venture.c
+===================================================================
+--- src/drivers/venture.c	(revision 131)
++++ src/drivers/venture.c	(working copy)
 @@ -324,17 +324,17 @@
  
  ROM_START( venture_rom )
@@ -662,1319 +1967,54 @@ diff -urN src/drivers/venture.c src/drivers/venture.c
  ROM_END
  
  ROM_START( mtrap_rom )
-diff -urN src/inifile/ini.c src/inifile/ini.c
---- src/inifile/ini.c	2008-08-22 16:54:28.000000000 +0000
-+++ src/inifile/ini.c	2008-08-22 16:54:32.000000000 +0000
-@@ -355,6 +355,8 @@
- 	// check for a # sign in it, set it to a NULL
- 	x = strchr( buf, '#' );
- 	if( x != NULL ) {
-+		// trim seems broken so do nothing if line starts with comment
-+		if( x == buf ) continue;
- 		*x = '\0';
- 	}
- 
-diff -urN src/inifile/mameconf.c src/inifile/mameconf.c
---- src/inifile/mameconf.c	2008-08-22 16:54:28.000000000 +0000
-+++ src/inifile/mameconf.c	2008-08-22 16:54:32.000000000 +0000
-@@ -17,6 +17,8 @@
- 
- /* lets make it easy to find the conf file. */
- static char *searchpath[] = {
-+	"Conf/ipodmame.ini",
-+	"/opt/Emulators/Conf/ipodmame.ini",
- 	"/mnt/ipodmame.ini",
- 	"/mnt/ipodmame/ipodmame.ini",
- 	"/hp/ipodmame.ini",
-@@ -100,6 +102,8 @@
- 	{ "HALF",	BLIT_HALVE	},
- 	{ "FAST",	BLIT_FAST	},
- 	{ "SLOW",	BLIT_SLOW	},
-+	{ "SCALE",	BLIT_SCALE	},
-+	{ "SCALE_ASPECT",BLIT_SCALE_ASPECT},
- 
- 	/* screensizes for Desktop */
- 	{ "1G",		GEN_MONO	},
-@@ -162,10 +166,8 @@
-  */
- void mc_secondary_configure( char * gamename )
- {
--#ifdef NEVER
- 	int x,v;
- 	char * temp2;
--#endif
- 	char * temp1;
- 
- 	if( !theConfFile ) return;
-@@ -173,25 +175,21 @@
- 
- 	printf( "\nConfiguring for %s\n", gamename );
- 
--#ifdef NEVER /* i think we want to automatically do it, actually */
- 	/* read in the screenmode entry */
- 	temp1 = ini_Query( theConfFile, gamename, "screenmode" );
- 	temp2 = ini_Query( theConfFile, "screenmodes", temp1 );
- 	/* need to extract all of the elements out of 'temp2' */
--	whichBlit = 0;
- 	if( temp1 && temp2 ) {
--#ifndef IPOD
-+		whichBlit = 0;
- 		printf( "XXX Screenmode %s: %s\n", temp1, temp2 );
--#endif
- 		for( x=0 
- 			; (v=ini_QueryArrayToken( theConfFile, "screenmodes", temp1, x, tokens)) 
- 			; x++)
- 		{
- 			whichBlit |= v;
--printf( ">> %x %x\n", whichBlit, v );
-+			printf( ">> %x %x\n", whichBlit, v );
- 		}
- 	}
--#endif
- 
- 	/* read in the frameskip setting */
- 	if( ini_Exists( theConfFile, gamename, "frameskip" ))
-diff -urN src/ipl/asm_rot.S src/ipl/asm_rot.S
---- src/ipl/asm_rot.S	2008-08-22 16:54:29.000000000 +0000
-+++ src/ipl/asm_rot.S	2008-08-22 16:54:32.000000000 +0000
-@@ -99,4 +99,4 @@
-         blo     1b                      @ if not, keep looping                  2S    1N 
-   
-         ldmia   sp!, {r4-r12, pc}       @ return
--		
-\ No newline at end of file
-+		
-diff -urN src/ipl/cop.h src/ipl/cop.h
---- src/ipl/cop.h	2008-08-22 16:54:29.000000000 +0000
-+++ src/ipl/cop.h	2008-08-22 16:54:32.000000000 +0000
-@@ -0,0 +1,18 @@
-+#ifndef __COP_H_
-+#define __COP_H_
+Index: src/drivers/centiped.c
+===================================================================
+--- src/drivers/centiped.c	(revision 131)
++++ src/drivers/centiped.c	(working copy)
+@@ -1,3 +1,23 @@
 +
-+int cop_execute(void (*function)());
 +
-+#define COP_STATUS		0x40015024
-+#define COP_DMA_BUFFER	0x40000040
-+#define COP_HANDLER		0x4001501C
-+#define COP_STATE		0x40015020
 +
-+#define COP_RUNNING		(1 << 0)
-+#define COP_BUSY		(1 << 1)
-+#define COP_FRAME_READY	(1 << 2)
 +
-+#define outl(a, b)	(*(volatile unsigned int *)(b) = (a))
-+#define inl(a)		(*(volatile unsigned int *)(a))
 +
-+#endif
-diff -urN src/ipl/ipodlinux.c src/ipl/ipodlinux.c
---- src/ipl/ipodlinux.c	2008-08-22 16:54:29.000000000 +0000
-+++ src/ipl/ipodlinux.c	2008-08-22 16:54:32.000000000 +0000
-@@ -62,6 +62,7 @@
- #include <time.h>
- #include <termios.h>
- #include <string.h>
-+#include <unistd.h>
- #include "osdepend.h"
- #include "mame.h"
- #include "driver.h"
-@@ -74,21 +75,23 @@
- #endif
- #include "mameconf.h"
- 
--
- /* ipod and screen information */
- int ipod_hwver   = 0;
--int ipod_lcdtype = 0;
-+int ipod_bpp     = 0;
- int ipod_lcdw    = 320;
- int ipod_lcdh    = 240;
- 
- /* hotdog and bitmap storage */
- hd_engine *engine = 0;
--hd_object *hd_obj_canvas = 0;
--unsigned int *lcd_framebuffer = NULL;
- 
- #ifdef IPOD
--uint32 * hotdog_screen = NULL;
-+#include "cop.h"
 +
-+uint16 * hotdog_screen = NULL;
- 
-+//#ifdef USE_COP
-+void cop_displayloop_photo(void);
-+//#endif
- 
- /* this isn't available anywhere, but we need it... */
- #ifndef inl
-@@ -102,9 +105,6 @@
- SDL_Surface *screen = NULL;
- #endif
- 
--/* this isn't exported from hotdog. :( */
--hd_object *HD_Canvas_Create(uint32 width,uint32 height);
--
- extern void clearbitmap(struct osd_bitmap* bitmap);
- 
- /* Cheap hack to dump the framebuffer data to a file */
-@@ -121,17 +121,49 @@
- int input_bank = 0;
- 
- int bankcolors[8] = {
-- 	/* black,   red,        green,      blue */
-+ 	/* black,   green,      red,        blue */
- 	0xff000000, 0xff00ff00, 0xffff0000, 0xff0000ff,
- 	
- 	0xffffffff, 0xffffff00, 0xff00ffff, 0xffff00ff
- }; 
- 
--unsigned int pallette[16];
-+uint16 bankcolors16[8];
 +
-+/* colour palette */
-+unsigned int *pallette = NULL;
-+uint16 *pal16 = NULL;
- 
- /* ASM rotating blitter */
- extern void _MAME_Rotate (unsigned int *dest, int sw, int sh, int dy, int dx, int dw, int dh, unsigned int palette[], unsigned char *src, int scale);
- 
-+void blitter_norm(void);
-+void blitter_norm_16(void);
-+void blitter_rot(void);
-+void blitter_rot_16(void);
-+void blitter_half(void);
-+void blitter_half_16(void);
-+void blitter_half_rot(void);
-+void blitter_half_rot_16(void);
-+void blitter_scale_rot_init(void);
-+void blitter_scale_rot_aspect_init(void);
-+void blitter_scale_rot_main(void);
-+void blitter_scale_rot_main_16(void);
-+void blitter_scale_init(void);
-+void blitter_scale_aspect_init(void);
-+void blitter_scale_main(void);
-+void blitter_scale_main_16(void);
-+int ipod_xoffs = 0;
-+int ipod_yoffs = 0;
-+int src_xoffs = 0;
-+int src_yoffs = 0;
-+int gamew = 0;
-+int gameh = 0;
-+unsigned char **bl_src_lines = NULL;
-+unsigned char *bl_src_org = NULL;
-+unsigned int *bl_src_cols = NULL;
-+unsigned int *bl_dst_org = NULL;
-+uint16 *bl_dst_org_16 = NULL;
-+void (*blitter_fn)(void) = blitter_scale_init;
- 
- /* --------------------- iPod specific stuff ----------------------------- */
- 
-@@ -157,8 +189,59 @@
-         tcsetattr(0,TCSANOW,&stored_settings);
- }
- 
-+//#ifdef USE_COP
-+int cop_execute(void (*function)())
-+{
-+		outl((unsigned int)function, COP_HANDLER);
-+		outl(0x0, 0x60007004);
-+		return 1;	
-+}
-+//#endif
 +
- #endif
- 
-+/* auto blitter selection */
-+int auto_blit(int w)
-+{
-+	// remove the auto flag and rotation
-+	w &= ~(BLIT_AUTO | BLIT_ROTCW90 | BLIT_ROTCW180 | BLIT_ROTCW270);
-+	// see if native size will fit
-+	if(gamew <= ipod_lcdw && gameh <= ipod_lcdh)
-+		return BLIT_NORM;
-+	else if(gamew <= ipod_lcdh && gameh <= ipod_lcdw)
-+		return BLIT_ROTCW90;
-+	else {
-+		// maybe the game will scale by 2
-+		if((gamew / 2 == ipod_lcdw && gameh / 2 == ipod_lcdh))
-+			return BLIT_HALVE;
-+		else if((gamew / 2 == ipod_lcdh && gameh / 2 == ipod_lcdw))
-+			return BLIT_HALVE | BLIT_ROTCW90;
-+	}
-+	// if auto half size
-+	if(w & BLIT_HALVE) {
-+		// remove scale flags
-+		w &= ~(BLIT_SCALE | BLIT_SCALE_ASPECT);
-+		// rotate if the half game won't fit upright
-+		if(gameh / 2 > ipod_lcdh)
-+			w |= BLIT_ROTCW90;
-+	} else {
-+		// use auto scale (either aspect or non-aspect scale)
-+		if(w & BLIT_SCALE_ASPECT) {
-+			// keep aspect ratio, so remove scale flag
-+			w &= ~BLIT_SCALE;
-+			// maybe the game will scale by half
-+			if((gamew / 2 == ipod_lcdw && gameh / 2 <= ipod_lcdh) || (gamew / 2 <= ipod_lcdw && gameh / 2 == ipod_lcdh))
-+				return BLIT_HALVE;
-+			else if((gamew / 2 == ipod_lcdh && gameh / 2 <= ipod_lcdw) || (gamew / 2 <= ipod_lcdh && gameh / 2 == ipod_lcdw))
-+				return BLIT_HALVE | BLIT_ROTCW90;
-+		} else
-+			w |= BLIT_SCALE;	// at this point make sure scale is used
-+		// if the game is taller than wide, rotate
-+		if(gameh > gamew)
-+			w |= BLIT_ROTCW90;
-+	}
-+	return w;
-+}
- 
- /* -- supported MAME callbacks ------------------------------------------ */
- 
-@@ -172,13 +255,25 @@
-  */
- int osd_init (int argc, char *argv[])
- {
-+	// save the blit speed flags
-+	int blitSpeed = whichBlit & (BLIT_SLOW | BLIT_FAST);
-+	whichBlit &= ~(BLIT_SLOW | BLIT_FAST);
-+	
-+	/* visible area of the game */
-+	src_xoffs = Machine->drv->visible_area.min_x;
-+	src_yoffs = Machine->drv->visible_area.min_y;
-+	gamew = Machine->drv->visible_area.max_x - src_xoffs + 1;
-+	gameh = Machine->drv->visible_area.max_y - src_yoffs + 1;
 +
-         /* grab screen info, shove it into the globals */
- #ifdef IPOD
-+	int ipod_lcdtype;
- 	(void)argc;
- 	(void)argv;
- 
- 	HD_LCD_Init();
-         HD_LCD_GetInfo( &ipod_hwver, &ipod_lcdw, &ipod_lcdh, &ipod_lcdtype );
-+        ipod_bpp = HD_LCD_BPP(ipod_lcdtype);
- 	
- #else
- 	int i;
-@@ -195,37 +290,117 @@
- 			}
- 		}
- 	}
-+	ipod_bpp = 16;
- 	printf( "Running at a resolution of %d x %d\n", ipod_lcdw, ipod_lcdh );
-+	printf( "Game resolution of %d x %d, visible area %d x %d\n", Machine->drv->screen_width, Machine->drv->screen_height, gamew, gameh );
-+	printf( "Number of colours %d (len %d)\n", Machine->drv->total_colors, Machine->drv->color_table_len );
- #endif
-+	
-+	// if auto flag exists
-+	if(whichBlit & BLIT_AUTO) {
-+		whichBlit = auto_blit( whichBlit );
-+		// TODO: what about non-internal input? it might need rotated
-+#ifndef IPOD
-+		printf( "Auto selected blit flags %08x\n", whichBlit );
-+#endif
-+	}
-+	
-+	// if half size
-+	if( whichBlit & BLIT_HALVE ) {
-+		// ensure no scaling flags
-+		whichBlit &= ~(BLIT_SCALE | BLIT_SCALE_ASPECT);
-+		// set game size to half
-+		gamew /= 2;
-+		gameh /= 2;
-+	}
-+	
-+	// if not using scale
-+	if( !(whichBlit & (BLIT_SCALE_ASPECT | BLIT_SCALE)) ) {
-+		int canv_w, canv_h;
-+		// set canvas size to the game size
-+		if( whichBlit & BLIT_ROTCW90 ) {
-+			// clip game to ipod size
-+			if( gamew > ipod_lcdh ) gamew = ipod_lcdh;
-+			if( gameh > ipod_lcdw ) gameh = ipod_lcdw;
-+			canv_w = gameh;
-+			canv_h = gamew;
-+		} else {
-+			// clip game to ipod size
-+			if( gamew > ipod_lcdw ) gamew = ipod_lcdw;
-+			if( gameh > ipod_lcdh ) gameh = ipod_lcdh;
-+			canv_w = gamew;
-+			canv_h = gameh;
-+		}
-+	
-+		// set the canvas offset to centre the image
-+		ipod_xoffs = (ipod_lcdw - canv_w) / 2;
-+		ipod_yoffs = (ipod_lcdh - canv_h) / 2;
-+		
-+		/* adjust x offset if rotated to upper-right pixel (relative to ipod held upright), that
-+		   is where the first (upper left) pixel of the game will be drawn */
-+		if( whichBlit & BLIT_ROTCW90 )
-+			ipod_xoffs += canv_w - 1;
-+		
-+#ifndef IPOD
-+		printf("Output resolution %d x %d (LCD offset %d x %d)\n", canv_w, canv_h, ipod_xoffs, ipod_yoffs);
-+#endif
-+	} else {
-+		// if keep aspect, clear scale flag
-+		if( whichBlit & BLIT_SCALE_ASPECT ) whichBlit &= ~BLIT_SCALE;
-+	}
-+	
-+	/* rotate 90 CW */
-+	if( whichBlit == BLIT_ROTCW90 ) {
-+		blitter_fn = ipod_bpp == 16 ? blitter_rot_16 : blitter_rot;
-+	/* halve it */ /* used on iPod Photo */
-+	} else if( whichBlit == BLIT_HALVE ) {
-+		blitter_fn = ipod_bpp == 16 ? blitter_half_16 : blitter_half;
-+	/* scale */ /* used on iPod Photo */
-+	} else if( whichBlit == BLIT_SCALE ) {
-+		blitter_fn = blitter_scale_init;
-+	/* new scale */ /* used on iPod Photo */
-+	} else if( whichBlit == BLIT_SCALE_ASPECT ) {
-+		blitter_fn = blitter_scale_aspect_init;
-+	/* new scale and rotate */
-+	} else if( whichBlit == (BLIT_ROTCW90 | BLIT_SCALE) ) {
-+		blitter_fn = blitter_scale_rot_init;
-+	/* rotate 90 CW and scale */ /* used on iPod Photo */
-+	} else if( whichBlit == (BLIT_ROTCW90 | BLIT_SCALE_ASPECT) ) {
-+		blitter_fn = blitter_scale_rot_aspect_init;
-+	/* rotate 90 CW, and halve it. */
-+	} else if( whichBlit == (BLIT_ROTCW90 | BLIT_HALVE) ) {
-+		blitter_fn = ipod_bpp == 16 ? blitter_half_rot_16 : blitter_half_rot;
-+	/* normal - no scale nor rotate */
-+	} else {
-+		blitter_fn = ipod_bpp == 16 ? blitter_norm_16 : blitter_norm;
-+	}
- 
--	/* determine which blit routine to use ... */
--	/* eventually, this should work off of a config file or somesuch  */
--	if( ipod_lcdw >= 320 )       whichBlit = BLIT_ROTCW90;
--	else if( ipod_lcdw >= 220 )  whichBlit = BLIT_HALVE;
--	else                         whichBlit = BLIT_ROTCW90 | BLIT_HALVE;
--
--	play_sound = 0;
--	use_joystick = 0;
--	first_free_pen = 0;
--
--
-+	// Set the speed flags
-+	whichBlit |= blitSpeed;
-+	
- 	/* set up the screen canvas */
- #ifndef IPOD
- 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-                 fprintf(stderr,"Unable to init SDL: %s\n",SDL_GetError());
--                exit(1);
-+                osd_exit();
-+                return OSD_NOTOK;
-         }
-         atexit(SDL_Quit);
- 
--        screen = SDL_SetVideoMode(ipod_lcdw, ipod_lcdh, 16 ,SDL_SWSURFACE);
-+        screen = SDL_SetVideoMode(ipod_lcdw, ipod_lcdh, 16, SDL_SWSURFACE);
-         if (screen == NULL) {
-                 fprintf(stderr,"Unable to init SDL video: %s\n",SDL_GetError());
--                exit(1);
-+                osd_exit();
-+                return OSD_NOTOK;
-         }
- 
-         /* Initialize the hotdog engine object */
-         engine = HD_Initialize( ipod_lcdw, ipod_lcdh, 16, 
- 				    screen->pixels, update);
-+	if( !engine ) { 
-+		osd_exit();
-+		return OSD_NOTOK;
-+	}
- #endif
- 
- #ifdef IPOD
-@@ -233,23 +408,51 @@
-         set_keypress();
- 
-         /* allocate some buffers */
--	hotdog_screen = malloc( ipod_lcdw * ipod_lcdh * sizeof( uint32 ));
--	if( !hotdog_screen ) { /* do something and exit */ }
-+	hotdog_screen = malloc( ipod_lcdw * ipod_lcdh * sizeof( uint16 ));
-+	if( !hotdog_screen ) { 
-+		osd_exit();
-+		return OSD_NOTOK;
-+	}
- 
-         /* Initialize the hotdog engine object */
-         engine = HD_Initialize(ipod_lcdw, ipod_lcdh, 16, hotdog_screen, update);
--#endif
--
--	/* set up our frame buffers */
--        lcd_framebuffer = malloc( ipod_lcdw*ipod_lcdh* sizeof( int ));
--	if( !lcd_framebuffer ) { /* do something and exit */ }
-+	if( !engine ) { 
-+		osd_exit();
-+		return OSD_NOTOK;
-+	}
- 
--        /* Create a hotdog canvas object */
--        hd_obj_canvas = HD_Canvas_Create(ipod_lcdw, ipod_lcdh);
-+	// if fast, start COP
-+	if (whichBlit & BLIT_FAST ) {
-+		outl(COP_RUNNING, COP_STATUS);
-+		cop_execute(cop_displayloop_photo);
-+	}
- 
--        /* Register the canvas object with the hotdog engine object */
--        HD_Register(engine, hd_obj_canvas);
-+#endif
- 
-+	play_sound = 0;
-+	use_joystick = 0;
-+	first_free_pen = 0;
-+	
-+	/* alloc the palette */
-+	if( ipod_bpp == 16 )
-+		pal16 = malloc(Machine->drv->total_colors * sizeof(uint));
-+	else
-+		pallette = malloc(Machine->drv->total_colors * sizeof(unsigned int));
 +
-+	/* pre-calculate the dest starting offset */
-+	if( ipod_bpp == 16 ) {
-+		bl_dst_org_16 = engine->screen.framebuffer + ipod_xoffs + ipod_yoffs * ipod_lcdw;
-+		
-+		/* make the 16 bit bank colours */
-+		int i;
-+		for( i = 0; i < 8; i++ ) {
-+			bankcolors16[i]  = ((bankcolors[i] & 0x00FF0000) >> (16+3)) << 11; // R
-+			bankcolors16[i] |= ((bankcolors[i] & 0x0000FF00) >> (8+2)) << 5;  // G
-+			bankcolors16[i] |= ((bankcolors[i] & 0x000000FF) >> (3));    // B
-+		}
-+	} else
-+		bl_dst_org = HD_SRF_PIXELS(engine->buffer) + ipod_xoffs + ipod_yoffs * ipod_lcdw;
-+	
- 	return (OSD_OK);
- }
- 
-@@ -260,12 +463,26 @@
- void osd_exit (void)
- {
- #ifdef IPOD
--        HD_Destroy(hd_obj_canvas); /* Destroy the canvas */
-+	if( whichBlit & BLIT_FAST ) {
-+		// clear the running flag and set frame ready to exit the COP render function
-+		outl(COP_FRAME_READY, COP_STATUS);
-+		// wait a bit for it to exit
-+		usleep(10000);
-+	}
-+ #endif
-+ 
-+        HD_Deinitialize( engine ); /* hotdog will check for NULL */
-+#ifdef IPOD
-         HD_LCD_Quit();
-         reset_keypress();
- 	if( hotdog_screen )   free( hotdog_screen );
-+#else
-+	if( screen ) free( screen );
- #endif
--	if( lcd_framebuffer ) free( lcd_framebuffer );
-+	if( bl_src_lines ) free( bl_src_lines );
-+	if( bl_src_cols ) free( bl_src_cols );
-+	if( pallette ) free( pallette );
-+	if( pal16 ) free( pal16 );
- }
- 
- 
-@@ -311,8 +528,8 @@
- 
- void osd_free_bitmap (struct osd_bitmap *bitmap)
- {
--	(void)bitmap;
- 	free (bitmap->private);
-+	free (bitmap);
- }
- 
- 
-@@ -331,6 +548,9 @@
- {
- 	display_bitmap = osd_create_bitmap(width,height);
- 
-+	/* pre-calculate the source offset */
-+	bl_src_org = (unsigned char*)display_bitmap->private + (src_yoffs * display_bitmap->width) + src_xoffs;
-+	
- 	return (display_bitmap);
- }
- 
-@@ -352,8 +572,18 @@
-  */
- int osd_obtain_pen (unsigned char red, unsigned char green, unsigned char blue)
- {				
--	/* Bitshifting voodoo, courtesy of linuxstb */
--	pallette[first_free_pen++] = 0xff000000 
-+#ifndef IPOD
-+	if(first_free_pen >= Machine->drv->total_colors)
-+		printf("bad obtain pen %d\n", first_free_pen);
-+	//else if(first_free_pen == Machine->drv->total_colors - 1)
-+	//	printf("obtain last pen %d\n", first_free_pen);
-+#endif
 +
-+	if( ipod_bpp == 16 )
-+		pal16[first_free_pen++] = ((red >> 3) << 11) | ((green >> 2) << 5) | (blue >> 3);
-+	else
-+		/* Bitshifting voodoo, courtesy of linuxstb */
-+		pallette[first_free_pen++] = 0xff000000 
- 				   | (red << 16) 
- 				   | (green << 8) 
- 				   | blue; 
-@@ -375,6 +605,37 @@
- #endif
- }
- 
-+/* paint the box to indicate alternate input bank
-+ * TODO: maybe this should become it's own hotdog surface? then
-+ * it could always paint in the upper left corner */
-+void draw_blink_box( int color )
-+{
-+	/* i'm torn on this.  I want more than one pixel to be blinking, and
-+	i'd prefer it to be one pixel in from each border, but I think
-+	this should be fine.  I also was thinking of doing 
-+		int * f = lcd_framebuffer;
-+		*f++ = menucolor;
-+		*f = menucolor;
-+		f+= ipod_lcdw = menucolor
-+		...
-+	But i think this way wastes just a few more cycles, but maes for
-+	nicer code.
-+	*/
-+	//unsigned int *lcd_framebuffer = HD_SRF_PIXELS(hd_obj_canvas->canvas);
-+	if( ipod_bpp == 16 ) {
-+		uint16 *b = engine->screen.framebuffer;
-+		b[ 0 ] =
-+			b[ 1 ] = 
-+			b[ ipod_lcdw ] = 
-+			b[ ipod_lcdw+1 ] = bankcolors16[color];
-+	} else {
-+		unsigned int *lcd_framebuffer = HD_SRF_PIXELS(engine->buffer);
-+		lcd_framebuffer[ 0 ] =
-+			lcd_framebuffer[ 1 ] = 
-+			lcd_framebuffer[ HD_SRF_WIDTH(engine->buffer) ] = 
-+			lcd_framebuffer[ HD_SRF_WIDTH(engine->buffer)+1 ] = bankcolors[color];
-+	}
-+}
- 
- /* 
-  * This is the main update function. It rotates the pixel data
-@@ -386,149 +647,399 @@
-  */
- void osd_update_display (void)
- {
--	int r,c;
--	int menucolor;
--	unsigned int* dst;
--	unsigned char* line = display_bitmap->private;
--
--	/* centering positioning of the bitmap */
--	int gamew = Machine->drv->screen_width;
--	int gameh = Machine->drv->screen_height;
--        int ipod_xoffs = (ipod_lcdw-gameh)>>1;
--        int ipod_yoffs = (ipod_lcdh-gamew)>>1;
-+#ifdef IPOD
-+	// Wait for COP to finish previous frame
-+	if( whichBlit & BLIT_FAST )
-+		while ((inl(COP_STATUS) & COP_FRAME_READY));
-+#endif
-+	
-+	blitter_fn();
 +
-+	if( input_bank ) {
-+		int menucolor = 0;
-+		/* blink corner pixels if we're in an alternate input bank */
-+		if( blinker_step++ & 4 ) {
-+	
-+			if( inputMechanism == INPMECH_INTERNAL ) {
-+				blinker_color++;
-+				menucolor = 4+((blinker_color>>3) & 3);
-+	
-+			} else {
-+				menucolor = input_bank;
-+			}
-+		}
-+		draw_blink_box( menucolor );
-+	}
- 
-+#ifndef IPOD
-+	if( SDL_MUSTLOCK( screen ))
-+		SDL_LockSurface( screen );
- 
--	/* this should be replaced with a proper hd rotate/scale/blit
--	   but for now, this version is okay.  Even once that version
--	   is implemented, these should still be allowed.
--	   (meaning, do not remove this code. ;) 
--	*/
-+	SDL_UpdateRect( SDL_GetVideoSurface(), 0, 0, ipod_lcdw, ipod_lcdh );
- 
--	/* rotate 90 CW */
--	if( whichBlit == BLIT_ROTCW90 ) {
--#ifdef IPOD
--		/* Josh's optmized rotating blitter */
--		_MAME_Rotate( lcd_framebuffer, 
--				display_bitmap->width, display_bitmap->height, 
--				ipod_yoffs, ipod_xoffs, 
--				ipod_lcdw, ipod_lcdh, pallette, line, 0);
-+	if( SDL_MUSTLOCK( screen ))
-+		SDL_UnlockSurface( screen );
- #else
--		for( r=display_bitmap->height-1 ; r >= 0 ; r--) {
--
--			/* This loop rotates the pixels */
--			dst = &lcd_framebuffer[ipod_yoffs*ipod_lcdw+ipod_xoffs+r];
-+	// If FAST, use COP
-+	if( whichBlit & BLIT_FAST )
-+		outl(inl(COP_STATUS) | COP_FRAME_READY, COP_STATUS);
-+	else
-+		HD_LCD_Update(engine->screen.framebuffer, 0, 0, ipod_lcdw, ipod_lcdh);
-+#endif
-+}
- 
--			for( c=0 ; c<display_bitmap->width ; c++ ) {
--				*dst = pallette[*(line++)];
--				dst+= ipod_lcdw;
--			}
--		} 
--#endif	
-+#ifdef IPOD
-+void cop_displayloop_photo(void)
-+{
-+	while (inl(COP_STATUS) & COP_RUNNING) {
-+		// wait for a frame
-+		while (!(inl(COP_STATUS) & COP_FRAME_READY));
-+		//outl(inl(COP_STATUS) | COP_BUSY, COP_STATUS);
-+		// render the frame
-+		HD_LCD_Update(engine->screen.framebuffer, 0, 0, ipod_lcdw, ipod_lcdh);
-+		// clear busy and frame ready
-+		outl(inl(COP_STATUS) & ~(COP_BUSY | COP_FRAME_READY), COP_STATUS);
- 	}
-+}
-+#endif
- 
-+void blitter_scale_calc_lines(int scalex, int scaley)
-+{
-+	int i;
-+	unsigned char* src_org = display_bitmap->private;
-+	src_org += (src_yoffs * display_bitmap->width) + src_xoffs;
-+	bl_src_lines = malloc(gameh * sizeof(unsigned char*));
-+	bl_src_cols = malloc(gamew * sizeof(unsigned int));
-+	for(i = 0; i < gameh; i++)
-+		bl_src_lines[i] = &src_org[i * scaley / 1024 * display_bitmap->width];
-+	for(i = 0; i < gamew; i++)
-+		bl_src_cols[i] = i * scalex / 1024;
-+}
 +
-+void blitter_scale_calc(int dstw, int dsth, int keep_aspect)
-+{
-+	int scalex = gamew * 1024 / dstw;
-+	int scaley = gameh * 1024 / dsth;
-+	if(keep_aspect) {
-+		if(scalex > scaley)
-+			scaley = scalex;
-+		else
-+			scalex = scaley;
-+	}
-+	if(scalex < 1) scalex = 1;
-+	if(scaley < 1) scaley = 1;
-+	gamew = (gamew * 1024) / scalex;
-+	gameh = (gameh * 1024) / scaley;
-+#ifndef IPOD
-+	printf("scaled resolution %d x %d", gamew, gameh);
-+#endif
-+	// do the line calculation
-+	blitter_scale_calc_lines(scalex, scaley);
-+}
- 
--	/* halve it */ /* used on iPod Photo */
--	if( whichBlit == BLIT_HALVE ) {
--	        /* it's a smaller screen, rotate/copy/blit it, half-size */
--	        ipod_xoffs = (ipod_lcdw-(gamew>>1))>>1;
--		ipod_yoffs = (ipod_lcdh-(gameh>>1))>>1;
--
--		for( r=display_bitmap->height-1 ; r>=0 ; r--  ) {
--			/* this can probably be optimized. */
--			dst = &lcd_framebuffer[ 
--				ipod_xoffs +
--				(ipod_lcdh - (ipod_yoffs + (r>>1)))*ipod_lcdw ];
--
--			for( c=0 ; c<(gamew>>1) ; c++ ) {
--				*(dst++) = pallette[ *line ];
--				line += 2;
--			}
--		}
-+void blitter_scale_init_calc(int keep_aspect)
-+{
-+	blitter_scale_calc(ipod_lcdw, ipod_lcdh, keep_aspect);
-+#ifndef IPOD
-+	printf(" (LCD offset %d x %d)\n", (ipod_lcdw - gamew) / 2, (ipod_lcdh - gameh) / 2);
-+#endif
-+	// pre-calculate the offsets
-+	ipod_xoffs = (ipod_lcdw - gamew) / 2;	
-+	ipod_yoffs = (ipod_lcdh - gameh) / 2;
-+	// update the blit function and render this frame
-+	if( ipod_bpp == 16 ) {
-+		bl_dst_org_16 = engine->screen.framebuffer + ipod_xoffs + ipod_yoffs * ipod_lcdw;
-+		blitter_fn = blitter_scale_main_16;
-+	} else {
-+		bl_dst_org = HD_SRF_PIXELS(engine->buffer) + ipod_xoffs + ipod_yoffs * ipod_lcdw;
-+		blitter_fn = blitter_scale_main;
- 	}
-+	blitter_fn();
-+}
- 
--	/* rotate 90 CW, and halve it. */
--	if( whichBlit == (BLIT_ROTCW90 | BLIT_HALVE) ) {
--#ifdef NEVERIPOD
--	        _MAME_Rotate (lcd_framebuffer, 
--				display_bitmap->width, display_bitmap->height, 
--				ipod_yoffs, ipod_xoffs, 
--				ipod_lcdw, ipod_lcdh, pallette, line, 1);
--#else
--		int m2, gw2;
--		/* it's a smaller screen, rotate/copy/blit it, half-size */
--		ipod_xoffs = (ipod_lcdw-(gameh>>1))>>1;
--		ipod_yoffs = (ipod_lcdh-(gamew>>1))>>1;
--
--		/* pull this out.. optimizer might do this anyway */
--		m2 = (ipod_yoffs*ipod_lcdw)+ipod_xoffs;
--		gw2 = gamew>>1;
--		
-+void blitter_scale_init(void)
-+{
-+	blitter_scale_init_calc(0);
-+}
- 
--		for( r=display_bitmap->height-1 ; r>=0 ; r-=2 ) {
--			dst = &lcd_framebuffer[ m2 + (r>>1) ];
-+void blitter_scale_aspect_init(void)
-+{
-+	blitter_scale_init_calc(1);
-+}
- 
--			for( c=0 ; c<display_bitmap->width ; c++ ) {
--				if(c < gw2)  *dst = pallette[ *line ];
--				dst += ipod_lcdw;
--				line += 2;
--			}
--		}
-+void blitter_scale_main(void)
-+{
-+	int r,c;
-+	unsigned char **src_lines = bl_src_lines;
-+	unsigned char *src_org;
-+	unsigned int *src_col;
-+	unsigned int *dst_org = bl_dst_org;
-+	unsigned int *dst;
-+	for(r = gameh; r > 0 ;r--, dst_org += ipod_lcdw) {
-+		for(c = gamew, dst = dst_org, src_org = *src_lines++, src_col = bl_src_cols; c > 0; c--)
-+			*dst++ = pallette[src_org[*src_col++]];
-+	}
-+}
 +
-+void blitter_scale_main_16(void)
-+{
-+	int r,c;
-+	unsigned char **src_lines = bl_src_lines;
-+	unsigned char *src_org;
-+	unsigned int *src_col;
-+	uint16 *dst_org = bl_dst_org_16;
-+	uint16 *dst;
-+	for(r = gameh; r > 0 ;r--, dst_org += ipod_lcdw) {
-+		for(c = gamew, dst = dst_org, src_org = *src_lines++, src_col = bl_src_cols; c > 0; c--)
-+			*dst++ = pal16[src_org[*src_col++]];
-+	}
-+}
 +
-+void blitter_scale_rot_calc(int keep_aspect)
-+{
-+	blitter_scale_calc(ipod_lcdh, ipod_lcdw, keep_aspect);
-+#ifndef IPOD
-+	printf(" (LCD offset %d x %d)\n", (ipod_lcdw - gameh) / 2, (ipod_lcdh - gamew) / 2);
- #endif
--	} 
-+	// pre-calculate the offsets
-+	ipod_xoffs = ipod_lcdw - ((ipod_lcdw - gameh) / 2) - 1;
-+	ipod_yoffs = (ipod_lcdh - gamew) / 2;
-+	// update the blit function and render this frame
-+	if( ipod_bpp == 16 ) {
-+		bl_dst_org_16 = engine->screen.framebuffer + ipod_xoffs + ipod_yoffs * ipod_lcdw;
-+		blitter_fn = blitter_scale_rot_main_16;
-+	} else {
-+		bl_dst_org = HD_SRF_PIXELS(engine->buffer) + ipod_xoffs + ipod_yoffs * ipod_lcdw;
-+		blitter_fn = blitter_scale_rot_main;
-+	}
-+	blitter_fn();
-+}
- 
-+void blitter_scale_rot_init(void)
-+{
-+	blitter_scale_rot_calc(0);
-+}
- 
--	/* blink corner pixels if we're in an alternate input bank */
--	blinker_step++;
--	menucolor = 0;
--	if( input_bank && blinker_step & 4 ) {
-+void blitter_scale_rot_aspect_init(void)
-+{
-+	blitter_scale_rot_calc(1);
-+}
- 
--		if( inputMechanism == INPMECH_INTERNAL ) {
--			blinker_color++;
--			menucolor = bankcolors[ 4+((blinker_color>>3) & 3) ];
-+void blitter_scale_rot_main(void)
-+{
-+	int r,c;
-+	unsigned char **src_lines = bl_src_lines;
-+	unsigned char *src_org;
-+	unsigned int *src_col;
-+	unsigned int *dst_org = bl_dst_org;
-+	unsigned int *dst;
-+	for(r = gameh; r > 0; r--) {
-+		for(c = gamew, dst = dst_org--, src_org = *src_lines++, src_col = bl_src_cols; c > 0; c--, dst += ipod_lcdw)
-+			*dst = pallette[src_org[*src_col++]];
-+	}
-+}
- 
--		} else {
--			if( blinker_step & 4) {
--				menucolor = bankcolors[ input_bank ];
--			}
-+void blitter_scale_rot_main_16(void)
-+{
-+	int r,c;
-+	unsigned char **src_lines = bl_src_lines;
-+	unsigned char *src_org;
-+	unsigned int *src_col;
-+	uint16 *dst_org = bl_dst_org_16;
-+	uint16 *dst;
-+	for(r = gameh; r > 0; r--) {
-+		for(c = gamew, dst = dst_org--, src_org = *src_lines++, src_col = bl_src_cols; c > 0; c--, dst += ipod_lcdw)
-+			*dst = pal16[src_org[*src_col++]];
-+	}
-+}
 +
-+/*void blitter_scale_rot(void)
-+{
-+	int r,c;
-+	unsigned char* src_org = display_bitmap->private;
-+	unsigned char* src;
-+	unsigned int *dst_org = HD_SRF_PIXELS(hd_obj_canvas->canvas) + ipod_yoffs * ipod_lcdw + ipod_lcdw - ipod_xoffs;
-+	unsigned int *dst;
-+	int sx = 0;
-+	int sy = 0;
-+	src_org += (src_yoffs * display_bitmap->width) + src_xoffs;
 +
-+	for( r=gameh ; r>0 ; r--,src_org+=display_bitmap->width ) {
-+		if(sy >= bl_skip) {
-+			sy %= bl_skip;
-+			continue;
-+		} else
-+			sy+=32;
-+		dst = --dst_org;
-+		for( c=gamew, sx=0, src=src_org ; c>0 ; c--,src++ ) {
-+			if(sx >= bl_skip) {
-+				sx %= bl_skip;
-+				continue;
-+			} else
-+				sx += 32;
-+			*dst = pallette[ *src ];
-+			dst += ipod_lcdw;
- 		}
- 	}
--	/* i'm torn on this.  I want more than one pixel to be blinking, and
--	   i'd prefer it to be one pixel in from each border, but I think
--	   this should be fine.  I also was thinking of doing 
--		int * f = lcd_framebuffer;
--		*f++ = menucolor;
--		*f = menucolor;
--		f+= ipod_lcdw = menucolor
--		...
--	   But i think this way wastes just a few more cycles, but maes for
--	   nicer code.
--	*/
--	lcd_framebuffer[ 0 ] =
--		lcd_framebuffer[ 1 ] = 
--		lcd_framebuffer[ ipod_lcdw ] = 
--		lcd_framebuffer[ ipod_lcdw+1 ] = menucolor;
-+}*/
- 
-+/*void blitter_scale(void)
-+{
-+	int r,c;
-+	unsigned char* src_org = display_bitmap->private;
-+	unsigned char* src = display_bitmap->private;
-+	unsigned int *dst_org = HD_SRF_PIXELS(hd_obj_canvas->canvas) + ipod_xoffs + ipod_yoffs * ipod_lcdw;
-+	unsigned int *dst;
-+	int sx = 0;
-+	int sy = 0;
-+	src_org += (src_yoffs * display_bitmap->width) + src_xoffs;
 +
-+	for( r=gameh ; r>0 ; r--,src_org+=display_bitmap->width ) {
-+		if(sy >= bl_skip) {
-+			src += display_bitmap->width;
-+			sy %= bl_skip;
-+			continue;
-+		} else
-+			sy+=32;
-+		dst = dst_org;
-+		dst_org += ipod_lcdw;
-+		for( c=gamew, sx=0, src=src_org ; c>0 ; c--,src++ ) {
-+			if(sx >= bl_skip) {
-+				sx %= bl_skip;
-+				continue;
-+			} else
-+				sx+=32;
-+			*dst++ = pallette[ *src ];
-+		}
-+	}
-+}*/
- 
--	hd_obj_canvas->dirty = 1;	 /* set the canvas to "dirty" */
-+/* Half blit with no rotation, gamew and gameh assumed to be halved
-+ * the canvas is assumed to be the halved gamew x gameh */
-+void blitter_half(void)
-+{
-+	int r, c;
-+	unsigned int *dst_org = bl_dst_org;
-+	unsigned int *dst;
-+	unsigned char *src_org = bl_src_org;
-+	unsigned char *src;
-+	for(r = gameh; r > 0; r--, src_org += display_bitmap->width << 1, dst_org += ipod_lcdw) {
-+		for(c = gamew, dst = dst_org, src = src_org; c > 0; c--, src += 2)
-+			*dst++ = pallette[*src];
-+	}
-+}
- 
--	/* copy the pixel data to the canvas */
--	memcpy(HD_SRF_PIXELS(hd_obj_canvas->canvas), lcd_framebuffer, 
--		4 * ipod_lcdw * ipod_lcdh);
-+void blitter_half_16(void)
-+{
-+	int r, c;
-+	uint16 *dst_org = bl_dst_org_16;
-+	uint16 *dst;
-+	unsigned char *src_org = bl_src_org;
-+	unsigned char *src;
-+	for(r = gameh; r > 0; r--, src_org += display_bitmap->width << 1, dst_org += ipod_lcdw) {
-+		for(c = gamew, dst = dst_org, src = src_org; c > 0; c--, src += 2)
-+			*dst++ = pal16[*src];
-+	}
-+}
- 
--#ifndef IPOD
--	if( SDL_MUSTLOCK( screen ))
--		SDL_LockSurface( screen );
-+/* Half blit rotated, gamew and gameh assumed to be halved
-+ * the canvas is assumed to be the halved gameh x gamew */
-+void blitter_half_rot(void)
-+{
-+#ifdef NEVERIPOD
-+	_MAME_Rotate (HD_SRF_PIXELS(engine->buffer), 
-+			display_bitmap->width, display_bitmap->height, 
-+			ipod_yoffs, ipod_xoffs, 
-+			ipod_lcdw, ipod_lcdh, pallette, line, 1);
-+#else
-+	int r, c;
-+	unsigned int *dst_org = bl_dst_org;
-+	unsigned int *dst;
-+	unsigned char *src_org = bl_src_org;
-+	unsigned char *src;
-+	for(r = gameh; r > 0; r--, dst_org--, src_org += display_bitmap->width << 1) {
-+		for(c = gamew, dst = dst_org, src = src_org; c > 0; c--, src += 2, dst += ipod_lcdw)
-+			*dst = pallette[*src];
-+	}
- #endif
--	
--	/* render the canvas to the screen */
--	HD_Render(engine);
-+}
- 
--#ifndef IPOD
--	if( SDL_MUSTLOCK( screen ))
--		SDL_UnlockSurface( screen );
--#endif
-+void blitter_half_rot_16(void)
-+{
-+	int r, c;
-+	uint16 *dst_org = bl_dst_org_16;
-+	uint16 *dst;
-+	unsigned char *src_org = bl_src_org;
-+	unsigned char *src;
-+	for(r = gameh; r > 0; r--, dst_org--, src_org += display_bitmap->width << 1) {
-+		for(c = gamew, dst = dst_org, src = src_org; c > 0; c--, src += 2, dst += ipod_lcdw)
-+			*dst = pal16[*src];
-+	}
-+}
 +
-+/* Normal no scale nor rotate */
-+void blitter_norm(void)
-+{
-+	int r, c;
-+	unsigned int *dst_org = bl_dst_org;
-+	unsigned int *dst;
-+	unsigned char *src_org = bl_src_org;
-+	unsigned char *src;
-+	for(r = gameh; r > 0; r--, src_org += display_bitmap->width, dst_org += ipod_lcdw) {
-+		for(c = gamew, src = src_org, dst = dst_org; c > 0; c--)
-+			*dst++ = pallette[*src++];
-+	}
-+}
 +
-+void blitter_norm_16(void)
-+{
-+	int r, c;
-+	uint16 *dst_org = bl_dst_org_16;
-+	uint16 *dst;
-+	unsigned char *src_org = bl_src_org;
-+	unsigned char *src;
-+	for(r = gameh, dst = engine->screen.framebuffer; r > 0; r--, src_org += display_bitmap->width, dst_org += ipod_lcdw) {
-+		for(c = gamew, src = src_org, dst = dst_org; c > 0; c--)
-+			*dst++ = pal16[*src++];
-+	}
- }
+ /***************************************************************************
  
-+/* Normal rotate (no change in size)
-+ * the canvas is assumed to be gameh x gamew */
-+void blitter_rot(void)
-+{
-+#ifdef NEVERIPOD
-+	/* Josh's optmized rotating blitter */
-+	/* Unfortunately I don't think this will work anymore since the visible area may be less than display_bitmap->width */
-+	_MAME_Rotate( HD_SRF_PIXELS(engine->buffer), 
-+			display_bitmap->width, display_bitmap->height, 
-+			ipod_yoffs, ipod_xoffs, 
-+			ipod_lcdw, ipod_lcdh, pallette, display_bitmap->private, 0);
-+#else
-+	int r, c;
-+	unsigned int *dst_org = bl_dst_org;
-+	unsigned int *dst;
-+	unsigned char *src_org = bl_src_org;
-+	unsigned char *src;
-+	for(r = gameh; r > 0; r--, dst_org--, src_org += display_bitmap->width) {
-+		for(c = gamew, dst = dst_org, src = src_org; c > 0; c--, dst += ipod_lcdw)
-+			*dst = pallette[*src++];
-+	}
-+#endif	
-+}
-+	
-+void blitter_rot_16(void)
-+{
-+	int r, c;
-+	uint16 *dst_org = bl_dst_org_16;
-+	uint16 *dst;
-+	unsigned char *src_org = bl_src_org;
-+	unsigned char *src;
-+	for(r = gameh; r > 0; r--, dst_org--, src_org += display_bitmap->width) {
-+		for(c = gamew, dst = dst_org, src = src_org; c > 0; c--, dst += ipod_lcdw)
-+			*dst = pal16[*src++];
-+	}
-+}
- 	
- /* 
-  * Here's a dirty hack to take a quick screenshot. Just
-@@ -555,12 +1066,17 @@
- 	return 0;
- }
+               Centipede Memory map and Dip Switches
+@@ -341,15 +361,15 @@
  
--
-+/* switch to a new input bank
-+ * b should be one of the INPUT_??? constants
-+ */
- void change_input_bank( int b )
- {
- 	input_bank = -(1+b);
- 	if( input_bank > 3 ) input_bank = 0;
- 	if( input_bank < 0 ) input_bank = 0;
-+	/* really this just needs to ensure the blink box erases when
-+	   switching back to bank 0 */
-+	draw_blink_box( 0 );
- }
+ ROM_START( centiped_rom )
+ 	ROM_REGION(0x10000)	/* 64k for code */
+-	ROM_LOAD( "%s.307", 0x2000, 0x0800 )
+-	ROM_LOAD( "%s.308", 0x2800, 0x0800 )
+-	ROM_LOAD( "%s.309", 0x3000, 0x0800 )
+-	ROM_LOAD( "%s.310", 0x3800, 0x0800 )
+-	ROM_LOAD( "%s.310", 0xf800, 0x0800 )	/* for the reset and interrupt vectors */
++	ROM_LOAD( "136001-307.d1", 0x2000, 0x0800 )
++	ROM_LOAD( "136001-308.e1", 0x2800, 0x0800 )
++	ROM_LOAD( "136001-309.fh1", 0x3000, 0x0800 )
++	ROM_LOAD( "136001-310.j1", 0x3800, 0x0800 )
++	ROM_LOAD( "136001-310.j1", 0xf800, 0x0800 )	/* for the reset and interrupt vectors */
  
- 
-@@ -624,20 +1140,24 @@
- #endif
- 
- 
--	/* check for the hold switch toggling */
--	/* generate the event when the user switches from Orange->off */
--	if( (hold == 0) && (lasthold == 1) )
-+	/* if the hold state changed */
-+	if( hold != lasthold )
- 	{
--		/* trigger hold event -> switch input banks */
--		change_input_bank( inputBanks[ input_bank ].hold );
--
--		/* just in case someone made a bad ini file... */
--		if( input_bank > 3 ) input_bank = 0;
-+		/* check for the hold switch toggling */
-+		/* generate the event when the user switches from Orange->off */
-+		if( (hold == 0) && (lasthold == 1) )
-+		{
-+			/* trigger hold event -> switch input banks */
-+			change_input_bank( inputBanks[ input_bank ].hold );
- #ifndef IPOD
--		fprintf( stderr, "Switching to bank %d\n", input_bank );
-+			fprintf( stderr, "Switching to bank %d\n", input_bank );
- #endif
-+		}
-+		lasthold = hold;
-+		/* any time the hold changed then ignore the button value, my iPod photo seems
-+		   to sometimes generate unexpected button values */
-+		return( 0 );
- 	}
--	lasthold = hold;
- 
- 	/* check for bank changes from other button inputs (non OSD events) */
- 	if( (button & IPOD_KEYPAD_MENU) && (inputBanks[ input_bank ].menu < 0) ) {
-@@ -668,7 +1188,7 @@
- 	/* now the check to see if various inputs on the emulated 
- 	    system have been triggered 
- 	*/
--	if( (button & IPOD_KEYPAD_MENU) && (request == inputBanks[ input_bank ].menu )) return( 1 );
-+	if( (button & IPOD_KEYPAD_MENU) && (request == inputBanks[ input_bank ].menu) ) return( 1 );
- 	if( (button & IPOD_KEYPAD_PREV) && (request == inputBanks[ input_bank ].prev) ) return( 1 );
- 	if( (button & IPOD_KEYPAD_NEXT) && (request == inputBanks[ input_bank ].next) ) return( 1 );
- 	if( (button & IPOD_KEYPAD_PLAY) && (request == inputBanks[ input_bank ].play) ) return( 1 );
-@@ -729,11 +1249,18 @@
- 	}
- #endif
- 
--	if( (hold == 0) && (lasthold == 1) )
-+	/* if the hold state changed */
-+	if( hold != lasthold )
- 	{
--		input_bank ^= 1; // (input_bank+1) & 0x03;
-+		if( (hold == 0) && (lasthold == 1) )
-+		{
-+			input_bank ^= 1; // (input_bank+1) & 0x03;
-+		}
-+		lasthold = hold;
-+		/* any time the hold changed then ignore the button value, my iPod photo seems
-+		   to sometimes generate unexpected button values */
-+		return( 0 );
- 	}
--	lasthold = hold;
- 
- 	if( input_bank > 0 ) {
- 		switch( request ) {
-@@ -765,15 +1292,14 @@
- 		}
- 
- 		/* exit menu */
--		if( 
--		     (button == IPOD_KEYPAD_ACTION) ) {
--			input_bank = INPUT_DEFAULT;
-+		if( button == IPOD_KEYPAD_ACTION ) {
-+		     	change_input_bank( INPUT_DEFAULT );
- 			return( 0 );
- 		}
- 	}
- 
- 	/* rotate the input */
--	if( (whichBlit & BLIT_ROTCW90) == BLIT_ROTCW90 ) {
-+	if( whichBlit & BLIT_ROTCW90 ) {
- 		b_u = IPOD_KEYPAD_NEXT;
- 		b_d = IPOD_KEYPAD_PREV;
- 		b_l = IPOD_KEYPAD_MENU;
-diff -urN src/ipl/osdep2.h src/ipl/osdep2.h
---- src/ipl/osdep2.h	2008-08-22 16:54:29.000000000 +0000
-+++ src/ipl/osdep2.h	2008-08-22 16:54:32.000000000 +0000
-@@ -28,6 +28,9 @@
- #define BLIT_FAST		(0x40)	/* asm-based routine */
- #define BLIT_AUTO		(0x80)	/* use whatever is appropriate */
- 
-+#define BLIT_SCALE		(0x100)	/* scale */
-+#define BLIT_SCALE_ASPECT	(0x200)	/* scale (keep aspect ratio) */
-+
- 
- /* vid mode */
- #define GEN_MONO        (1)
-diff -urN src/sndhrdw/junglek.c src/sndhrdw/junglek.c
---- src/sndhrdw/junglek.c	2008-08-22 16:54:30.000000000 +0000
-+++ src/sndhrdw/junglek.c	2008-08-22 17:06:09.000000000 +0000
-@@ -5,6 +5,7 @@
- 
- 
- 
-+#if 0
- static int junglek_portB_r(int offset)
- {
- 	int clockticks,clock;
-@@ -17,6 +18,7 @@
- 
- 	return clock;
- }
-+#endif
- 
- 
- 
-diff -urN src/sndhrdw/mooncrst.c src/sndhrdw/mooncrst.c
---- src/sndhrdw/mooncrst.c	2008-08-22 16:54:30.000000000 +0000
-+++ src/sndhrdw/mooncrst.c	2008-08-22 17:07:26.000000000 +0000
-@@ -2,7 +2,7 @@
- #include <math.h>
- 
- 
--#define SOUND_CLOCK 1536000 /* 1.536 Mhz */
-+#define SOUND_CLOCK 1536000 /* 1.536 Mhz */
- #define PI 3.1415
- 
- #define TONE_LENGTH 2000
-@@ -12,8 +12,8 @@
- #define WAVE_AMPLITUDE 70
- 
- 
--static char *tone;
--static char *noise;
-+static char *tone = NULL;
-+static char *noise = NULL;
- 
- 
- 
-@@ -35,7 +35,7 @@
- 
- int mooncrst_sh_start(void)
- {
--	int i;
-+	//int i;
- 
- /*
- 	if ((tone = malloc(TONE_LENGTH)) == 0)
-@@ -61,8 +61,8 @@
- 
- void mooncrst_sh_stop(void)
- {
--	free(noise);
--	free(tone);
-+	if(noise) free(noise);
-+	if(tone) free(tone);
- }
- 
- 
-diff -urN src/sndhrdw/phoenix.c src/sndhrdw/phoenix.c
---- src/sndhrdw/phoenix.c	2008-08-22 16:54:30.000000000 +0000
-+++ src/sndhrdw/phoenix.c	2008-08-22 17:07:47.000000000 +0000
-@@ -3,8 +3,8 @@
- 
- 
- /* I played around with these until they sounded ok */
--static max_freq = 22500;
--static dec_freq = 1500;
-+static int max_freq = 22500;
-+static int dec_freq = 1500;
- 
- /* values needed by phoenix_sh_update */
- static int sound_a_play = 0;
-diff -urN src/vidhrdw/rallyx.c src/vidhrdw/rallyx.c
---- src/vidhrdw/rallyx.c	2008-08-22 16:54:29.000000000 +0000
-+++ src/vidhrdw/rallyx.c	2008-08-22 17:08:21.000000000 +0000
-@@ -23,7 +23,7 @@
- 											/* to speed up video refresh */
- static unsigned char dirtybuffer2[VIDEO_RAM_SIZE];	/* keep track of modified portions of the screen */
- 											/* to speed up video refresh */
--static struct osd_bitmap *tmpbitmap;
-+struct osd_bitmap *tmpbitmap;
- 
+ 	ROM_REGION(0x1000)	/* temporary space for graphics (disposed after conversion) */
+-	ROM_LOAD( "%s.211", 0x0000, 0x0800 )
+-	ROM_LOAD( "%s.212", 0x0800, 0x0800 )
++	ROM_LOAD( "136001-211.f7", 0x0000, 0x0800 )
++	ROM_LOAD( "136001-212.hj7", 0x0800, 0x0800 )
+ ROM_END
  
  

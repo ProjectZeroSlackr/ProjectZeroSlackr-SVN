@@ -1,4 +1,4 @@
-Last updated: Aug 22, 2008
+Last updated: Sept 18, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -10,10 +10,20 @@ original/ported software.
 
 == To do ==
 
+- New Slax 6 development live-CD/USB
 - Full SansaLinux support:
+  - update official PZ2 and TTK SVNs with support
+  - benchmark memcpy method vs Rockbox's ASM code
+  - try adding screen rotating code
+  - recompile pre-compiled libSDL.a in TTK's SVN
+  - rebuild kernel with remapped keys
+  - rebuild kernel using 2.4.32 patches
   - rebuilt the kernel with 2.4.32 source code
-  - rebuilt bootloader (maybe add cmdline args via
-    different key prsses on startup?)
+  - rebuilt sansapatcher and bootloader
+    (try loop-mount boot method and Loader2Args
+	 equivalent)?
+  - merge iPL ZS and SL ZS userlands
+  - properly port over iPL ZS emulators
 - Add a "Known Issues" and "Works on" sections to
   "ReadMe from Keripo.txt"s
 - Use Insune instead of PZ2 for ZeroLauncher
@@ -33,7 +43,6 @@ Tools:
 
 Media:
 - iPod Midi Player
-- TinyGL demos
 
 Zillae:
 - PalmZilla

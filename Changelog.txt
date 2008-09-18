@@ -1,4 +1,4 @@
-Last updated: Aug 22, 2008
+Last updated: Sept 18, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,10 @@ original/ported software.
 
 
 == Changelog ==
+
+Sept 18, 2008
+- Fixed iPodMAME patch
+- Cleaned up hWolf3D build script
 
 Aug 22, 2008
 - Added hotdog port for SansaLinux, cleaned up SDL
