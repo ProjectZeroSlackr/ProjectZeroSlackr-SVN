@@ -3,7 +3,7 @@
 # hWolf3D Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Aug 21, 2008
+# Last updated: Sept 18, 2008
 #
 echo ""
 echo "==========================================="
@@ -23,7 +23,7 @@ BUILDDIR=$(pwd)
 mkdir compiling
 # Update with Git
 echo "> Updating Git..."
-git clone git://git.icculus.org/relnev/wolf3d.git official-git >> build.log
+git clone git://git.icculus.org/relnev/wolf3d.git official-git >> build.log 2>&1
 cp -r official-git/src/* compiling/
 # Apply ZeroSlackr custom patches
 echo "> Applying ZeroSlackr patches..."
