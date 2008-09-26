@@ -1,5 +1,5 @@
 #!/bin/sh
-# Last updated: July 28, 2008
+# Last updated: Sept 26, 2008
 # ~Keripo
 
 echo "====================================================="
@@ -13,6 +13,11 @@ if [ `uname` == "Darwin" ]; then
 	echo "  of ipodpatcher; even if patching is successful,"
 	echo "  this script may report failure. If you are"
 	echo "  able to compile on Mac OS X, please contact me."
+	echo "  Warning: If ipodpatcher gives you an unmounting"
+	echo "  error and fails, copy this script file and the"
+	echo "  'patch-files' folder to your computer and run"
+	echo "  the script from your computer (instead of from"
+	echo "  your iPod). Also make sure you run it with sudo."
 	./patch-files/ipodpatcher-mac -ab patch-files/loader.bin
 elif [ 'uname -m' == "x86-64" ]; then
 	echo "  Warning: Using an unpatched 64-bit Linux version"
