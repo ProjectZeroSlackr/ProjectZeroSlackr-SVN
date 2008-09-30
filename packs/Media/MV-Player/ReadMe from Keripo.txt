@@ -61,7 +61,7 @@ Modifications:
 - comes with pre-converted clip of promotional video of
   Hatsune Miku (Vocaloid2) singing "Miku Miku ni Shiteageru"
   converted with sMooVePoD 0.8 http://www.consumption.net/user/greeze/smoovepod/
-  from YouTube video: http://www.youtube.com/watch?v=XZodVW3Fpd0&fmt=18
+  from YouTube video: http://www.youtube.com/watch?v=UnpSAMnGi78&fmt=18
   (originally from: http://www.nicovideo.jp/watch/sm1359820)
 - made ZS friendly
 - user-made MvPD schemes:
