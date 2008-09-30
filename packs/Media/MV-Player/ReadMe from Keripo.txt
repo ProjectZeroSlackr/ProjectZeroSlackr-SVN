@@ -1,4 +1,4 @@
-Last updated: Apr 23, 2008
+Last updated: Sept 29, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -61,9 +61,8 @@ Modifications:
 - comes with pre-converted clip of promotional video of
   Hatsune Miku (Vocaloid2) singing "Miku Miku ni Shiteageru"
   converted with sMooVePoD 0.8 http://www.consumption.net/user/greeze/smoovepod/
-  from YouTube video: http://www.youtube.com/watch?v=nEshhGNzfSg
+  from YouTube video: http://www.youtube.com/watch?v=XZodVW3Fpd0&fmt=18
   (originally from: http://www.nicovideo.jp/watch/sm1359820)
-  (translated here: http://www.youtube.com/watch?v=3rsBLRFONEs)
 - made ZS friendly
 - user-made MvPD schemes:
   http://ipodlinux.org/Mv_player/Schemes (many)
