@@ -1,4 +1,4 @@
-Last updated: Aug 19, 2008
+Last updated: Oct 5, 2008
 ~Keripo
 
 
@@ -162,9 +162,9 @@ A: No. There won't be. And no, I don't plan to make one.
 Q: All these packs are really cool but the ZeroSlackr SVN
    keeps getting updated and there are apps that have yet
    to be added. How can I build my own SlackrPacks?
-A: To compile things for ZeroSlackr, see the
-   "== Compiling ==" section of ""ReadMe from Keripo.txt"
-   and follow the iPodLinux
+A: To compile things for ZeroSlackr, see the "Compiling.txt"
+   file in Project ZeroSlackr's SVN (see the project's
+   SourceForge page) and follow the iPodLinux
    "Introduction_to_Compiling_for_iPodLinux" wiki tutorial.
    I have not finished adding everything I know to Project
    ZeroSlackr but if you're willing to help (and are an
