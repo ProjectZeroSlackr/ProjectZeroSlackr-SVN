@@ -1,4 +1,4 @@
-Last updated: Apr 30, 2008
+Last updated: Oct 12, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -35,8 +35,8 @@ hotdog demos:
 - Source: SVN
 - Link:
   https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/libs/hotdog/
-- Date: Apr 30, 2008
-- Version: Revision 2418
+- Date: Oct 12, 2008
+- Version: Revision 2437
 
 hotdog-ex:
 - Authors: iPL Core Devs
@@ -49,7 +49,7 @@ hotdog-ex:
 ZS Version:
 - Modder: Keripo
 - Type: Mod and ZS Recompile
-- Date: Aug 7, 2008
+- Date: Oct 12, 2008
 - Version: B X.X
 
 Modifications:
