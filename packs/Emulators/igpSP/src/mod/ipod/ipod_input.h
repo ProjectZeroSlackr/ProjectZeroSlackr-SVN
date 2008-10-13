@@ -1,5 +1,5 @@
 /*
- * Last updated: Jun 12, 2008
+ * Last updated: Oct 12, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -24,7 +24,9 @@
 #define KEY_REWIND	17 // Left
 #define KEY_FORWARD	33 // Right
 #define KEY_ACTION	28 // Select
-#define KEY_HOLD	35 // Exit
+#define KEY_HOLD	35 // Hold
+#define KEY_REC		46 // Record (Sansa e200 only)
+#define KEY_POWER	25 // Power (Sansa e200 only)
 #define SCROLL_L	38 // Counter-clockwise
 #define SCROLL_R	19 // Clockwise
 

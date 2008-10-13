@@ -36,8 +36,8 @@ tar -xf src/SDL/SDL-1.2.13.tar.gz
 mv SDL-1.2.13 SDL
 # Update SVN
 echo "> Updating SVN..."
-svn co --quiet https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/libs/SDL/src SDL/src-official-svn
-cp -rf SDL/src-official-svn/* SDL/src/
+wget -q http://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/libs/SDL/src/video/ipod/SDL_ipodvideo.c
+mv -f SDL_ipodvideo.c SDL/src/video/ipod/
 # Compiling
 echo "> Compiling..."
 cd SDL

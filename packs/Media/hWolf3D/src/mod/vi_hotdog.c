@@ -1,5 +1,5 @@
 /*
- * Last updated: Aug 12, 2008
+ * Last updated: Oct 12, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -249,6 +249,7 @@ void INL_Update()
 						keyboard_handler(sc_Space, 0);
 					}
 					break;
+				case KEY_REC:
 				case KEY_PLAY:
 					if (in_menu)
 						keyboard_handler(sc_DownArrow, 0);
@@ -258,6 +259,7 @@ void INL_Update()
 				case KEY_FORWARD:
 					keyboard_handler(sc_RightArrow, 0);
 					break;
+				case KEY_POWER:
 				case KEY_HOLD:
 					keyboard_handler(sc_Escape, 0);
 					break;
@@ -275,9 +277,10 @@ void INL_Update()
 					keyboard_handler(sc_LeftArrow, 1);
 					break;
 				case SCROLL_R:
-					if (in_menu)
+					if (in_menu) {
 						keyboard_handler(sc_X, 1); // For game saving
 						keyboard_handler(sc_Y, 0);
+					}
 					break;
 				case KEY_ACTION:
 					if (in_menu) {
@@ -287,6 +290,7 @@ void INL_Update()
 						keyboard_handler(sc_Alt, 1); // Strafing
 					}
 					break;
+				case KEY_REC:
 				case KEY_PLAY:
 					if (in_menu)
 						keyboard_handler(sc_DownArrow, 1);
@@ -300,10 +304,12 @@ void INL_Update()
 					keyboard_handler(sc_Escape, 1);
 					break;
 				case SCROLL_L:
-					if (in_menu)
+					if (in_menu) {
 						keyboard_handler(sc_Y, 1); // For game saving
 						keyboard_handler(sc_Y, 0);
+					}
 					break;
+				case KEY_POWER:
 				case KEY_MENU:
 					keyboard_handler(sc_UpArrow, 1);
 					break;

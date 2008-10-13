@@ -1,5 +1,5 @@
 /*
- * Last updated: Jun 26, 2008
+ * Last updated: Oct 12, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -84,6 +84,9 @@ int main()
 						if (SCROLL_MOD(SCROLL_MOD_NUM))
 							keyname = "scroll r";
 						break;
+					case KEY_POWER:
+						keyname = "power";
+						break;
 					case KEY_ACTION:
 						keyname = "action";
 						break;
@@ -99,6 +102,9 @@ int main()
 					case SCROLL_L:
 						if (SCROLL_MOD(SCROLL_MOD_NUM))
 							keyname = "scroll l";
+						break;
+					case KEY_REC:
+						keyname = "record";
 						break;
 					case KEY_MENU: 
 						keyname = "menu";
@@ -119,6 +125,9 @@ int main()
 						if (SCROLL_MOD(SCROLL_MOD_NUM))
 							keyname = "scroll r";
 						break;
+					case KEY_POWER:
+						keyname = "power";
+						break;
 					case KEY_ACTION:
 						keyname = "action";
 						break;
@@ -134,6 +143,9 @@ int main()
 					case SCROLL_L:
 						if (SCROLL_MOD(SCROLL_MOD_NUM))
 							keyname = "scroll l";
+						break;
+					case KEY_REC:
+						keyname = "record";
 						break;
 					case KEY_MENU: 
 						keyname = "menu";
