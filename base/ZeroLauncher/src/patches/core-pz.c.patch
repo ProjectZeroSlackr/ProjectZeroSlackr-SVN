@@ -2,17 +2,6 @@ Index: core/pz.c
 ===================================================================
 --- core/pz.c	(revision 2420)
 +++ core/pz.c	(working copy)
-@@ -42,6 +42,10 @@
-     "Adam Johnston",
-     "Alastair Stuart",
-     "Rebecca Bettencourt",
-+    "Keripo",
-+#ifdef SANSA
-+    "Sebastian Duell",
-+#endif
-     0
- };
- 
 @@ -319,7 +323,7 @@
  	struct stat statbuf;
  

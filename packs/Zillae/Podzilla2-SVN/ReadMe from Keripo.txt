@@ -1,4 +1,4 @@
-Last updated: Apr 27, 2008
+Last updated: Oct 12, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -51,13 +51,13 @@ Original:
 - Authors: iPL Core Devs
 - Source: SVN
 - Link: https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/apps/ipod/podzilla2
-- Date: Apr 27, 2008
-- Version: Revision 2418
+- Date: Oct 12, 2008
+- Version: Revision 2437
 
 ZS Version:
 - Modder: Keripo
 - Type: Mod and ZS Recompile
-- Date: Apr 27, 2008
+- Date: Oct 12, 2008
 - Version: B X.X
 
 Modifications:

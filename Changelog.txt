@@ -1,4 +1,4 @@
-Last updated: Sept 18, 2008
+Last updated: Oct 12, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,14 @@ original/ported software.
 
 
 == Changelog ==
+
+Oct 12, 2008
+- Committed lots of ZeroSlackr patches to the official
+  iPodLinux SVN
+- Completed Sansa e200 port work for the 2.4.24 kernel
+  and updated the graphics libraries (kernel source
+  will be added later or once 2.4.32 port is finished)
+- Added Mac patching notice
 
 Sept 18, 2008
 - Fixed iPodMAME patch

@@ -1,5 +1,5 @@
 #!/bin/sh
-# Last updated: Aug 12, 2008
+# Last updated: Oct 12, 2008
 # ~Keripo
 
 echo "====================================================="
@@ -18,6 +18,12 @@ echo "  patching is successful, this script may report"
 echo "  failure"
 echo ""
 if [ `uname` == "Darwin" ]; then
+	echo "  Warning: If sansapatcher gives you an unmounting"
+	echo "  error and fails, copy this script file and the"
+	echo "  'patch-files' folder to your computer and run"
+	echo "  the script from your computer (instead of from"
+	echo "  your Sansa). Also make sure you run it from"
+	echo "  Terminal with 'sudo'."
 	./patch-files/sansapatcher-mac --install
 elif [ 'uname -m' == "x86-64" ]; then
 	echo "  Error: I currently do not have any 64-bit sansapatcher"

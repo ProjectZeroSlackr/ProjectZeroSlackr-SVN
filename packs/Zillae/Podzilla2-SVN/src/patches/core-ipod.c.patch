@@ -2,24 +2,6 @@ Index: core/ipod.c
 ===================================================================
 --- core/ipod.c	(revision 2423)
 +++ core/ipod.c	(working copy)
-@@ -217,7 +217,7 @@
- 
- void ipod_beep(void)
- {
--#ifdef IPOD
-+#if defined(IPOD) && !defined(SANSA)
- 	if (pz_ipod_get_hw_version() >= 0x40000) {
- 		int i, j;
- 		outl(inl(0x70000010) & ~0xc, 0x70000010);
-@@ -346,7 +346,7 @@
- 
- void pz_ipod_go_to_diskmode()
- {
--#ifdef IPOD
-+#if defined(IPOD) && !defined(SANSA)
- 	unsigned char * storage_ptr;
- 	unsigned int iram_len;
- 
 @@ -368,7 +368,8 @@
  #ifdef IPOD
      pz_uninit();
@@ -40,23 +22,3 @@ Index: core/ipod.c
      exit(0);
  #else
      pz_warning ("I don't think you want me to reboot your desktop...");
- #endif
- }
- 
-+#ifdef SANSA
-+
-+// No USB support for SansaLinux, yet
-+int pz_ipod_usb_is_connected(void) { return 0; }
-+int pz_ipod_fw_is_connected(void) { return 0; }
-+
-+#else
-+
- #ifdef IPOD
- static int usb_check_connection()
- {
-@@ -522,3 +532,5 @@
- #endif
- 	return 0;
- }
-+
-+#endif

@@ -3,7 +3,7 @@
 # hotdog Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Aug 22, 2008
+# Last updated: Oct 12, 2008
 #
 echo ""
 echo "==========================================="
@@ -19,11 +19,8 @@ fi
 echo "> Updating SVN..."
 svn co --quiet https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/libs/hotdog/ hotdog
 # Compiling
-cd hotdog
-echo "> Patching for SansaLinux..."
-patch -p0 -t -i ../src/hotdog/hotdog-sansalinux.patch >> build.log
-cp -rf ../src/hotdog/hotdog_lcd_sansa.S ./
 echo "> Compiling..."
+cd hotdog
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
 make IPOD=1 >> build.log
 echo ""

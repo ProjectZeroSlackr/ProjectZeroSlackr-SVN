@@ -1,4 +1,4 @@
-Last updated: Aug 6, 2008
+Last updated: Oct 12, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -50,19 +50,13 @@ Original:
 - Source: SVN
 - Link:
   https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/apps/ipod/podzilla2
-- Date: Apr 27, 2008
-- Version: Revision 2418
-
-SansaLinux:
-- Porter: Sebastian Duell
-- Type: Mod
-- Date: May 15, 2008
-- Version: 0.20
+- Date: Oct 12, 2008
+- Version: Revision 2437
 
 ZS Version:
 - Modder: Keripo
 - Type: Mod and ZS Recompile
-- Date: Aug 6, 2008
+- Date: Oct 12, 2008
 - Version: B X.X
 
 Modifications:
@@ -78,7 +72,6 @@ Modifications:
 - browser module modified
   > added open_directory_title function
 - mpdc module modified
-  > group-and-icon-goodness
   > added kill/initiate functions
 - podwrite module modified
   > /Notes/ -> /mnt/Notes/
