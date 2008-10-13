@@ -1,5 +1,5 @@
 /*
- * Last updated: Aug 20, 2008
+ * Last updated: Oct 12, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -217,7 +217,7 @@ static PzWindow *load_file_handler_gzip_d(ttk_menu_item *item)
 
 static PzWindow *readme()
 {
-	return new_textview_window(
+	return pz_new_textview_window(
 		"/opt/Tools/CmdLine-Archivers/ReadMe from Keripo.txt");
 }
 

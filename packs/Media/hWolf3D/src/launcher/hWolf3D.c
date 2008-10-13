@@ -1,5 +1,5 @@
 /*
- * Last updated: Aug 13, 2008
+ * Last updated: Oct 12, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -88,7 +88,7 @@ static PzWindow *sod_retail()
 
 static PzWindow *readme()
 {
-	return new_textview_window(
+	return pz_new_textview_window(
 		"/opt/Media/hWolf3D/ReadMe from Keripo.txt");
 }
 

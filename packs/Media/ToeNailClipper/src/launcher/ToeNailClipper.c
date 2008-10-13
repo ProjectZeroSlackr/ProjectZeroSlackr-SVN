@@ -1,5 +1,5 @@
 /*
- * Last updated: Aug 7, 2008
+ * Last updated: Oct 12, 2008
  * ~Keripo
  *  
  * Copyright (C) 2007 Keripo
@@ -34,7 +34,7 @@ static PzWindow *new_toenailclipper_window(void)
 
 static PzWindow *readme()
 {
-	return new_textview_window(
+	return pz_new_textview_window(
 		"/opt/Media/ToeNailClipper/ReadMe from Keripo.txt");
 }
 

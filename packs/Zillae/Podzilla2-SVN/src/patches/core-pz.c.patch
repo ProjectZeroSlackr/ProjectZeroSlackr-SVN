@@ -1,67 +1,66 @@
 Index: core/pz.c
 ===================================================================
---- core/pz.c	(revision 2420)
-+++ core/pz.c	(working copy)
-@@ -319,7 +323,7 @@
- 	struct stat statbuf;
+--- core/pz.c    (revision 2439) 
++++ core/pz.c    (working copy) 
+@@ -320,7 +320,7 @@
+     struct stat statbuf;
  
- 	/* find the last modified time of the settings file */
--	stat( "/etc/podzilla/podzilla.conf", &statbuf );
-+	stat( "/opt/Zillae/Podzilla2-SVN/Conf/podzilla2-svn.conf", &statbuf );
+     /* find the last modified time of the settings file */
+-    stat( "/etc/podzilla/podzilla.conf", &statbuf ); 
++    stat( "/opt/Zillae/Podzilla2-SVN/Conf/podzilla2-svn.conf", &statbuf );
  
- 	/* convert timespec to timeval */
- 	tv_s.tv_sec  = statbuf.st_mtime;
-@@ -332,7 +336,7 @@
+     /* convert timespec to timeval */
+     tv_s.tv_sec  = statbuf.st_mtime;
+@@ -333,7 +333,7 @@
  void pz_touch_settings(void) 
  {
  #ifdef IPOD
--	close (open ("/etc/podzilla/podzilla.conf", O_WRONLY));
-+	close (open ("/opt/Zillae/Podzilla2-SVN/Conf/podzilla2-svn.conf", O_WRONLY));
+-    close (open ("/etc/podzilla/podzilla.conf", O_WRONLY)); 
++    close (open ("/opt/Zillae/Podzilla2-SVN/Conf/podzilla2-svn.conf", O_WRONLY)); 
  #endif
  }
  
-@@ -375,7 +379,7 @@
+@@ -376,7 +376,7 @@
      unsigned long retaddr, off;
      const char *modfile = "Unknown";
      int i;
--    FILE *f = fopen ("podzilla.oops", "w");
-+    FILE *f = fopen ("/opt/Zillae/Podzilla2-SVN/Misc/podzilla2-svn.oops", "w");
+-    FILE *f = fopen ("podzilla.oops", "w"); 
++    FILE *f = fopen ("/opt/Zillae/Podzilla2-SVN/Misc/podzilla2-svn.oops", "w"); 
  
      asm ("mov %0, r11" : "=r" (FP) : );
  
-@@ -558,7 +562,7 @@
+@@ -559,7 +559,7 @@
  #endif
  
  #ifdef IPOD
--#define CONFIG_FILE "/etc/podzilla/podzilla.conf"
-+#define CONFIG_FILE "/opt/Zillae/Podzilla2-SVN/Conf/podzilla2-svn.conf"
+-#define CONFIG_FILE "/etc/podzilla/podzilla.conf" 
++#define CONFIG_FILE "/opt/Zillae/Podzilla2-SVN/Conf/podzilla2-svn.conf" 
  #else
  #define CONFIG_FILE "config/podzilla.conf"
  #endif
-@@ -621,13 +625,14 @@
+@@ -622,13 +622,14 @@
  #define SET(x) pz_get_setting(pz_global_config,x)
- 	if (!SET(WHEEL_DEBOUNCE))   pz_ipod_set (WHEEL_DEBOUNCE, 10);
- 	if (!SET(CONTRAST))         pz_ipod_set (CONTRAST, initialContrast);
--	if (!SET(CLICKER))          pz_ipod_set (CLICKER, 1);
-+	if (!SET(CLICKER))          pz_ipod_set (CLICKER, 0);
- 	if (!SET(DSPFREQUENCY))     pz_ipod_set (DSPFREQUENCY, 0);
--	if (!SET(SLIDE_TRANSIT))    pz_ipod_set (SLIDE_TRANSIT, 1);
-+	if (!SET(SLIDE_TRANSIT))    pz_ipod_set (SLIDE_TRANSIT, 2);
- 	if (!SET(BACKLIGHT))        pz_ipod_set (BACKLIGHT, 1);
- 	if (!SET(BACKLIGHT_TIMER))  pz_ipod_set (BACKLIGHT_TIMER, 3);
- 	if (!SET(COLORSCHEME))
--		pz_set_string_setting (pz_global_config,COLORSCHEME, "mono.cs");
-+		pz_set_string_setting (pz_global_config,COLORSCHEME, "familiar.cs");
-+	if (!SET(GROUPED_MENUS))	pz_ipod_set (GROUPED_MENUS, 1);
- 	pz_save_config (pz_global_config);
- 	pz_ipod_fix_settings (pz_global_config);
+     if (!SET(WHEEL_DEBOUNCE))   pz_ipod_set (WHEEL_DEBOUNCE, 10);
+     if (!SET(CONTRAST))         pz_ipod_set (CONTRAST, initialContrast);
+-    if (!SET(CLICKER))          pz_ipod_set (CLICKER, 1); 
++    if (!SET(CLICKER))          pz_ipod_set (CLICKER, 0); 
+     if (!SET(DSPFREQUENCY))     pz_ipod_set (DSPFREQUENCY, 0);
+     if (!SET(SLIDE_TRANSIT))    pz_ipod_set (SLIDE_TRANSIT, 2);
+     if (!SET(BACKLIGHT))        pz_ipod_set (BACKLIGHT, 1);
+     if (!SET(BACKLIGHT_TIMER))  pz_ipod_set (BACKLIGHT_TIMER, 3);
+     if (!SET(COLORSCHEME))
+-        pz_set_string_setting (pz_global_config,COLORSCHEME, "mono.cs"); 
++        pz_set_string_setting (pz_global_config,COLORSCHEME, "familiar.cs"); 
++    if (!SET(GROUPED_MENUS))    pz_ipod_set (GROUPED_MENUS, 1); 
+     pz_save_config (pz_global_config);
+     pz_ipod_fix_settings (pz_global_config);
  
-@@ -640,7 +645,7 @@
- 	/* load some fonts */
- 	/* NOTE: we should probably do something if these fail! */
- 	pz_load_font (&ttk_textfont, "Espy Sans", TEXT_FONT, pz_global_config);
--	pz_load_font (&ttk_menufont, "Chicago",   MENU_FONT, pz_global_config);
-+	pz_load_font (&ttk_menufont, "GPalatino",   MENU_FONT, pz_global_config);
+@@ -641,7 +642,7 @@
+     /* load some fonts */
+     /* NOTE: we should probably do something if these fail! */
+     pz_load_font (&ttk_textfont, "Espy Sans", TEXT_FONT, pz_global_config);
+-    pz_load_font (&ttk_menufont, "Chicago",   MENU_FONT, pz_global_config); 
++    pz_load_font (&ttk_menufont, "GPalantino",      MENU_FONT, pz_global_config); 
  
- 	/* set up the menus and initialize the modules */
- 	pz_menu_init();
+     /* set up the menus and initialize the modules */
+     pz_menu_init();
