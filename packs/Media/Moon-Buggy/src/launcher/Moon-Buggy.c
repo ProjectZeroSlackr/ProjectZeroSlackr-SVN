@@ -1,5 +1,5 @@
 /*
- * Last updated: Aug 9, 2008
+ * Last updated: Oct 12, 2008
  * ~Keripo
  *  
  * Copyright (C) 2007 Keripo
@@ -34,7 +34,7 @@ static PzWindow *new_moon_buggy_window(void)
 
 static PzWindow *readme()
 {
-	return new_textview_window(
+	return pz_new_textview_window(
 		"/opt/Media/Moon-Buggy/ReadMe from Keripo.txt");
 }
 

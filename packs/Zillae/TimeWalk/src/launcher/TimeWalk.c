@@ -1,5 +1,5 @@
 /*
- * Last updated: July 26, 2008
+ * Last updated: Oct 12, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -24,7 +24,7 @@
 #define DEFAULT "podzilla"
 
 static PzModule *module;
-static const char *path, *welcome_text, *missing_text, *readme_text;
+static const char *path;
 
 // Common
 static PzWindow *exec_zilla(const char *folder, const char *binary)
@@ -175,15 +175,18 @@ static PzWindow *Yankeezilla()
 // Info
 static PzWindow *welcome()
 {
-	return new_textview_window((char *)welcome_text);
+	return pz_new_textview_window(
+		"/opt/Zillae/TimeWalk/Launch/Welcome.txt");
 }
 static PzWindow *missing()
 {
-	return new_textview_window((char *)missing_text);
+	return pz_new_textview_window(
+		"/opt/Zillae/TimeWalk/Launch/Missing.txt");
 }
 static PzWindow *readme()
 {
-	return new_textview_window((char *)readme_text);
+	return pz_new_textview_window(
+		"/opt/Zillae/TimeWalk/ReadMe from Keripo.txt");
 }
 
 // Init
@@ -191,9 +194,6 @@ static void init_launch()
 {
 	module = pz_register_module("TimeWalk", 0);
 	path = "/opt/Zillae/TimeWalk/Launch/Launch.sh";
-	welcome_text = "/opt/Zillae/TimeWalk/Launch/Welcome.txt";
-	missing_text = "/opt/Zillae/TimeWalk/Launch/Missing.txt";
-	readme_text = "/opt/Zillae/TimeWalk/ReadMe from Keripo.txt";
 	
 	// Group
 	pz_menu_add_stub_group("/~TimeWalk", "#ZeroSlackr");
@@ -210,17 +210,17 @@ static void init_launch()
 	
 	// PZ0 Specials
 	pz_menu_add_action_group("/~TimeWalk/iTanks",			"PZ0 Specials",	iTanks);
-	pz_menu_add_action_group("/~TimeWalk/MikModPodzilla",	"PZ0 Specials",	MikModPodzilla);
+	pz_menu_add_action_group("/~TimeWalk/MikModPodzilla",		"PZ0 Specials",	MikModPodzilla);
 	pz_menu_add_action_group("/~TimeWalk/pdPod",			"PZ0 Specials",	pdPod);
 	
 	// PZ0 Features
 	pz_menu_add_action_group("/~TimeWalk/Keyman (PZ0)",		"PZ0 Featured",	Keyman_pz0);
-	pz_menu_add_action_group("/~TimeWalk/Keyman (Floyd)",	"PZ0 Featured",	Keyman_floyd);
+	pz_menu_add_action_group("/~TimeWalk/Keyman (Floyd)",		"PZ0 Featured",	Keyman_floyd);
 	pz_menu_add_action_group("/~TimeWalk/NXSnake",			"PZ0 Featured",	NXSnake);
 	pz_menu_add_action_group("/~TimeWalk/Othello",			"PZ0 Featured",	Othello);
 	pz_menu_add_action_group("/~TimeWalk/Sudoku",			"PZ0 Featured",	Sudoku);
 	pz_menu_add_action_group("/~TimeWalk/Tuxchess",			"PZ0 Featured",	Tuxchess);
-	pz_menu_add_action_group("/~TimeWalk/Video-podzilla",	"PZ0 Featured",	Video_podzilla);
+	pz_menu_add_action_group("/~TimeWalk/Video-podzilla",		"PZ0 Featured",	Video_podzilla);
 	
 	// PZ0 Jonrelay's
 	pz_menu_add_action_group("/~TimeWalk/podzilla-fbk",		"PZ0 Jonrelay",	podzilla_fbk);
@@ -236,7 +236,7 @@ static void init_launch()
 	pz_menu_add_action_group("/~TimeWalk/relayzilla",		"PZ0 Jonrelay",	relayzilla);
 	
 	// PZ0 Translates
-	pz_menu_add_action_group("/~TimeWalk/podzilla-Dutch",	"PZ0 Translations", podzilla_Dutch);
+	pz_menu_add_action_group("/~TimeWalk/podzilla-Dutch",		"PZ0 Translations", podzilla_Dutch);
 	pz_menu_add_action_group("/~TimeWalk/Jpodzilla",		"PZ0 Translations", Jpodzilla);
 	
 	// PZ0 Custom Builds

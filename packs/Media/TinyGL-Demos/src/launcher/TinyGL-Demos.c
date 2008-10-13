@@ -1,5 +1,5 @@
 /*
- * Last updated: Aug 11, 2008
+ * Last updated: Oct 12, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -105,7 +105,7 @@ static PzWindow *view_all_pics()
 
 static PzWindow *readme()
 {
-	return new_textview_window(
+	return pz_new_textview_window(
 		"/opt/Media/TinyGL-Demos/ReadMe from Keripo.txt");
 }
 

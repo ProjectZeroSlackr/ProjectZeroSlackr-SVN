@@ -300,6 +300,7 @@ void INL_Update()
 				case KEY_FORWARD:
 					keyboard_handler(sc_RightArrow, 1);
 					break;
+				case KEY_POWER:
 				case KEY_HOLD:
 					keyboard_handler(sc_Escape, 1);
 					break;
@@ -309,7 +310,6 @@ void INL_Update()
 						keyboard_handler(sc_Y, 0);
 					}
 					break;
-				case KEY_POWER:
 				case KEY_MENU:
 					keyboard_handler(sc_UpArrow, 1);
 					break;

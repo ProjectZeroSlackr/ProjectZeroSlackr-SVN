@@ -1,5 +1,5 @@
 /*
- * Last updated: Aug 20, 2008
+ * Last updated: Oct 12, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -129,7 +129,7 @@ static PzWindow *browse_lolcode()
 
 static PzWindow *readme()
 {
-	return new_textview_window(
+	return pz_new_textview_window(
 		"/opt/Tools/CmdLine-Tools/ReadMe from Keripo.txt");
 }
 

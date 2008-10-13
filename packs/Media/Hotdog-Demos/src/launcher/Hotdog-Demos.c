@@ -1,5 +1,5 @@
 /*
- * Last updated: Aug 9, 2008
+ * Last updated: Oct 12, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -100,7 +100,7 @@ static PzWindow *browse_imagebits()
 
 static PzWindow *readme()
 {
-	return new_textview_window(
+	return pz_new_textview_window(
 		"/opt/Media/Hotdog-Demos/ReadMe from Keripo.txt");
 }
 

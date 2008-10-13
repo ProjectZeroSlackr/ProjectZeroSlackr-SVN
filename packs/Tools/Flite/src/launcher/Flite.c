@@ -1,5 +1,5 @@
 /*
- * Last updated: July 28, 2008
+ * Last updated: Oct 12, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -163,7 +163,7 @@ static PzWindow *browse_texts()
 
 static PzWindow *readme()
 {
-	return new_textview_window(
+	return pz_new_textview_window(
 		"/opt/Tools/Flite/ReadMe from Keripo.txt");
 }
 
