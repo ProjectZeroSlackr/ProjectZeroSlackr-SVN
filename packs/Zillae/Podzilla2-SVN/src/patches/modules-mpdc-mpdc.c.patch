@@ -1,6 +1,6 @@
 Index: modules/mpdc/mpdc.c
 ===================================================================
---- modules/mpdc/mpdc.c	(revision 2436)
+--- modules/mpdc/mpdc.c	(revision 2437)
 +++ modules/mpdc/mpdc.c	(working copy)
 @@ -28,6 +28,9 @@
  #include "pz.h"
@@ -55,7 +55,7 @@ Index: modules/mpdc/mpdc.c
 +			cleanup_mpd();
 +			pz_message("MPD process killed.");
 +		} else {
-+			pz_message("Unknown error: kill_mpd function missing!";
++			pz_message("Unknown error: kill_mpd function missing!");
 +		}
 +		return TTK_MENU_UPALL;
 +	} else {

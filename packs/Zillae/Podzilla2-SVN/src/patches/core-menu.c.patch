@@ -1,7 +1,7 @@
-Index: menu.c
+Index: core/menu.c
 ===================================================================
---- menu.c	(revision 2436)
-+++ menu.c	(working copy)
+--- core/menu.c	(revision 2437)
++++ core/menu.c	(working copy)
 @@ -237,8 +237,8 @@
      ttk_menu_item * item;
  

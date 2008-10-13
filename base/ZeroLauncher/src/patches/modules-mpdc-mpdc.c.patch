@@ -55,7 +55,7 @@ Index: modules/mpdc/mpdc.c
 +			cleanup_mpd();
 +			pz_message("MPD process killed.");
 +		} else {
-+			pz_message("Unknown error: kill_mpd function missing!";
++			pz_message("Unknown error: kill_mpd function missing!");
 +		}
 +		return TTK_MENU_UPALL;
 +	} else {

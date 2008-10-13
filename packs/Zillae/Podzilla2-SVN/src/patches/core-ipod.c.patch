@@ -1,6 +1,6 @@
 Index: core/ipod.c
 ===================================================================
---- core/ipod.c	(revision 2423)
+--- core/ipod.c	(revision 2437)
 +++ core/ipod.c	(working copy)
 @@ -368,7 +368,8 @@
  #ifdef IPOD
@@ -12,7 +12,7 @@ Index: core/ipod.c
      
      printf("No poweroff binary available.  Rebooting.\n");
      execl("/bin/reboot", "reboot", NULL);
-@@ -382,13 +383,22 @@
+@@ -382,7 +383,8 @@
  {
  #ifdef IPOD
      pz_uninit();
