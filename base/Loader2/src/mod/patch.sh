@@ -1,5 +1,5 @@
 #!/bin/sh
-# Last updated: Sept 26, 2008
+# Last updated: Oct 12, 2008
 # ~Keripo
 
 echo "====================================================="
@@ -17,7 +17,8 @@ if [ `uname` == "Darwin" ]; then
 	echo "  error and fails, copy this script file and the"
 	echo "  'patch-files' folder to your computer and run"
 	echo "  the script from your computer (instead of from"
-	echo "  your iPod). Also make sure you run it with sudo."
+	echo "  your iPod). Also make sure you run it from"
+	echo "  Terminal with 'sudo'."
 	./patch-files/ipodpatcher-mac -ab patch-files/loader.bin
 elif [ 'uname -m' == "x86-64" ]; then
 	echo "  Warning: Using an unpatched 64-bit Linux version"

@@ -66,12 +66,3 @@ Index: core/browser.c
  static TWindow *browser_vt_exec (ttk_menu_item *item)
  {
  	pz_exec((char *)item->data);
-@@ -263,7 +303,7 @@
- 	return 1;
- }
- 
--static TWindow *new_textview_window(char *filename)
-+TWindow *new_textview_window(char *filename)
- {
- 	TWindow *ret;
- 	char *buf = NULL;

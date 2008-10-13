@@ -3,7 +3,7 @@
 # ZeroLauncher Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Aug 6, 2008
+# Last updated: Oct 12, 2008
 #
 echo ""
 echo "==========================================="
@@ -66,12 +66,7 @@ echo "  be logged to the 'build.log' file."
 echo "  If building fails, check the log file."
 cd compiling
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
-if [ $SANSA ]; then
-	echo "  (building for SansaLinux)"
-	make IPOD=1 SANSA=1 >> ../build.log 2>&1
-else
-	make IPOD=1 >> ../build.log 2>&1
-fi
+make IPOD=1 >> ../build.log 2>&1
 # Copy over compiled file
 echo "> Copying over compiled files..."
 cd ..

@@ -470,10 +470,10 @@ int pz_dsp_open(pz_dsp_st *oss, int mode);
 void pz_dsp_close(pz_dsp_st *oss);
 
 
-/** File browser helper functions - browser.c **/
+/** File browser helper functions - browser.c **/\
+TWindow *pz_new_textview_window(char *filename);
 TWindow *pz_browser_open (const char *path);
 TWidget *pz_browser_get_actions (const char *path); // returns a menu widget
-TWindow *new_textview_window(char *filename);
 void pz_browser_set_handler (int (*pred)(const char *), TWindow *(*handler)());
 void pz_browser_remove_handler (int (*pred)(const char *));
 void pz_browser_add_action (int (*pred)(const char *), ttk_menu_item *action); // action->data will be set to file's full name

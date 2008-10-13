@@ -1,4 +1,4 @@
-Last updated: Aug 20, 2008
+Last updated: Oct 12, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -89,9 +89,11 @@ instructions:
    If you are on Windows, make sure that you have admin
    access. If you are on Linux, make sure the script and
    the "ipodpatcher" binary has full root permission and
-   you run the "patch.sh" script through the console. The
-   script is untested on Macs but should work the same
-   way as on Linux.
+   you run the "patch.sh" script through the console. If
+   you are on a Mac, you must instead copy over the
+   "patch.sh" script file and "patch-files" folder to your
+   Desktop and run the "patch.sh" script from your Desktop
+   through Terminal.
    
 4) Safely remove/eject/unmount/unplug your iPod after the
    patch script finishes successfully. Allow your iPod to

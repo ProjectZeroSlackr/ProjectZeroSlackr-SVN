@@ -1,4 +1,4 @@
-Last updated: July 24, 2008
+Last updated: Oct 12, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -54,13 +54,13 @@ Original:
   http://newview.org/jsha/hacks/encyclopodiareader-module.tar.gz
   http://ipodlinux.org/forums/viewtopic.php?p=64392#64392
   https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/apps/ipod/podzilla2
-- Date: Jan 30, 2006, Mar 15, 2006, Apr 27, 2008 
-- Version: 0.9, 0.1, Revision 2418
+- Date: Jan 30, 2006, Mar 15, 2006, Oct 12, 2008 
+- Version: 0.9, 0.1, Revision 2437
 
 ZS Version:
 - Modder: Keripo
 - Type: Mod and ZS Recompile
-- Date: July 24, 2008
+- Date: Oct 12, 2008
 - Version: B X.X
 
 Modifications:
