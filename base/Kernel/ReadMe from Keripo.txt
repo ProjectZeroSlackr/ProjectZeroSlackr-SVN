@@ -1,4 +1,4 @@
-Last updated: July 17, 2008
+Last updated: Oct 17, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -15,7 +15,9 @@ Kernel
 - It can also load a normal, partitioned iPodLinux
   installation (see the "loader.cfg" file).
 - The SansaLinux port uses a pre-compiled 2.4.24 kernel
-  modifed for the Sansa. I will compile my own kernel later.
+  which operates slightly differently from the iPod's
+  2.4.32 kernel. I will integrate the port into the
+  official SVN and try to upgrade to 2.4.32 later.
 For more information, see:
 - http://ipodlinux.org/Experimental_Kernel
 - http://ipodlinux.org/Kernel
@@ -50,21 +52,21 @@ iPodLinux Patches:
 - Link:
   http://www.so2.sys-techs.com/ipod/linux/
   https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/linux/2.4
-- Date: Apr 27, 2008
-- Version: Revision 2418
+- Date: Oct 17, 2008
+- Version: Revision 2442
 
 SansaLinux:
-- Porter: Sebastian Duell
+- Porter: Sebastian Duell, Keripo
 - Type: Ported
-- Date: May 29, 2008
-- Version: 0.20
+- Date: Oct 17, 2008
+- Version: 0.30
 
 ZS Version:
 - Modder: Keripo
 - Type: Mod and Recompile
 - Link:
   http://ipodlinux.org/images/8/81/Iboy_kernel_patches.zip (iBoy patches)
-- Date: Apr 27, 2008
+- Date: Oct 17, 2008
 - Version: B X.X
 
 Modifications:

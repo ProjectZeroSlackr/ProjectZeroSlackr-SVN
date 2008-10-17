@@ -1,4 +1,4 @@
-Last updated: Oct 12, 2008
+Last updated: Oct 17, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -11,7 +11,7 @@ original/ported software.
 == To do ==
 
 - Full SansaLinux support:
-  - recompile pre-compiled libSDL.a in TTK's SVN
+  - merge 2.4.24 kernel changes with official SVN
   - rebuilt the kernel with 2.4.32 source code
   - rebuilt sansapatcher and bootloader
     (try loop-mount boot method and Loader2Args
