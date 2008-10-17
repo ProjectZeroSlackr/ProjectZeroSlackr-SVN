@@ -1,5 +1,5 @@
 /*
- * Last updated: Oct 12, 2008
+ * Last updated: Oct 16, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -235,7 +235,7 @@ static void init_launch()
 	
 	pz_menu_add_stub_group("/Tools/CmdLine-Archivers", "Utilities");
 	pz_menu_add_action_group("/Tools/CmdLine-Archivers/~ReadMe", "Info", readme);
-	pz_menu_sort("/Tools/CmdLine Archivers");
+	pz_menu_sort("/Tools/CmdLine-Archivers");
 	
 	browser_extension_checksum.name = N_("Calculate checksums");
 	browser_extension_checksum.makesub = load_file_handler_checksum;
