@@ -1,4 +1,4 @@
-Last updated: Oct 12, 2008
+Last updated: Oct 17, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,15 @@ original/ported software.
 
 
 == Changelog ==
+
+Oct 17, 2008
+- Finished full PZ2 port for Sansa e200 (except USB
+  detection and wheel-vs-screen backlight control)
+- Added pre-compiled Sansa e200 kernel with rotated
+  screen and remapped buttons (will try to merge
+  changes into official SVN later after much cleaning)
+- SDL or hotdog apps will be properly ported to the
+  Sansa e200 soon
 
 Oct 12, 2008
 - Committed lots of ZeroSlackr patches to the official

@@ -1,4 +1,4 @@
-Last updated: Aug 3, 2008
+Last updated: Oct 17, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -15,8 +15,8 @@ iAtari800
   on the SDL port using SDL and one written from
   scratch by Keripo using hotdog.
 - ZeroSlackr uses the hotdog version as it is faster
-  and has more features; the Sansa uses the SDL version
-  instead
+  and has more features; the SDL version is for code
+  comparison purposes (i.e. a SDL-to-hotdog example)
 For more information, see:
 - http://atari800.sourceforge.net/index.html
 - http://en.wikipedia.org/wiki/Atari_8-bit_family

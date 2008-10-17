@@ -3,21 +3,13 @@
 # iDarcNES Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Aug 22, 2008
+# Last updated: Oct 17, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
 echo "iDarcNES Auto-Building Script"
 echo ""
-# SansaLinux not supported
-if [ $SANSA ]; then
-	echo "[iDarcNES will not be supported for"
-	echo " SansaLinux - skipping]"
-	echo ""
-	echo "==========================================="
-	exit
-fi
 # Cleanup
 if [ -d build ]; then
 	echo "> Removing old build directory..."

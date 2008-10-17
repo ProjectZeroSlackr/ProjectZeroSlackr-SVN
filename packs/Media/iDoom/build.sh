@@ -3,21 +3,13 @@
 # iDoom/hDoom Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 18, 2008
+# Last updated: Oct 17, 2008
 #
 echo ""
 echo "==========================================="
 echo ""
 echo "iDoom/hDoom Auto-Building Script"
 echo ""
-# SansaLinux not supported yet
-if [ $SANSA ]; then
-	echo "[iDoom/hDoom compiling not yet"
-	echo " supported for SansaLinux - skipping]"
-	echo ""
-	echo "==========================================="
-	exit
-fi
 # Cleanup
 if [ -d build ]; then
 	echo "> Removing old build directory..."
