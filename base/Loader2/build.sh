@@ -3,7 +3,7 @@
 # Loader2 & iPodPatcher Auto-Building Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Oct 12, 2008
+# Last updated: Oct 19, 2008
 #
 echo ""
 echo "==========================================="
@@ -60,6 +60,11 @@ echo "> Updating SVN..."
 svn co --quiet https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/apps/ipod/ipodloader2 official-svn
 cp -r official-svn/* compiling/
 cd compiling
+# Apply ZeroSlackr custom patches
+echo "> Applying ZeroSlackr patches..."
+for file in ../../../src/patches/ipodloader2/*; do
+	patch -p0 -t -i $file >> build.log
+done
 # Compiling
 echo "> Compiling..."
 export PATH=/usr/local/arm-uclinux-tools2/bin:/usr/local/arm-uclinux-elf-tools/bin:/usr/local/arm-uclinux-tools/bin:$PATH
