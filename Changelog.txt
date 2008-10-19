@@ -1,4 +1,4 @@
-Last updated: Oct 17, 2008
+Last updated: Oct 19, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,10 @@ original/ported software.
 
 
 == Changelog ==
+
+Oct 19, 2008
+- Loader 2's boot tune feature was removed from the
+  official SVN and added back to ZeroSlackr
 
 Oct 17, 2008
 - Finished full PZ2 port for Sansa e200 (except USB
