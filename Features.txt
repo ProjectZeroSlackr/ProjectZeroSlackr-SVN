@@ -1,4 +1,4 @@
-Last updated: Aug 22, 2008
+Last updated: Oct 25, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -27,6 +27,8 @@ Kernel
 - iBoy audio buffer and loop-mount patches applied
 - Backwards compatible; can boot partitioned install
   created by Installer 2
+- Does not currently work with MacPods
+  (need MacPod testers!)
 Userland
 - Collection of Linux system tools and file heiarchy
 - Modified for ZeroSlackr, most folders symlinked to
@@ -54,31 +56,37 @@ iAtari800
 - Almost/full speed, optimized for iPod, no sound
 - Bumpomov's Dogs, Claim Jumper, Dog Daze and
   Dog Daze Deluxe disk images/software included
+- Colour iPods only
 iBoy
 - Gameboy (GB) and Gameboy Colour (GBC) emulator
 - Full speed, well optimized for iPod
 - AntSoldiers Demo, Boxes, Chip the Chick, DanLaser
   Demo, and Frox PD roms included
+- All iPod models
 iDarcNES
 - Nintendo Entertainment System (NES) and
   Sega Master System (SMS) emulator
 - Almost/full speed, very buggy, no sound
 - Bomb Sweeper and Stars Fields PD roms included
+- Colour iPods only
 iGameGear
 - Sega Master System (SMS) and Sega Game Gear
   (SGG) emulator
 - Almost/full speed, no sound, no menu
 - Damiana, Nibbles and Tetris PD roms included
+- Colour iPods only
 igpSP
 - Gameboy Advance (GBA) emulator
 - Decent speed, well optimized for iPod
 - Super Wings PD rom included, BIOS file not included
+- Colour iPods only
 iPodMAME
 - Multiple Arcade Machine Emulator (MAME)
 - Almost/full speed, no sound, no menu
 - Old ROMs only - see romlist in documents
 - Alien Armada, Hello Pacman demo and Matrix Pacman
   demo included
+- Colour iPods only
 
 == Media ==
 Frotz
@@ -88,16 +96,22 @@ Frotz
 Hotdog-Demos
 - Collection of demos for displaying capabilities
   of the iPod-optimized "hotdog" graphics engine
+- Colour iPods only
 hWolf3D
 - Port of the classical id game Wolfenstein 3D and its
   prequel Spear of Destiny
-- Wolfenstein 3D shareware files and Spear of Destiny demo
-  files included
+- Almost/full speed, no sound, saving issues
+- Wolfenstein 3D shareware files and Spear of Destiny
+  demo files included
+- Colour iPods only
 iDoom/hDoom
 - Port of the classical id game Doom
+- Almost/full speed, no sound
 - Hacked for PWAD support through using FreeDoom
-- Shareware IWAD (doom1.wad) and FreeDoom DeathMatch IWAD
-  (freedm.wad) included
+- Shareware IWAD (doom1.wad) and FreeDoom DeathMatch
+  IWAD (freedm.wad) included
+- All iPods except 5.5G for iDoom, colour iPods only
+  for hDoom
 Moon-Buggy
 - Simple text-based moon buggy driving/jumping game
 MV Player (Movie Player)
@@ -106,23 +120,30 @@ MV Player (Movie Player)
   format created for iPodLinux
 - Preconverted Miku Hatsune PV clip and collection of
   MV Player schemes included
+- Colour iPods only
 nano
 - Demoscene graphical demo for the iPod nano
 - Soundtrack ripped as extra MP3 file
+- iPod nano only
 ONScripter
 - Open-source clone of NScripter visual novel engine
 - English build with Mikachan font
 - Converting tools and instructions included
-- Preconverted Higurashi no Naku Koro ni - Onikakushi-hen
-  demo, fan-translated by Sonozaki Futago-tachi
+- Preconverted Higurashi no Naku Koro ni -
+  Onikakushi-hen demo, fan-translated by Sonozaki
+  Futago-tachi
+- All iPods (I think)
 Podfather
 - Demoscene graphical demo for monochrome iPods
+- Monochrome iPods only (1G-4G I think)
 SBaGen
-- Binaural beat player, can play converted iDoser files
+- Binaural beat player, can play converted iDoser
+  files
 - Sample beats included
 TinyGL-Demos
 - Collection of demos for displaying capabilities
   of the ported TinyGL 3D-graphics engine
+- Colour iPods only
 TinySID
 - SID player for playback of Commodore 64 music
 - Sample Freeze SID file included
@@ -149,7 +170,7 @@ Encyclopodia
   for iPodLinux
 - Made for converting wiki content, such as Wikipedia
   or Wiktionary
-- Preconverted copy of the iPodLinux wiki included
+- Preconverted Wiktionary dump included
 Flite
 - Light-weight voice synthesizer
 - Allows visual reading of text during voice synthesized
@@ -163,14 +184,18 @@ PiCalc
 Floyd2illA (Floydzilla)
 - Custom build of podzilla legacy with numerous
   unstable games/apps
+- iPod nanos and older only
 Podzilla0-Lite
 - Slimmed down build of podzilla legacy with Podwrite
+- iPod nanos and older only
 Podzilla0-SVN
 - SVN build of podzilla legacy (podzilla0/PZ0)
+- iPod nanos and older only
 Podzilla2-SVN
 - SVN build of podzilla 2 (podzilla/podzilla2/PZ2)
 - Launch from ZeroLauncher with select module locations
   (i.e. load with only game modules, only tools, etc.)
+- All iPods
 TimeWalk
 - Large collection of historical zillae created during
   the development of podzilla legacy (pre-podzilla2)
@@ -183,11 +208,13 @@ TimeWalk
 viPodzilla
 - Custom build of podzilla legacy with circle-based
   interface
+- iPod nanos and older only
 ZacZilla
 - Custom build of proof-of-concept TTKzilla
+- All iPods (I think)
 
 == In Development ==
-- iGens
+- SansaLinux port
 - ScummVM
 - See "To Do.txt" for full ToDo list
 
