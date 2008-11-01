@@ -1,4 +1,4 @@
-Last updated: Oct 5, 2008
+Last updated: Oct 31, 2008
 ~Keripo
 
 
@@ -10,7 +10,10 @@ but many also apply to the SansaLinux version. For
 simplicity, "iPod" is used here instead of "iPod/Sansa e200"
 and "iPodLinux" instead of "iPodLinux/SansaLinux". A few
 things, however, are iPodLinux-specific, i.e. Installer 2 and
-Loader2 stuff.
+Loader2 stuff. If you encounter terms you are unfamiliar
+with, consult Google, Wikipedia, or the "== Terminology =="
+section below.
+
 
 Q: What is Project ZeroSlackr?
 A: Read the "ReadMe from Keripo.txt" document.
@@ -50,6 +53,10 @@ A: No. Rockbox can be installed along side Project ZeroSlackr
    option of Loader2. Thats it! (Note that if you do NOT want
    Rockbox, you may want to comment out the line in the 
    "loader.cfg" file and change the default to 1).
+   If you're iPod's a MacPod, however, you're out of luck.
+   Rockbox only works on WinPods, so you're only choice would
+   be to convert your iPod to a WinPod. See Rockbox's wiki
+   for more information.
 
 Q: After trying out a few apps I keep getting this
    "blahblahblah is too big" message or a lot of random
@@ -327,4 +334,16 @@ loop-mount image
   the iPodLinux version and "/initrd" for SansaLinux; see
   "Loop-mount Instructions.txt" in "/docs/userland" for
   instructions on editing the content of the file.
+WinPod
+- An iPod originally formatted on a Windows computer using the
+  Windows version of iTunes. WinPods need to be FAT32
+  partitioned; iPods formatted as NTFS or FAT16 need to be
+  reformatted to FAT32 to work with iPodLinux. See iPodLinux's
+  wiki article for more info.
+MacPod
+- An iPod originally formatted on a Mac computer using the Mac
+  version of iTunes. MacPods need to be HFS+ formatted to work
+  with iPodLinux. Due to a kernel bug, iPodLinux will not work
+  with 5.5G iPod video MacPods (this may be fixed in the
+  future). Note that Rockbox only supports WinPods.
 

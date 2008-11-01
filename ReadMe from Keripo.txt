@@ -1,4 +1,4 @@
-Last updated: Aug 19, 2008
+Last updated: Oct 31, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under

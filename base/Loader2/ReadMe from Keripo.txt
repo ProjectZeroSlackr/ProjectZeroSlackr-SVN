@@ -1,4 +1,4 @@
-Last updated: Oct 19, 2008
+Last updated: Oct 31, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -44,13 +44,13 @@ Loader 2:
 - Source: SVN
 - Link:
   https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/apps/ipod/ipodloader2
-- Date: Oct 19, 2008
-- Version: Revision 2444
+- Date: Oct 31, 2008
+- Version: Revision 2445
 
 ZS Version:
 - Modder: Keripo
 - Type: Mod and Recompile
-- Date: Oct 19, 2008
+- Date: Oct 31, 2008
 - Version: B X.X
 
 iPodPatcher:

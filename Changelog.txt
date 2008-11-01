@@ -1,4 +1,4 @@
-Last updated: Oct 19, 2008
+Last updated: Oct 31, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,9 @@ original/ported software.
 
 
 == Changelog ==
+
+Oct 31, 2008
+- ZeroSlackr works on MacPods!!! Happy Halloween!!!
 
 Oct 19, 2008
 - Loader 2's boot tune feature was removed from the
