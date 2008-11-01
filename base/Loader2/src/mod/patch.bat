@@ -1,4 +1,4 @@
-::Last updated: July 28, 2008
+::Last updated: Oct 31, 2008
 ::~Keripo
 
 @ECHO OFF
@@ -31,13 +31,7 @@ ECHO   go back to Loader2. For instructions on rebooting,
 ECHO   see: http://ipodlinux.org/Key_combinations
 ECHO - Make sure to read all of ZeroSlackr's documents
 ECHO   starting with "ReadMe from Keripo.txt"
-ECHO - patch files will be moved to the boot/patch
-ECHO   folder; if you ever need them again, copy them
-ECHO   to the root of your iPod and execute this script.
 ECHO =====================================================
-MD boot\patch
-MOVE /Y patch-files boot\patch\
+MOVE /Y patch-files\loader-winpod.cfg loader.cfg
 PAUSE
-MOVE /Y patch.sh boot\patch\
-MOVE /Y patch.bat boot\patch\
 EXIT

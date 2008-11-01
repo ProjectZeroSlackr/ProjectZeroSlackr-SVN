@@ -1,4 +1,4 @@
-Last updated: Oct 25, 2008
+Last updated: Oct 31, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -18,7 +18,8 @@ usage instructions.
 Loader2
 - iPodLinux's main graphical bootloader
 - Able to load Rockbox, partitioned iPodLinux install
-  and ZeroSlackr install
+  and ZeroSlackr install (note: Rockbox will NOT work
+  on MacPods)
 - Modified getLoaderAutoExec for the loop-mount kernel
 - Added boot tune feature and FFVII victory fanfare
   boot tune (disable by default)
@@ -27,8 +28,6 @@ Kernel
 - iBoy audio buffer and loop-mount patches applied
 - Backwards compatible; can boot partitioned install
   created by Installer 2
-- Does not currently work with MacPods
-  (need MacPod testers!)
 Userland
 - Collection of Linux system tools and file heiarchy
 - Modified for ZeroSlackr, most folders symlinked to

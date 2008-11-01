@@ -3,7 +3,7 @@
 # Auto-Lumping Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: July 29, 2008
+# Last updated: Oct 31, 2008
 #
 echo ""
 echo "==========================================="
@@ -126,8 +126,8 @@ cd $LUMP
 sh -c "find -name '.svn' -exec rm -rf {} \;" >> /dev/null 2>&1
 # permissions
 echo "> Setting all permissions..."
-cd $SVNROOT
-chmod -fR ugo+rwx $LUMP/*
+cd $LUMP
+sh -c "find . -type f -exec chmod +x {} \;" >> /dev/null 2>&1
 # done
 cd $SVNROOT
 echo ""

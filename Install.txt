@@ -1,4 +1,4 @@
-Last updated: Oct 12, 2008
+Last updated: Oct 31, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -16,17 +16,12 @@ in the process of writing one in Java (cross-platform)
 based around ipodpatcher. For the time being, you will
 have to "install" ZeroSlackr manually.
 
-Please note that ZeroSlackr can only be installed on
-FAT-formatted Winpods that is currently supported by
-iPodLinux. If you have a Macpod, see the Rockbox wiki
-for converting instructions:
-http://www.rockbox.org/twiki/bin/view/Main/IpodConversionToFAT32
-
 iPodLinux currently supports/works on 5.5G iPod videos
 and older with the exception of the iPod shuffles.
 This includes: 1G, 2G, 3G, 4G, iPod colour, iPod
 photo, iPod mini 1G, iPod mini 2G, iPod nano 1G,
-5G iPod video and 5.5G iPod video. iPodLinux (or
+5G iPod video and 5.5G iPod video (no 5.5G iPod video
+MacPods however due to a kernel bug). iPodLinux (or
 Rockbox or iPodWizard hacks) currently does not work on
 iPod shuffles or any of the iPod newer models. This
 includes: iPod shuffle 1G, iPod shuffle 2G, iPod nano
@@ -36,23 +31,15 @@ for the newer hardware. If you are not sure what iPod
 model you have, see Wikipedia or iPodLinux's wiki's
 "Generations" page (http://ipodlinux.org/Generations).
 
-A Winpod is an iPod formatted by iTunes on a Windows
-computer; ZeroSlackr will not work on iPods formatted
-on a Mac (Macpods). If your iPod is a Macpod or you are
-not sure or ZeroSlackr does not load from Loader2, you
-should try restoring your iPod through iTunes installed
-on a Windows computer (you may have to first use Windows
-to reformat your iPod as FAT16 or FAT32).
 
-If your iPod is both a FAT-formatted Winpod and is
-currently supported by iPodLinux, you can install
-ZeroSlackr on your iPod through the following
-instructions:
+If your iPod is currently supported by iPodLinux, you
+can install ZeroSlackr on your iPod through the
+following instructions:
 
 1) Extract/copy the content of the ZeroSlackr archive
    (i.e. the "ZeroSlackr" folder, the "boot" folder,
-   the "loader.cfg" file, etc.) directly to the root of
-   your iPod.
+   the "patch.bat" and "patch.sh files, etc.) directly
+   to the root of your iPod.
    
    The "root of your iPod" means where your data files,
    music, etc. is normally stored. On Windows, it would
@@ -87,13 +74,17 @@ instructions:
    your iPod with Loader2 by using ipodpatcher.
    
    If you are on Windows, make sure that you have admin
-   access. If you are on Linux, make sure the script and
-   the "ipodpatcher" binary has full root permission and
-   you run the "patch.sh" script through the console. If
-   you are on a Mac, you must instead copy over the
-   "patch.sh" script file and "patch-files" folder to your
-   Desktop and run the "patch.sh" script from your Desktop
-   through Terminal.
+   access. If you are on Mac/Linux, make sure to run the
+   script as root (you may have to "chmod +x ./patch.sh"
+   and maybe use "sudo ./patch.sh") from the terminal.
+   
+   Also make sure iTunes and any other programs accessing
+   your iPod is closed and not running. If you are getting
+   permissions issues with ipodpatcher, make sure that no
+   program is accessing the iPod (i.e. in Mac, you will
+   probably run into permissions issues due to Spotlight's
+   indexing, etc. - you'll have to figure out work arounds
+   yourself as I don't know how to use Macs).
    
 4) Safely remove/eject/unmount/unplug your iPod after the
    patch script finishes successfully. Allow your iPod to
