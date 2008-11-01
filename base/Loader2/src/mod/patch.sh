@@ -18,7 +18,7 @@ if [ `uname` == "Darwin" ]; then
 	echo "  are accessing your iPod (i.e. iTunes, Spotlight,"
 	echo "  etc.). Also make sure you run this script from "
 	echo "  Terminal with 'sudo'."
-	cp ./patch-files/loader-macpod.cfg ./loader.cfg
+	cp -f ./patch-files/loader-macpod.cfg ./loader.cfg
 	chmod +x ./patch-files/ipodpatcher-mac
 	./patch-files/ipodpatcher-mac -ab patch-files/loader.bin
 elif [ 'uname -m' == "x86-64" ]; then
@@ -26,11 +26,11 @@ elif [ 'uname -m' == "x86-64" ]; then
 	echo "  of ipodpatcher; even if patching is successful,"
 	echo "  this script may report failure. If you are"
 	echo "  able to compile on 64-bit Linux, please contact me."
-	cp ./patch-files/loader-winpod.cfg ./loader.cfg
+	cp -f ./patch-files/loader-winpod.cfg ./loader.cfg
 	chmod +x ./patch-files/ipodpatcher-linux-64
 	./patch-files/ipodpatcher-linux-64 -ab patch-files/loader.bin
 else
-	cp ./patch-files/loader-winpod.cfg ./loader.cfg
+	cp -f ./patch-files/loader-winpod.cfg ./loader.cfg
 	chmod +x ./patch-files/ipodpatcher-linux-32
 	./patch-files/ipodpatcher-linux-32 -ab patch-files/loader.bin
 fi

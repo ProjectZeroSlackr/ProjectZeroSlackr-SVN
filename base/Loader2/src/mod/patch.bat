@@ -32,6 +32,6 @@ ECHO   see: http://ipodlinux.org/Key_combinations
 ECHO - Make sure to read all of ZeroSlackr's documents
 ECHO   starting with "ReadMe from Keripo.txt"
 ECHO =====================================================
-MOVE /Y patch-files\loader-winpod.cfg loader.cfg
+XCOPY /Q /Y patch-files\loader-winpod.cfg loader.cfg
 PAUSE
 EXIT
