@@ -1,5 +1,5 @@
 #!/bin/sh
-# Last updated: Oct 31, 2008
+# Last updated: Nov 11, 2008
 # ~Keripo
 
 echo "====================================================="
@@ -9,10 +9,6 @@ echo ""
 echo "- patching iPod with Loader2..."
 echo ""
 if [ `uname` == "Darwin" ]; then
-	echo "  Warning: Using an unpatched Mac version"
-	echo "  of ipodpatcher; even if patching fails, this,"
-	echo "  script may report (false) success. If you are"
-	echo "  able to compile on Mac OS X, please contact me."
 	echo "  Warning: If ipodpatcher gives you a permissions"
 	echo "  error and fails, make sure no other applications"
 	echo "  are accessing your iPod (i.e. iTunes, Spotlight,"

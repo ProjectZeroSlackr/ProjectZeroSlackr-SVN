@@ -1,4 +1,4 @@
-::Last updated: Oct 31, 2008
+::Last updated: Nov 11, 2008
 ::~Keripo
 
 @ECHO OFF
@@ -8,6 +8,7 @@ ECHO =====================================================
 ECHO Project ZeroSlackr Auto-patch-files Script
 ECHO by Keripo
 ECHO - patching iPod with Loader2...
+XCOPY /Q /Y patch-files\loader-winpod.cfg loader.cfg
 patch-files\ipodpatcher-win.exe -ab patch-files\loader.bin
 IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :SUCCESS
 GOTO :FAIL
@@ -32,6 +33,5 @@ ECHO   see: http://ipodlinux.org/Key_combinations
 ECHO - Make sure to read all of ZeroSlackr's documents
 ECHO   starting with "ReadMe from Keripo.txt"
 ECHO =====================================================
-XCOPY /Q /Y patch-files\loader-winpod.cfg loader.cfg
 PAUSE
 EXIT

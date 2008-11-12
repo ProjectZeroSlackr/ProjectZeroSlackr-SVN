@@ -1,4 +1,4 @@
-Last updated: Oct 31, 2008
+Last updated: Nov 11, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -50,7 +50,7 @@ Loader 2:
 ZS Version:
 - Modder: Keripo
 - Type: Mod and Recompile
-- Date: Oct 31, 2008
+- Date: Nov 11, 2008
 - Version: B X.X
 
 iPodPatcher:
@@ -58,8 +58,8 @@ iPodPatcher:
 - Source: SVN
 - Link:
   svn://svn.rockbox.org/rockbox/trunk/rbutil/ipodpatcher
-- Date: Apr 23, 2008
-- Version: Revision 17227
+- Date: Oct 10, 2008
+- Version: Revision 18763
 
 SansaPatcher:
 - Authors: Rockbox Devs, Sebastian Duell
@@ -77,11 +77,10 @@ Modifications:
 - added pre-compiled ipodpatcher binaries
   for Windows (compiled by Keripo), 32-bit Linux
   (compiled by Keripo), 64-bit Linux (Rockbox wiki) and
-  Mac OS X (extracted from Rockbox wiki by AriX)
+  Mac OS X (compiled by Matthew Croop)
 
 To do:
 - find someone to help recompile ipodpatcher on 64-bit Linux
-  and Mac OS X
 - FastLaunch.sh searcher
 - sub-menu support (look at iBoot Advanced / iLoadz)
 
