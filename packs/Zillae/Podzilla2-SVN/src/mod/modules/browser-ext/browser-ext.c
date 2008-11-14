@@ -1,5 +1,5 @@
 /*
- * Last updated: Aug 8, 2008
+ * Last updated: Nov 13, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -146,11 +146,6 @@ static int check_is_binary(const char *file)
 		return 1;
 	return 0;
 }
-static TWindow *pz_exec_binary(const char *file)
-{
-	pz_exec(file);
-	return NULL;
-}
 static TWindow *pz_exec_kill_binary(const char *file)
 {
 	pz_exec_kill(file);
@@ -267,7 +262,6 @@ static void init_launch()
 	browser_extension_pz_exec_kill.name = N_("Exit and execute");
 	browser_extension_pz_exec_kill.makesub = load_pz_exec_kill_handler;
 	pz_browser_add_action(check_is_binary, &browser_extension_pz_exec_kill);
-	pz_browser_set_handler(check_is_binary, pz_exec_binary);
 }
 
 PZ_MOD_INIT(init_launch)

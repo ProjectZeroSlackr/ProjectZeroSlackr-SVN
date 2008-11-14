@@ -1,5 +1,5 @@
 /*
- * Last updated: Jun 26, 2008
+ * Last updated: Nov 13, 2008
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -91,8 +91,66 @@ int main()
 {
 	int input;
 	char *keyname;
+	int quit = 0;
+	char *model = "Unknown";
 	
-	IPOD_HW_VER = iPod_GetGeneration();
+	IPOD_HW_VER = iPod_GetGeneration() >> 16;
+	
+	#define IPOD_SANSA		0x0
+	#define IPOD_VIDEO		0xB
+	#define IPOD_NANO		0xC
+	#define IPOD_PHOTO		0x6
+	#define IPOD_MINI_2G	0x7
+	#define IPOD_MINI_1G	0x4
+	#define IPOD_MONO_4G	0x5
+	#define IPOD_MONO_3G	0x3
+	#define IPOD_MONO_2G	0x2
+	#define IPOD_MONO_1G	0x1
+	
+	switch (IPOD_HW_VER) {
+		case 0x0: // Sansa e200
+			model = "Sansa e200";
+			quit = 1;
+			break;
+		case 0xB: // video
+			model = "5/5.5G iPod video";
+			break;
+		case 0xC: // nano
+			model = "iPod nano 1G";
+			break;
+		case 0x6: // photo, color
+			if (iPod_GetGeneration() == 0x60000)
+				model = "iPod photo";
+			else
+				model = "iPod colour";
+			break;
+		case 0x7: // mini2g
+			model = "iPod mini 2G";
+			break;
+		case 0x4: // mini1g
+			model = "iPod mini 1G";
+			break;
+		case 0x5: // 4g
+			model = "4G iPod mono";
+			break;
+		case 0x3: // 3g
+			model = "3G iPod mono";
+			quit = 1;
+			break;
+		case 0x2: // 2g
+			model = "2G iPod mono";
+			quit = 1;
+			break;
+		case 0x1: // 1g
+			model = "1G iPod mono";
+			quit = 1;
+			break;
+	}
+	fprintf(stderr, "iPod model: %s\n", model);
+	if (quit) {
+		fprintf(stderr, "Sorry, this iPod model does not have touch wheel support./n");
+		exit(1);
+	}
 	
 	for (;;) { // Infinite loop
 		input = ipod_get_keytouch();
