@@ -1,4 +1,4 @@
-Last updated: Nov 11, 2008
+Last updated: Nov 22, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,9 @@ original/ported software.
 
 
 == Changelog ==
+
+Nov 22, 2008
+- Updated location for courtc's SVN
 
 Nov 11, 2008
 - Compiled a patched ipodpatcher for Macs
