@@ -3,7 +3,7 @@
 # TinyGL Auto-Compiling Script
 # Created by Keripo
 # For Project ZeroSlackr
-# Last updated: Aug 22, 2008
+# Last updated: Nov 22, 2008
 #
 # Requires hotdog
 LIBS="hotdog"
@@ -26,7 +26,7 @@ if [ -d TinyGL ]; then
 fi
 # Update SVN
 echo "> Updating SVN..."
-svn co --quiet http://svn.so2.sytes.net/repos/ipod/tinygl TinyGL
+svn co --quiet http://svn.so2.ath.cx/repos/ipod/tinygl TinyGL
 # Compiling
 echo "> Compiling..."
 cd TinyGL
