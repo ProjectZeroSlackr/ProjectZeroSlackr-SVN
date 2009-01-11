@@ -6,8 +6,8 @@
 killall -15 ZeroLauncher >> /dev/null 2>&1
 # Due to lack of sound, ONScripter actually runs faster than realtime
 # At 57MHz, text displaying speed is slowed down to normal
-cpu_speed 57
-backlight brightness 12
+cpu_speed 57 >> /dev/null
+backlight brightness 12 >> /dev/null
 if [ -z "$1" ]; then
 	cd /opt/Media/ONScripter
 	# Because I only have a nano ; P

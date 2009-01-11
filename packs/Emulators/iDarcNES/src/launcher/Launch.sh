@@ -4,7 +4,7 @@
 
 # Format: $binary $rom_path (--nosound)
 killall -15 ZeroLauncher >> /dev/null 2>&1
-cpu_speed 78
+cpu_speed 78 >> /dev/null
 if [ -z "$1" ]; then
 	cd /opt/Emulators/iDarcNES
 	exec /opt/Emulators/iDarcNES/iDarcNES /opt/Emulators/iDarcNES/Roms/BombSweeper.nes

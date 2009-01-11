@@ -4,7 +4,7 @@
 
 # Format: $binary $rom_file $rom_dir
 killall -15 ZeroLauncher >> /dev/null 2>&1
-cpu_speed 75
+cpu_speed 75 >> /dev/null
 if [ -z "$1" ]; then
 	cd /opt/Emulators/iBoy/Roms
 	# Chip the Chick example
