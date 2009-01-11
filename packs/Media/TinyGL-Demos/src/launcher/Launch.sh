@@ -4,6 +4,6 @@
 
 # Format: $binary
 killall -15 ZeroLauncher >> /dev/null 2>&1
-cpu_speed 78
+cpu_speed 78 >> /dev/null
 cd /opt/Media/TinyGL-Demos
 exec /opt/Media/TinyGL-Demos/$1
