@@ -1,5 +1,5 @@
 /*
- * Last updated: July 23, 2008
+ * Last updated: Jan 11, 2009
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -30,6 +30,8 @@
 // Note: Most of this code is from iBoy but will not work for 4Gs and mini 1Gs
 // as they handle wheel touches differently (see iBoy's kb.c for more info)
 
+typedef u32 (*ipod_update_ingame_input_type)();
+
 extern void enter_menu();
 extern int IPOD_HW_VER;
 
@@ -42,6 +44,8 @@ static struct termios stored_settings;
 
 static int trigger_pressed = 0;
 static u32 pressed_buttons = 0;
+
+static ipod_update_ingame_input_type ipod_update_ingame_input_funct = 0;
 
 static int ipod_get_keypress()
 {
@@ -80,6 +84,11 @@ static int ipod_get_keytouch()
 }
 
 u32 ipod_update_ingame_input()
+{
+	return ipod_update_ingame_input_funct();
+}
+
+u32 ipod_update_ingame_input_default()
 {
 	int input;
 	u32 touched_buttons, key;
@@ -224,6 +233,98 @@ u32 ipod_update_ingame_input()
 	return key;
 }
 
+u32 ipod_update_ingame_input_sansa()
+{
+	int input;
+	input = ipod_get_keypress();
+	while (input != KEY_NULL) {
+		if (KEYSTATE(input)) { // Key up/lifted
+			input = KEYCODE(input);
+			switch (input) { // In numeric order for speed
+				case KEY_REWIND:
+					pressed_buttons &=~BUTTON_LEFT;
+					break;
+				case SCROLL_R:
+					pressed_buttons &=~BUTTON_R;
+					break;
+				case KEY_POWER:
+					pressed_buttons &=~BUTTON_A;
+					break;
+				case KEY_ACTION:
+					pressed_buttons &=~BUTTON_B;
+					trigger_pressed = 0;
+					break;
+				case KEY_PLAY:
+					pressed_buttons &=~BUTTON_DOWN;
+					break;
+				case KEY_FORWARD:
+					pressed_buttons &=~BUTTON_RIGHT;
+					break;
+				case KEY_HOLD:
+					break;
+				case SCROLL_L:
+					pressed_buttons &=~BUTTON_L;
+					break;
+				case KEY_REC:
+					pressed_buttons &=~BUTTON_START;
+					pressed_buttons &=~BUTTON_SELECT;
+					break;
+				case KEY_MENU: 
+					pressed_buttons &=~BUTTON_UP;
+					break;
+				default:
+					break;
+			}
+		} else { // Key down/pressed
+			input = KEYCODE(input);
+			switch (input) { // In numeric order for speed	
+				case KEY_REWIND:
+					pressed_buttons |= BUTTON_LEFT;
+					break;
+				case SCROLL_R:
+					if (SCROLL_MOD(SCROLL_MOD_NUM))
+						pressed_buttons |= BUTTON_R;
+					break;
+				case KEY_POWER:
+					pressed_buttons |= BUTTON_A;
+					break;
+				case KEY_ACTION:
+					pressed_buttons |= BUTTON_B;
+					trigger_pressed = 1;
+					break;
+				case KEY_PLAY:
+					pressed_buttons |= BUTTON_DOWN;
+					break;
+				case KEY_FORWARD:
+					pressed_buttons |= BUTTON_RIGHT;
+					break;
+				case KEY_HOLD:
+					enter_menu();
+					break;
+				case SCROLL_L:
+					if (SCROLL_MOD(SCROLL_MOD_NUM))
+						pressed_buttons |= BUTTON_L;
+					break;
+				case KEY_REC:
+					if (trigger_pressed)
+						pressed_buttons |= BUTTON_SELECT;
+					else
+						pressed_buttons |= BUTTON_START;
+					break;
+				case KEY_MENU: 
+					pressed_buttons |= BUTTON_UP;
+					break;
+				default:
+					break;
+			}
+		}
+		input = ipod_get_keypress();
+	}
+	
+	key |= pressed_buttons;
+	return key;
+}
+
 gui_action_type ipod_update_menu_input()
 {
 	// Call here as settings only get changed in the menu
@@ -302,6 +403,11 @@ void ipod_init_input()
 	
 	tcsetattr(console, TCSAFLUSH, &new_settings);
 	ioctl(console, KDSKBMODE, K_MEDIUMRAW);
+	
+	if (IPOD_HW_VER == 0x0)
+		ipod_update_ingame_input_funct = ipod_update_ingame_input_sansa;
+	else
+		ipod_update_ingame_input_funct = ipod_update_ingame_input_default;
 }
 
 void ipod_exit_input()
