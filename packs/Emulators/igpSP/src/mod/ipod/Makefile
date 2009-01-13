@@ -1,8 +1,8 @@
-# Last updated: Jun 26, 2008
+# Last updated: Jan 13, 2008
 # ~Keripo
 
 # igpSP Makefile
-# Build 0.9-2Xb K6
+# Build 0.9-2Xb K7
 # Based on GP2X Makefile
 
 

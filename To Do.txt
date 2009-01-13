@@ -1,4 +1,4 @@
-Last updated: Oct 31, 2008
+Last updated: Jan 13, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -10,7 +10,6 @@ original/ported software.
 
 == To do ==
 
-- Fix up Mac patching script (need testers!)
 - Full SansaLinux support:
   - merge 2.4.24 kernel changes with official SVN
   - rebuilt the kernel with 2.4.32 source code
