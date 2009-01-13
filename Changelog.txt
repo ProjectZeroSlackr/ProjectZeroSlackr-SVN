@@ -1,4 +1,4 @@
-Last updated: Nov 22, 2008
+Last updated: Jan 13, 2008
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -9,6 +9,9 @@ original/ported software.
 
 
 == Changelog ==
+
+Jan 13, 2008
+- Initial Sansa e200 port for igpSP K7
 
 Nov 22, 2008
 - Updated location for courtc's SVN

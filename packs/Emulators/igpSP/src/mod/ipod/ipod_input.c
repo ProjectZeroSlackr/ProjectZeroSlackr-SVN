@@ -1,5 +1,5 @@
 /*
- * Last updated: Jan 11, 2009
+ * Last updated: Jan 13, 2009
  * ~Keripo
  *
  * Copyright (C) 2008 Keripo
@@ -43,6 +43,8 @@ static int console;
 static struct termios stored_settings;
 
 static int trigger_pressed = 0;
+static int rapid_a = 0;
+static int rapid_b = 0;
 static u32 pressed_buttons = 0;
 
 static ipod_update_ingame_input_type ipod_update_ingame_input_funct = 0;
@@ -236,83 +238,82 @@ u32 ipod_update_ingame_input_default()
 u32 ipod_update_ingame_input_sansa()
 {
 	int input;
+	u32 key, touched_buttons;
+
+	touched_buttons = BUTTON_NONE;
 	input = ipod_get_keypress();
 	while (input != KEY_NULL) {
 		if (KEYSTATE(input)) { // Key up/lifted
 			input = KEYCODE(input);
-			switch (input) { // In numeric order for speed
-				case KEY_REWIND:
-					pressed_buttons &=~BUTTON_LEFT;
-					break;
-				case SCROLL_R:
-					pressed_buttons &=~BUTTON_R;
-					break;
+			switch(input) {
 				case KEY_POWER:
-					pressed_buttons &=~BUTTON_A;
+					rapid_b = 0;
 					break;
 				case KEY_ACTION:
-					pressed_buttons &=~BUTTON_B;
-					trigger_pressed = 0;
-					break;
-				case KEY_PLAY:
-					pressed_buttons &=~BUTTON_DOWN;
-					break;
-				case KEY_FORWARD:
-					pressed_buttons &=~BUTTON_RIGHT;
-					break;
-				case KEY_HOLD:
-					break;
-				case SCROLL_L:
-					pressed_buttons &=~BUTTON_L;
+					rapid_a = 0;
 					break;
 				case KEY_REC:
-					pressed_buttons &=~BUTTON_START;
-					pressed_buttons &=~BUTTON_SELECT;
-					break;
-				case KEY_MENU: 
-					pressed_buttons &=~BUTTON_UP;
+					trigger_pressed = 0;
 					break;
 				default:
 					break;
 			}
+			return BUTTON_NONE;
 		} else { // Key down/pressed
 			input = KEYCODE(input);
 			switch (input) { // In numeric order for speed	
 				case KEY_REWIND:
-					pressed_buttons |= BUTTON_LEFT;
+					if (trigger_pressed) {
+						touched_buttons |= BUTTON_L;
+					} else {
+						touched_buttons |= BUTTON_LEFT;
+					}
 					break;
 				case SCROLL_R:
-					if (SCROLL_MOD(SCROLL_MOD_NUM))
-						pressed_buttons |= BUTTON_R;
 					break;
 				case KEY_POWER:
-					pressed_buttons |= BUTTON_A;
+					if (trigger_pressed) {
+						touched_buttons |= BUTTON_START;
+					} else {
+						touched_buttons |= BUTTON_B;
+						rapid_b = 1;
+					}
 					break;
 				case KEY_ACTION:
-					pressed_buttons |= BUTTON_B;
-					trigger_pressed = 1;
+					if (trigger_pressed) {
+						touched_buttons |= BUTTON_SELECT;
+					} else {
+						touched_buttons |= BUTTON_A;
+						rapid_a = 1;
+					}
 					break;
 				case KEY_PLAY:
-					pressed_buttons |= BUTTON_DOWN;
+					if (trigger_pressed)
+						touched_buttons |= BUTTON_START;
+					else
+						touched_buttons |= BUTTON_DOWN;
 					break;
 				case KEY_FORWARD:
-					pressed_buttons |= BUTTON_RIGHT;
+					if (trigger_pressed) {
+						touched_buttons |= BUTTON_R;
+					} else {
+						touched_buttons |= BUTTON_RIGHT;
+					}
 					break;
 				case KEY_HOLD:
 					enter_menu();
 					break;
 				case SCROLL_L:
-					if (SCROLL_MOD(SCROLL_MOD_NUM))
-						pressed_buttons |= BUTTON_L;
 					break;
 				case KEY_REC:
-					if (trigger_pressed)
-						pressed_buttons |= BUTTON_SELECT;
-					else
-						pressed_buttons |= BUTTON_START;
+					trigger_pressed = 1;
 					break;
-				case KEY_MENU: 
-					pressed_buttons |= BUTTON_UP;
+				case KEY_MENU:
+					if (trigger_pressed) {
+						touched_buttons |= BUTTON_SELECT;
+					} else {
+						touched_buttons |= BUTTON_UP;
+					}
 					break;
 				default:
 					break;
@@ -320,8 +321,14 @@ u32 ipod_update_ingame_input_sansa()
 		}
 		input = ipod_get_keypress();
 	}
-	
-	key |= pressed_buttons;
+	if (ipod_rapid_fire) {
+		if (rapid_a && (RAPID_FIRE(RAPID_FIRE_NUM))) {
+			touched_buttons |= BUTTON_A;
+		} elseif (rapid_b && (RAPID_FIRE(RAPID_FIRE_NUM))) {
+			touched_buttons |= BUTTON_B;
+		}
+	}
+	key = touched_buttons;
 	return key;
 }
 

@@ -1,8 +1,8 @@
-Last updated: Aug 19, 2008
+Last updated: Jan 13, 2008
 ~Keripo
 
 
-igpSP 0.9-2xb K6 build
+igpSP 0.9-2xb K7 build
 port by Keripo with permission from Exophase
 
 
@@ -16,7 +16,8 @@ the emulator itself (gpSP), see the documents in the "docs"
 directory. For information on the iPodLinux port, see the iPL
 wiki page (http://ipodlinux.org/Igpsp) or search the iPodLinux
 forums (http://www.ipodlinux.org/forums/). Currently igpSP only
-runs on colour iPods (i.e. iPod colour/photo/nano/video).
+runs on colour iPods (i.e. iPod colour/photo/nano/video) and
+the Sansa e200.
 
 
 == History ==
@@ -28,7 +29,8 @@ of gpSP as a separate build target, rewritting a large chunk
 of Zaphod's code and adding in many iPod-specific features and
 optimizations. As of the moment, the emulator is able to run at
 around 50-80% real-time speed (depending on the game/homebrew)
-compared to the full-speed PSP and GP2X versions.
+compared to the full-speed PSP and GP2X versions. The Sansa e200
+port is functional but buggy and incomplete.
 
 
 == Code ==
@@ -76,6 +78,18 @@ optimizations). Note, however, that overclocking the iPod to
 iPodLinux to become unstable or shut down (after a certain
 temperature). Thus, normal usage should be measured in terms
 of 78MHz.
+
+To accommodate the Sansa e200's lack of touch input, the
+Record button is used as an input modifier (i.e. similar to a
+Ctrl or Alt key on a keyboard). Due to how video blitting is
+done, however, the screen sometimes shifts to the right when
+entering/exiting the emulator's menu and stays like that.
+This is due to the non-concurrency of screen updating with
+hotdog and gpSP's screen code (particularly the memcpy used
+by the "enter_menu()" function) - I am currently unable to
+think of a way around this. As well, backlight brightness
+control is unavailable for the Sansa as the code has not
+yet been ported over from the Rockbox code.
 
 
 == Preparing ==
@@ -166,9 +180,26 @@ In game, if the "Rapid Fire A & B" setting is "On":
 TOUCH UP-RIGHT   = A (rapid fire)
 TOUCH UP-LEFT    = B (rapid fire)
 
+For the Sansa e200, in-game controls are based on using
+the Record button as an input modifier:
+MENU             = up
+PAUSE/PLAY       = down
+REWIND           = left
+FAST FORWARD     = right
+CENTRE           = A
+POWER            = B
+HOLD SWITCH      = enter menu
+RECORD + MENU    = select
+RECORD + PLAY    = start
+RECORD + REWIND  = left trigger
+RECORD + FORWARD = right trigger
+RECORD + CENTRE  = select
+RECORD + POWER   = start
+
 Note that igpSP sometimes freezes when exiting.
 If this happens, just force reboot your iPod
 (see the "Key_Combinations" iPodLinux wiki page).
+For the Sansa e200, hold the Power button for 8 seconds.
 
 
 == Tweaking ==
@@ -245,6 +276,9 @@ Hardware settings:
 
 
 == Changelog ==
+K7:
+- Added input mapping for the Sansa e200 (port still has video
+  scaling issues)
 K6:
 - Fixed backlight setting (now setting instead of toggle)
 - Moved hardware settings into new submenu

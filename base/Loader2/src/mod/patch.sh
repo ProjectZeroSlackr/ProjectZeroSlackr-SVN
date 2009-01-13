@@ -1,5 +1,5 @@
 #!/bin/sh
-# Last updated: Nov 11, 2008
+# Last updated: Jan 13, 2008
 # ~Keripo
 
 echo "====================================================="
@@ -14,9 +14,9 @@ if [ `uname` == "Darwin" ]; then
 	echo "  are accessing your iPod (i.e. iTunes, Spotlight,"
 	echo "  etc.). Also make sure you run this script from "
 	echo "  Terminal with 'sudo'."
-	cp -f ./patch-files/loader-macpod.cfg ./loader.cfg
-	chmod +x ./patch-files/ipodpatcher-mac
-	./patch-files/ipodpatcher-mac -ab patch-files/loader.bin
+	sudo cp -f ./patch-files/loader-macpod.cfg ./loader.cfg
+	sudo chmod +x ./patch-files/ipodpatcher-mac
+	sudo ./patch-files/ipodpatcher-mac -ab patch-files/loader.bin
 elif [ 'uname -m' == "x86-64" ]; then
 	echo "  Warning: Using an unpatched 64-bit Linux version"
 	echo "  of ipodpatcher; even if patching is successful,"
