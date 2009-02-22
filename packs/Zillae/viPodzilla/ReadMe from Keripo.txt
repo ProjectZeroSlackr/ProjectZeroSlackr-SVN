@@ -23,8 +23,8 @@ viPodzilla
   the ZeroSlackr pack uses a hex edited viPodzilla binary
   with no MPD support.
 For more information, see:
-- http://ipodlinux.org/ViPodzilla
-- http://ipodlinux.org/Category:Podzillae
+- http://ipodlinux.org/wiki/ViPodzilla
+- http://ipodlinux.org/wiki/Category:Podzillae
 
 Usage:
 - FastLaunch through "Zillae > viPodzilla".
@@ -34,9 +34,9 @@ Original:
 - Authors: Zsombor Kovacs (zsk009) et al.
 - Source: Jonrelay's mirror
 - Link:
-  www.ipodlinux.org/Vipodzilla
+  http://ipodlinux.org/wiki/Vipodzilla
   http://www.kreativekorp.com/ipl/vipodzilla.tgz
-  http://ipodlinux.org/images/7/7e/ViPodzilla.tgz (connect4 pics)
+  http://ipodlinux.org/wiki/Image:ViPodzilla.tgz (connect4 pics)
 - Date: March 3, 2006 (mirrored)
 - Version: ???
 

@@ -23,7 +23,7 @@ Hotdog
   (changes were committed upstream) as well as other
   hotdog demos (hotdog-ex) written in C++.
 For more information, see:
-- http://www.ipodlinux.org/Hotdog
+- http://ipodlinux.org/wiki/Hotdog
 - http://ipl.nonb.org/wiki/Hotdog/Overview
 
 Usage:

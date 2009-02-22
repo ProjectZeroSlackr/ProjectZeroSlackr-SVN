@@ -24,10 +24,10 @@ igpSP
 - The ZeroSlackr version has a few path changes for
   ZS-friendliness.
 For more information, see:
-- http://ipodlinux.org/IgpSP
-- http://ipodlinux.org/forums/viewtopic.php?t=29996
+- http://ipodlinux.org/wiki/IgpSP
+- http://ipodlinux.org/oldforums/viewtopic.php?t=29996
 - http://en.wikipedia.org/wiki/Nintendo_Entertainment_System
-- http://www.ipodlinux.org/forums/viewtopic.php?t=18245
+- http://ipodlinux.org/oldforums/viewtopic.php?t=18245
 
 Usage:
 - Dump your own 'gba_bios.bin' file and place it in the "Data"

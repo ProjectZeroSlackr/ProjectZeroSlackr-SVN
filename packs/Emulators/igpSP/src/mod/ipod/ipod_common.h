@@ -22,7 +22,7 @@
 /*
  * Source code for these files borrowed from various places including:
  * - iBoy: http://sourceforge.net/projects/iboy
- * - igpSP: http://ipodlinux.org/Igpsp (Zaphod's original port)
+ * - igpSP: http://ipodlinux.org/wiki/Igpsp (Zaphod's original port)
  * - ithread: http://svn.so2.sytes.net/repos/ipod/ithread/
  * - libipod: https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/libs/libipod/
  * - Rockbox: svn://svn.rockbox.org/rockbox/trunk/firmware

@@ -21,8 +21,8 @@ Userland
 - The ZeroSlackr userland also includes various unofficial
   fonts and schemes created by various users.
 For more information, see:
-- http://ipodlinux.org/Installation:_Winpod_without_datacorruption
-- http://ipodlinux.org/Userland
+- http://ipodlinux.org/wiki/Installation:_Winpod_without_datacorruption
+- http://ipodlinux.org/wiki/Userland
 - http://en.wikipedia.org/wiki/Userland_(computing)
 - http://en.wikipedia.org/wiki/Initrd
 - http://busybox.net/
@@ -43,7 +43,7 @@ Usage:
   than all of "/etc").
 - If you do need to modify/access the ext2 image however, you
   can do so via the old, depreciated "start" file method
-  (see http://ipodlinux.org/Start_File) or loop-mounting
+  (see http://ipodlinux.org/wiki/Start_File) or loop-mounting
   the image on Linux (see "Loop-mount Instructions.txt" in
   "/docs/userland/").
 - Since "/usr" is symlinked, any binaries placed in "/usr/bin"
@@ -59,7 +59,7 @@ Original:
 - Authors: DataGhost & AriX
 - Source: AriX's iPod Application Manager
 - Link:
-  http://ipodlinux.org/forums/viewtopic.php?t=23450 (thread)
+  http://ipodlinux.org/oldforums/viewtopic.php?t=23450 (thread)
   http://winxblog.com/iPodLinuxManagerbeta.zip
 - Date: Mar 11, 2007?
 - Version: 1.1

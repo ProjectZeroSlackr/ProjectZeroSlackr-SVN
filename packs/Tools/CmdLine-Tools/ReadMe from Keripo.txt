@@ -47,11 +47,11 @@ Original:
   gnu tools
   (grep, gawk, sed)
   imphasing, Apr 1, 2006
-  http://ipodlinux.org/Gnutools
-  http://ipodlinux.org/forums/viewtopic.php?t=9148
-  http://ipodlinux.org/Image:Ipodgrep.tar
-  http://ipodlinux.org/Image:Ipodgawk.tar.gz
-  http://ipodlinux.org/Image:Ipodsed.tar
+  http://ipodlinux.org/wiki/Gnutools
+  http://ipodlinux.org/oldforums/viewtopic.php?t=9148
+  http://ipodlinux.org/wiki/Image:Ipodgrep.tar
+  http://ipodlinux.org/wiki/Image:Ipodgawk.tar.gz
+  http://ipodlinux.org/wiki/Image:Ipodsed.tar
   
   diffutils
   (cmp, diff, diff3, sdiff)
@@ -62,12 +62,12 @@ Original:
   (asciichart, contrast, font, lsi, pause, raise)
   (note that backlight isn't included; use Keripo's version)
   Jonrelay, Revision 2113 (pre-"Great Befuddlement")
-  http://ipodlinux.org/forums/viewtopic.php?t=705
+  http://ipodlinux.org/oldforums/viewtopic.php?t=705
   https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/apps/ipod/cmdlineutils
   
   John the Ripper
   coob, Mar 14, 2005
-  http://ipodlinux.org/forums/viewtopic.php?t=1324
+  http://ipodlinux.org/oldforums/viewtopic.php?t=1324
   http://www.openwall.com/john/f/john-1.7.2.tar.gz
   http://web.archive.org/web/20050404001647/http://booc.coob.org/john-1.6.37-arm.diff
   

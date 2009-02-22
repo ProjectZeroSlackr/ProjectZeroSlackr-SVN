@@ -88,7 +88,7 @@ static int ipod_get_keytouch()
 			touch = (in & 0x007F0000 ) >> 16;
 	}
 	
-	// See http://ipodlinux.org/Key_Chart
+	// See http://ipodlinux.org/wiki/Key_Chart
 	// The +6 is for rounding
 	if (touch != 0xff) {
 		touch += 6;

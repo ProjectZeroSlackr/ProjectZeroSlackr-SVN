@@ -31,7 +31,7 @@ SBaGen
   USE AND EXPERIMENT WITH THIS UTILITY AT YOUR OWN RISK!"
 For more information, see:
 - http://uazu.net/sbagen
-- http://ipodlinux.org/forums/viewtopic.php?t=4435 (first port)
+- http://ipodlinux.org/oldforums/viewtopic.php?t=4435 (first port)
 - http://uazu.net/sbagen/notes1.html
 - http://en.wikipedia.org/wiki/Binaural_beats
 

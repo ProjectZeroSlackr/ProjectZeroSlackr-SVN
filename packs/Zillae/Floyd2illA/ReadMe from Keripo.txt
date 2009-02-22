@@ -27,8 +27,8 @@ Floydzilla
   MPD documentation).
 For more information, see:
 - http://www.dansfloyd.com/floydzilla.html
-- http://ipodlinux.org/Floydzilla
-- http://ipodlinux.org/Podzillae
+- http://ipodlinux.org/wiki/Floydzilla
+- http://ipodlinux.org/wiki/Podzillae
 
 Usage:
 - FastLaunch through "Zillae > Floydzilla".

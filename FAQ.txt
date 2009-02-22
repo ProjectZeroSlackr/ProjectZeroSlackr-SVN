@@ -87,7 +87,7 @@ A: Due to large number of SlackrPacks now and thus
    of memory (think RAM, not hard-drive space). This is
    partially due to memory fragmenting in the kernel (for
    which we need kernel developers (see this thread:
-   http://ipodlinux.org/forums/viewtopic.php?t=27395 )
+   http://ipodlinux.org/oldforums/viewtopic.php?t=27395 )
    and sometimes due to bad programming in the apps
    (I did not write the majority of these applications and
    would not know how to fix such). The current solution

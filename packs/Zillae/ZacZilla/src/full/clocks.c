@@ -62,7 +62,7 @@
  * Revision 1.7  2005/05/26 04:27:00  yorgle
  * Timezone arrays moved into clocks.c from menu.c
  * DST arrays added
- * World clock complete and hooked in.  (ipodlinux.org/WorldClock for info)
+ * World clock complete and hooked in.  (ipodlinux.org/wiki/WorldClock for info)
  * Added WORLD DST into the settings array
  * Re-ordered the time-based settings items
  *

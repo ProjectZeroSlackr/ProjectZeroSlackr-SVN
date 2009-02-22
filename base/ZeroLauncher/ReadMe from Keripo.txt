@@ -19,7 +19,7 @@ ZeroLauncher
   of "Module" and requires the module file to end with
   a file extension of ".zl" rather than ".mod.o".
 For more information, see:
-- http://ipodlinux.org/Podzilla
+- http://ipodlinux.org/wiki/Podzilla
 - http://en.wikipedia.org/wiki/Graphical_user_interface
 
 Usage:
@@ -30,7 +30,7 @@ Usage:
   from the ZeroLauncher menu (or until iPodLinux freezes,
   in which the user should manually reboot by holding the
   correct key combinations for force rebooting their iPod
-  (see http://ipodlinux.org/Key_combinations).
+  (see http://ipodlinux.org/wiki/Key_Combinations).
 - ZeroLauncher loads special podzilla2 modules from
   folders in "/opt" and "/opt/Base/ZeroLauncher/Add-ons".
 - To add normal podzilla2 modules to ZeroLauncher, rename
@@ -108,7 +108,7 @@ Add-ons:
     make ZeroSlackr friendly
   > uses check_is_ascii_file
   > source:
-    http://ipodlinux.org/modules/podread/podread-0.0.1-src.tar.gz
+   http://ipodlinux.org/w/modules/podread/podread-0.0.1-src.tar.gz
 
 To do:
 - include select ncurses tests/demos?

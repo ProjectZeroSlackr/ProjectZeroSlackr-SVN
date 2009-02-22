@@ -16,8 +16,8 @@ Flite
 - The ZeroSlackr pack will allow you to read the actual
   text while listening to the synthesized reading.
 For more information, see:
-- http://ipodlinux.org/forums/viewtopic.php?t=59
-- http://ipodlinux.org/Flite_(festival-lite)
+- http://ipodlinux.org/oldforums/viewtopic.php?t=59
+- http://ipodlinux.org/wiki/Flite_(festival-lite)
 - http://www.speech.cs.cmu.edu/flite/
 
 Usage:

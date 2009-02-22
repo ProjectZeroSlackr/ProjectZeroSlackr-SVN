@@ -28,7 +28,7 @@ ECHO   boot into ZeroSlackr or select the "Apple OS"
 ECHO   option to boot into the original firmware.
 ECHO - When in the Apple OS, force reboot your iPod to
 ECHO   go back to Loader2. For instructions on rebooting,
-ECHO   see: http://ipodlinux.org/Key_combinations
+ECHO   see: http://ipodlinux.org/wiki/Key_Combinations
 ECHO - Make sure to read all of ZeroSlackr's documents
 ECHO   starting with "ReadMe from Keripo.txt"
 ECHO =====================================================

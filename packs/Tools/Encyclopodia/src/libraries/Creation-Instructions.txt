@@ -8,11 +8,11 @@ Last updated: July 23, 2008
    and download the appropriate compressed .xml files
    (e.g. enwiktionary's pages-articles.xml.bz2).
    For creating an iPodLinux wiki dump, go to
-   http://ipodlinux.org/Special:Export
+   http://ipodlinux.org/wiki/Special:Export
    and copy-paste the content of "iPL-Export-List.txt"
    into the text box, then save the export as a .xml file
    (you can generate your own list by copying the content of
-   http://ipodlinux.org/Special:Allpages, then replacing
+   http://ipodlinux.org/wiki/Special:Allpages, then replacing
    all tab characters with newline characters).
    Note that if you downloaded an archived dump (i.e. file
    extension of .xml.7z, .xml.bz2 or .xml.gz) you will need

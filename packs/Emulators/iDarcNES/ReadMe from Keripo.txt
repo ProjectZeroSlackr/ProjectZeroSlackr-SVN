@@ -28,10 +28,10 @@ iDarcNES
   version has a few small changes but an entire
   rewrite is very much needed.
 For more information, see:
-- http://ipodlinux.org/IDarcNES
+- http://ipodlinux.org/wiki/IDarcNES
 - http://www.dridus.com/~nyef/darcnes/
 - http://en.wikipedia.org/wiki/Nintendo_Entertainment_System
-- http://www.ipodlinux.org/forums/viewtopic.php?t=18245
+- http://ipodlinux.org/oldforums/viewtopic.php?t=18245
 
 Usage:
 - FastLaunch through "Emulators > iDarcNES > FastLaunch"
@@ -54,7 +54,7 @@ Original:
 - Authors: Nyef, zaphod, zacaj
 - Source: Wiki upload
 - Link:
-  http://ipodlinux.org/Image:Darcnes.zip
+  http://ipodlinux.org/wiki/Image:Darcnes.zip
 - Date: Mar 18, 2008
 - Version: ????
 

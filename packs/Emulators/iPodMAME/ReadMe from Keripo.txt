@@ -15,7 +15,7 @@ iPodMAME
   iPodMAME is only confirmed to work with
   iPod nanos and iPod videos (5G).
 For more information, see:
-- http://ipodlinux.org/Ipodmame
+- http://ipodlinux.org/wiki/Ipodmame
 - http://umlautllama.com/projects/nanomame/
 - http://mamedev.org/
 - http://en.wikipedia.org/wiki/MAME

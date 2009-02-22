@@ -15,7 +15,7 @@ Podzilla0-SVN
   abandoned in favour of podzilla2 (for its modularity).
 - Podzilla0 also has a built-in video player that can play
   uncompressed .avi files preconverted by applications
-  such as MoPiD (http://ipodlinux.org/MoPiD)
+  such as MoPiD (http://ipodlinux.org/wiki/MoPiD)
 - Since the iPod video (5G/5.5G) was released after the
   switch to PZ2, the PZ0 LCD driver is extremely slow with
   iPod videos to the point that PZ0 and all PZ0-based zillae
@@ -23,7 +23,7 @@ Podzilla0-SVN
 - The ZeroSlackr version just has a few string changes for
   ZeroSlackr Framework compatibility.
 For more information, see:
-- http://ipodlinux.org/Podzilla_(legacy)
+- http://ipodlinux.org/wiki/Podzilla_(legacy)
 
 Usage:
 - FastLaunch through "Zillae > Podzilla0-SVN".

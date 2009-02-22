@@ -14,10 +14,10 @@ now ported to iPodLinux (it has also been ported to a few other
 platforms such as the iPhone, etc.). For more information on
 the emulator itself (gpSP), see the documents in the "docs"
 directory. For information on the iPodLinux port, see the iPL
-wiki page (http://ipodlinux.org/Igpsp) or search the iPodLinux
-forums (http://www.ipodlinux.org/forums/). Currently igpSP only
-runs on colour iPods (i.e. iPod colour/photo/nano/video) and
-the Sansa e200.
+wiki page (http://ipodlinux.org/wiki/Igpsp) or search the
+iPodLinux forums (http://ipodlinux.org/oldforums/). Currently
+igpSP only runs on colour iPods (i.e. iPod colour/photo/
+nano/video) and the Sansa e200.
 
 
 == History ==

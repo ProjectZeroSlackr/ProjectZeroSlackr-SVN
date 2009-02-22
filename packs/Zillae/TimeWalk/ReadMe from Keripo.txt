@@ -50,7 +50,7 @@ TimeWalk
   > vanillazilla, MarioZilla, Canuckzilla
 For more information, see each zillae's respective links
 though most of their descriptions can be found here:
-- http://www.ipodlinux.org/Podzillae
+- http://ipodlinux.org/Podzillae
 
 Usage:
 - Launch the different zillae through the "TimeWalk"
@@ -74,7 +74,7 @@ http://web.archive.org/web/20060527040112/http://zeropoke.net/Poke-Zilla/binary/
 (extras.zip corrupt)
 
 Owen OS by Crazyboarderboy6 and Megabyte
-http://web.archive.org/web/20070620194926/http://www.ipodlinux.org/Owen_OS
+http://web.archive.org/web/20070620194926/http://ipodlinux.org/Owen_OS
 http://www.webstick.co.uk/accounts/Bazanski/owenipod
 http://www.webstick.co.uk/accounts/Bazanski/Owenos.c
 
@@ -83,107 +83,107 @@ http://web.archive.org/web/20070223085357/http://ipodlinux.org/Yankeezilla
 (unknown source - forgot where gotten from)
 
 ill-zilla by miz_dawg
-http://ipodlinux.org/Podzillae
+http://ipodlinux.org/wiki/Podzillae
 (missing)
 
 PureZilla by Koekie
-http://ipodlinux.org/Podzillae
+http://ipodlinux.org/wiki/Podzillae
 (missing)
 
 vanillazilla by magician13134
-http://ipodlinux.org/forums/viewtopic.php?t=13902&highlight=vanillazilla
+http://ipodlinux.org/oldforums/viewtopic.php?t=13902&highlight=vanillazilla
 (never compiled?)
 
 MarioZilla by ???
-http://ipodlinux.org/Podzillae
+http://ipodlinux.org/wiki/Podzillae
 (never existed?)
 
 Funzilla by smacmac
-http://ipodlinux.org/forums/viewtopic.php?t=1632
+http://ipodlinux.org/oldforums/viewtopic.php?t=1632
 (unknown source - forgot where gotten from)
 
 mikmodpodzilla by Yorgle
-http://ipodlinux.org/forums/viewtopic.php?t=1515
+http://ipodlinux.org/oldforums/viewtopic.php?t=1515
 http://web.archive.org/web/20070210112709/http://ipodlinux.org/MikModPodzilla
 http://web.archive.org/web/20060219061513/patsy.cis.rit.edu/Software/iPod/2005-04-04_mikmod/
 
 king-zilla by king
-http://ipodlinux.org/Podzillae
+http://ipodlinux.org/wiki/Podzillae
 (missing)
 
 Jpodzilla by 50
-http://www.ipodlinux.org/forums/viewtopic.php?t=1308
-http://ipodlinux.org/Image:Jpodzilla.tgz
-http://ipodlinux.org/Image:Jpodzilla-src.tgz
+http://ipodlinux.org/oldforums/viewtopic.php?t=1308
+http://ipodlinux.org/wiki/Image:Jpodzilla.tgz
+http://ipodlinux.org/wiki/Image:Jpodzilla-src.tgz
 
 Canuckzilla by canuckid
-http://ipodlinux.org/Podzillae
+http://ipodlinux.org/wiki/Podzillae
 (never compiled?)
 
 multipodzilla by EvilDude
-http://ipodlinux.org/forums/viewtopic.php?t=695
+http://ipodlinux.org/oldforums/viewtopic.php?t=695
 (missing)
 
 iPodVX by surfdargent
-http://ipodlinux.org/forums/viewtopic.php?t=258
-http://ipodlinux.org/forums/viewtopic.php?t=675
+http://ipodlinux.org/oldforums/viewtopic.php?t=258
+http://ipodlinux.org/oldforums/viewtopic.php?t=675
 (missing - binary is not for iPL)
 
 Relayzilla by jonrelay
-http://ipodlinux.org/forums/viewtopic.php?t=4145&highlight=relayzilla
-http://ipodlinux.org/Image:Relayzilla.tgz
+http://ipodlinux.org/oldforums/viewtopic.php?t=4145&highlight=relayzilla
+http://ipodlinux.org/wiki/Image:Relayzilla.tgz
 
 podzilla-mc by jonrelay
-http://ipodlinux.org/forums/viewtopic.php?t=2387
-http://ipodlinux.org/Image:Multiconvert.tgz
+http://ipodlinux.org/oldforums/viewtopic.php?t=2387
+http://ipodlinux.org/wiki/Image:Multiconvert.tgz
 
 podzilla-fbk by jonrelay
-http://ipodlinux.org/Image:Fourbtnkbd.tgz
+http://ipodlinux.org/wiki/Image:Fourbtnkbd.tgz
 
 podzilla-ti by jonrelay
-http://ipodlinux.org/forums/viewtopic.php?t=2051
-http://ipodlinux.org/Text_Input_%28legacy%29
-http://ipodlinux.org/Image:Textinput.tgz
-http://ipodlinux.org/Image:TextInput8.tgz
-http://ipodlinux.org/Image:TextInput7.tgz
-http://ipodlinux.org/Image:TextInput6.tgz
-http://ipodlinux.org/Image:TextInput5.tgz
-http://ipodlinux.org/Image:TextInput4.tgz
-http://ipodlinux.org/Image:TextInput3.tgz
-http://ipodlinux.org/Image:TextInput2.tgz
+http://ipodlinux.org/oldforums/viewtopic.php?t=2051
+http://ipodlinux.org/wiki/Text_Input_%28legacy%29
+http://ipodlinux.org/wiki/Image:Textinput.tgz
+http://ipodlinux.org/wiki/Image:TextInput8.tgz
+http://ipodlinux.org/wiki/Image:TextInput7.tgz
+http://ipodlinux.org/wiki/Image:TextInput6.tgz
+http://ipodlinux.org/wiki/Image:TextInput5.tgz
+http://ipodlinux.org/wiki/Image:TextInput4.tgz
+http://ipodlinux.org/wiki/Image:TextInput3.tgz
+http://ipodlinux.org/wiki/Image:TextInput2.tgz
 
 podzilla with tuxchess by zsk009
-http://ipodlinux.org/Image:Tuxchess013.tgz
+http://ipodlinux.org/wiki/Image:Tuxchess013.tgz
 
 podzilla with nxsnake by zsk009
-http://ipodlinux.org/Image:Snake.tgz
+http://ipodlinux.org/wiki/Image:Snake.tgz
 
 podzilla_dutch by BobVH
-http://ipodlinux.org/Image:Podzilla_dutch.tar
+http://ipodlinux.org/wiki/Image:Podzilla_dutch.tar
 
 video_podzilla by aegray
-http://ipodlinux.org/Image:Video_podzilla.tgz
+http://ipodlinux.org/wiki/Image:Video_podzilla.tgz
 
 podzilla with keyman by KMM
-http://ipodlinux.org/Image:821keyman.tgz
+http://ipodlinux.org/wiki/Image:821keyman.tgz
 
 iTanks
-http://ipodlinux.org/Itanks
-http://ipodlinux.org/forums/viewtopic.php?t=9057
-http://ipodlinux.org/Image:Podzilla-with-itanks.zip
+http://ipodlinux.org/wiki/Itanks
+http://ipodlinux.org/oldforums/viewtopic.php?t=9057
+http://ipodlinux.org/wiki/Image:Podzilla-with-itanks.zip
 (unknown source - forgot where gotten from)
 
 pdPod
-http://ipodlinux.org/PdPod
-http://ipodlinux.org/Image:Pdpod_podzilla.gz
-http://ipodlinux.org/Image:PureData.zip
-http://ipodlinux.org/Image:Pdpod.c.gz
+http://ipodlinux.org/wiki/PdPod
+http://ipodlinux.org/wiki/Image:Pdpod_podzilla.gz
+http://ipodlinux.org/wiki/Image:PureData.zip
+http://ipodlinux.org/wiki/Image:Pdpod.c.gz
 
 podzilla with sudoku
-http://ipodlinux.org/Image:Sudoku.tar.gz
+http://ipodlinux.org/wiki/Image:Sudoku.tar.gz
 
 ipod-desktop + 4wins by Hallo99
-http://www.ipodlinux.org/forums/viewtopic.php?p=1383
+http://ipodlinux.org/oldforums/viewtopic.php?p=1383
 http://johannes.krude.de/ipod/4wins-0.3.tar.gz
 http://johannes.krude.de/ipod/4wins-0.3-binary.tar.gz
 http://johannes.krude.de/ipod/ipod-desktop-0.3.tar.gz
@@ -191,9 +191,9 @@ http://johannes.krude.de/ipod/ipod-desktop-0.3-binary.tar.gz
 http://johannes.krude.de/ipod/nano-X.tar.gz
 
 Margarelon by Efram
-http://www.ipodlinux.org/Margarelon
-http://www.ipodlinux.org/forums/viewtopic.php?t=1364
-http://www.ipodlinux.org/forums/viewtopic.php?t=1219 (interesting read)
+http://ipodlinux.org/wiki/Margarelon
+http://ipodlinux.org/oldforums/viewtopic.php?t=1364
+http://ipodlinux.org/oldforums/viewtopic.php?t=1219 (interesting read)
 http://web.archive.org/web/20060712054712/http://www.dotink.org/podzilla/
 http://web.archive.org/web/20060712054712/http://www.dotink.org/podzilla/packages/ptk-current.tar.bz2
 http://web.archive.org/web/20060727140704/www.dotink.org/podzilla/changelogs/ptk
@@ -201,7 +201,7 @@ http://web.archive.org/web/20060712054712/http://www.dotink.org/podzilla/package
 http://web.archive.org/web/20060727025522/www.dotink.org/podzilla/changelogs/margarelon
 
 podzilla with othello by courtc
-http://www.ipodlinux.org/forums/viewtopic.php?t=122
+http://ipodlinux.org/oldforums/viewtopic.php?t=122
 http://so2.sytes.net/ipod/podzilla
 
 ZS Version:

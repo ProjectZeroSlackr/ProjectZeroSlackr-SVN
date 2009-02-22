@@ -43,7 +43,7 @@ hDoom
 
 For more information, see:
 - http://idoom.hyarion.com/
-- http://ipodlinux.org/IDoom
+- http://ipodlinux.org/wiki/IDoom
 - http://en.wikipedia.org/wiki/Doom
 
 Usage:
