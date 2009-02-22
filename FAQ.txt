@@ -1,4 +1,4 @@
-Last updated: Oct 31, 2008
+Last updated: Feb 22, 2009
 ~Keripo
 
 
@@ -17,6 +17,31 @@ section below.
 
 Q: What is Project ZeroSlackr?
 A: Read the "ReadMe from Keripo.txt" document.
+
+Q: Why doesn't ZeroSlackr support MacPods? (see the
+   "== Terminology ==" section for checking whether
+   your iPod is a MacPod or WinPod)
+A: While it is possible to get ZeroSlackr installed on a
+   MacPod, the initial setup to make a factory-fresh MacPod
+   iPodLinux-ready requires multiple manual steps that can
+   not be easily handled by a simple bash script (which
+   ZeroSlackr uses), especially for 5.5G iPod videos. If
+   you wish to use ZeroSlackr, you will need to restore
+   your iPod using iTunes on a Windows computer and install
+   ZeroSlackr on Windows. Alternatively, you can follow the
+   manual install instruction on the "Manual Installation"
+   wiki page. Note that if you're MacPod has already been
+   set up with Loader 2 (and, if it is a 5.5G, is
+   repartitioned as described on the "Manual Installation"
+   wiki page), you can run ZeroSlackr by following the
+   normal install instructions but editing the "ZeroSlackr"
+   line of "loader.cfg" to say:
+      ZeroSlackr @ (hd0,1)/boot/vmlinux root=/dev/3
+      rootfstype=hfsplus rw quiet
+   Also keep in mind that Rockbox does not work on MacPods
+   so it is highly recommended that you just reformat your
+   iPod to a WinPod (it will still work with your Mac's
+   iTunes afterwards).
 
 Q: When I run the "patch" script I am told by ipodpatcher
    that my iPod cannot be found when my iPod is clearly
@@ -53,10 +78,6 @@ A: No. Rockbox can be installed along side Project ZeroSlackr
    option of Loader2. Thats it! (Note that if you do NOT want
    Rockbox, you may want to comment out the line in the 
    "loader.cfg" file and change the default to 1).
-   If you're iPod's a MacPod, however, you're out of luck.
-   Rockbox only works on WinPods, so you're only choice would
-   be to convert your iPod to a WinPod. See Rockbox's wiki
-   for more information.
 
 Q: After trying out a few apps I keep getting this
    "blahblahblah is too big" message or a lot of random
@@ -199,9 +220,8 @@ A: Project ZeroSlackr is a custom iPodLinux installation
    do hope the non-partitioning loop-mount install method
    becomes adopted as the official install method). Whenever
    I do make modifications that I believe are beneficial to
-   the iPodLinux project, however, I do try to get the
-   modifications committed upstream by the official
-   developers; see http://ipl.nonb.org/search?q=Keripo
+   the iPodLinux project, however, I ommit it to the
+   official SVN.
 
 Q: Project ZeroSlackr is awesome! How can I thank you?
 A: If you're an experienced programmer, feel free to contact
@@ -345,5 +365,7 @@ MacPod
   version of iTunes. MacPods need to be HFS+ formatted to work
   with iPodLinux. Due to a kernel bug, iPodLinux will not work
   with 5.5G iPod video MacPods (this may be fixed in the
-  future). Note that Rockbox only supports WinPods.
+  future). Note that Rockbox only supports WinPods. MacPods
+  are currently not supported by ZeroSlackr - see the
+  "== Fast FAQ ==" section above.
 
