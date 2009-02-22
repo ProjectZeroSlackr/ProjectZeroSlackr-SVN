@@ -15,8 +15,8 @@ Kernel
 - It can also load a normal, partitioned iPodLinux
   installation (see the "loader.cfg" file).
 For more information, see:
-- http://ipodlinux.org/Experimental_Kernel
-- http://ipodlinux.org/Kernel
+- http://ipodlinux.org/wiki/Experimental_Kernel
+- http://ipodlinux.org/wiki/Kernel
 - http://en.wikipedia.org/wiki/Kernel_(computer_science)
 
 Usage:
@@ -55,7 +55,7 @@ ZS Version:
 - Modder: Keripo
 - Type: Mod and Recompile
 - Link:
-  http://ipodlinux.org/images/8/81/Iboy_kernel_patches.zip (iBoy patches)
+  http://ipodlinux.org/wiki/Image:Iboy_kernel_patches.zip (iBoy patches)
 - Date: Apr 27, 2008
 - Version: B X.X
 

@@ -40,13 +40,13 @@ Original:
   
   gzip
   imphasing, Apr 1, 2006
-  http://ipodlinux.org/Gnutools
-  http://ipodlinux.org/forums/viewtopic.php?t=9148
-  http://ipodlinux.org/Image:Ipodgzip.tar
+  http://ipodlinux.org/wiki/Gnutools
+  http://ipodlinux.org/oldforums/viewtopic.php?t=9148
+  http://ipodlinux.org/wiki/Image:Ipodgzip.tar
   
   unzip and unrar
   Rufus, Oct 8, 2007
-  http://ipodlinux.org/forums/viewtopic.php?t=28199
+  http://ipodlinux.org/oldforums/viewtopic.php?t=28199
   http://www.box.net/shared/ib9ai6yzcm
   
   tar

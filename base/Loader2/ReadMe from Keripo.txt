@@ -22,7 +22,7 @@ Loader2 & iPodPatcher / SansaPatcher
   used are from the original SansaLinux release. Much of
   the below information does not apply.
 For more information, see:
-- http://ipodlinux.org/Loader2
+- http://ipodlinux.org/wiki/Loader2
 - http://www.rockbox.org/twiki/bin/view/Main/IpodPatcher
 - http://en.wikipedia.org/wiki/Bootloader
 
@@ -31,7 +31,7 @@ Usage:
   it has its own special syntax.
 - For proper usage of Loader2 and its various options/syntax,
   see the provided "loader.cfg" file as well as
-  the iPodLinux wiki page: http://ipodlinux.org/Loader2
+  the iPodLinux wiki page: http://ipodlinux.org/wiki/Loader2
 - The iPodLinux kernel accepts most standard kernel arguments;
   see "/docs/kernel/Original/kernel-parameters.txt"
 - Loader2 has also been patched to play a boot tune on startup.

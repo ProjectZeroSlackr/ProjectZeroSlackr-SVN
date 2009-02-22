@@ -28,7 +28,7 @@ includes: iPod shuffle 1G, iPod shuffle 2G, iPod nano
 The reasoning behind this is Apple's added encryption
 for the newer hardware. If you are not sure what iPod
 model you have, see Wikipedia or iPodLinux's wiki's
-"Generations" page (http://ipodlinux.org/Generations).
+"Generations" page (http://ipodlinux.org/wiki/Generations).
 
 
 If your iPod is currently supported by iPodLinux and
@@ -92,7 +92,7 @@ on your iPod through the following instructions:
    OS by rebooting your iPod back into Loader2. To reboot
    your iPod, use "Power > Reboot iPod" in ZeroLauncher or
    force reboot by holding the correct key combination
-   (see http://ipodlinux.org/Key_Combinations). When in the
+   (see http://ipodlinux.org/wiki/Key_Combinations). When in the
    Apple OS, to return to Loader2, force reboot your iPod.
    
    Make sure to read all the documentation that comes with

@@ -47,7 +47,7 @@ Launch Module:
 - FastLaunches Podfather demo
 
 To do:
-- recompiled/port!!! See http://www.ipodlinux.org/forums/viewtopic.php?t=14717
+- recompiled/port!!! See http://ipodlinux.org/oldforums/viewtopic.php?t=14717
 
 Changelog 
 [keep untouched till beta release]

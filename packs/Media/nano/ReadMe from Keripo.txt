@@ -20,7 +20,7 @@ Overview:
 - An MP3 file of the soundtrack (ripped from the non-realtime
   video) is also included in the ZeroSlackr pack.
 For more information, see:
-- http://www.ipodlinux.org/forums/viewtopic.php?t=17261
+- http://ipodlinux.org/oldforums/viewtopic.php?t=17261
 - http://www.kakiarts-technologies.de/
 - http://keyj.s2000.ws/?page_id=37
 - http://keyj.s2000.ws/?p=51 (Making of >>nano<<)

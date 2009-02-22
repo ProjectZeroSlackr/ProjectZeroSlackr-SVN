@@ -16,7 +16,7 @@ PiCalc
 - My iPod calculated 8192 digits in 37 seconds (used "8k", "2", "-1")
   but the built-in timer is very likely to be inaccurate.
 For more information, see:
-- http://www.ipodlinux.org/forums/viewtopic.php?t=29515
+- http://ipodlinux.org/oldforums/viewtopic.php?t=29515
 - http://myownlittleworld.com/miscellaneous/computers/otherpiprograms.html
 
 Usage:

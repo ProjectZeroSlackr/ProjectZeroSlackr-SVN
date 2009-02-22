@@ -16,7 +16,7 @@ iBoy
   long history, appearing in a number of past publications
   (magazine and online) featuring iPodLinux.
 For more information, see:
-- http://ipodlinux.org/iBoy
+- http://ipodlinux.org/wiki/iBoy
 - http://en.wikipedia.org/wiki/Gnuboy
 - http://en.wikipedia.org/wiki/Game_Boy
 - http://en.wikipedia.org/wiki/Game_Boy_Color

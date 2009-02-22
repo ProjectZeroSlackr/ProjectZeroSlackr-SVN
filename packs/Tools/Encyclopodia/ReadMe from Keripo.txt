@@ -52,7 +52,7 @@ Original:
 - Link:
   http://encyclopodia.sourceforge.net/
   http://newview.org/jsha/hacks/encyclopodiareader-module.tar.gz
-  http://ipodlinux.org/forums/viewtopic.php?p=64392#64392
+  http://ipodlinux.org/oldforums/viewtopic.php?p=64392#64392
   https://ipodlinux.svn.sourceforge.net/svnroot/ipodlinux/apps/ipod/podzilla2
 - Date: Jan 30, 2006, Mar 15, 2006, Oct 12, 2008 
 - Version: 0.9, 0.1, Revision 2437

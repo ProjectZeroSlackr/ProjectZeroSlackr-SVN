@@ -20,7 +20,7 @@ Podzilla0-Lite
   is included in the ZeroSlackr userland) and was never
   released as a separate application.
 For more information, see:
-- http://ipodlinux.org/Podzilla_(legacy)
+- http://ipodlinux.org/wiki/Podzilla_(legacy)
 
 Usage:
 - FastLaunch through "Zillae > Podzilla0-Lite".

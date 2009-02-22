@@ -21,10 +21,10 @@ ZacZilla
   PZ2 modules removed and does not support MPD; the reason is
   purely lack of interest/effort/reason.
 For more information, see:
-- http://www.ipodlinux.org/ZacZilla
+- http://ipodlinux.org/wiki/ZacZilla
 - http://sourceforge.net/projects/zaczilla/
-- http://www.ipodlinux.org/Ttkzilla
-- http://www.ipodlinux.org/Podzillae
+- http://ipodlinux.org/wiki/Ttkzilla
+- http://ipodlinux.org/wiki/Podzillae
 
 Usage:
 - FastLaunch through "Zillae > ZacZilla".

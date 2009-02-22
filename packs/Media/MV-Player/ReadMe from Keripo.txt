@@ -19,10 +19,10 @@ MV Player
   the creator (Gaspode) to help.
 For more information, see:
 - http://www.justgeek.de/moviepod/
-- http://ipodlinux.org/Mv_player
-- http://ipodlinux.org/Mv_player/Video_Converters
-- http://ipodlinux.org/Mv_player/Schemes
-- http://ipodlinux.org/forums/viewtopic.php?t=24546 (scheme tutorial)
+- http://ipodlinux.org/wiki/Mv_player
+- http://ipodlinux.org/wiki/Mv_player/Video_Converters
+- http://ipodlinux.org/wiki/Mv_player/Schemes
+- http://ipodlinux.org/oldforums/viewtopic.php?t=24546 (scheme tutorial)
 
 Usage:
 - FastLaunch through "Media > MV Player > FastLaunch" or
@@ -65,11 +65,11 @@ Modifications:
   (originally from: http://www.nicovideo.jp/watch/sm1359820)
 - made ZS friendly
 - user-made MvPD schemes:
-  http://ipodlinux.org/Mv_player/Schemes (many)
-  http://www.ipodlinux.org/forums/viewtopic.php?t=29385 (newground)
-  http://www.ipodlinux.org/forums/viewtopic.php?p=182123#182123 (rx-7)
-  http://www.ipodlinux.org/forums/viewtopic.php?t=23008
-  (jwmp - had to download from http://www.ipodlinux.org/forums/viewtopic.php?t=22532)
+  http://ipodlinux.org/wiki/Mv_player/Schemes (many)
+  http://ipodlinux.org/oldforums/viewtopic.php?t=29385 (newground)
+  http://ipodlinux.org/oldforums/viewtopic.php?p=182123#182123 (rx-7)
+  http://ipodlinux.org/oldforums/viewtopic.php?t=23008
+  (jwmp - had to download from http://ipodlinux.org/oldforums/viewtopic.php?t=22532)
 
 Launch Module:
 - FastLaunches MV Player

@@ -22,12 +22,12 @@ Podzilla2-SVN
   ZeroSlackr Framework compatibility (most previous patches
   have already been accepted into the official SVN).
 For more information, see:
-- http://ipodlinux.org/Podzilla
-- http://ipodlinux.org/Special:Module
-- http://ipodlinux.org/Special:Scheme
-- http://ipodlinux.org/IPLCSE
-- http://ipodlinux.org/Creating_podzilla2_schemes
-- http://www.ipodlinux.org/forums/viewtopic.php?p=47290#47290 (epic post)
+- http://ipodlinux.org/wiki/Podzilla
+- http://ipodlinux.org/wiki/Special:Module
+- http://ipodlinux.org/wiki/Special:Scheme
+- http://ipodlinux.org/wiki/IPLCSE
+- http://ipodlinux.org/wiki/Creating_podzilla2_schemes
+- http://ipodlinux.org/oldforums/viewtopic.php?p=47290#47290 (epic post)
 - http://en.wikipedia.org/wiki/Graphical_user_interface
 
 Usage:

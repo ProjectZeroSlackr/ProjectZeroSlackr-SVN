@@ -16,12 +16,12 @@ iGameGear
 - iGameGear uses the hotdog graphics engine and
   works on iPod nanos, videos and photos.
 For more information, see:
-- http://ipodlinux.org/IGameGear
+- http://ipodlinux.org/wiki/IGameGear
 - http://web.archive.org/web/*/http://membres.lycos.fr/cyxdown/smssdl/
 - http://web.archive.org/web/*/http://cgfm2.emuviews.com/
 - http://en.wikipedia.org/wiki/Sega_Master_System
 - http://en.wikipedia.org/wiki/Sega_Game_Gear
-- http://ipodlinux.org/forums/viewtopic.php?t=9561
+- http://ipodlinux.org/oldforums/viewtopic.php?t=9561
 
 Usage:
 - FastLaunch through "Emulators > iGameGear > FastLaunch"

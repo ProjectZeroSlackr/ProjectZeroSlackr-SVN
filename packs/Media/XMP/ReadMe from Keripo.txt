@@ -15,8 +15,8 @@ XMP
 - The official SourceForge page lists 81 supported formats,
   including most of the formats supported by mikmod.
 For more information, see:
-- http://ipodlinux.org/XMP
-- http://www.ipodlinux.org/forums/viewtopic.php?t=29331
+- http://ipodlinux.org/wiki/XMP
+- http://ipodlinux.org/oldforums/viewtopic.php?t=29331
 - http://xmp.sourceforge.net/
 - http://en.wikipedia.org/wiki/Module_file
 

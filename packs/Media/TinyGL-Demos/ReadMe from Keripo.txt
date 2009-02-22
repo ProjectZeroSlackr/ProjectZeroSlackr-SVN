@@ -18,7 +18,7 @@ TinyGL
 - The ZeroSlackr pack contains most of the TinyGL
   demos that come with the source code.
 For more information, see:
-- http://ipodlinux.org/forums/viewtopic.php?t=28324
+- http://ipodlinux.org/oldforums/viewtopic.php?t=28324
 - http://fabrice.bellard.free.fr/TinyGL/
 - http://en.wikipedia.org/wiki/OpenGL
 
