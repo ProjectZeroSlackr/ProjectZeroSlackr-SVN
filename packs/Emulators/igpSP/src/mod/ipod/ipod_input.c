@@ -324,7 +324,7 @@ u32 ipod_update_ingame_input_sansa()
 	if (ipod_rapid_fire) {
 		if (rapid_a && (RAPID_FIRE(RAPID_FIRE_NUM))) {
 			touched_buttons |= BUTTON_A;
-		} elseif (rapid_b && (RAPID_FIRE(RAPID_FIRE_NUM))) {
+		} else if (rapid_b && (RAPID_FIRE(RAPID_FIRE_NUM))) {
 			touched_buttons |= BUTTON_B;
 		}
 	}
