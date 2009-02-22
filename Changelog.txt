@@ -1,4 +1,4 @@
-Last updated: Jan 13, 2008
+Last updated: Feb 22, 2009
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -10,7 +10,14 @@ original/ported software.
 
 == Changelog ==
 
-Jan 13, 2008
+Feb 22, 2009
+- Got a 30GB 5.5G iPod video now ^_^
+  (but no longer have my old 2GB 1G iPod nano >_<)
+- No more support for MacPods due to too many manual
+  steps required for setup of bootloader (and
+  partition table for 5.5Gs)
+
+Jan 13, 2009
 - Initial Sansa e200 port for igpSP K7
 
 Nov 22, 2008

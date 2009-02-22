@@ -1,4 +1,4 @@
-Last updated: Oct 31, 2008
+Last updated: Feb 21, 2009
 ~Keripo
 
 All code/scripts written by Keripo are licensed under
@@ -20,8 +20,7 @@ iPodLinux currently supports/works on 5.5G iPod videos
 and older with the exception of the iPod shuffles.
 This includes: 1G, 2G, 3G, 4G, iPod colour, iPod
 photo, iPod mini 1G, iPod mini 2G, iPod nano 1G,
-5G iPod video and 5.5G iPod video (no 5.5G iPod video
-MacPods however due to a kernel bug). iPodLinux (or
+5G iPod video and 5.5G iPod video. iPodLinux (or
 Rockbox or iPodWizard hacks) currently does not work on
 iPod shuffles or any of the iPod newer models. This
 includes: iPod shuffle 1G, iPod shuffle 2G, iPod nano
@@ -32,9 +31,9 @@ model you have, see Wikipedia or iPodLinux's wiki's
 "Generations" page (http://ipodlinux.org/Generations).
 
 
-If your iPod is currently supported by iPodLinux, you
-can install ZeroSlackr on your iPod through the
-following instructions:
+If your iPod is currently supported by iPodLinux and
+is a WinPod (see FAQ.txt), you can install ZeroSlackr
+on your iPod through the following instructions:
 
 1) Extract/copy the content of the ZeroSlackr archive
    (i.e. the "ZeroSlackr" folder, the "boot" folder,
@@ -44,18 +43,17 @@ following instructions:
    The "root of your iPod" means where your data files,
    music, etc. is normally stored. On Windows, it would
    be the drive representing your iPod (e.g. E:/). On
-   Mac OS X, this would be somewhere in /Volumes. On
    Linux, this would be wherever you/KDE/Gnome mounted
    it (usually somewhere on /mnt or /media).
    
    Archives ending in .7z can be extracted using 7-zip
-   or WinRAR on Windows and p7zip on Mac/Linux. Archives
+   or WinRAR on Windows and p7zip on Linux. Archives
    ending in .tar.gz can be extracted by most common
    archiving tools. Note that you do not need any source
    code archives (which have "src" in their names) to
    install ZeroSlackr.
    
-   If you are on Windows or Mac and have troubles finding
+   If you are on Windows and have troubles finding
    your iPod, make sure the "Enable disk use" checkbox
    is checked in iTunes.
    
@@ -70,21 +68,19 @@ following instructions:
    playback.
    
 3) Run the patch script - this would be "patch.bat" for
-   Windows or "patch.sh" for Macs/Linux. This will patch
+   Windows or "patch.sh" for Linux. This will patch
    your iPod with Loader2 by using ipodpatcher.
    
-   If you are on Windows, make sure that you have admin
-   access. If you are on Mac/Linux, make sure to run the
-   script as root (you may have to "chmod +x ./patch.sh"
-   and maybe use "sudo ./patch.sh") from the terminal.
+   If you are on Windows, make sure that you execute the
+   script with administrative privileges. If you are on
+   Linux, make sure to cd to the iPod's location, chmod
+   the file, and run it as root.
    
-   Also make sure iTunes and any other programs accessing
-   your iPod is closed and not running. If you are getting
-   permissions issues with ipodpatcher, make sure that no
-   program is accessing the iPod (i.e. in Mac, you will
-   probably run into permissions issues due to Spotlight's
-   indexing, etc. - you'll have to figure out work arounds
-   yourself as I don't know how to use Macs).
+   If you are getting permissions error with ipodpatcher,
+   make sure that no program is accessing the iPod. On
+   Windows, make sure iTunes is closed and services such
+   iTunesHelper.exe and iPodService.exe are killed by
+   the Task Manager.
    
 4) Safely remove/eject/unmount/unplug your iPod after the
    patch script finishes successfully. Allow your iPod to
