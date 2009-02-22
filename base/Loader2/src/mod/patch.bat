@@ -1,4 +1,4 @@
-::Last updated: Nov 11, 2008
+::Last updated: Feb 21, 2009
 ::~Keripo
 
 @ECHO OFF
@@ -8,7 +8,6 @@ ECHO =====================================================
 ECHO Project ZeroSlackr Auto-patch-files Script
 ECHO by Keripo
 ECHO - patching iPod with Loader2...
-XCOPY /Q /Y patch-files\loader-winpod.cfg loader.cfg
 patch-files\ipodpatcher-win.exe -ab patch-files\loader.bin
 IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 GOTO :SUCCESS
 GOTO :FAIL

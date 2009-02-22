@@ -1,5 +1,5 @@
 #!/bin/sh
-# Last updated: Jan 13, 2008
+# Last updated: Feb 21, 2009
 # ~Keripo
 
 echo "====================================================="
@@ -9,24 +9,22 @@ echo ""
 echo "- patching iPod with Loader2..."
 echo ""
 if [ `uname` == "Darwin" ]; then
-	echo "  Warning: If ipodpatcher gives you a permissions"
-	echo "  error and fails, make sure no other applications"
-	echo "  are accessing your iPod (i.e. iTunes, Spotlight,"
-	echo "  etc.). Also make sure you run this script from "
-	echo "  Terminal with 'sudo'."
-	sudo cp -f ./patch-files/loader-macpod.cfg ./loader.cfg
-	sudo chmod +x ./patch-files/ipodpatcher-mac
-	sudo ./patch-files/ipodpatcher-mac -ab patch-files/loader.bin
+	echo "  Error: ZeroSlackr does not support MacPods; please"
+	echo "  use iTunes on a Windows computer to reformat your"
+	echo "  iPod as a WinPod or install iPodLinux by following"
+	echo "  instructions on the 'Manual Installation'"
+	echo "   wiki page."
+	echo ""
+	echo "====================================================="
+	read -p "Press any key to exit . . ."
 elif [ 'uname -m' == "x86-64" ]; then
 	echo "  Warning: Using an unpatched 64-bit Linux version"
 	echo "  of ipodpatcher; even if patching is successful,"
 	echo "  this script may report failure. If you are"
 	echo "  able to compile on 64-bit Linux, please contact me."
-	cp -f ./patch-files/loader-winpod.cfg ./loader.cfg
 	chmod +x ./patch-files/ipodpatcher-linux-64
 	./patch-files/ipodpatcher-linux-64 -ab patch-files/loader.bin
 else
-	cp -f ./patch-files/loader-winpod.cfg ./loader.cfg
 	chmod +x ./patch-files/ipodpatcher-linux-32
 	./patch-files/ipodpatcher-linux-32 -ab patch-files/loader.bin
 fi
