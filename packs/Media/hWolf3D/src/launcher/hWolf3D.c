@@ -1,4 +1,4 @@
-/*
+ /*
  * Last updated: Oct 12, 2008
  * ~Keripo
  *
@@ -53,7 +53,7 @@ static PzWindow *wolf3d_shareware()
 static PzWindow *wolf3d_retail()
 {
 	if (check_file(
-		"/opt/Media/hWolf3D/Wolf3D-Retail/vswap.wl1",
+		"/opt/Media/hWolf3D/Wolf3D-Retail/vswap.wl6",
 		"Wolfenstein 3D (Retail)") == 1) {
 		pz_exec_kill(
 			"/opt/Media/hWolf3D/Launch/Launch-Wolf3D-Retail.sh"
@@ -77,7 +77,7 @@ static PzWindow *sod_shareware()
 static PzWindow *sod_retail()
 {
 	if (check_file(
-		"/opt/Media/hWolf3D/SoD-Retail/vswap.sdm",
+		"/opt/Media/hWolf3D/SoD-Retail/vswap.sod",
 		"Spear of Destiny (Retail)") == 1) {
 		pz_exec_kill(
 			"/opt/Media/hWolf3D/Launch/Launch-SoD-Retail.sh"
