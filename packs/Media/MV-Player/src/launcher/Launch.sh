@@ -4,8 +4,7 @@
 
 # Format: $binary $video_path
 killall -15 ZeroLauncher >> /dev/null 2>&1
-# Set cpu_speed higher if  using higher compressed videos
-cpu_speed 69 >> /dev/null
+# Set cpu_speed higher if using higher compressed videos
 backlight brightness 12 >> /dev/null
 if [ -z "$1" ]; then
 	cd /opt/Media/MV-Player

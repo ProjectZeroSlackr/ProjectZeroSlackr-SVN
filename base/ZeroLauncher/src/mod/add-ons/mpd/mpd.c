@@ -149,7 +149,7 @@ void kill_mpd()
 {
 	if (MPD_ACTIVE == 1) {
 		send_command("kill");
-		set_cpu_speed(CPU_72MHz); // ZeroLauncher default
+		set_cpu_speed(CPU_75MHz); // ZeroLauncher default
 		MPD_ACTIVE = 0;
 	}
 }
