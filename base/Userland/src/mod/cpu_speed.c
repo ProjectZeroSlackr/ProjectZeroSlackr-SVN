@@ -48,7 +48,7 @@ static void print_help()
 {
 	printf("Usage: cpu_speed [SPEED]\n");
 	printf("SPEED should be a multiple of 3 between 45 and 81 inclusively.\n");
-	printf("The Apple OS default is 66MHz, ZeroSlackr's default is 72MHz.\n");
+	printf("The Apple OS default is 66MHz, ZeroSlackr's default is 75MHz.\n");
 	printf("To prevent your iPod from overheating, avoid extended usage at 78MHz or higher.\n");
 }
 
