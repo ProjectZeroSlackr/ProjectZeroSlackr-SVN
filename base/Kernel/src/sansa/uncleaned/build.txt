@@ -1,0 +1,9 @@
+tar -xvf linux-2.4.24.tar.bz2
+cd linux-2.4.24
+zcat ../uClinux-2.4.24-uc0.diff.gz | patch -p1
+zcat ../uclinux-2.4.24-ipod2.patch.gz | patch -p0
+patch -p0 -t -i ../linux-2.4.24-sansa-e200-v1.patch
+cp -rf arch/armnommu/def-configs/ipod ./.config
+make oldconfig
+make dep
+make boot

@@ -1,0 +1,5721 @@
+Only in linux-2.4.24-svn/arch: .svn
+Only in linux-2.4.24-svn/arch/armnommu: .svn
+diff -ur linux-2.4.24/arch/armnommu/Makefile linux-2.4.24-svn/arch/armnommu/Makefile
+--- linux-2.4.24/arch/armnommu/Makefile	2009-12-28 02:54:17.000000000 +0000
++++ linux-2.4.24-svn/arch/armnommu/Makefile	2009-12-28 03:55:02.000000000 +0000
+@@ -251,7 +251,7 @@
+ 
+ ifeq ($(CONFIG_ARCH_IPOD),y)
+ MACHINE		 = ipod
+-TEXTADDR	 = 0x28008000
++TEXTADDR	 = 0x00008000
+ endif
+ 
+ export	LDFLAGS LIBGCC MACHINE PROCESSOR TEXTADDR GZFLAGS
+Only in linux-2.4.24-svn/arch/armnommu/boot: .svn
+diff -ur linux-2.4.24/arch/armnommu/config.in linux-2.4.24-svn/arch/armnommu/config.in
+--- linux-2.4.24/arch/armnommu/config.in	2009-12-28 02:54:17.000000000 +0000
++++ linux-2.4.24-svn/arch/armnommu/config.in	2009-12-28 03:55:02.000000000 +0000
+@@ -484,7 +484,7 @@
+    define_bool CONFIG_CPU_ARM7TDMI y
+    define_bool CONFIG_CPU_32 y
+    define_bool CONFIG_CPU_26 n
+-   define_hex DRAM_BASE 0x28000000
++   define_hex DRAM_BASE 0x00000000
+    define_hex DRAM_SIZE 0x02000000
+    define_hex FLASH_MEM_BASE 0x10000000
+    define_hex FLASH_SIZE 0x00100000
+@@ -699,6 +699,7 @@
+    tristate "iPod Audio" CONFIG_AUDIO_IPOD
+    tristate "iPod Keypad support" CONFIG_KB_IPOD
+    dep_tristate "iPod Remote support" CONFIG_REMOTE_IPOD $CONFIG_INPUT_KEYBDEV
++   dep_tristate "iPod IDE support" CONFIG_IDE_IPOD $CONFIG_BLK_DEV_IDE
+    endmenu
+ fi
+ 
+@@ -741,8 +742,9 @@
+ 	  8192KB	CONFIG_UNCACHED_8192" 1024KB
+        fi
+      fi
++   else
++     bool 'Allow allocating large blocks (> 1MB) of memory' CONFIG_NO_MMU_LARGE_ALLOCS
+    fi
+-   dep_bool '  Allow allocating large blocks (> 1MB) of memory' CONFIG_NO_MMU_LARGE_ALLOCS $CONFIG_CONTIGUOUS_PAGE_ALLOC
+ fi
+ 
+ endmenu
+Only in linux-2.4.24-svn/arch/armnommu/def-configs: .svn
+diff -ur linux-2.4.24/arch/armnommu/def-configs/ipod linux-2.4.24-svn/arch/armnommu/def-configs/ipod
+--- linux-2.4.24/arch/armnommu/def-configs/ipod	2009-12-28 02:54:17.000000000 +0000
++++ linux-2.4.24-svn/arch/armnommu/def-configs/ipod	2009-12-28 03:55:02.000000000 +0000
+@@ -43,7 +43,7 @@
+ CONFIG_CPU_ARM7TDMI=y
+ CONFIG_CPU_32=y
+ # CONFIG_CPU_26 is not set
+-DRAM_BASE=0x28000000
++DRAM_BASE=0x00000000
+ DRAM_SIZE=0x02000000
+ FLASH_MEM_BASE=0x10000000
+ FLASH_SIZE=0x00100000
+@@ -351,7 +351,7 @@
+ CONFIG_FBCON_CFB2=y
+ # CONFIG_FBCON_CFB4 is not set
+ # CONFIG_FBCON_CFB8 is not set
+-# CONFIG_FBCON_CFB16 is not set
++CONFIG_FBCON_CFB16=y
+ # CONFIG_FBCON_CFB24 is not set
+ # CONFIG_FBCON_CFB32 is not set
+ # CONFIG_FBCON_AFB is not set
+@@ -707,6 +707,7 @@
+ CONFIG_AUDIO_IPOD=y
+ CONFIG_KB_IPOD=y
+ CONFIG_REMOTE_IPOD=y
++CONFIG_IDE_IPOD=y
+ 
+ #
+ # Kernel hacking
+@@ -718,8 +719,8 @@
+ # CONFIG_DEBUG_INFO is not set
+ # CONFIG_MAGIC_SYSRQ is not set
+ # CONFIG_DEBUG_LL is not set
+-CONFIG_CONTIGUOUS_PAGE_ALLOC=y
+-CONFIG_MEM_MAP=y
++# CONFIG_CONTIGUOUS_PAGE_ALLOC is not set
++# CONFIG_MEM_MAP is not set
+ CONFIG_NO_MMU_LARGE_ALLOCS=y
+ 
+ #
+Only in linux-2.4.24-svn/arch/armnommu/kernel: .svn
+diff -ur linux-2.4.24/arch/armnommu/kernel/entry-armv.S linux-2.4.24-svn/arch/armnommu/kernel/entry-armv.S
+--- linux-2.4.24/arch/armnommu/kernel/entry-armv.S	2009-12-28 02:54:17.000000000 +0000
++++ linux-2.4.24-svn/arch/armnommu/kernel/entry-armv.S	2009-12-28 03:55:02.000000000 +0000
+@@ -978,21 +978,9 @@
+ #elif defined(CONFIG_ARCH_IPOD)
+ 
+ #include <asm/arch/irqs.h>
+-
+-#define IDE_INT0_MASK	(1 << IDE_INT0_IRQ)
+-#define SER0_MASK	(1 << SER0_IRQ)
+-#define I2S_MASK	(1 << I2S_IRQ)
+-#define SER1_MASK	(1 << SER1_IRQ)
+-#define TIMER1_MASK	(1 << TIMER1_IRQ)
+-#define GPIO_MASK	(1 << GPIO_IRQ)
+-#define DMA_OUT_MASK	(1 << DMA_OUT_IRQ)
++#include <asm/arch/hardware.h>
+ 
+ 		.macro	disable_fiq
+-.ifdef NOTDEF
+-		mrs	r13, spsr
+-		orr	r13, r13, #F_BIT
+-		msr	spsr_c, r13
+-.endif
+ 		ldr	pc, cop_fiq_loc
+ 
+ cop_fiq_loc:	.word	cop_fiq
+@@ -1000,53 +988,78 @@
+ 		.endm
+ 
+ 		.macro  get_irqnr_and_base, irqnr, irqstat, base, tmp
++		mov     r0, #PP_CPU_TYPE
++		ldr     r0, [r0]
++		cmp     r0, #0
++		bne	1002f		/* branch if PP5020 */
+ 
++		/* PP5002 code */
+ 		ldr 	\base, =(0xcf001000)
+ 		ldr	\irqstat, [\base]
+ 
+-#if 1
+-		tst	\irqstat, #DMA_OUT_MASK
+-		movne	\irqnr, #DMA_OUT_IRQ
++		tst	\irqstat, #PP5002_DMA_OUT_MASK
++		movne	\irqnr, #PP5002_DMA_OUT_IRQ
+ 		bne	1001f
+ 
+-		tst	\irqstat, #GPIO_MASK
+-		movne	\irqnr, #GPIO_IRQ
++		tst	\irqstat, #PP5002_GPIO_MASK
++		movne	\irqnr, #PP5002_GPIO_IRQ
+ 		bne	1001f
+ 
+-		tst	\irqstat, #IDE_INT0_MASK
+-		movne	\irqnr, #IDE_INT0_IRQ
++		tst	\irqstat, #PP5002_IDE_MASK
++		movne	\irqnr, #PP5002_IDE_IRQ
+ 		bne	1001f
+ 
+-		tst	\irqstat, #SER1_MASK
+-		movne	\irqnr, #SER1_IRQ
++		tst	\irqstat, #PP5002_SER1_MASK
++		movne	\irqnr, #PP5002_SER1_IRQ
+ 		bne	1001f
+ 
+-		tst	\irqstat, #I2S_MASK
+-		movne	\irqnr, #I2S_IRQ
++		tst	\irqstat, #PP5002_I2S_MASK
++		movne	\irqnr, #PP5002_I2S_IRQ
+ 		bne	1001f
+ 
+-		tst	\irqstat, #SER0_MASK
+-		movne	\irqnr, #SER0_IRQ
++		tst	\irqstat, #PP5002_SER0_MASK
++		movne	\irqnr, #PP5002_SER0_IRQ
+ 		bne	1001f
+ 
+-		tst	\irqstat, #TIMER1_MASK
+-		movne	\irqnr, #TIMER1_IRQ
++		tst	\irqstat, #PP5002_TIMER1_MASK
++		movne	\irqnr, #PP5002_TIMER1_IRQ
+ 		bne	1001f
+ 
+-1001:
++		b	1001f
+ 
+-#else
+-		mov     \irqnr, #0
+-1001:
+-		tst     \irqstat, #1
+-		bne     1002f
+-		add     \irqnr, \irqnr, #1
+-		mov     \irqstat, \irqstat, lsr #1
+-		cmp     \irqnr, #32
+-		bcc     1001b
+-1002:		/* EQ will be set if we reach 32 */
++1002:
++		/* PP5020 code */
++		ldr 	\base, =(0x64004000)
++		ldr	\irqstat, [\base]
+ 
+-#endif
++		tst	\irqstat, #PP5020_TIMER1_MASK
++		movne	\irqnr, #PP5020_TIMER1_IRQ
++		bne	1001f
++
++		tst	\irqstat, #PP5020_IDE_MASK
++		movne	\irqnr, #PP5020_IDE_IRQ
++		bne	1001f
++
++		ldr 	\base, =(0x64004100)
++		ldr	\irqstat, [\base]
++
++		tst	\irqstat, #PP5020_GPIO_MASK
++		movne	\irqnr, #PP5020_GPIO_IRQ
++		bne	1001f
++
++		tst	\irqstat, #PP5020_SER0_MASK
++		movne	\irqnr, #PP5020_SER0_IRQ
++		bne	1001f
++
++		tst	\irqstat, #PP5020_SER1_MASK
++		movne	\irqnr, #PP5020_SER1_IRQ
++		bne	1001f
++
++		tst	\irqstat, #PP5020_I2C_MASK
++		movne	\irqnr, #PP5020_I2C_IRQ
++		bne	1001f
++
++1001:
+ 		.endm
+ 
+ 		.macro irq_prio_table
+diff -ur linux-2.4.24/arch/armnommu/kernel/head-arm-ipod.S linux-2.4.24-svn/arch/armnommu/kernel/head-arm-ipod.S
+--- linux-2.4.24/arch/armnommu/kernel/head-arm-ipod.S	2009-12-28 02:54:17.000000000 +0000
++++ linux-2.4.24-svn/arch/armnommu/kernel/head-arm-ipod.S	2009-12-28 03:55:02.000000000 +0000
+@@ -5,11 +5,7 @@
+ #include <asm/assembler.h>
+ #include <asm/mach-types.h>
+ #include <asm/mach/arch.h>
+-
+-	.equ	C_PROCESSOR_ID, 0xc4000000
+-	.equ	C_CPU_SLEEP, 0xca
+-	.equ	C_CPU_ID, 0x55
+-	.equ	C_CFG_COPROC, 0xcf004058
++#include <asm/arch/hardware.h>
+ 
+ /*
+  * Reset condition :
+@@ -24,56 +20,18 @@
+ 	mov     r0, #0xd3
+ 	msr     CPSR_c, r0
+ 
+-.ifdef NOTDEF
+-	ldr	r1, L_0xcf00502c
+-	mov	r0, #0
+-	str	r0, [r1]
+-
+-	ldr	r1, L_0xcf004024
+-	mov	r0, #0
+-	str	r0, [r1]
+-
+-	ldr	r1, L_0xcf005000
+-	ldr	r0, L_0xb9f
+-	str	r0, [r1]
+-
+-	ldr	r1, L_0xcf005004
+-	mov	r0, #0x35
+-	str	r0, [r1]
+-.endif
+-
+-	/* clear and mask all interrupts */
+-	ldr	r1, L_0xcf00101c
+-	mov	r0, #-1
+-	str	r0, [r1]
+-
+-	ldr	r1, L_0xcf001028
+-	mov	r0, #-1
+-	str	r0, [r1]
+-
+-	ldr	r1, L_0xcf001038
+-	mov	r0, #-1
+-	str	r0, [r1]
+-
+-	/* clear timers */
+-	ldr	r1, L_0xcf001100
+-	mov	r0, #0
+-	str	r0, [r1]
+-
+-	ldr	r1, L_0xcf001104
+-	ldr	r1, [r1]
+-
+-	ldr	r1, L_0xcf001108
+-	mov	r0, #0
+-	str	r0, [r1]
+-
+-	ldr	r1, L_0xcf00110c
+-	ldr	r1, [r1]
+-
+ 	/* setup memory mapping */
+-	ldr	r1, C_0x40010000
+-	ldr	r2, L_install_reloc_start
+-	ldr	r3, L_install_reloc_end
++	ldr	r1, =0x40010000
++	ldr	r2, =install_reloc_start
++	ldr	r3, =install_reloc_end
++
++	/*
++	 * this code is compiled for 0x0 but running at 0x28000000
++	 * or 0x10000000 so we need to adjust
++	 */
++	and	r5, pc, #0xff000000	/* adjust for execute address */
++	orr	r2, r2, r5
++	orr	r3, r3, r5
+ 
+ 	/* copy the code to 0x40010000 */
+ 1:
+@@ -82,11 +40,12 @@
+ 	cmp	r2, r3
+ 	ble	1b
+ 
+-	ldr	r3, C_0x28003f84
+-	ldr	r2, C_0xf000f014
+-	mov	r1, #0x3b00
+-	ldr	r0, C_0xf000f010
+-	ldr	r4, C_0x40010000
++	ldr	r3, =0x3f84
++	orr	r3, r3, r5		/* adjust for execute address */
++	ldr	r2, =0xf000f014
++	mov	r1, #0x3a00
++	ldr	r0, =0xf000f010
++	ldr	r4, =0x40010000
+ 	mov	pc, r4
+ 
+ install_reloc_start:
+@@ -100,18 +59,42 @@
+ install_reloc_end:
+ 
+ post_reloc_start:
++	cmp	r5, #0x28000000
++	mov	r0, #PP_CPU_TYPE
++	moveq	r1, #0x0	/* we are a PP5002 */
++	movne	r1, #0x1	/* we are a PP5020 */
++	str	r1, [r0]
++	bne	pp5020
++
++pp5002:
++	/* check if we are cpu or co-processor */
++	ldr	r0, =PP5002_PROC_ID
++	ldr	r0, [r0]
++	and	r0, r0, #0xff
++	cmp	r0, #0x55
++	beq	cpu_startup
++
++	/* we are the co-processor, go to sleep until cpu wakes us up */
++	ldr	r0, =PP5002_COP_CTRL
++	mov	r1, #0xca
++	str	r1, [r0]
++	b	cop_startup
++
++pp5020:
+ 	/* check if we are cpu or co-processor */
+-	mov	r0, #C_PROCESSOR_ID
++	ldr	r0, =PP5020_PROC_ID
+ 	ldr	r0, [r0]
+ 	and	r0, r0, #0xff
+-	cmp	r0, #C_CPU_ID
++	cmp	r0, #0x55
+ 	beq	cpu_startup
+ 
+ 	/* we are the co-processor, go to sleep until cpu wakes us up */
+-	ldr	r0, L_CFG_COPROC
+-	mov	r1, #C_CPU_SLEEP
++	ldr	r0, =PP5020_COP_CTRL
++	mov	r1, #0x80000000
+ 	str	r1, [r0]
++	b	cop_startup
+ 
++cop_startup:
+ 	/* set stack pointer for FIQ mode */
+ 	mov	r0, #0xd1
+ 	msr	CPSR_c, r0
+@@ -122,54 +105,15 @@
+ 	msr	CPSR_c, r0
+ 	ldr	sp, svc_sp
+ 
+-.ifdef NOTDEF
+-	/* copy our FIQ code to 0x4000000 */
+-	mov	r1, #0x40000000
+-	ldr	r2, L_cop_start
+-	ldr	r3, L_cop_end
+-
+-	/* copy the code to 0x40000000 */
+-1:
+-	ldr	r4, [r2], #4
+-	str	r4, [r1], #4
+-	cmp	r2, r3
+-	ble	1b
+-.endif
+-
+-.ifdef NOTDEF
+-	/* install our FIQ handler */
+-	mov	r1, #0x1c
+-	ldr	r2, cop_fiq_vec
+-	ldr	r2, [r2]
+-	str	r2, [r1]
+-.endif
+-
+ 	bl	ipod_init_cache
+ 
+ 	/* jump to our idle loop */
+ 	b	cop_idle
+ 
+-cop_fiq_vec:
+-	mov	pc, #0x40000000
+-
+ svc_sp:		.word cop_svc_stack
+ fiq_sp:		.word cop_fiq_stack
+ 
+-L_cop_start:	.word cop_fiq
+-L_cop_end:	.word cop_end
+-
+-L_0xcf00502c:	.word 0xcf00502c
+-L_0xcf004024:	.word 0xcf004024
+-L_0xcf005000:	.word 0xcf005000
+-L_0xb9f:	.word 0xb9f
+-L_0xcf005004:	.word 0xcf005004
+-L_0xcf00101c:	.word 0xcf00101c
+-L_0xcf001028:	.word 0xcf001028
+-L_0xcf001038:	.word 0xcf001038
+-L_0xcf001100:	.word 0xcf001100
+-L_0xcf001104:	.word 0xcf001104
+-L_0xcf001108:	.word 0xcf001108
+-L_0xcf00110c:	.word 0xcf00110c
++	.ltorg	/* dump literal pool to avoid section problems */
+ 
+ cpu_startup:
+ 	/* get important "magic" values */
+@@ -183,9 +127,9 @@
+ 	strcc	r4, [r5], #4
+ 	bcc	1b
+ 
++	bl	ipod_set_sys_info
+ 	bl	ipod_init_cache
+ 	bl	ipod_set_cpu_speed
+-	bl	ipod_set_sys_info
+ 
+ 	/* put initial values into stack?? */
+ 	mov	r5, sp
+@@ -219,17 +163,6 @@
+ L_ARMID:	.long 0x41007700
+ 
+ 
+-C_0x40010000:	.word 0x40010000
+-
+-L_install_reloc_start:	.word install_reloc_start
+-L_install_reloc_end:	.word install_reloc_end
+-
+-C_0x28003f84:	.word 0x28003f84
+-C_0xf000f014:	.word 0xf000f014
+-C_0xf000f010:	.word 0xf000f010
+-
+-L_CFG_COPROC:	.word C_CFG_COPROC
+-
+ 	.align 8
+ LC0:	.long	SYMBOL_NAME(__bss_start)
+ 	.long	SYMBOL_NAME(processor_id)
+@@ -237,15 +170,3 @@
+ 	.long	SYMBOL_NAME(__machine_arch_type)
+ 	.long	SYMBOL_NAME(init_task_union)+8192
+ 
+-#ifdef CONFIG_BLK_DEV_RAM
+-	.global __ramdisk_data
+-	.global __ramdisk_data_end
+-
+-	.align 12
+-__ramdisk_data:
+-	.incbin "../../../initrd"
+-__ramdisk_data_end:
+-	.align
+-
+-#endif
+-
+Only in linux-2.4.24-svn/arch/armnommu/mach-ipod: .svn
+diff -ur linux-2.4.24/arch/armnommu/mach-ipod/Makefile linux-2.4.24-svn/arch/armnommu/mach-ipod/Makefile
+--- linux-2.4.24/arch/armnommu/mach-ipod/Makefile	2009-12-28 02:54:17.000000000 +0000
++++ linux-2.4.24-svn/arch/armnommu/mach-ipod/Makefile	2009-12-28 03:55:02.000000000 +0000
+@@ -11,14 +11,15 @@
+ 
+ # Object file lists.
+ 
+-obj-y += arch.o cop.o dma.o hardware.o irq.o time.o
++obj-y += arch.o cop.o dma.o hardware.o irq.o time.o pcf50605.o 
+ 
+ obj-$(CONFIG_AUDIO_IPOD)	+= audio.o
+ obj-$(CONFIG_FB_IPOD)		+= fb.o
+ obj-$(CONFIG_IEEE1394_IPOD)	+= tsb43aa82.o
+ obj-$(CONFIG_KB_IPOD)		+= keyboard.o
+ obj-$(CONFIG_REMOTE_IPOD)	+= ipodremote.o
++obj-$(CONFIG_IDE_IPOD)		+= ipod-ide.o
+ 
+-export-objs		:= audio.o fb.o tsb43aa82.o keyboard.o ipodremote.o hardware.o
++export-objs		:= audio.o fb.o tsb43aa82.o keyboard.o ipodremote.o hardware.o ipod-ide.o
+ 
+ include $(TOPDIR)/Rules.make
+diff -ur linux-2.4.24/arch/armnommu/mach-ipod/arch.c linux-2.4.24-svn/arch/armnommu/mach-ipod/arch.c
+--- linux-2.4.24/arch/armnommu/mach-ipod/arch.c	2009-12-28 02:54:17.000000000 +0000
++++ linux-2.4.24-svn/arch/armnommu/mach-ipod/arch.c	2009-12-28 03:55:02.000000000 +0000
+@@ -26,7 +26,7 @@
+ 
+ MACHINE_START(IPOD, "iPod")
+ 	MAINTAINER("Bernard Leach")
+-	BOOT_MEM(0x28000000, 0xc0000000, 0x00000000)
++	BOOT_MEM(0x00000000, 0xc0000000, 0x00000000)
+ 	INITIRQ(ipod_init_irq)
+ 	FIXUP(ipod_fixup)
+ MACHINE_END
+diff -ur linux-2.4.24/arch/armnommu/mach-ipod/audio.c linux-2.4.24-svn/arch/armnommu/mach-ipod/audio.c
+--- linux-2.4.24/arch/armnommu/mach-ipod/audio.c	2009-12-28 02:54:17.000000000 +0000
++++ linux-2.4.24-svn/arch/armnommu/mach-ipod/audio.c	2009-12-28 03:55:02.000000000 +0000
+@@ -1,7 +1,7 @@
+ /*
+  * ipod_audio.c - audio driver for iPod
+  *
+- * Copyright (c) 2003,2004 Bernard Leach <leachbj@bouncycastle.org>
++ * Copyright (c) 2003-2005 Bernard Leach <leachbj@bouncycastle.org>
+  */
+ 
+ #include <linux/module.h>
+@@ -24,190 +24,492 @@
+ #include <asm/arch/irqs.h>
+ #include <asm/arch/hardware.h>
+ 
++/* TODO */
++#define PP5002_DMA_OUT_MASK	(1 << PP5002_DMA_OUT_IRQ)
++
+ #define D2A_POWER_OFF   1
+ #define D2A_POWER_SB    2
+ #define D2A_POWER_ON    3
+ 
+-/* locations for our shared variables */
+-#define DMA_READ_OFF	0x40000000
+-#define DMA_WRITE_OFF	0x40000004
+-#define DMA_ACTIVE	0x40000008
+-#define DMA_STEREO	0x4000000c
+-#define DMA_BASE	0x40000010
+-
+ /* length of shared buffer in half-words (starting at DMA_BASE) */
+-#define BUF_LEN		(46*1024)
++#define BUF_LEN		(40*1024)
+ 
+ static int ipodaudio_isopen;
+-static int ipodaudio_power_state;
++// static int ipodaudio_power_state;
+ static unsigned ipod_hw_ver;
+ static devfs_handle_t dsp_devfs_handle, mixer_devfs_handle;
+ static int ipod_sample_rate = 44100;
+-static volatile int *ipodaudio_stereo = (int short *)DMA_STEREO;
++static volatile int *ipodaudio_stereo = (int *)DMA_STEREO;
+ static int ipod_mic_boost = 100;
+-static int ipod_line_level = 0x17;	// 0dB
+-static int ipod_pcm_level = 0x65;	// -6dB
++static int ipod_line_level = 0x17;	/* 0dB */
++static int ipod_pcm_level = 0x65;	/* -6dB */
+ static int ipod_active_rec = SOUND_MASK_MIC;
++static int codec_chip;
++
++#define WM8721	1
++#define WM8731	2
++#define WM8975	3
++#define WM8758	4
++
++
++
++
++
++
++/* WM8758 Regs */
++
++#define WM8758_RESET		0x0
++#define WM8758_PWRMGMT1		0x1
++#define WM8758_PWRMGMT2		0x2
++#define WM8758_PWRMGMT3		0x3
++#define WM8758_AUDIOIFCE	0x4
++#define WM8758_CLOCKCTRL	0x6
++#define WM8758_SRATECTRL	0x7
++
++#define WM8758_DACCTRL		0xA
++#define WM8758_LDACVOL		0xB
++#define WM8758_RDACVOL		0xC
++#define WM8758_JDTCTCTRL1	0x9
++#define WM8758_JDTCTCTRL2	0xD
++#define WM8758_OUTPUTCTRL	0x31
++#define WM8758_LMIXCTRL		0x32
++#define WM8758_RMIXCTRL		0x33
++#define WM8758_LOUT1VOL		0x34
++#define WM8758_ROUT1VOL		0x35
++#define WM8758_LOUT2VOL		0x36
++#define WM8758_ROUT2VOL		0x37
+ 
+-static void
+-set_clock_enb(unsigned short clks, int on)
++#define WM8758_PLLN		0x24
++#define WM8758_PLLK1		0x25
++#define WM8758_PLLK2		0x26
++#define WM8758_PLLK3		0x27
++
++static void wm_write(uint8_t reg, uint8_t data_high, uint8_t data_low)
+ {
+-	if ( on ) {
+-		outw(inw(0xcf005000) | clks, 0xcf005000);
+-	}
+-	else {
+-		outw(inw(0xcf005000) & ~clks, 0xcf005000);
+-	}
++	ipod_i2c_send(0x1A, (reg << 1) | (data_high & 0x1), data_low);
+ }
+ 
+-static void
+-d2a_set_active(int active)
+-{
+-	/* set active to 0x0 or 0x1 */
+-	if ( active == 0 ) {
+-		ipod_i2c_send(0x1a, 0x12, 0x00);
+ 
+-	} else {
+-		ipod_i2c_send(0x1a, 0x12, 0x01);
++static void codec_set_active(int active)
++{
++	if (codec_chip < WM8975) {
++		/* set active to 0x0 or 0x1 */
++		if (active) {
++			ipod_i2c_send(0x1a, 0x12, 0x01);
++		} else {
++			ipod_i2c_send(0x1a, 0x12, 0x00);
++		}
+ 	}
+ }
+ 
+-static int
+-d2a_set_sample_rate(int rate)
++static int codec_set_sample_rate(int rate)
+ {
+ 	int sampling_control;
+-
+-	if (rate <= 8000) {
+-		if (ipod_hw_ver == 0x3) {
++	if (codec_chip < WM8758)
++	{
++		if (rate <= 8000) {
++			if (codec_chip >= WM8731) {
+ 			/* set CLKIDIV2=1 SR=0011 BOSR=0 USB/NORM=1 (USB) */
+-			sampling_control = 0x4d;
+-		}
+-		else {
++				sampling_control = 0x4d;
++			} else {
+ 			/* set CLKIDIV2=1 SR=0001 BOSR=0 USB/NORM=1 (USB) */
+-			sampling_control = 0x45;
++				sampling_control = 0x45;
++			}
++			rate = 8000;
++		} else if (rate <= 12000 && codec_chip >= WM8975) {
++			/* set CLKIDIV2=1 SR=1000 BOSR=0 USB/NORM=1 (USB) */
++			sampling_control = 0x61;
++			rate = 12000;
++		} else if (rate <= 16000 && codec_chip >= WM8975) {
++			/* set CLKIDIV2=1 SR=1010 BOSR=1 USB/NORM=1 (USB) */
++			sampling_control = 0x55;
++			rate = 16000;
++		} else if (rate <= 22050 && codec_chip >= WM8975) {
++			/* set CLKIDIV2=1 SR=1101 BOSR=1 USB/NORM=1 (USB) */
++			sampling_control = 0x77;
++			rate = 22050;
++		} else if (rate <= 24000 && codec_chip >= WM8975) {
++			/* set CLKIDIV2=1 SR=1110 BOSR=0 USB/NORM=1 (USB) */
++			sampling_control = 0x79;
++			rate = 24000;
++		} else if (rate <= 32000) {
++			/* set CLKIDIV2=1 SR=0110 BOSR=0 USB/NORM=1 (USB) */
++			sampling_control = 0x59;
++			rate = 32000;
++		} else if (rate <= 44100) {
++			/* set CLKIDIV2=1 SR=1000 BOSR=1 USB/NORM=1 (USB) */
++			sampling_control = 0x63;
++			rate = 44100;
++		} else if (rate <= 48000) {
++			/* set CLKIDIV2=1 SR=0000 BOSR=0 USB/NORM=1 (USB) */
++			sampling_control = 0x41;
++			rate = 48000;
++		} else if (rate <= 88200) {
++			/* set CLKIDIV2=1 SR=1111 BOSR=1 USB/NORM=1 (USB) */
++			sampling_control = 0x7f;
++			rate = 88200;
++		} else {
++			/* set for 96kHz */
++			/* set CLKIDIV2=1 SR=0111 BOSR=0 USB/NORM=1 (USB) */
++			sampling_control = 0x5d;
++			rate = 96000;
++		}
++	
++		codec_set_active(0x0);
++		ipod_i2c_send(0x1a, 0x10, sampling_control);
++		codec_set_active(0x1);
++
++		ipod_sample_rate = rate;
++
++		return ipod_sample_rate;
++	} else {
++		/* 0 = 11.2896  1 = 12.288 */
++		uint8_t sysclock = 0;
++		uint16_t srate, mclkdiv;	
++		
++		if (rate <= 8000) {
++			rate = 8000;
++			mclkdiv = 7;
++			srate = 2;
++			sysclock=1;	
++
++		} else if (rate <= 12000) {
++			rate = 12000;
++			mclkdiv = 6;
++			srate = 4;
++			sysclock=1;
++		} else if (rate <= 16000) {
++			rate = 16000;
++			mclkdiv = 5;
++			srate = 3;
++			sysclock = 1;
++		} else if (rate <= 22050) {
++			rate = 22050;
++			mclkdiv = 4;
++			srate = 2;
++			sysclock = 0;
++		} else if (rate <= 24000) {
++			rate = 24000;
++			mclkdiv = 4;	
++			srate = 2;
++			sysclock = 1;
++		} else if (rate <= 32000) {
++			rate = 32000;
++			mclkdiv = 3;
++			sysclock = 1;
++			srate = 1;
++		} else if (rate <= 44100) {
++			rate = 44100;
++			mclkdiv = 2;
++			sysclock = 0;
++			srate = 0;
++		} else if (rate <= 48000) {
++			rate = 48000;
++			mclkdiv = 2;
++			sysclock = 1;
++			srate =	0;
++		} else if (rate <= 88200) {
++			rate = 88200;
++			mclkdiv = 0;
++			sysclock = 0;
++			srate = 0;
++
++		} else {
++			rate = 96000;
++			mclkdiv = 0;
++			sysclock = 1;
++			srate = 0;
++
++		}
++		
++
++		/* set clock div */
++		wm_write(WM8758_CLOCKCTRL, 0, 1 | (0 << 2) | (2 << 5));
++		if (sysclock == 0) {
++
++			/* setup PLL for MHZ=11.2896 */
++			wm_write(WM8758_PLLN, 0, (1 << 4) | 0x7);
++			wm_write(WM8758_PLLK1, 0, 0x21);
++			wm_write(WM8758_PLLK2, 1, 0x61);
++			wm_write(WM8758_PLLK3, 0, 0x26);
++		} else {
++
++			/* setup PLL for MHZ=12.288 */
++			wm_write(WM8758_PLLN, 0, (1 << 4) | 0x8);
++			wm_write(WM8758_PLLK1, 0, 0xC);
++			wm_write(WM8758_PLLK2, 0, 0x93);
++			wm_write(WM8758_PLLK3, 0, 0xE9);
+ 		}
+-		rate = 8000;
+-	}
+-	else if (rate <= 32000) {
+-		/* set CLKIDIV2=1 SR=0110 BOSR=0 USB/NORM=1 (USB) */
+-		sampling_control = 0x59;
+-		rate = 32000;
+-	}
+-	else if (rate <= 44100) {
+-		/* set CLKIDIV2=1 SR=1000 BOSR=1 USB/NORM=1 (USB) */
+-		sampling_control = 0x63;
+-		rate = 44100;
+-	}
+-	else if (rate <= 48000) {
+-		/* set CLKIDIV2=1 SR=0000 BOSR=0 USB/NORM=1 (USB) */
+-		sampling_control = 0x41;
+-		rate = 48000;
+-	}
+-	else if (rate <= 88200) {
+-		/* set CLKIDIV2=1 SR=1111 BOSR=1 USB/NORM=1 (USB) */
+-		sampling_control = 0x7f;
+-		rate = 88200;
+-	}
+-	else {
+-		/* set for 96kHz */
+-		/* set CLKIDIV2=1 SR=0111 BOSR=0 USB/NORM=1 (USB) */
+-		sampling_control = 0x5d;
+-		rate = 96000;
++
++
++		/* set clock div */
++		wm_write(WM8758_CLOCKCTRL, 1, 1 | (1 << 2) | (mclkdiv << 5));
++
++		/* set srate */
++		wm_write(WM8758_SRATECTRL, 0, (srate << 1));
++	
++
++
++		ipod_sample_rate = rate;
++
++		return ipod_sample_rate;
++
+ 	}
++}
++
++
++
++
++/*
++ * Init the WM8758 for playback via headphone and line out.
++ * I'm using the WM8983 datasheet - seems to be right.
++ */
++static void codec_wm8758_init_pb(void)
++{
++	/* reset the chip to a known state */
++	wm_write(WM8758_RESET, 0, 0x1);	
++
++
++
++	/* Set Master Mode, Clock from pll base for 44100HZ */
++	wm_write(WM8758_CLOCKCTRL, 1, 1 | (1 << 2) | (0 << 5));
+ 
+-	d2a_set_active(0x0);
+-	ipod_i2c_send(0x1a, 0x10, sampling_control);
+-	d2a_set_active(0x1);
++	/* Enable LOUT1, ROUT1 */
++	wm_write(WM8758_PWRMGMT2, 1, (1 << 7));
+ 
+-	ipod_sample_rate = rate;
++	/* Enable LOUT2, ROUT2, RMIX, LMIX, DACR, DACL */
++	wm_write(WM8758_PWRMGMT3, 0, (0x3 << 5) | (0x3 << 2) | 0x3);
++
++	/* FORMAT=10 (I2S)  WL=00 (16 bit data width) */
++	wm_write(WM8758_AUDIOIFCE, 0, (1 << 4));
++	
++	/* set the sample rate */	
++	codec_set_sample_rate(ipod_sample_rate);
++
++	/* VMID=11, BIASEN=1 PLLon */
++	wm_write(WM8758_PWRMGMT1, 0, 0x3 | (1 << 3) | (1 << 5));
++
++	/* output control - enable DACs to Mixer paths - enable VREF */
++	wm_write(WM8758_OUTPUTCTRL, 0, (0x3 << 5) | 1);
++
++	/* unmute (SOFTMUTE = 0)  
++	 * NOTE: This is contradicting in the doc - but SOFTMUTE=0 
++	 * disables mute 
++	 */
++	wm_write(WM8758_DACCTRL, 0, 0x0);
+ 
+-	return ipod_sample_rate;
+ }
+ 
+-static void
+-d2a_set_power(int new_state)
++
++
++/*
++ * Initialise the WM8975 for playback via headphone and line out.
++ * Note, I'm using the WM8750 datasheet as its apparently close.
++ */
++static void codec_wm8975_init_pb(void)
+ {
+-	if ( ipodaudio_power_state == new_state) {
+-		return;
+-	}
++	/*
++	 * 1. Switch on power supplies.
++	 *    By default the WM8750L is in Standby Mode, the DAC is
++	 *    digitally muted and the Audio Interface, Line outputs
++	 *    and Headphone outputs are all OFF (DACMU = 1 Power
++	 *    Management registers 1 and 2 are all zeros).
++	 */
++	ipod_i2c_send(0x1a, 0x1f, 0xff);	/*Reset*/
++	ipod_i2c_send(0x1a, 0x1e, 0x0);
+ 
+-	if ( new_state != D2A_POWER_OFF ) {
+-		set_clock_enb((1<<1), 0x1);
+-	}
++	 /* 2. Enable Vmid and VREF. */
++	ipod_i2c_send(0x1a, 0x32, 0xc0);	/*Pwr Mgmt(1)*/
+ 
+-	if ( new_state == D2A_POWER_ON ) {
+-		/* set power register to POWER_OFF=0 on OUTPD=0, DACPD=0 */
+-		ipod_i2c_send(0x1a, 0xc, 0x67);
++	 /* 3. Enable DACs as required. */
++	ipod_i2c_send(0x1a, 0x34 | 0x1, 0x80);	/*Pwr Mgmt(2)*/
+ 
+-		/* de-activate the d2a */
+-		d2a_set_active(0x0);
++	 /* 4. Enable line and / or headphone output buffers as required. */
++	ipod_i2c_send(0x1a, 0x34 | 0x1, 0xf8);	/*Pwr Mgmt(2)*/
+ 
+-		/* set DACSEL=1 */
+-		if (ipod_hw_ver == 0x3) {
+-			ipod_i2c_send(0x1a, 0x8, 0x18);
+-		} else {
+-			ipod_i2c_send(0x1a, 0x8, 0x10);
+-		}
++	/* BCLKINV=0(Dont invert BCLK) MS=1(Enable Master) LRSWAP=0 LRP=0 */
++       	/* IWL=00(16 bit) FORMAT=10(I2S format) */
++	ipod_i2c_send(0x1a, 0xe, 0x42);
++
++
++	codec_set_sample_rate(ipod_sample_rate);
++
++	/* set the volume to -6dB */
++	ipod_i2c_send(0x1a, 0x4, ipod_pcm_level);
++	ipod_i2c_send(0x1a, 0x6 | 0x1, ipod_pcm_level);
++	ipod_i2c_send(0x1a, 0x50, ipod_pcm_level);
++	ipod_i2c_send(0x1a, 0x52 | 0x1, ipod_pcm_level);
++
++	ipod_i2c_send(0x1a, 0x45, 0x50);	/* Left out Mix(def) */
++	ipod_i2c_send(0x1a, 0x46, 0x50);
++
++	ipod_i2c_send(0x1a, 0x48, 0x50);	/* Right out Mix(def) */
++	ipod_i2c_send(0x1a, 0x4b, 0x50);
++
++	ipod_i2c_send(0x1a, 0x4c, 0x0);		/* Mono out Mix */
++	ipod_i2c_send(0x1a, 0x4e, 0x0);
++
++	/* 5. Set DACMU = 0 to soft-un-mute the audio DACs. */
++	ipod_i2c_send(0x1a, 0xa, 0x0);
++}
+ 
+-		/* set DACMU=0 DEEMPH=0 */
+-		ipod_i2c_send(0x1a, 0xa, 0x00);
++static void codec_wm8975_init_mic(void)
++{
++	/*
++	 * 1. Switch on power supplies.
++	 *    By default the WM8750L is in Standby Mode, the DAC is
++	 *    digitally muted and the Audio Interface, Line outputs
++	 *    and Headphone outputs are all OFF (DACMU = 1 Power
++	 *    Management registers 1 and 2 are all zeros).
++	 */
++	ipod_i2c_send(0x1a, 0x1f, 0xff);	/*Reset*/
++	ipod_i2c_send(0x1a, 0x1e, 0x0);
++
++	 /* 2. Enable Vmid and VREF. */
++	ipod_i2c_send(0x1a, 0x32, 0xc0);	/*Pwr Mgmt(1)*/
++
++	 /* 3. Enable ADCs as required. */
++	ipod_i2c_send(0x1a, 0x32, 0xcc);	/*Pwr Mgmt(1)*/
++	ipod_i2c_send(0x1a, 0x34 | 0x1, 0x80);	/*Pwr Mgmt(2)*/
++
++	 /* 4. Enable line and / or headphone output buffers as required. */
++	ipod_i2c_send(0x1a, 0x32, 0xfc);	/*Pwr Mgmt(1)*/
++
++	/* BCLKINV=0(Dont invert BCLK) MS=1(Enable Master) LRSWAP=0 LRP=0 */
++       	/* IWL=00(16 bit) FORMAT=10(I2S format) */
++	ipod_i2c_send(0x1a, 0xe, 0x42);
++
++	codec_set_sample_rate(ipod_sample_rate);
++
++	/* unmute inputs */
++	ipod_i2c_send(0x1a, 0x1, 0x17);		/* LINVOL (def 0dB) */
++	ipod_i2c_send(0x1a, 0x3, 0x17);		/* RINVOL (def 0dB) */
++
++	ipod_i2c_send(0x1a, 0x2b, 0xd7);	/* LADCVOL max vol x was ff */
++	ipod_i2c_send(0x1a, 0x2d, 0xd7);	/* RADCVOL max vol x was ff */
++
++	/* VSEL=10(def) DATSEL=10 (use right ADC only) */
++	ipod_i2c_send(0x1a, 0x2e, 0xc8);	/* Additional control(1) */
++
++	/* VROI=1 (sets output resistance to 40kohms) */
++	ipod_i2c_send(0x1a, 0x36, 0x40); 	/* Additional control(3) */
++
++	/* LINSEL=1 (LINPUT2) LMICBOOST=10 (20dB boost) */
++	ipod_i2c_send(0x1a, 0x40, 0x60);	/* ADCL signal path */
++	ipod_i2c_send(0x1a, 0x42, 0x60);	/* ADCR signal path */
++}
+ 
+-		/* set BCLKINV=0(Dont invert BCLK) MS=1(Enable Master) LRSWAP=0 LRP=0 IWL=10(24 bit) FORMAT=10(I2S format) */
+-		ipod_i2c_send(0x1a, 0xe, 0x4a);
++static void codec_wm8731_init_pb(void)
++{
++	ipod_i2c_send(0x1a, 0x1e, 0x0);		/*Reset*/
+ 
+-		d2a_set_sample_rate(ipod_sample_rate);
++	codec_set_active(0x0);
+ 
+-		/* activate the d2a */
+-		d2a_set_active(0x1);
++	/* DACSEL=1 */
++	if (codec_chip == WM8721) {
++		ipod_i2c_send(0x1a, 0x8, 0x10);
++	} else if (codec_chip == WM8731) {
++		/* BYPASS=1 */
++		ipod_i2c_send(0x1a, 0x8, 0x18);
+ 	}
+-	else {
+-		/* power off or standby the audio chip */
+ 
+-		/* de-activate d2a */
+-		d2a_set_active(0x0);
++	/* set power register to POWEROFF=0 on OUTPD=0, DACPD=0 */
++	ipod_i2c_send(0x1a, 0xc, 0x67);
+ 
+-		/* line in mute left & right*/
+-		ipod_i2c_send(0x1a, 0x0 | 0x1, 0x80);
++	/* BCLKINV=0(Dont invert BCLK) MS=1(Enable Master) LRSWAP=0 LRP=0 */
++       	/* IWL=00(16 bit) FORMAT=10(I2S format) */
++	ipod_i2c_send(0x1a, 0xe, 0x42);
++
++	codec_set_sample_rate(ipod_sample_rate);
+ 
+-		/* set DACMU=1 DEEMPH=0 */
+-		ipod_i2c_send(0x1a, 0xa, 0x8);
++	/* set the volume to -6dB */
++	ipod_i2c_send(0x1a, 0x4, ipod_pcm_level);
++	ipod_i2c_send(0x1a, 0x6 | 0x1, ipod_pcm_level);
+ 
+-		/* set DACSEL=0, MUTEMIC=1 */
+-		ipod_i2c_send(0x1a, 0x8, 0x2);
++	/* ACTIVE=1 */
++	codec_set_active(1);
+ 
+-		/* set POWEROFF=0 OUTPD=0 DACPD=1 */
+-		ipod_i2c_send(0x1a, 0xc, 0x6f);
++	/* 5. Set DACMU = 0 to soft-un-mute the audio DACs. */
++	ipod_i2c_send(0x1a, 0xa, 0x0);
++}
++
++static void codec_init_pb(void)
++{
++	switch (codec_chip) {
++	case WM8721:
++	case WM8731:
++		codec_wm8731_init_pb();
++		break;
++	case WM8975:
++		codec_wm8975_init_pb();
++		break;
++	case WM8758:
++		codec_wm8758_init_pb();
++		break;
++	}
++}
+ 
+-		if ( new_state == D2A_POWER_OFF ) {
+-			/* power off the chip */
++static void codec_wm8731_init_mic(void)
++{
++	codec_set_active(0x0);
+ 
+-			/* set POWEROFF=1 OUTPD=1 DACPD=1 */
+-			ipod_i2c_send(0x1a, 0xc, 0xff);
++	/* set BCLKINV=0(Dont invert BCLK) MS=1(Enable Master) LRSWAP=0
++	 * LRP=0 IWL=10(24 bit) FORMAT=00(MSB-First,right justified) */
++	ipod_i2c_send(0x1a, 0xe, 0x48);
+ 
+-			set_clock_enb((1<<1), 0x0);
+-		}
+-		else {
+-			/* standby the chip */
++	ipod_i2c_send(0x1a, 0x0 | 0x1, 0x80);  /* line in mute left & right */
++	ipod_i2c_send(0x1a, 0x4 | 0x1, 0x0);   /* headphone mute left & right */
+ 
+-			/* set POWEROFF=0 OUTPD=1 DACPD=1 */
+-			ipod_i2c_send(0x1a, 0xc, 0x7f);
+-		}
++	if (ipod_mic_boost) {
++		ipod_i2c_send(0x1a, 0x8, 0x5);   /* INSEL=mic, MIC_BOOST */
++	} else {
++		ipod_i2c_send(0x1a, 0x8, 0x4);   /* INSEL=mic */
+ 	}
+ 
+-	ipodaudio_power_state = new_state;
++	/* disable ADC high pass filter, mute dac */
++	ipod_i2c_send(0x1a, 0xa, 0x9);
++
++	/* power on (PWR_OFF=0) */
++       	/* CLKOUTPD OSCPD OUTPD DACPD LINEINPD */
++	ipod_i2c_send(0x1a, 0xc, 0x79);
++
++	codec_set_active(0x1);
+ }
+ 
+-static void
+-d2a_activate_linein(void)
++static void codec_activate_mic(void)
+ {
+-	d2a_set_active(0x0);
++	switch (codec_chip) {
++	case WM8721:
++		/* no recording with this device */
++		return;
++	case WM8731:
++		codec_wm8731_init_mic();
++		break;
++	case WM8975:
++		codec_wm8975_init_mic();
++		break;
++	case WM8758:
++		/* TODO: implement */
++		break;
++	}
++}
++
++static void codec_wm8731_init_linein(void)
++{
++	codec_set_active(0x0);
++
++	/* set BCLKINV=0(Dont invert BCLK) MS=1(Enable Master) LRSWAP=0
++	 * LRP=0 IWL=10(24 bit) FORMAT=00(MSB-First,right justified) */
++	ipod_i2c_send(0x1a, 0xe, 0x48);
+ 
+ 	if (ipod_line_level == 0) {
+ 		ipod_i2c_send(0x1a, 0x0 | 0x1, 0x80);
+ 	} else {
+ 		ipod_i2c_send(0x1a, 0x0 | 0x1, ipod_line_level);
+ 	}
++
+ 	ipod_i2c_send(0x1a, 0x4 | 0x1, 0x0);   /* headphone mute left & right */
++
+ 	ipod_i2c_send(0x1a, 0x8, 0xa);   /* BY PASS, mute mic, INSEL=line in */
+ 
+ 	ipod_i2c_send(0x1a, 0xa, 0x9); /* disable ADC high pass filter, mute dac */
+@@ -215,61 +517,187 @@
+ 	/* power on (PWR_OFF=0) */
+ 	ipod_i2c_send(0x1a, 0xc, 0x7a);  /* MICPD */
+ 
+-	d2a_set_active(0x1);
++	codec_set_active(0x1);
+ }
+ 
+-static void
+-d2a_activate_mic(void)
++static void codec_activate_linein(void)
+ {
+-	d2a_set_active(0x0);
++	switch (codec_chip) {
++	case WM8721:
++		/* no recording with this device */
++		return;
++	case WM8731:
++		codec_wm8731_init_linein();
++		break;
++	case WM8975:
++		// TODO
++		codec_wm8975_init_mic();
++		break;
++	case WM8758:
++		/* TODO: implement */
++		break;
++	}
++}
+ 
+-	ipod_i2c_send(0x1a, 0x0 | 0x1, 0x80);  /* line in mute left & right */
+-	ipod_i2c_send(0x1a, 0x4 | 0x1, 0x0);   /* headphone mute left & right */
++static void codec_wm8758_deinit(void)
++{
+ 
+-	if (ipod_mic_boost) {
+-		ipod_i2c_send(0x1a, 0x8, 0x5);   /* INSEL=mic, MIC_BOOST */
+-	}
+-	else {
+-		ipod_i2c_send(0x1a, 0x8, 0x4);   /* INSEL=mic */
+-	}
++	/* Softmute DAC */
++	wm_write(WM8758_DACCTRL, 0, (1 << 6));
+ 
+-	ipod_i2c_send(0x1a, 0xa, 0x9); /* disable ADC high pass filter, mute dac */
++	/* output + dac disables */
++	wm_write(WM8758_PWRMGMT3, 0, 0x00);
+ 
+-	/* power on (PWR_OFF=0) */
+-	ipod_i2c_send(0x1a, 0xc, 0x79);  /* CLKOUTPD OSCPD OUTPD DACPD LINEINPD */
++	/* output diable */
++	wm_write(WM8758_PWRMGMT1, 0, 0x00);
++
++	/* output + disable + SLEEP MODE */
++	wm_write(WM8758_PWRMGMT2, 0, (1 << 6));
+ 
+-	d2a_set_active(0x1);
+ }
++static void codec_wm8975_deinit(void)
++{
++	/* 1. Set DACMU = 1 to soft-mute the audio DACs. */
++	ipod_i2c_send(0x1a, 0xa, 0x8);
+ 
+-static void ipodaudio_process_pb_dma(void)
++	/* 2. Disable all output buffers. */
++	ipod_i2c_send(0x1a, 0x34, 0x0);	/*Pwr Mgmt(2)*/
++
++	/* 3. Switch off the power supplies. */
++	ipod_i2c_send(0x1a, 0x32, 0x0);	/*Pwr Mgmt(1)*/
++}
++
++static void codec_wm8731_deinit(void)
++{
++	/* set DACMU=1 DEEMPH=0 */
++	ipod_i2c_send(0x1a, 0xa, 0x8);
++
++	/* ACTIVE=0 */
++	codec_set_active(0x0);
++
++	/* line in mute left & right*/
++	ipod_i2c_send(0x1a, 0x0 | 0x1, 0x80);
++
++	/* set DACSEL=0, MUTEMIC=1 */
++	ipod_i2c_send(0x1a, 0x8, 0x2);
++
++	/* set POWEROFF=0 OUTPD=0 DACPD=1 */
++	ipod_i2c_send(0x1a, 0xc, 0x6f);
++
++	/* set POWEROFF=1 OUTPD=1 DACPD=1 */
++	ipod_i2c_send(0x1a, 0xc, 0xff);
++}
++
++static void codec_deinit(void)
++{
++	switch (codec_chip) {
++	case WM8721:
++	case WM8731:
++		codec_wm8731_deinit();
++		break;
++	case WM8975:
++		codec_wm8975_deinit();
++		break;
++	case WM8758:
++		codec_wm8758_deinit();
++		break;
++	}
++}
++
++static void i2s_pp5002_pb_dma(void)
+ {
+ 	volatile int *r_off = (int *)DMA_READ_OFF;
+ 	volatile int *w_off = (int *)DMA_WRITE_OFF;
+ 	volatile int *dma_active = (int *)DMA_ACTIVE;
+ 	volatile unsigned short *dma_buf = (unsigned short *)DMA_BASE;
+ 	int stereo = *ipodaudio_stereo;
++	int free_count;
+ 
+ 	inl(0xcf001040);
+ 	outl(inl(0xc000251c) & ~(1<<9), 0xc000251c);
+ 
+-	while ( *r_off != *w_off ) {
+-		if ( (inl(0xc000251c) & 0x7800000) == 0 ) {
+-			outl(inl(0xc000251c)|(1<<9), 0xc000251c);
++repeat:
++	while (*r_off != *w_off) {
++		free_count = (inl(0xc000251c) & 0x7800000) >> 23;
++
++		if (free_count < 2) {
++			/* enable interrupt */
++			outl(inl(0xc000251c) | (1<<9), 0xc000251c);
++
+ 			return;
+ 		}
+ 
+ 		outl(((unsigned)dma_buf[*r_off]) << 16, 0xc0002540);
+-		if ( !stereo ) {
++		if (!stereo) {
+ 			outl(((unsigned)dma_buf[*r_off]) << 16, 0xc0002540);
+ 		}
+ 
++		/* enable playback fifo */
++		outl(inl(0xc0002500) | 0x4, 0xc0002500);
++
+ 		*r_off = (*r_off + 1) % BUF_LEN;
+ 	}
+ 
++	/* wait for fifo to empty */
++	while ((inl(0xc000251c) & 0x1) == 0) {
++		if (*r_off != *w_off) {
++			goto repeat;
++		}
++	}
++
++	/* disable playback fifo */
++	outl(inl(0xc0002500) & ~0x4, 0xc0002500);
++
+ 	*dma_active = 0;
+ }
+ 
+-static void ipodaudio_process_rec_dma(void)
++static void i2s_pp5020_pb_dma(void)
++{
++	volatile int *r_off = (int *)DMA_READ_OFF;
++	volatile int *w_off = (int *)DMA_WRITE_OFF;
++	volatile int *dma_active = (int *)DMA_ACTIVE;
++	volatile unsigned short *dma_buf = (unsigned short *)DMA_BASE;
++	int stereo = *ipodaudio_stereo;
++	int free_count;
++
++	outl(inl(0x70002800) & ~0x2, 0x70002800);
++
++repeat:
++	while (*r_off != *w_off) {
++		free_count = (inl(0x7000280c) & 0x3f0000) >> 16;
++
++		if (free_count < 2) {
++			/* enable interrupt */
++			outl(inl(0x70002800) | 0x2, 0x70002800);
++
++			return;
++		}
++
++		outl(((unsigned)dma_buf[*r_off]) << 16, 0x70002840);
++		if (!stereo) {
++			outl(((unsigned)dma_buf[*r_off]) << 16, 0x70002840);
++		}
++
++		/* enable playback fifo */
++		outl(inl(0x70002800) | 0x20000000, 0x70002800);
++
++		*r_off = (*r_off + 1) % BUF_LEN;
++	}
++
++	/* wait for fifo to empty */
++	while ((inl(0x70002804) & 0x80000000) == 0) {
++		if (*r_off != *w_off) {
++			goto repeat;
++		}
++	}
++
++	/* disable playback fifo */
++	outl(inl(0x70002800) & ~0x20000000, 0x70002800);
++
++	*dma_active = 0;
++}
++
++static void i2s_pp5002_rec_dma(void)
+ {
+ 	volatile int *r_off = (int *)DMA_READ_OFF;
+ 	volatile int *w_off = (int *)DMA_WRITE_OFF;
+@@ -280,9 +708,16 @@
+ 	inl(0xcf001040);
+ 	outl(inl(0xc000251c) & ~(1<<14), 0xc000251c);
+ 
+-	while ( ((inl(0xc000251c) & 0x78000000)>>27) < 8 ) {
++	while (*dma_active != 2) {
++	       	int empty_count = (inl(0xc000251c) & 0x78000000) >> 27;
++		if (empty_count > 14) {
++			/* enable interrupt */
++			outl(inl(0xc000251c) | (1<<14), 0xc000251c);
++			return;
++		}
++
+ 		dma_buf[*w_off] = (unsigned short)(inl(0xc0002580) >> 8);
+-		if ( !stereo ) {
++		if (!stereo) {
+ 			/* throw away second sample */
+ 			inl(0xc0002580);
+ 		}
+@@ -290,22 +725,111 @@
+ 		*w_off = (*w_off + 1) % BUF_LEN;
+ 
+ 		/* check for buffer over run */
+-		if ( *r_off == *w_off ) {
++		if (*r_off == *w_off) {
++			*r_off = (*r_off + 1) % BUF_LEN;
++		}
++	}
++
++	/* disable fifo */
++	outl(inl(0xc0002500) & ~0x8, 0xc0002500);
++
++	/* tell the cpu we are no longer active */
++	*dma_active = 3;
++}
++
++static void i2s_pp5020_rec_dma(void)
++{
++	volatile int *r_off = (int *)DMA_READ_OFF;
++	volatile int *w_off = (int *)DMA_WRITE_OFF;
++	volatile int *dma_active = (int *)DMA_ACTIVE;
++	volatile unsigned short *dma_buf = (unsigned short *)DMA_BASE;
++	int stereo = *ipodaudio_stereo;
++
++	outl(inl(0x70002800) & ~0x1, 0x70002800);
++
++	while (*dma_active != 2) {
++		int full_count = (inl(0x7000280c) & 0x3f000000) >> 24;
++		if (full_count < 2) {
++			/* enable interrupt */
++			outl(inl(0x70002800) | 0x1, 0x70002800);
++			return;
++		}
++
++		dma_buf[*w_off] = (unsigned short)(inl(0x70002880) >> 16);
++		if (!stereo) {
++			/* throw away second sample */
++			inl(0x70002880);
++		}
++
++		*w_off = (*w_off + 1) % BUF_LEN;
++
++		/* check for buffer over run */
++		if (*r_off == *w_off) {
+ 			*r_off = (*r_off + 1) % BUF_LEN;
+ 		}
+ 	}
+ 
+-	outl(inl(0xc000251c) | (1<<14), 0xc000251c);
+-	/* *dma_active = 0; */
++	/* disable fifo */
++	outl(inl(0x70002800) & ~0x10000000, 0x70002800);
++
++	/* tell the cpu we are no longer active */
++	*dma_active = 3;
+ }
+ 
++/*
++ * Reset the I2S BIT.FORMAT I2S, 16bit, FIFO.FORMAT 32bit
++ */
++static void i2s_reset(void)
++{
++	if (ipod_hw_ver > 0x3) {
++		/* PP502x */
++
++		/* I2S soft reset */
++		outl(inl(0x70002800) | 0x80000000, 0x70002800);
++		outl(inl(0x70002800) & ~0x80000000, 0x70002800);
++
++		/* BIT.FORMAT [11:10] = I2S (default) */
++		outl(inl(0x70002800) & ~0xc00, 0x70002800);
++		/* BIT.SIZE [9:8] = 16bit (default) */
++		outl(inl(0x70002800) & ~0x300, 0x70002800);
++
++		/* FIFO.FORMAT [6:4] = 32 bit LSB */
++		/* since BIT.SIZ < FIFO.FORMAT low 16 bits will be 0 */
++		outl(inl(0x70002800) | 0x30, 0x70002800);
++
++		/* RX_ATN_LVL=1 == when 12 slots full */
++		/* TX_ATN_LVL=1 == when 12 slots empty */
++		outl(inl(0x7000280c) | 0x33, 0x7000280c);
++
++		/* Rx.CLR = 1, TX.CLR = 1 */
++		outl(inl(0x7000280c) | 0x1100, 0x7000280c);
++	} else {
++		/* PP500x */
++
++		/* I2S device reset */
++		outl(inl(0xcf005030) | 0x80, 0xcf005030);
++		outl(inl(0xcf005030) & ~0x80, 0xcf005030);
++
++		/* I2S controller enable */
++		outl(inl(0xc0002500) | 0x1, 0xc0002500);
++
++		/* BIT.FORMAT [11:10] = I2S (default) */
++		/* BIT.SIZE [9:8] = 24bit */
++		/* FIFO.FORMAT = 24 bit LSB */
++
++		/* reset DAC and ADC fifo */
++		outl(inl(0xc000251c) | 0x30000, 0xc000251c);
++	}
++}
++
++
+ static int ipodaudio_open(struct inode *inode, struct file *filep)
+ {
+ 	volatile int *r_off = (int *)DMA_READ_OFF;
+ 	volatile int *w_off = (int *)DMA_WRITE_OFF;
+ 	volatile int *dma_active = (int *)DMA_ACTIVE;
+ 
+-	if ( ipodaudio_isopen ) {
++	if (ipodaudio_isopen) {
+ 		return -EBUSY;
+ 	}
+ 
+@@ -316,49 +840,50 @@
+ 
+ 	ipodaudio_isopen = 1;
+ 	ipod_sample_rate = 44100;
+-	*ipodaudio_stereo = 1;
++	*ipodaudio_stereo = 0;
++
++	/* reset the I2S controller into known state */
++	i2s_reset();
+ 
+-	/* cop setup */
+ 	if (filep->f_mode & FMODE_WRITE) {
+-		d2a_set_power(D2A_POWER_ON);
++		codec_init_pb();
+ 
+-		/* set the volume to -6dB */
+-		ipod_i2c_send(0x1a, 0x4 | 0x1, ipod_pcm_level);
++		if (ipod_hw_ver > 3) {
++			/* PP502x */
+ 
+-		if (ipod_hw_ver == 0x3) {
+-			outl(inl(0xcf000004) & ~0xf, 0xcf000004);
+-		}
++			/* setup I2S FIQ handler */
++			ipod_set_process_dma(i2s_pp5020_pb_dma);
++
++			/* setup I2S interrupt for FIQ */
++			outl(inl(0x6000403c) | PP5020_I2S_MASK, 0x6000403c);
++			outl(PP5020_I2S_MASK, 0x60004034);
++		} else {
++			/* PP500x */
++
++			/* setup I2S FIQ handler */
++			ipod_set_process_dma(i2s_pp5002_pb_dma);
+ 
+-		ipod_set_process_dma(ipodaudio_process_pb_dma);
+-		outl(inl(0xcf00103c) | (1 << DMA_OUT_IRQ) , 0xcf00103c);
+-		outl((1 << DMA_OUT_IRQ), 0xcf001034);
++			/* setup I2S interrupt for FIQ */
++			outl(inl(0xcf00103c) | PP5002_DMA_OUT_MASK, 0xcf00103c);
++			outl(PP5002_DMA_OUT_MASK, 0xcf001034);
++		}
+ 	}
+ 
+ 	if (filep->f_mode & FMODE_READ) {
+-		/* 3g recording */
+-		if (ipod_hw_ver != 0x3) {
++		/* no recording with this device */
++		if (codec_chip == WM8721) {
+ 			return -ENODEV;
+ 		}
+ 
+-		outl(inl(0xcf000004) & ~0xf, 0xcf000004);
+-		outl(inl(0xcf004044) & ~0x4, 0xcf004044);
+-
+-		d2a_set_power(D2A_POWER_ON);
+-
+-		d2a_set_active(0x0);
+-
+-		/* set BCLKINV=0(Dont invert BCLK) MS=1(Enable Master) LRSWAP=0
+-		   LRP=0 IWL=10(24 bit) FORMAT=00(MSB-First,right justified) */
+- 		/* MS IWL=24bit FORMAT=MSB */
+-		ipod_i2c_send(0x1a, 0xe, 0x48);
+-
+-		d2a_set_active(0x1);
+-
+ 		if (ipod_active_rec == SOUND_MASK_LINE) {
+-			d2a_activate_linein();
++			codec_activate_linein();
++		} else if (ipod_active_rec == SOUND_MASK_MIC) {
++			codec_activate_mic();
+ 		}
+-		else if (ipod_active_rec == SOUND_MASK_MIC) {
+-			d2a_activate_mic();
++
++		if (ipod_hw_ver == 0x6) {
++			outl(inl(0x6000d120) & ~0x40, 0x6000d120);
++			outl(inl(0x6000d020) & ~0x4, 0x6000d020);
+ 		}
+ 	}
+ 
+@@ -367,7 +892,16 @@
+ 
+ static void ipodaudio_txdrain(void)
+ {
+-	while ( (inl(0xc000251c) & (1<<0)) == 0 ) {
++	volatile int *r_off = (int *)DMA_READ_OFF;
++	volatile int *w_off = (int *)DMA_WRITE_OFF;
++	volatile int *dma_active = (int *)DMA_ACTIVE;
++
++	if (!*dma_active) {
++		printk(KERN_ERR "dma not active\n");
++		return;
++	}
++
++	while (*r_off != *w_off) {
+ 		set_current_state(TASK_INTERRUPTIBLE);
+ 		schedule_timeout(2);
+ 
+@@ -382,20 +916,44 @@
+ 	if (filep->f_mode & FMODE_WRITE) {
+ 		ipodaudio_txdrain();
+ 
+-		outl((1 << DMA_OUT_IRQ), 0xcf001038);
+-		ipod_set_process_dma(0);
++		/* mask the interrupt */
++		if (ipod_hw_ver > 3) {
++			/* PP502x */
++			outl(PP5020_I2S_MASK, 0x60004038);
++		} else {
++			/* PP500x */
++			outl(PP5002_DMA_OUT_MASK, 0xcf001038);
++		}
+ 	}
+ 
+ 	if (filep->f_mode & FMODE_READ) {
+ 		volatile int *dma_active = (int *)DMA_ACTIVE;
+ 
+-		*dma_active = 0;
+-		outl((1 << DMA_IN_IRQ), 0xcf001038);
+-		ipod_set_process_dma(0);
++		if (*dma_active) {
++			/* tell COP dma to exit */
++			*dma_active = 2;
++
++			/* wait for the COP to signal its done */
++			while (*dma_active != 3) {
++				set_current_state(TASK_INTERRUPTIBLE);
++				schedule_timeout(2);
++
++				if (signal_pending(current)) {
++					break;
++				}
++			}
++		}
++
++		if (ipod_hw_ver == 0x6) {
++			outl(inl(0x6000d120) | 0x40, 0x6000d120);
++			outl(inl(0x6000d020) | 0x4, 0x6000d020);
++		}
+ 	}
+ 
++	/* clear the handler */
++	ipod_set_process_dma(0);
+ 
+-	d2a_set_power(D2A_POWER_OFF);
++	codec_deinit();
+ 
+ 	ipodaudio_isopen = 0;
+ 
+@@ -414,7 +972,7 @@
+ 	volatile int *dma_active = (int *)DMA_ACTIVE;
+ 	volatile unsigned short *dma_buf = (unsigned short *)DMA_BASE;
+ 
+-	if ( count <= 0 ) {
++	if (count <= 0) {
+ 		return 0;
+ 	}
+ 
+@@ -423,7 +981,7 @@
+ 
+ 	write_off_current = *w_off;
+ 
+-	while ( rem > 0 ) {
++	while (rem > 0) {
+ 		int cnt;
+ 
+ 		write_off_next = (write_off_current + 1) % BUF_LEN;
+@@ -431,7 +989,7 @@
+ 		read_off_current = *r_off;
+ 
+ 		/* buffer full? */
+-		if ( write_off_next == read_off_current ) {
++		if (write_off_next == read_off_current) {
+ 			/* buffer is full */
+ 			set_current_state(TASK_INTERRUPTIBLE);
+ 
+@@ -439,30 +997,29 @@
+ 			schedule_timeout(2);
+ 		}
+ 
+-		if ( read_off_current <= write_off_current ) {
++		if (read_off_current <= write_off_current) {
+ 			/* room at end of buffer? */
+ 			cnt = BUF_LEN - 1 - write_off_current;
+-			if ( read_off_current > 0 ) cnt++;
++			if (read_off_current > 0) cnt++;
+ 
+-			if ( cnt > 0 )  {
+-				if ( cnt > rem ) cnt = rem;
++			if (cnt > 0)  {
++				if (cnt > rem) cnt = rem;
+ 
+ 				memcpy((void*)&dma_buf[write_off_current], bufsp, cnt<<1);
+ 
+ 				rem -= cnt;
+ 				bufsp += cnt;
+ 
+-				write_off_current += cnt;
++				write_off_current = (write_off_current + cnt) % BUF_LEN;
+ 			}
+ 
+ 			/* room at start of buffer (and more data)? */
+-			if ( read_off_current > 0 && rem > 0 ) {
++			if (read_off_current > 0 && rem > 0) {
+ 				int n;
+ 
+-				if ( rem >= read_off_current ) {
++				if (rem >= read_off_current) {
+ 					n = read_off_current - 1;
+-				}
+-				else {
++				} else {
+ 					n = rem;
+ 				}
+ 
+@@ -473,10 +1030,9 @@
+ 
+ 				write_off_current = n;
+ 			}
+-		}
+-		else if ( read_off_current > write_off_current ) {
++		} else if (read_off_current > write_off_current) {
+ 			cnt = read_off_current - 1 - write_off_current;
+-			if ( cnt > rem ) cnt = rem;
++			if (cnt > rem) cnt = rem;
+ 
+ 			memcpy((void*)&dma_buf[write_off_current], bufsp, cnt<<1);
+ 
+@@ -488,10 +1044,15 @@
+ 
+ 		*w_off = write_off_current;
+ 
+-		if ( !*dma_active ) {
++		if (!*dma_active) {
+ 			*dma_active = 1;
+ 
+-			outl(inl(0xc000251c)|(1<<9), 0xc000251c);
++			if (ipod_hw_ver > 0x3) {
++				outl(inl(0x70002800) | 0x2, 0x70002800);
++				outl(inl(0x70002800) | 0x20000000, 0x70002800);
++			} else {
++				outl(inl(0xc000251c) | (1<<9), 0xc000251c);
++			}
+ 		}
+ 	}
+ 
+@@ -508,38 +1069,57 @@
+ 	volatile int *dma_active = (int *)DMA_ACTIVE;
+ 	volatile unsigned short *dma_buf = (unsigned short *)DMA_BASE;
+ 
+-	if ( !*dma_active ) {
++	if (!*dma_active) {
+ 		*dma_active = 1;
+ 
+-		ipod_set_process_dma(ipodaudio_process_rec_dma);
+-		outl(inl(0xcf00103c) | (1 << DMA_IN_IRQ) , 0xcf00103c);
+-		outl((1 << DMA_IN_IRQ), 0xcf001034);
+-
+ 		*r_off = 0;
+ 		*w_off = 0;
+-		outl(inl(0xc000251c) | 0x20000, 0xc000251c);
+ 
+-		outl(inl(0xc000251c) | (1<<14), 0xc000251c);
++		if (ipod_hw_ver > 0x3) {
++			/* setup I2S FIQ handler */
++			ipod_set_process_dma(i2s_pp5020_rec_dma);
++
++			/* setup FIQ */
++			outl(inl(0x6000403c) | PP5020_I2S_MASK, 0x6000403c);
++			outl(PP5020_I2S_MASK, 0x60004034);
++
++			/* interrupt on full fifo */
++			outl(inl(0x70002800) | 0x1, 0x70002800);
++
++			/* enable record fifo */
++			outl(inl(0x70002800) | 0x10000000, 0x70002800);
++		} else {
++			/* setup I2S FIQ handler */
++			ipod_set_process_dma(i2s_pp5002_rec_dma);
++
++			/* setup FIQ */
++			outl(inl(0xcf00103c) | (1 << PP5002_DMA_IN_IRQ) , 0xcf00103c);
++			outl((1 << PP5002_DMA_IN_IRQ), 0xcf001034);
++
++			/* interrupt on full fifo */
++			outl(inl(0xc000251c) | (1<<14), 0xc000251c);
++
++			/* enable record fifo */
++			outl(inl(0xc0002500) | 0x8, 0xc0002500);
++		}
+ 	}
+ 
+ 	bufsp = (unsigned short *)buf;
+ 	rem = count/2;
+ 
+-	while ( rem > 0 ) {
++	while (rem > 0) {
+ 		int write_pos = *w_off;
+ 		int read_pos = *r_off;
+ 		int len = 0;
+ 
+-		if ( read_pos < write_pos ) {
++		if (read_pos < write_pos) {
+ 			/* read data between read pos and write pos */
+ 			len = write_pos - read_pos;
+-		}
+-		else if ( write_pos < read_pos ) {
++		} else if (write_pos < read_pos) {
+ 			/* read data to end of buffer */
+ 			/* next loop iteration will read the rest */
+ 			len = BUF_LEN - read_pos;
+-		}
+-		else {
++		} else {
+ 			/* buffer is empty */
+ 			set_current_state(TASK_INTERRUPTIBLE);
+ 
+@@ -547,7 +1127,7 @@
+ 			schedule_timeout(2);
+ 		}
+ 
+-		if ( len > rem ) {
++		if (len > rem) {
+ 			len = rem;
+ 		}
+ 
+@@ -558,10 +1138,9 @@
+ 			rem -= len;
+ 
+ 			/* check for buffer over run */
+-			if ( read_pos == *r_off ) {
++			if (read_pos == *r_off) {
+ 				*r_off = (*r_off + len) % BUF_LEN;
+-			}
+-			else {
++			} else {
+ 				printk(KERN_ERR "ADC buffer overrun\n");
+ 			}
+ 		}
+@@ -577,6 +1156,30 @@
+ 	return count;
+ }
+ 
++static int ipodaudio_getspace_ioctl(void *arg)
++{
++	audio_buf_info abinfo;
++	int read_pos = *(int *)DMA_READ_OFF;
++	int write_pos = *(int *)DMA_WRITE_OFF;
++	int len;
++
++	if (read_pos == write_pos) {
++		len = BUF_LEN - 1;	/* ring buffer empty */
++	} else if (read_pos < write_pos) {
++		len = BUF_LEN - 1 - (write_pos - read_pos);
++	} else {
++		int next_write_pos = (write_pos + 1) % BUF_LEN;
++
++		len = read_pos - next_write_pos;
++	}
++
++	abinfo.bytes = len * 2;
++	abinfo.fragsize = BUF_LEN / 2;
++	abinfo.fragments = abinfo.bytes / abinfo.fragsize;
++
++	return copy_to_user(arg, &abinfo, sizeof(abinfo)) ? -EFAULT : 0;
++}
++
+ static int ipodaudio_ioctl(struct inode *inode, struct file *filp, unsigned int cmd, unsigned long arg)
+ {
+ 	int rc = 0;
+@@ -585,10 +1188,10 @@
+ 	switch (cmd) {
+ 	case SNDCTL_DSP_SPEED:
+ 		rc = verify_area(VERIFY_READ, (void *) arg, sizeof(val));
+-		if ( rc == 0 ) {
++		if (rc == 0) {
+ 			get_user(val, (int *) arg);
+ 
+-			val = d2a_set_sample_rate(val);
++			val = codec_set_sample_rate(val);
+ 
+ 			put_user(val, (int *) arg);
+ 		}
+@@ -596,7 +1199,7 @@
+ 
+ 	case SNDCTL_DSP_GETFMTS:
+ 		rc = verify_area(VERIFY_READ, (void *) arg, sizeof(val));
+-		if ( rc == 0 ) {
++		if (rc == 0) {
+ 			put_user(AFMT_S16_LE, (int *) arg);
+ 		}
+ 		break;
+@@ -604,9 +1207,9 @@
+ 	case SNDCTL_DSP_SETFMT:
+ 	/* case SNDCTL_DSP_SAMPLESIZE: */
+ 		rc = verify_area(VERIFY_READ, (void *) arg, sizeof(val));
+-		if ( rc == 0 ) {
++		if (rc == 0) {
+ 			get_user(val, (int *) arg);
+-			if ( val != AFMT_S16_LE ) {
++			if (val != AFMT_S16_LE) {
+ 				put_user(AFMT_S16_LE, (int *) arg);
+ 			}
+ 		}
+@@ -614,12 +1217,11 @@
+ 
+ 	case SNDCTL_DSP_STEREO:
+ 		rc = verify_area(VERIFY_READ, (void *) arg, sizeof(val));
+-		if ( rc == 0 ) {
++		if (rc == 0) {
+ 			get_user(val, (int *) arg);
+-			if ( val != 0 && val != 1 ) {
++			if (val != 0 && val != 1) {
+ 				put_user(1, (int *) arg);
+-			}
+-			else {
++			} else {
+ 				*ipodaudio_stereo = val;
+ 			}
+ 		}
+@@ -627,7 +1229,7 @@
+ 
+ 	case SNDCTL_DSP_CHANNELS:
+ 		rc = verify_area(VERIFY_READ, (void *) arg, sizeof(val));
+-		if ( rc == 0 ) {
++		if (rc == 0) {
+ 			get_user(val, (int *) arg);
+ 			if (val > 2) {
+ 				val = 2;
+@@ -639,7 +1241,7 @@
+ 
+ 	case SNDCTL_DSP_GETBLKSIZE:
+ 		rc = verify_area(VERIFY_WRITE, (void *) arg, sizeof(long));
+-		if ( rc == 0 ) {
++		if (rc == 0) {
+ 			put_user(BUF_LEN/2, (int *) arg);
+ 		}
+ 		break;
+@@ -652,6 +1254,9 @@
+ 	case SNDCTL_DSP_RESET:
+ 		rc = 0;
+ 		break;
++
++	case SNDCTL_DSP_GETOSPACE:
++		return ipodaudio_getspace_ioctl((void *)arg);
+ 	}
+ 
+ 	return rc;
+@@ -681,9 +1286,12 @@
+ {
+ 	if (cmd == SOUND_MIXER_INFO) {
+ 		mixer_info info;
++		unsigned char *codec;
++	       
++		codec = (codec_chip == WM8731 ? "WM8731" : (codec_chip == WM8721 ? "WM8721" : (codec_chip==WM8975 ? "WM8975" : "WM8758")));
+ 
+-		strncpy(info.id, "WM8731", sizeof(info.id));
+-		strncpy(info.name, "Wolfson WM8731", sizeof(info.name));
++		strncpy(info.id, codec, sizeof(info.id));
++		strncpy(info.name, "Wolfson WM", sizeof(info.name));
+ 		if (copy_to_user((void *) arg, &info, sizeof(info)))
+ 			return -EFAULT;
+ 		return 0;
+@@ -716,7 +1324,10 @@
+ 			return put_user(ipod_active_rec, (int *)arg);
+ 
+ 		case SOUND_MIXER_PCM:		/* codec output level */
+-			val = (ipod_pcm_level - 0x2f) * 100 / 80;
++			if (codec_chip >= WM8758)
++				val = (ipod_pcm_level * 100) / 63;
++			else
++				val = (ipod_pcm_level - 0x2f) * 100 / 80;
+ 			val = val << 8 | val;
+ 			return put_user(val, (int *)arg);
+ 
+@@ -742,12 +1353,10 @@
+ 		case SOUND_MIXER_RECSRC:
+ 			if (val != ipod_active_rec) {
+ 				if (val == SOUND_MASK_LINE) {
+-					d2a_activate_linein();
+-				}
+-				else if (val == SOUND_MASK_MIC) {
+-					d2a_activate_mic();
+-				}
+-				else {
++					codec_activate_linein();
++				} else if (val == SOUND_MASK_MIC) {
++					codec_activate_mic();
++				} else {
+ 					val = ipod_active_rec;
+ 				}
+ 
+@@ -767,16 +1376,38 @@
+ 			if (left > 100) left = 100;
+ 			if (right > 100) right = 100;
+ 
+-			if (left == right) {
+-				ipod_pcm_level = (left * 80 / 100) + 0x2f;
+-				ipod_i2c_send(0x1a, 0x4 | 0x1, ipod_pcm_level);
+-			}
+-			else {
+-				ipod_pcm_level = (left * 80 / 100) + 0x2f;
+-				ipod_i2c_send(0x1a, 0x4, ipod_pcm_level);
++			ipod_pcm_level = (left * 80 / 100) + 0x2f;
++			if (codec_chip >= WM8758) {
++				ipod_pcm_level = ((left * 63) / 100);
++				right = ((right * 63) / 100);
++
++				/* OUT1 */
++				wm_write(WM8758_LOUT1VOL, 0, ipod_pcm_level);
++				wm_write(WM8758_ROUT1VOL, 1, right);
++
++				/* OUT2 */
++				wm_write(WM8758_LOUT2VOL, 0, ipod_pcm_level);
++				wm_write(WM8758_ROUT2VOL, 1, right);
+ 
++			} else if (codec_chip >= WM8975) {
+ 				right = (right * 80 / 100) + 0x2f;
+-				ipod_i2c_send(0x1a, 0x6, right);
++
++				/* OUT1 */
++				ipod_i2c_send(0x1a, 0x4, ipod_pcm_level);
++				ipod_i2c_send(0x1a, 0x6 | 0x1, right);
++
++				/* OUT2 */
++				ipod_i2c_send(0x1a, 0x50, ipod_pcm_level);
++				ipod_i2c_send(0x1a, 0x52 | 0x1, right);
++			} else {
++				if (left == right) {
++					ipod_i2c_send(0x1a, 0x4 | 0x1, ipod_pcm_level);
++				} else {
++					right = (right * 80 / 100) + 0x2f;
++
++					ipod_i2c_send(0x1a, 0x4, ipod_pcm_level);
++					ipod_i2c_send(0x1a, 0x6, right);
++				}
+ 			}
+ 
+ 			return put_user(val, (int *)arg);
+@@ -797,8 +1428,7 @@
+ 				} else {
+ 					ipod_i2c_send(0x1a, 0x0 | 0x1, ipod_line_level);
+ 				}
+-			}
+-			else {
++			} else {
+ 				ipod_line_level = left * 31 / 100;
+ 				if (ipod_line_level == 0) {
+ 					ipod_i2c_send(0x1a, 0x0, 0x80);
+@@ -822,8 +1452,7 @@
+ 				if (ipod_active_rec == SOUND_MASK_MIC) {
+ 					ipod_i2c_send(0x1a, 0x8, 0x5);   /* INSEL=mic, MIC_BOOST */
+ 				}
+-			}
+-			else {
++			} else {
+ 				/* disable mic boost */
+ 				val = 0;
+ 				if (ipod_active_rec == SOUND_MASK_MIC) {
+@@ -848,9 +1477,98 @@
+ 	ioctl: ipod_mixer_ioctl,
+ };
+ 
++static void __init ipodaudio_hw_init(void)
++{
++	ipod_hw_ver = ipod_get_hw_version() >> 16;
++
++	switch (ipod_hw_ver) {
++	case 1:		/* 1g */
++	case 2:		/* 2g */
++	case 4:		/* mini - nb these are really 31s but no recording */
++	case 7:		/* mini2 - nb these are really 31s but no recording */
++		codec_chip = WM8721;
++		break;
++	case 3:		/* 3g */
++		codec_chip = WM8731;
++		break;
++	case 5:		/* 4g */
++	case 6:		/* photo */
++	case 0xc:	/* nano */
++		codec_chip = WM8975;
++		break;
++	case 0xb:	/* 5g */
++		codec_chip = WM8758;
++		break;
++	}
++
++	printk("codec %s\n", (codec_chip == WM8731 ? "WM8731" : (codec_chip == WM8721 ? "WM8721" : (codec_chip==WM8975 ? "WM8975" : "WM8758"))));
++
++	/* reset I2C */
++	ipod_i2c_init();
++
++	if (ipod_hw_ver > 3) {
++		/* PP502x */
++
++		/* normal outputs for CDI and I2S pin groups */
++		outl(inl(0x70000020) & ~0x300, 0x70000020);
++
++		/*mini2?*/
++		outl(inl(0x70000010) & ~0x3000000, 0x70000010);
++		/*mini2?*/
++
++		/* device reset */
++		outl(inl(0x60006004) | 0x800, 0x60006004);
++		outl(inl(0x60006004) & ~0x800, 0x60006004);
++
++		/* device enable */
++		outl(inl(0x6000600C) | 0x807, 0x6000600C);
++
++		/* enable external dev clock clocks */
++		outl(inl(0x6000600c) | 0x2, 0x6000600c);
++
++		/* external dev clock to 24MHz */
++		outl(inl(0x70000018) & ~0xc, 0x70000018);
++
++	} else {
++		/* PP500x */
++
++		/* device reset */
++		outl(inl(0xcf005030) | 0x80, 0xcf005030);
++		outl(inl(0xcf005030) & ~0x80, 0xcf005030);
++
++		/* device enable */
++		outl(inl(0xcf005000) | 0x80, 0xcf005000);
++
++		/* GPIO D06 enable for output */
++		outl(inl(0xcf00000c) | 0x40, 0xcf00000c);
++		outl(inl(0xcf00001c) & ~0x40, 0xcf00001c);
++
++		if (ipod_hw_ver < 0x3) {
++			/* nb this is different to 3g!? */
++			/* bits 11,10 == 10 */
++			outl(inl(0xcf004040) & ~0x400, 0xcf004040);
++			outl(inl(0xcf004040) | 0x800, 0xcf004040);
++		} else {
++			/* bits 11,10 == 01 */
++			outl(inl(0xcf004040) | 0x400, 0xcf004040);
++			outl(inl(0xcf004040) & ~0x800, 0xcf004040);
++
++			outl(inl(0xcf004048) & ~0x1, 0xcf004048);
++
++			outl(inl(0xcf000004) & ~0xf, 0xcf000004);
++			outl(inl(0xcf004044) & ~0xf, 0xcf004044);
++
++			/* C03 = 0 */
++			outl(inl(0xcf000008) | 0x8, 0xcf000008);
++			outl(inl(0xcf000018) | 0x8, 0xcf000018);
++			outl(inl(0xcf000028) & ~0x8, 0xcf000028);
++		}
++	}
++}
++
+ static int __init ipodaudio_init(void)
+ {
+-	printk("ipodaudio: (c) Copyright 2003,2004 Bernard Leach <leachbj@bouncycastle.org>\n");
++	printk("ipodaudio: (c) Copyright 2003-2005 Bernard Leach <leachbj@bouncycastle.org>\n");
+ 
+ 	dsp_devfs_handle = devfs_register(NULL, "dsp", DEVFS_FL_DEFAULT,
+ 			SOUND_MAJOR, SND_DEV_DSP,
+@@ -871,50 +1589,13 @@
+ 		return 0;
+ 	}
+ 
+-	ipod_hw_ver = ipod_get_hw_version() >> 16;
+-	if (ipod_hw_ver == 0x3) {
+-		/* reset I2C */
+-		ipod_i2c_init();
+-
+-		/* reset DAC and ADC fifo */
+-		outl(inl(0xc000251c) | 0x10000, 0xc000251c);
+-		outl(inl(0xc000251c) | 0x20000, 0xc000251c);
+-		outl(inl(0xc000251c) & ~0x30000, 0xc000251c);
+-
+-		/* enable ADC/DAC */
+-		outl(0xd, 0xc0002500);
+-
+-		/* bits 11,10 == 01 */
+-		outl(inl(0xcf004040) | 0x400, 0xcf004040);
+-		outl(inl(0xcf004040) & ~0x800, 0xcf004040);
+-
+-		outl(inl(0xcf004048) & ~0x1, 0xcf004048);
+-	}
+-	else {
+-		/* reset DAC fifo */
+-		outl(inl(0xc000251c) | 0x10000, 0xc000251c);
+-		outl(inl(0xc000251c) & ~0x10000, 0xc000251c);
+-
+-		/* enable DAC */
+-		outl(0x5, 0xc0002500);
+-
+-		/* nb this is different to 3g!? */
+-		/* bits 11,10 == 10 */
+-		outl(inl(0xcf004040) & ~0x400, 0xcf004040);
+-		outl(inl(0xcf004040) | 0x800, 0xcf004040);
+-	}
+-
+-	/* GPIO D bit 6 enable for output */
+-	outl(inl(0xcf00000c) | 0x40, 0xcf00000c);
+-	outl(inl(0xcf00001c) & ~0x40, 0xcf00001c);
++	ipodaudio_hw_init();
+ 
+ 	return 0;
+ }
+ 
+ static void __exit ipodaudio_exit(void)
+ {
+-	ipod_set_process_dma(0);
+-
+ 	devfs_unregister_chrdev(SOUND_MAJOR, "mixer");
+ 	devfs_unregister(mixer_devfs_handle);
+ 
+@@ -928,3 +1609,4 @@
+ MODULE_AUTHOR("Bernard Leach <leachbj@bouncycastle.org>");
+ MODULE_DESCRIPTION("Audio driver for IPod");
+ MODULE_LICENSE("GPL");
++
+diff -ur linux-2.4.24/arch/armnommu/mach-ipod/cop.S linux-2.4.24-svn/arch/armnommu/mach-ipod/cop.S
+--- linux-2.4.24/arch/armnommu/mach-ipod/cop.S	2009-12-28 02:54:17.000000000 +0000
++++ linux-2.4.24-svn/arch/armnommu/mach-ipod/cop.S	2009-12-28 03:55:02.000000000 +0000
+@@ -1,83 +1,89 @@
+ /*
+  * cop.S - coprocessor code
+  *
+- * Copyright (c) 2003, Bernard Leach (leachbj@bouncycastle.org)
++ * Copyright (c) 2003-2005, Bernard Leach (leachbj@bouncycastle.org)
+  */
+ 
++#include <asm/arch/hardware.h>
++
+ 	.global cop_fiq
+-	.global cop_end
+ 	.global cop_idle
+ 
+-	.equ C_PROCESSOR_ID, 0xc4000000
+-	.equ C_CPU_ID, 0x55
+-
+-	.equ C_CFG_COPROC, 0xcf004058
+-	.equ C_CPU_SLEEP, 0xca
+-
+ cop_fiq:
+-	stmdb   sp!, {r0, lr}
+-
+-.ifdef NOTDEF
+-	ldr	r0, L_lcd_base
+-	ldr	r1, [r0]
+-	orr	r1, r1, #0x2
+-	str	r1, [r0]
+-.endif
+-	ldr	r0, L_C_PROCESSOR_ID
+-	ldr	r0, [r0]
+-	and	r0, r0, #0xff
+-	cmp	r0, #C_CPU_ID
++	mov	r8, #PP_CPU_TYPE
++	ldr	r8, [r8]
++	cmp	r8, #0
++
++	ldreq	r8, =PP5002_PROC_ID
++	ldrne	r8, =PP5020_PROC_ID
++	ldr	r8, [r8]
++	and	r8, r8, #0xff
++	cmp	r8, #0x55
+ 	beq	1f
+ 
+-	mov	lr, pc
+-	ldr	pc, L_ipod_handle_dma
++	stmdb   sp!, {r0-r7, lr}
+ 
+-	nop
+-	nop
+-	nop
++	bl	ipod_handle_dma
+ 
++	ldmia   sp!, {r0-r7, lr}
+ 1:
+-	ldmia   sp!, {r0, lr}
+ 	subs	pc, lr, #4
+ 
+-L_C_PROCESSOR_ID:	.word C_PROCESSOR_ID
+-
+-cop_fiq_end:
+ 
+ cop_idle:
++	mov	r0, #0x0
++	bl	ipod_set_process_dma
++
++	mov	r0, #0x0
++	bl	ipod_set_handle_cop
++
+ 	/* enable FIQ */
+ 	mrs     r0, cpsr
+ 	bic     r0, r0, #0x40
+ 	msr     cpsr_c, r0
+ 
+ cop_sleep:
++	mov	r0, #PP_CPU_TYPE
++	ldr	r0, [r0]
++	cmp	r0, #0
++	bne	pp5020
++
++	/* PP5002 */
+ 	/* put us (co-processor) to sleep */
+-	ldr	r4, L_CFG_COPROC
+-	mov	r3, #C_CPU_SLEEP
+-	strh	r3, [r4]
++	ldr	r1, =PP5002_COP_CTRL
++	mov	r0, #0xca	
++	strh	r0, [r1]
++	b	1f
+ 
++pp5020:
++	/* PP5020 */
++	/* put us (co-processor) to sleep */
++	ldr	r1, =PP5020_COP_CTRL
++	mov	r0, #0x80000000	
++	str	r0, [r1]
++
++1:
+ 	nop
+ 	nop
+ 
+-	b	cop_sleep
+ 
+-	.global cop_fiq_stack
+-	.global cop_svc_stack
++	ldr	r1, =COP_STATE
++	mov	r0, #0x1
++	str	r0, [r1]
++	
++	bl	ipod_handle_cop
+ 
+-	.lcomm cop_fiq_stack, 1024
+-	.lcomm cop_svc_stack, 1024
+ 
+-L_CFG_COPROC:	.word C_CFG_COPROC
++	ldr	r1, =COP_STATE
++	mov 	r0, #0x0
++	str 	r0, [r1]
+ 
+-L_ipod_handle_dma:.word ipod_handle_dma
+ 
+-L_lcd_base:	.word 0xc0001000
++	b	cop_sleep
+ 
+-/* these must match those in audio.c */
+-L_DMA_READ_OFF:	.word 0x40000000
+-L_DMA_WRITE_OFF:.word 0x40000004
+-L_DMA_ACTIVE:	.word 0x40000008
+-L_DMA_BASE:	.word 0x4000000c
++	.global cop_fiq_stack
++	.global cop_svc_stack
+ 
+-cop_end:
++	.lcomm cop_fiq_stack, 1024
++	.lcomm cop_svc_stack, 1024
+ 
+diff -ur linux-2.4.24/arch/armnommu/mach-ipod/fb.c linux-2.4.24-svn/arch/armnommu/mach-ipod/fb.c
+--- linux-2.4.24/arch/armnommu/mach-ipod/fb.c	2009-12-28 02:54:17.000000000 +0000
++++ linux-2.4.24-svn/arch/armnommu/mach-ipod/fb.c	2009-12-28 03:55:02.000000000 +0000
+@@ -1,7 +1,7 @@
+ /*
+  * fb.c - Frame-buffer driver for iPod
+  *
+- * Copyright (c) 2003,2004 Bernard Leach (leachbj@bouncycastle.org)
++ * Copyright (c) 2003-2005 Bernard Leach (leachbj@bouncycastle.org)
+  *
+  * The LCD uses the HD66753 controller from Hitachi (now owned by Renesas).
+  */
+@@ -25,32 +25,67 @@
+ 
+ #include <video/fbcon.h>
+ #include <video/fbcon-cfb2.h>
++#include <video/fbcon-cfb16.h>
+ 
+ /* the ID returned by the controller */
+ #define HD66753_ID	0x5307
+ 
+-#define IPOD_LCD_BASE	0xc0001000
+-#define IPOD_RTC	0xcf001110
++#define IPOD_PP5002_LCD_BASE	0xc0001000
++#define IPOD_PP5002_RTC		0xcf001110
+ 
+-#define IPOD_LCD_WIDTH	160
+-#define IPOD_LCD_HEIGHT	128
++#define IPOD_PP5020_LCD_BASE	0x70003000
++#define IPOD_PP5020_RTC		0x60005010
+ 
+-/* allow for 2bpp */
+-static char ipod_scr[IPOD_LCD_HEIGHT * (IPOD_LCD_WIDTH/4)];
++#define LCD_DATA 0x10
++#define LCD_CMD  0x08
+ 
++#define IPOD_5G_LCD_WIDTH	320
++#define IPOD_5G_LCD_HEIGHT	240
++
++#define IPOD_STD_LCD_WIDTH	160
++#define IPOD_STD_LCD_HEIGHT	128
++
++#define IPOD_MINI_LCD_WIDTH	138
++#define IPOD_MINI_LCD_HEIGHT	110
++
++#define IPOD_PHOTO_LCD_WIDTH	220
++#define IPOD_PHOTO_LCD_HEIGHT	176
++
++#define IPOD_NANO_LCD_WIDTH	176
++#define IPOD_NANO_LCD_HEIGHT	132
++
++static int ipod_hw_ver;
++
++static u16 ipod_fbcon_cmap[16];
++
++
++static unsigned long ipod_rtc;
++static unsigned long lcd_base;
++static unsigned long lcd_busy_mask;
++
++static unsigned long lcd_width;
++static unsigned long lcd_height;
++
++static unsigned long lcd_type;
++
++/* allow for 16bpp for photo res */ /* Sized to max we could possibly need */
++static char ipod_scr[IPOD_5G_LCD_HEIGHT * IPOD_5G_LCD_WIDTH * 8];
++
++static unsigned int lcd_contrast = 0x6a;	/* required for mini2 */
+ 
+ /* get current usec counter */
+-static int
+-timer_get_current(void)
++static int timer_get_current(void)
+ {
+-	return inl(IPOD_RTC);
++	return inl(ipod_rtc);
+ }
+ 
+ /* check if number of useconds has past */
+-static int
+-timer_check(int clock_start, int usecs)
++static int timer_check(int clock_start, int usecs)
+ {
+-	if ( (inl(IPOD_RTC) - clock_start) >= usecs ) {
++	unsigned long clock;
++	clock = inl(ipod_rtc);
++	
++	if ( (clock - clock_start) >= usecs ) {
+ 		return 1;
+ 	} else {
+ 		return 0;
+@@ -58,27 +93,31 @@
+ }
+ 
+ /* wait for LCD with timeout */
+-static void
+-lcd_wait_write(void)
++static void lcd_wait_write(void)
+ {
+-	if ( (inl(IPOD_LCD_BASE) & 0x1) != 0 ) {
++	if ((inl(lcd_base) & lcd_busy_mask) != 0) {
+ 		int start = timer_get_current();
+ 
+ 		do {
+-			if ( (inl(IPOD_LCD_BASE) & (unsigned int)0x8000) == 0 ) break;
+-		} while ( timer_check(start, 1000) == 0 );
++			if ((inl(lcd_base) & lcd_busy_mask) == 0) break;
++		} while (timer_check(start, 1000) == 0);
+ 	}
+ }
+ 
+ 
+ /* send LCD data */
+-static void
+-lcd_send_data(int data_lo, int data_hi)
++static void lcd_send_data(int data_lo, int data_hi)
+ {
+ 	lcd_wait_write();
+-	outl(data_lo, 0xc0001010);
+-	lcd_wait_write();
+-	outl(data_hi, 0xc0001010);
++	if (ipod_hw_ver == 0x7) {
++		outl((inl(0x70003000) & ~0x1f00000) | 0x1700000, 0x70003000);
++		outl(data_hi | (data_lo << 8) | 0x760000, 0x70003008);
++	}
++	else {
++		outl(data_lo, lcd_base + LCD_DATA);
++		lcd_wait_write();
++		outl(data_hi, lcd_base + LCD_DATA);
++	}
+ }
+ 
+ /* send LCD command */
+@@ -86,72 +125,140 @@
+ lcd_prepare_cmd(int cmd)
+ {
+ 	lcd_wait_write();
+-	outl(0x0, 0xc0001008);
+-	lcd_wait_write();
+-	outl(cmd, 0xc0001008);
++	if (ipod_hw_ver == 0x7) {
++		outl((inl(0x70003000) & ~0x1f00000) | 0x1700000, 0x70003000);
++		outl(cmd | 0x740000, 0x70003008);
++	}
++	else {
++		outl(0x0, lcd_base + LCD_CMD);
++		lcd_wait_write();
++		outl(cmd, lcd_base + LCD_CMD);
++	}
+ }
+ 
+ /* send LCD command and data */
+-static void
+-lcd_cmd_and_data(int cmd, int data_lo, int data_hi)
++/* this is only used for b&w lcds */
++static void lcd_cmd_and_data(int cmd, int data_lo, int data_hi)
+ {
+ 	lcd_prepare_cmd(cmd);
+-
+ 	lcd_send_data(data_lo, data_hi);
+ }
+ 
+ static unsigned
+ get_contrast(void)
+ {
+-	unsigned data_lo, data_hi;
++	if (ipod_hw_ver < 0x6) {
++		unsigned data_lo, data_hi = 0;
+ 
+-	/* data_lo has the scan line */
+-	lcd_wait_write();
+-	data_lo = inl(0xc0001008);
+-	/* data_hi has the contrast */
+-	lcd_wait_write();
+-	data_hi = inl(0xc0001008);
++		/* data_lo has the scan line */
++		lcd_wait_write();
++
++		data_lo = inl(lcd_base + LCD_CMD);
+ 
+-	return data_hi & 0xff;
++		/* data_hi has the contrast */
++		lcd_wait_write();
++
++		data_hi = inl(lcd_base + LCD_CMD);
++
++		return data_hi & 0xff;
++	}
++	else if (ipod_hw_ver == 0x7) {
++		return lcd_contrast;
++	}
++
++	return 0;
+ }
+ 
+ static void
+ set_contrast(int contrast)
+ {
+-	lcd_cmd_and_data(0x4, 0x4, contrast);
++	if (ipod_hw_ver < 0x6 || ipod_hw_ver == 0x7) {
++		lcd_cmd_and_data(0x4, 0x4, contrast);
++		lcd_contrast = contrast;
++	}
+ }
+ 
+ static int
+ get_backlight(void)
+ {
+-	return inl(IPOD_LCD_BASE) & 0x2 ? 1 : 0;
++	if (ipod_hw_ver >= 0x04) {
++		/* is Port B03 on or off */
++		if (inl(0x6000d824) & (1<<3)) {
++			if (ipod_hw_ver == 0x5 || ipod_hw_ver == 0x6 || ipod_hw_ver == 0xb || ipod_hw_ver == 0xc) {
++				return (inl(0x7000a010) >> 16) & 0xff;
++			}
++
++			return 1;
++		}
++
++		return 0;
++	} else {
++		return inl(lcd_base) & 0x2 ? 1 : 0;
++	}
+ }
+ 
+ static void
+ set_backlight(int on)
+ {
+-	int lcd_state = inl(IPOD_LCD_BASE);
++	if (ipod_hw_ver >= 0x4) {
++		if (ipod_hw_ver == 0x5 || ipod_hw_ver == 0x6) {
++			if (on) {
++				/* brightness full */
++				outl(0x80000000 | (0xff << 16), 0x7000a010);
++
++				/* set port B03 on */
++				outl(((0x100 | 1) << 3), 0x6000d824);
++			}
++			else {
++				/* fades backlght off on 4g */
++				/* GPO D01 disable */
++				outl(inl(0x70000084) & ~0x2000000, 0x70000084);
++				outl(0x80000000, 0x7000a010);
++			}
++		} else if (ipod_hw_ver == 0x04 || ipod_hw_ver == 0x7) {
++			/* set port B03 */
++			outl(((0x100 | (on ? 1 : 0)) << 3), 0x6000d824);
++		} else if (ipod_hw_ver == 0xb || ipod_hw_ver == 0xc) {
++			/* set port B03 */
++			outl(((0x100 | (on ? 1 : 0)) << 3), 0x6000d824);
++			/* set port L07 */
++			outl(((0x100 | (on ? 1 : 0)) << 7), 0x6000d12c);
++		}
++	} else {
++		int lcd_state;
+ 
+-	if (on) {
+-		lcd_state = lcd_state | 0x2;
+-		outl(lcd_state, IPOD_LCD_BASE);
+-
+-		/* display control (1 00 0 1) */
+-		/* GSH=01 -> 2/3 level grayscale control */
+-		/* GSL=00 -> 1/4 level grayscale control */
+-		/* REV=0 -> don't reverse */
+-		/* D=1 -> display on */
+-		lcd_cmd_and_data(0x7, 0x0, 0x11 /* | 0x2 */);
++		lcd_state = inl(IPOD_PP5002_LCD_BASE);
++		if (on) {
++			lcd_state = lcd_state | 0x2;
++		}
++		else {
++			lcd_state = lcd_state & ~0x2;
++		}
++		outl(lcd_state, IPOD_PP5002_LCD_BASE);
+ 	}
+-	else {
+-		lcd_state = lcd_state & ~0x2;
+-		outl(lcd_state, IPOD_LCD_BASE);
+ 
+-		/* display control (10 0 1) */
+-		/* GSL=10 -> 2/4 level grayscale control */
+-		/* REV=0 -> don't reverse */
+-		/* D=1 -> display on */
+-		lcd_cmd_and_data(0x7, 0x0, 0x9 /* | 0x2 */);
++	if (ipod_hw_ver < 0x6 || ipod_hw_ver == 0x7) {
++		if (on) {
++			/* display control (1 00 0 1) */
++			/* GSH=01 -> 2/3 level grayscale control */
++			/* GSL=00 -> 1/4 level grayscale control */
++			/* REV=0 -> don't reverse */
++			/* D=1 -> display on */
++			if (ipod_hw_ver < 3) {
++				/* REV=1 */
++				lcd_cmd_and_data(0x7, 0x0, 0x11 | 0x2);
++			}
++			else {
++				lcd_cmd_and_data(0x7, 0x0, 0x11);
++			}
++		}
++		else {
++			/* display control (10 0 1) */
++			/* GSL=10 -> 2/4 level grayscale control */
++			/* REV=0 -> don't reverse */
++			/* D=1 -> display on */
++			lcd_cmd_and_data(0x7, 0x0, 0x9);
++		}
+ 	}
+ }
+ 
+@@ -163,60 +270,88 @@
+ 	/* read the Start Osciallation register -> it gives us a id */
+ 	lcd_prepare_cmd(0x0);
+ 
++	lcd_wait_write();	
++	data_lo = inl(lcd_base + LCD_DATA);
++	
+ 	lcd_wait_write();
+-	data_lo = inl(0xc0001010);
+-	lcd_wait_write();
+-	data_hi = inl(0xc0001010);
++	data_hi = inl(lcd_base + LCD_DATA);
+ 
+ 	return ((data_hi & 0xff) << 8) | (data_lo & 0xff);
+ }
+ 
++static void lcd_send_lo(int v)
++{
++	lcd_wait_write();
++	outl(v | 0x80000000, 0x70008A0C);
++}
++
++static void lcd_send_hi(int v)
++{
++	lcd_wait_write();
++	outl(v | 0x81000000, 0x70008A0C);
++}
++
++static void lcd_cmd_data(int cmd, int data)
++{
++	if (lcd_type == 0) {
++		lcd_send_lo(cmd);
++		lcd_send_lo(data);
++	} else {
++		lcd_send_lo(0x0);
++		lcd_send_lo(cmd);
++		lcd_send_hi((data >> 8) & 0xff);
++		lcd_send_hi(data & 0xff);
++	}
++}
++
+ /* initialise the LCD */
+ static void
+ init_lcd(void)
+ {
+-	if ( read_controller_id() != HD66753_ID )  {
++	if (ipod_hw_ver < 0x6 && read_controller_id() != HD66753_ID )  {
+ 		printk(KERN_ERR "Unknown LCD controller ID: 0x%x id?\n", read_controller_id());
+ 	}
+ 
+-	/* driver output control - 168x128 -> we use 160x128 */
++	/* driver output control */
+ 	/* CMS=0, SGS=1 */
+-	lcd_cmd_and_data(0x1, 0x1, 0xf);
++	if (ipod_hw_ver == 0x4 || ipod_hw_ver == 0x7) {
++		/* driver output control - 160x112 (ipod mini) */
++		lcd_cmd_and_data(0x1, 0x0, 0xd);
++	}
++	else if (ipod_hw_ver < 0x4 || ipod_hw_ver == 0x5) {
++		/* driver output control - 160x128 */
++		lcd_cmd_and_data(0x1, 0x1, 0xf);
++	}
+ 
+ 	/* ID=1 -> auto decrement address counter */
+ 	/* AM=00 -> data is continuously written in parallel */
+ 	/* LG=00 -> no logical operation */
+-	lcd_cmd_and_data(0x5, 0x0, 0x10);
+-
+-	/* backlight off & set grayscale */
+-	set_backlight(0);
+-}
+-
++	if (ipod_hw_ver < 0x6 || ipod_hw_ver == 0x7) {
++		lcd_cmd_and_data(0x5, 0x0, 0x10);
++	}
+ 
+-void contrast_up(void)
+-{
+-	int contrast = get_contrast();
+-	if ( contrast < 0xff ) {
+-		contrast++; 
+-		lcd_cmd_and_data(0x4, 0x4, contrast);
++	if (ipod_hw_ver == 0x5 || ipod_hw_ver == 0x6) {
++		outl(inl(0x6000d004) | 0x4, 0x6000d004); /* B02 enable */
++		outl(inl(0x6000d004) | 0x8, 0x6000d004); /* B03 enable */
++		outl(inl(0x70000084) | 0x2000000, 0x70000084); /* D01 enable */
++		outl(inl(0x70000080) | 0x2000000, 0x70000080); /* D01 =1 */
+ 
+-#if 0
+-		printk("ctrst=0x%x\n", get_contrast());
+-#endif
++		outl(inl(0x6000600c) | 0x20000, 0x6000600c);	/* PWM enable */
+ 	}
+-}
+ 
+-void contrast_down(void)
+-{
+-	int contrast = get_contrast();
+-	if ( contrast > 0 ) {
+-		contrast--; 
+-		lcd_cmd_and_data(0x4, 0x4, contrast);
+-
+-#if 0
+-		printk("ctrst=0x%x\n", get_contrast());
+-#endif
++	if (ipod_hw_ver == 0x6 && lcd_type == 0) {
++		lcd_cmd_data(0xef, 0x0);
++		lcd_cmd_data(0x1, 0x0);
++		lcd_cmd_data(0x80, 0x1);
++		lcd_cmd_data(0x10, 0x8);
++		lcd_cmd_data(0x18, 0x6);
++		lcd_cmd_data(0x7e, 0x4);
++		lcd_cmd_data(0x7e, 0x5);
++		lcd_cmd_data(0x7f, 0x1);
+ 	}
++
++	/* backlight off & set grayscale */
++	set_backlight(1);
+ }
+ 
+ static void ipod_update_display(struct display *p, int sx, int sy, int mx, int my)
+@@ -252,6 +387,215 @@
+ 	}
+ }
+ 
++static void lcd_bcm_write32(unsigned address, unsigned value) {
++	/* write out destination address as two 16bit values */
++	outw(address, 0x30010000);
++	outw((address >> 16), 0x30010000);
++
++	/* wait for it to be write ready */
++	while ((inw(0x30030000) & 0x2) == 0);
++
++	/* write out the value low 16, high 16 */
++	outw(value, 0x30000000);
++	outw((value >> 16), 0x30000000);
++}
++
++static void lcd_bcm_setup_rect(unsigned cmd, unsigned start_horiz, unsigned start_vert, unsigned max_horiz, unsigned max_vert, unsigned count) {
++	lcd_bcm_write32(0x1F8, 0xFFFA0005);
++	lcd_bcm_write32(0xE0000, cmd);
++	lcd_bcm_write32(0xE0004, start_horiz);
++	lcd_bcm_write32(0xE0008, start_vert);
++	lcd_bcm_write32(0xE000C, max_horiz);
++	lcd_bcm_write32(0xE0010, max_vert);
++	lcd_bcm_write32(0xE0014, count);
++	lcd_bcm_write32(0xE0018, count);
++	lcd_bcm_write32(0xE001C, 0);
++}
++
++static unsigned lcd_bcm_read32(unsigned address) {
++	while ((inw(0x30020000) & 1) == 0);
++
++	/* write out destination address as two 16bit values */
++	outw(address, 0x30020000);
++	outw((address >> 16), 0x30020000);
++
++	/* wait for it to be read ready */
++	while ((inw(0x30030000) & 0x10) == 0);
++
++	/* read the value */
++	return inw(0x30000000) | inw(0x30000000) << 16;
++}
++
++static void lcd_bcm_finishup(void) {
++	unsigned data; 
++
++	outw(0x31, 0x30030000); 
++
++	lcd_bcm_read32(0x1FC);
++
++	do {
++		data = lcd_bcm_read32(0x1F8);
++	} while (data == 0xFFFA0005 || data == 0xFFFF);
++
++	lcd_bcm_read32(0x1FC);
++}
++
++static void ipod_update_photo(struct display *p, int sx, int sy, int mx, int my)
++{
++	int startx = sy * fontheight(p);
++	int starty = sx * fontwidth(p);
++	int height = (my - sy) * fontheight(p);
++	int width = (mx - sx) * fontwidth(p);
++	int rect1, rect2, rect3, rect4;
++
++	unsigned short *addr = (unsigned short *)ipod_scr;
++
++	/* calculate the drawing region */
++	if (ipod_hw_ver != 0x6) {
++		rect1 = starty;			/* start horiz */
++		rect2 = startx;			/* start vert */
++		rect3 = (starty + width) - 1;	/* max horiz */
++		rect4 = (startx + height) - 1;	/* max vert */
++	} else {
++		rect1 = startx;			/* start vert */
++		rect2 = (lcd_width - 1) - starty;	/* start horiz */
++		rect3 = (startx + height) - 1;	/* end vert */
++		rect4 = (rect2 - width) + 1;		/* end horiz */
++	}
++
++	/* setup the drawing region */
++	if (lcd_type == 0) {
++		lcd_cmd_data(0x12, rect1);	/* start vert */
++		lcd_cmd_data(0x13, rect2);	/* start horiz */
++		lcd_cmd_data(0x15, rect3);	/* end vert */
++		lcd_cmd_data(0x16, rect4);	/* end horiz */
++	} else if (ipod_hw_ver != 0xb) {
++		/* swap max horiz < start horiz */
++		if (rect3 < rect1) {
++			int t;
++			t = rect1;
++			rect1 = rect3;
++			rect3 = t;
++		}
++
++		/* swap max vert < start vert */
++		if (rect4 < rect2) {
++			int t;
++			t = rect2;
++			rect2 = rect4;
++			rect4 = t;
++		}
++
++		/* max horiz << 8 | start horiz */
++		lcd_cmd_data(0x44, (rect3 << 8) | rect1);
++		/* max vert << 8 | start vert */
++		lcd_cmd_data(0x45, (rect4 << 8) | rect2);
++
++		if (ipod_hw_ver == 0x6) {
++			/* start vert = max vert */
++			rect2 = rect4;
++		}
++
++		/* position cursor (set AD0-AD15) */
++		/* start vert << 8 | start horiz */
++		lcd_cmd_data(0x21, (rect2 << 8) | rect1);
++
++		/* start drawing */
++		lcd_send_lo(0x0);
++		lcd_send_lo(0x22);
++	} 
++
++	addr += startx * p->line_length + starty;
++
++	while (height > 0) {
++		int x, y;
++		int h, pixels_to_write;
++
++		pixels_to_write = (width * height) * 2;
++
++		/* calculate how much we can do in one go */
++		h = height;
++		if (pixels_to_write > 64000) {
++			h = (64000/2) / width;
++			pixels_to_write = (width * h) * 2;
++		}
++
++		outl(0x10000080, 0x70008a20);
++		outl((pixels_to_write - 1) | 0xc0010000, 0x70008a24);
++		outl(0x34000000, 0x70008a20);
++
++		/* for each row */
++		for (x = 0; x < h; x++) {
++			/* for each column */
++			for (y = 0; y < width; y += 2) {
++				unsigned two_pixels;
++				two_pixels =  (((addr[0]&0x00FF) << 8) |
++					       ((addr[0]&0xFF00) >> 8)) |
++					     ((((addr[1]&0x00FF) << 8) |
++					       ((addr[1]&0xFF00) >> 8)) << 16);
++				addr += 2;
++
++				while ((inl(0x70008a20) & 0x1000000) == 0);
++
++				/* output 2 pixels */
++				outl(two_pixels, 0x70008b00);
++			}
++
++			addr += lcd_width - width;
++		}
++		while ((inl(0x70008a20) & 0x4000000) == 0);
++	
++		outl(0x0, 0x70008a24);
++
++		height = height - h;
++	}
++
++}
++
++
++static void ipod_update_video(struct display *p, int sx, int sy, int mx, int my)
++{
++	int startx = sy * fontheight(p);
++	int starty = sx * fontwidth(p);
++	int height = (my - sy) * fontheight(p);
++	int width = (mx - sx) * fontwidth(p);
++	int rect1, rect2, rect3, rect4;
++	int x, y;
++	unsigned short *addr = (unsigned short *)ipod_scr;
++
++	/* calculate the drawing region */
++	rect1 = starty;			/* start horiz */
++	rect2 = startx;			/* start vert */
++	rect3 = (starty + width) - 1;	/* max horiz */
++	rect4 = (startx + height) - 1;	/* max vert */
++	
++
++	/* setup the drawing region */
++	lcd_bcm_setup_rect(0x34, rect1, rect2, rect3, rect4, (width*height)<<1);
++
++	addr += startx * p->line_length + starty;
++
++	outw((0xE0020 & 0xffff), 0x30010000);
++	outw((0xE0020 >> 16), 0x30010000);
++
++	while ((inw(0x30030000) & 0x2)==0);
++
++	for (y = 0; y < height; y++) {
++		for (x = 0; x < width; x+=2) {
++			outw(*(addr++), 0x30000000);
++			outw(*(addr++), 0x30000000);
++		}
++		addr += (lcd_width - width);
++	}
++	
++	
++	lcd_bcm_finishup();
++}
++
++
++
++
++
+ struct ipodfb_info {
+ 	/*
+ 	 *  Choose _one_ of the two alternatives:
+@@ -292,7 +636,7 @@
+ 		     int height, int width)
+ {
+ 	fbcon_cfb2.bmove(p, sy, sx, dy, dx, height, width);
+-	ipod_update_display(p, 0, 0, IPOD_LCD_WIDTH/8, IPOD_LCD_HEIGHT/fontheight(p));
++	ipod_update_display(p, 0, 0, lcd_width/8, lcd_height/fontheight(p));
+ }
+ 
+ void ipod_fb_clear(struct vc_data *conp, struct display *p, int sy, int sx,
+@@ -337,6 +681,83 @@
+ 	fontwidthmask:	FONTWIDTH(8)
+ };
+ 
++void ipod_fb16_setup(struct display *p)
++{
++	fbcon_cfb16.setup(p);
++}
++
++void ipod_fb16_bmove(struct display *p, int sy, int sx, int dy, int dx,
++		     int height, int width)
++{
++	fbcon_cfb16.bmove(p, sy, sx, dy, dx, height, width);
++	if (ipod_hw_ver!=0xb)	
++		ipod_update_photo(p, 0, 0, lcd_width/fontwidth(p), lcd_height/fontheight(p));
++	else
++		ipod_update_video(p, 0, 0, lcd_width/fontwidth(p), lcd_height/fontheight(p));
++
++}
++
++void ipod_fb16_clear(struct vc_data *conp, struct display *p, int sy, int sx,
++		     int height, int width)
++{
++	fbcon_cfb16.clear(conp, p, sy, sx, height, width);
++	if (ipod_hw_ver!=0xb)
++		ipod_update_photo(p, sx, sy, sx+width, sy+height);
++	else
++		ipod_update_video(p, sx, sy, sx+width, sy+height);
++}
++
++void ipod_fb16_putc(struct vc_data *conp, struct display *p, int c, int yy,
++		    int xx)
++{
++	fbcon_cfb16.putc(conp, p, c, yy, xx);
++	if (ipod_hw_ver!=0xb)
++		ipod_update_photo(p, xx, yy, xx+1, yy+1);
++	else
++		ipod_update_video(p, xx, yy, xx+1, yy+1);
++}
++
++void ipod_fb16_putcs(struct vc_data *conp, struct display *p, 
++		     const unsigned short *s, int count, int yy, int xx)
++{
++	fbcon_cfb16.putcs(conp, p, s, count, yy, xx);
++	if (ipod_hw_ver!=0xb)
++		ipod_update_photo(p, xx, yy, xx+count, yy+1);
++	else
++		ipod_update_video(p, xx, yy, xx+count, yy+1);
++}
++
++void ipod_fb16_revc(struct display *p, int xx, int yy)
++{
++	fbcon_cfb16.revc(p, xx, yy);
++	if (ipod_hw_ver!=0xb)
++		ipod_update_photo(p, xx, yy, xx+1, yy+1);
++	else
++		ipod_update_video(p, xx, yy, xx+1, yy+1);
++		
++}
++
++void ipod_fb16_clear_margins(struct vc_data *conp, struct display *p,
++			       int bottom_only)
++{
++	fbcon_cfb16.clear_margins(conp, p, bottom_only);
++}
++
++
++/*
++ *  `switch' for the low level operations
++ */
++
++struct display_switch fbcon_ipod16 = {
++	setup:		ipod_fb16_setup,
++	bmove:		ipod_fb16_bmove,
++	clear:		ipod_fb16_clear,
++	putc:		ipod_fb16_putc,
++	putcs:		ipod_fb16_putcs,
++	revc:		ipod_fb16_revc,
++	clear_margins:	ipod_fb16_clear_margins,
++	fontwidthmask:	FONTWIDTH(4)|FONTWIDTH(8)|FONTWIDTH(12)|FONTWIDTH(16)
++};
+ static struct ipodfb_info fb_info;
+ static struct ipodfb_par current_par;
+ static int current_par_valid = 0;
+@@ -377,13 +798,19 @@
+ 
+ 	strcpy(fix->id, "iPod");
+ 	/* required for mmap() */
+-	fix->smem_start = ipod_scr;
+-	fix->smem_len = IPOD_LCD_HEIGHT * (IPOD_LCD_WIDTH/4);
++	fix->smem_start = (unsigned long)ipod_scr;
+ 
+-	fix->type= FB_TYPE_PACKED_PIXELS;
++	fix->type = FB_TYPE_PACKED_PIXELS;
+ 
+-	fix->visual = FB_VISUAL_PSEUDOCOLOR;	/* fixed visual */
+-	fix->line_length = IPOD_LCD_WIDTH >> 2;	/* cfb2 default */
++	if (ipod_hw_ver == 0x6 || ipod_hw_ver == 0xb || ipod_hw_ver == 0xc) {
++		fix->visual = FB_VISUAL_TRUECOLOR;
++		fix->line_length = lcd_width << 1;	/* cfb16 default */
++		fix->smem_len = lcd_height * lcd_width * 2;
++	} else {
++		fix->visual = FB_VISUAL_PSEUDOCOLOR;	/* fixed visual */
++		fix->line_length = lcd_width >> 2;	/* cfb2 default */
++		fix->smem_len = lcd_height * (lcd_width/4);
++	}
+ 
+ 	fix->xpanstep = 0;	/* no hardware panning */
+ 	fix->ypanstep = 0;	/* no hardware panning */
+@@ -406,8 +833,8 @@
+ 	 *  bitfields, horizontal timing, vertical timing.
+ 	 */
+ 
+-	if ( var->xres > IPOD_LCD_WIDTH ||
+-		var->yres > IPOD_LCD_HEIGHT ||
++	if ( var->xres > lcd_width ||
++		var->yres > lcd_height ||
+ 		var->xres_virtual != var->xres ||
+ 		var->yres_virtual != var->yres ||
+ 		var->xoffset != 0 ||
+@@ -415,8 +842,14 @@
+ 		return -EINVAL;
+ 	}
+ 
+-	if ( var->bits_per_pixel != 2 ) {
+-		return -EINVAL;
++	if (ipod_hw_ver == 0x6 || ipod_hw_ver == 0xb || ipod_hw_ver == 0xc) {
++		if ( var->bits_per_pixel != 16 ) {
++			return -EINVAL;
++		}
++	} else {
++		if ( var->bits_per_pixel != 2 ) {
++			return -EINVAL;
++		}
+ 	}
+ 
+ 	return 0;
+@@ -430,15 +863,36 @@
+ 	 *  values read out of the hardware.
+ 	 */
+ 
+-	var->xres = IPOD_LCD_WIDTH;
+-	var->yres = IPOD_LCD_HEIGHT;
++	var->xres = lcd_width;
++	var->yres = lcd_height;
+ 	var->xres_virtual = var->xres;
+ 	var->yres_virtual = var->yres;
+ 	var->xoffset = 0;
+ 	var->yoffset = 0;
+ 
+-	var->bits_per_pixel = 2;
+-	var->grayscale = 1;
++	if (ipod_hw_ver == 0x6 || ipod_hw_ver == 0xb || ipod_hw_ver == 0xc) {
++		var->bits_per_pixel = 16;
++
++		var->red.offset = 0;
++		var->red.length = 5;
++
++		var->green.offset = 5;
++		var->green.length = 6;
++
++		var->blue.offset = 11;
++		var->blue.length = 5;
++
++		var->transp.offset = 0;
++		var->transp.length = 0;
++
++		var->red.msb_right = 0;
++		var->green.msb_right = 0;
++		var->blue.msb_right = 0;
++		var->transp.msb_right = 0;
++	} else {
++		var->bits_per_pixel = 2;
++		var->grayscale = 1;
++	}
+ 
+ 	return 0;
+ }
+@@ -479,7 +933,13 @@
+ 	 *  Return != 0 for invalid regno.
+ 	 */
+ 
+-	/* ... */
++	if (regno >= 16) return 1;
++	if (ipod_hw_ver == 0x6 || ipod_hw_ver == 0xb || ipod_hw_ver == 0xc) {
++		*red   = (ipod_fbcon_cmap[regno]      ) & 0xf800;
++		*green = (ipod_fbcon_cmap[regno] <<  5) & 0xfc00;
++		*blue  = (ipod_fbcon_cmap[regno] << 11) & 0xf800;
++		*transp = 0;
++	}
+ 	return 0;
+ }
+ 
+@@ -493,7 +953,12 @@
+ 	 *  Return != 0 for invalid regno.
+ 	 */
+ 
+-	/* ... */
++	if (regno >= 16) return 1;
++	if (ipod_hw_ver == 0x6 || ipod_hw_ver == 0xb || ipod_hw_ver == 0xc) {
++		ipod_fbcon_cmap[regno] = ((red & 0xf800) |
++					 ((green & 0xfc00) >> 5) |
++					 ((blue & 0xf800) >> 11));
++	}
+ 	return 0;
+ }
+ 
+@@ -514,10 +979,12 @@
+ {
+ 	static int backlight_on = -1;
+ 
++	if (ipod_hw_ver == 0x6 || ipod_hw_ver == 0xb || ipod_hw_ver == 0xc) {
++		return 0;
++	}
++
+ 	switch (blank_mode) {
+ 	case VESA_NO_BLANKING:
+-		/* printk(KERN_ERR "VESA_NO_BLANKING\n"); */
+-
+ 		/* start oscillation
+ 		 * wait 10ms
+ 		 * cancel standby
+@@ -536,7 +1003,6 @@
+ 
+ 	case VESA_VSYNC_SUSPEND:
+ 	case VESA_HSYNC_SUSPEND:
+-		/* printk(KERN_ERR "VESA_XSYNC_BLANKING\n"); */
+ 		if (backlight_on == -1) {
+ 			backlight_on = get_backlight();
+ 			set_backlight(0);
+@@ -549,7 +1015,6 @@
+ 		break;
+ 
+ 	case VESA_POWERDOWN:
+-		/* printk(KERN_ERR "VESA_POWERDOWN\n"); */
+ 		if (backlight_on == -1) {
+ 			backlight_on = get_backlight();
+ 			set_backlight(0);
+@@ -560,7 +1025,6 @@
+ 		break;
+ 
+ 	default:
+-		/* printk(KERN_ERR "unknown blank value %d\n", blank_mode); */
+ 		return -EINVAL;
+ 	}
+ 
+@@ -581,7 +1045,13 @@
+ 	 */
+ 
+ 	disp->screen_base = ipod_scr;
+-	disp->dispsw = &fbcon_ipod;
++	if (ipod_hw_ver == 0x6 || ipod_hw_ver == 0xb || ipod_hw_ver == 0xc) {
++		disp->dispsw = &fbcon_ipod16;
++		disp->dispsw_data = ipod_fbcon_cmap;
++	}
++	else {
++		disp->dispsw = &fbcon_ipod;
++	}
+ }
+ 
+ 
+@@ -690,6 +1160,80 @@
+ 
+ int __init ipodfb_init(void)
+ {
++	
++	ipod_hw_ver = ipod_get_hw_version() >> 16;
++	switch (ipod_hw_ver)
++	{
++	case 0xb: /* 5g/video */
++		lcd_type = 5;
++		lcd_width = IPOD_5G_LCD_WIDTH;
++		lcd_height = IPOD_5G_LCD_HEIGHT;
++		ipod_rtc = IPOD_PP5020_RTC;
++		break;
++
++	case 0xc: /* nano */
++		lcd_type = 1;
++		lcd_width = IPOD_NANO_LCD_WIDTH;
++		lcd_height = IPOD_NANO_LCD_HEIGHT;
++		ipod_rtc = IPOD_PP5020_RTC;
++		lcd_base = 0x70008a0c;
++		lcd_busy_mask = 0x80000000;
++		break;
++
++	case 6: /* photo */
++		if (ipod_get_hw_version() == 0x60000) {
++			lcd_type = 0;
++		} else {
++			int gpio_a01, gpio_a04;
++
++			/* A01 */
++			gpio_a01 = (inl(0x6000D030) & 0x2) >> 1;
++			/* A04 */
++			gpio_a04 = (inl(0x6000D030) & 0x10) >> 4;
++
++			printk(KERN_ERR "lcd: %d %d\n", gpio_a01, gpio_a04);
++			if (((gpio_a01 << 1) | gpio_a04) == 0 || ((gpio_a01 << 1) | gpio_a04) == 2) {
++				lcd_type = 0;
++			} else {
++				lcd_type = 1;
++			}
++		}
++
++		lcd_width = IPOD_PHOTO_LCD_WIDTH;
++		lcd_height = IPOD_PHOTO_LCD_HEIGHT;
++		ipod_rtc = IPOD_PP5020_RTC;
++		lcd_base = 0x70008a0c;
++		lcd_busy_mask = 0x80000000;
++		break;
++			
++	case 5: /* 4g */
++		lcd_width = IPOD_STD_LCD_WIDTH;
++		lcd_height = IPOD_STD_LCD_HEIGHT;
++		ipod_rtc = IPOD_PP5020_RTC;
++		lcd_base = IPOD_PP5020_LCD_BASE;
++		lcd_busy_mask = 0x8000;
++		break;
++
++	case 7: /* mini g2 */
++	case 4: /* mini */
++		lcd_width = IPOD_MINI_LCD_WIDTH;
++		lcd_height = IPOD_MINI_LCD_HEIGHT;	
++		ipod_rtc = IPOD_PP5020_RTC;
++		lcd_base = IPOD_PP5020_LCD_BASE;
++		lcd_busy_mask = 0x8000;
++		break;
++
++	case 3: /* 3g */
++	case 2: /* 2g */
++	case 1: /* 1g */
++		lcd_width = IPOD_STD_LCD_WIDTH;
++		lcd_height = IPOD_STD_LCD_HEIGHT;
++		ipod_rtc = IPOD_PP5002_RTC;
++		lcd_base = IPOD_PP5002_LCD_BASE;
++		lcd_busy_mask = 0x8000;
++		break;
++	}
++
+ 	fb_info.gen.fbhw = &ipod_switch;
+ 
+ 	fb_info.gen.fbhw->detect();
+@@ -711,7 +1255,7 @@
+ 	fbgen_set_disp(-1, &fb_info.gen);
+ 	fbgen_install_cmap(0, &fb_info.gen);
+ 
+-	if ( register_framebuffer(&fb_info.gen.info) < 0 ) {
++	if (register_framebuffer(&fb_info.gen.info) < 0) {
+ 		return -EINVAL;
+ 	}
+ 
+diff -ur linux-2.4.24/arch/armnommu/mach-ipod/hardware.c linux-2.4.24-svn/arch/armnommu/mach-ipod/hardware.c
+--- linux-2.4.24/arch/armnommu/mach-ipod/hardware.c	2009-12-28 02:54:17.000000000 +0000
++++ linux-2.4.24-svn/arch/armnommu/mach-ipod/hardware.c	2009-12-28 03:55:02.000000000 +0000
+@@ -1,7 +1,7 @@
+ /*
+  * hardware.c - special hardware routines for iPod
+  *
+- * Copyright (c) 2003,2004 Bernard Leach <leachbj@bouncycastle.org>
++ * Copyright (c) 2003-2005 Bernard Leach <leachbj@bouncycastle.org>
+  */
+ 
+ #include <linux/config.h>
+@@ -15,15 +15,17 @@
+ #include <asm/hardware.h>
+ #include <asm/system.h>
+ 
+-#define SYSINFO_TAG     (unsigned char *)0x40017f18
+-#define SYSINFO_PTR     (struct sysinfo_t **)0x40017f1c
+-
+ static struct sysinfo_t ipod_sys_info;
+ static int ipod_sys_info_set;
+ 
+ void ipod_set_sys_info(void);
+ 
+ /*
++ * nano  0x000C0005
++ * mini2 0x00070002
++ * ipod photo 0x60000
++ * 4th generation 0x50000
++ * ipod mini 0x40000
+  * 3rd generation (docking) 0x30000, 0x30001
+  * 2nd generation (touch wheel) 0x20000, 0x20001
+  * 1st generation (scroll wheel) iPods 0x10000, 0x10001, 0x10002
+@@ -36,7 +38,7 @@
+ 	}
+ 
+ 	if (ipod_sys_info_set > 0) {
+-		return ipod_sys_info.boardHwSwInterfaceRev;
++		return system_rev;
+ 	}
+ 
+ 	return 0x0;
+@@ -55,14 +57,31 @@
+ 	return 0x0;
+ }
+ 
++int ipod_is_pp5022(void) {
++	return (inl(0x70000000) << 8) >> 24 == '2';
++}
++
+ void ipod_set_sys_info(void)
+ {
+ 	if (!ipod_sys_info_set) {
+-		if ( *(unsigned *)SYSINFO_TAG == *(unsigned *)"IsyS" 
+-				&& (*SYSINFO_PTR)->IsyS ==  *(unsigned *)"IsyS" ) {
+-			memcpy(&ipod_sys_info, *SYSINFO_PTR, sizeof(struct sysinfo_t));
++		unsigned sysinfo_tag = SYSINFO_TAG;
++		struct sysinfo_t ** sysinfo_ptr = SYSINFO_PTR;
++
++		if (ipod_is_pp5022()) {
++			sysinfo_tag = SYSINFO_TAG_PP5022;
++			sysinfo_ptr = SYSINFO_PTR_PP5022;
++		}
++
++		if (*(unsigned *)sysinfo_tag == *(unsigned *)"IsyS" 
++				&& (*(struct sysinfo_t **)sysinfo_ptr)->IsyS ==  *(unsigned *)"IsyS" ) {
++			memcpy(&ipod_sys_info, *sysinfo_ptr, sizeof(struct sysinfo_t));
+ 			ipod_sys_info_set = 1;
+-			system_rev = ipod_sys_info.boardHwSwInterfaceRev;
++			/* magic length based on newer ipod nano sysinfo */
++			if (ipod_sys_info.len == 0xf8) {
++				system_rev = ipod_sys_info.sdram_zero2;
++			} else {
++				system_rev = ipod_sys_info.boardHwSwInterfaceRev;
++			}
+ 		}
+ 		else {
+ 			ipod_sys_info_set = -1;
+@@ -72,167 +91,110 @@
+ 
+ void ipod_hard_reset(void)
+ {
+-	outl(inl(0xcf005030) | 0x4, 0xcf005030);
++	int hw_ver = ipod_get_hw_version() >> 16;
++	if (hw_ver > 0x3) {
++		outl(inl(0x60006004) | 0x4, 0x60006004);
++	}
++	else {
++		outl(inl(0xcf005030) | 0x4, 0xcf005030);
++	}
+ }
+ 
+-/* make startup piezo noise */
+-void ipod_startup_noise(void)
++void
++ipod_init_cache(void)
+ {
+-	int i1, i2;
+-
+-	outl(0x80, 0xc000604c);
+-
+-	/* set divisor low word */
+-	outl(0xd, 0xc0006040);
++	unsigned i;
++	int hw_ver;
+ 
+-	outl(0x3, 0xc000604c);
++	hw_ver = ipod_get_hw_version() >> 16;
++	if (hw_ver > 0x3) {
++		/* cache init mode? */
++		outl(0x4, 0x6000C000);
++
++		/* PP5002 has 8KB cache */
++		for (i = 0xf0004000; i < 0xf0006000; i += 16) {
++			outl(0x0, i);
++		}
+ 
+-	outl(0x3, 0xc0006050);
+-	outl(0x7, 0xc0006048);
++		outl(0x0, 0xf000f040);
++		outl(0x3fc0, 0xf000f044);
+ 
+-	for ( i1 = 0; i1 < 500; i1++ ) {
+-		outl(0x0, 0xc0006040);
++		/* enable cache */
++		outl(0x1, 0x6000C000);
+ 
+-		/* delay for a bit */
+-		for ( i2 = 0; i2 < i1; i2++ ) {
+-			/* empty */
++		for (i = 0x10000000; i < 0x10002000; i += 16) {
++			inb(i);
+ 		}
+ 	}
+-}
++	else {
++		outl(inl(0xcf004050) & ~0x700, 0xcf004050);
++		outl(0x4000, 0xcf004020);
+ 
+-/* wait for action button to be pressed and then released */
+-void
+-wait_for_action(void)
+-{
+-	/* wait for press */
+-	do {
+-		inl(0xcf000030);
+-	} while ( (inl(0xcf000030) & 0x2) != 0 );
+-
+-	/* wait for release */
+-	do {
+-		inl(0xcf000030);
+-	} while ( (inl(0xcf000030) & 0x2) == 0 );
+-}
++		outl(0x2, 0xcf004024);
+ 
+-void
+-ipod_init_cache(void)
+-{
+-	unsigned i;
+-
+-	outl(inl(0xcf004050) & ~0x700, 0xcf004050);
+-	outl(0x4000, 0xcf004020);
++		/* PP5002 has 8KB cache */
++		for (i = 0xf0004000; i < 0xf0006000; i += 16) {
++			outl(0x0, i);
++		}
+ 
+-	outl(0x2, 0xcf004024);
++		outl(0x0, 0xf000f020);
++		outl(0x3fc0, 0xf000f024);
+ 
+-	/* PP5002 has 8KB cache */
+-	for (i = 0xf0004000; i < 0xf0006000; i += 16) {
+-		outl(0x0, i);
++		outl(0x3, 0xcf004024);
+ 	}
+-
+-	outl(0x0, 0xf000f020);
+-	outl(0x3fc0, 0xf000f024);
+-
+-	outl(0x3, 0xcf004024);
+ }
+ 
+ void
+ ipod_set_cpu_speed(void)
+ {
+-	outl(0x02, 0xcf005008);
+-
+-	outl(0x55, 0xcf00500c);
+-	outl(0x6000, 0xcf005010);
+-
+-#if 1
+-	// 75  MHz (24/24 * 75) (default)
+-	outl(24, 0xcf005018);
+-	outl(75, 0xcf00501c);
+-#endif
+-
+ #if 0
+-	// 66 MHz (24/3 * 8)
+-	outl(3, 0xcf005018);
+-	outl(8, 0xcf00501c);
++	if ((ipod_get_hw_version() >> 16) == 0xb)
++		return;
+ #endif
++	if ((ipod_get_hw_version() >> 16) > 0x3) {
++		outl(inl(0x70000020) | (1<<30), 0x70000020);
+ 
+-	outl(0xe000, 0xcf005010);
+-
+-	udelay(2000);
+-
+-	outl(0xa8, 0xcf00500c);
+-}
+-
+-static void
+-set_boot_variable(unsigned *dest, char *src, unsigned len)
+-{
+-	if ( !(((unsigned)dest | (unsigned)src) & 0x3 ) ) {
++		/* Set run state to 24MHz */
++		outl((inl(0x60006020) & 0x0fffff0f) | 0x20000020, 0x60006020);
+ 
+-		unsigned lr = 0x01010101;
++		/* 75 MHz (24/8)*25 */
++		outl(0xaa021908, 0x60006034);
++		udelay(2000);
++
++		outl((inl(0x60006020) & 0x0fffff0f) | 0x20000070, 0x60006020);
++	} else {
++		outl(0x02, 0xcf005008);
+ 
+-		unsigned ip;
+-		unsigned t;
++		outl(0x55, 0xcf00500c);
++		outl(0x6000, 0xcf005010);
+ 
+-		do {
+-			if ( len < 4 ) break;
+-
+-			ip = *(unsigned *)src;
+-			*dest = ip;
+-
+-			dest ++;
+-			src += 4;
+-			len -= 4;
+-
+-			/* this magic checks for embedded nulls */
+-			t = ip - lr;
+-			t = t & ~ip;
+-		} while ( (t & (lr << 7)) == 0 );
+-	}
++#if 1
++		// 75  MHz (24/24 * 75) (default)
++		outl(24, 0xcf005018);
++		outl(75, 0xcf00501c);
++#endif
+ 
+-	if ( len == 0 ) return;
++#if 0
++		// 66 MHz (24/3 * 8)
++		outl(3, 0xcf005018);
++		outl(8, 0xcf00501c);
++#endif
+ 
+-	{
+-		char ip;
++		outl(0xe000, 0xcf005010);
+ 
+-		do {
+-			ip = *src++;
+-			*((char *)dest)++ = ip;
+-			if ( ip == 0 ) break;
+-			len--;
+-		} while ( len != 0 );
++		udelay(2000);
+ 
+-		if ( len <= 1 ) return;
++		outl(0xa8, 0xcf00500c);
+ 	}
+-
+-	len --;
+-
+-	do {
+-		*((unsigned char *)dest)++ = '\0';
+-		len--;
+-	} while ( len != 0 );
+ }
+ 
+-void
+-ipod_reboot_to_diskmode(void)
+-{
+-	/* select new mode and icon to show during boot */
+-	set_boot_variable((unsigned *)0x40017f00, "diskmode", 8);
+-	set_boot_variable((unsigned *)0x40017f08, "hotstuff", 8);
+-
+-	/* do special startup? */
+-	outl(0x1, 0x40017f10);
+-
+-	/* reset */
+-	outl(inl(0xcf005030) | 0x4, 0xcf005030);
+-}
+-
+-#define IPOD_I2C_CTRL	0xc0008000
+-#define IPOD_I2C_ADDR	0xc0008004
+-#define IPOD_I2C_DATA0	0xc000800c
+-#define IPOD_I2C_DATA1	0xc0008010
+-#define IPOD_I2C_DATA2	0xc0008014
+-#define IPOD_I2C_DATA3	0xc0008018
+-#define IPOD_I2C_STATUS	0xc000801c
++#define IPOD_I2C_CTRL	(ipod_i2c_base+0x00)
++#define IPOD_I2C_ADDR	(ipod_i2c_base+0x04)
++#define IPOD_I2C_DATA0	(ipod_i2c_base+0x0c)
++#define IPOD_I2C_DATA1	(ipod_i2c_base+0x10)
++#define IPOD_I2C_DATA2	(ipod_i2c_base+0x14)
++#define IPOD_I2C_DATA3	(ipod_i2c_base+0x18)
++#define IPOD_I2C_STATUS	(ipod_i2c_base+0x1c)
+ 
+ /* IPOD_I2C_CTRL bit definitions */
+ #define IPOD_I2C_SEND	0x80
+@@ -242,6 +204,8 @@
+ 
+ #define POLL_TIMEOUT (HZ)
+ 
++static unsigned ipod_i2c_base;
++
+ static int
+ ipod_i2c_wait_not_busy(void)
+ {
+@@ -264,12 +228,67 @@
+ 	static int i2c_init = 0;
+ 
+ 	if (i2c_init == 0) {
++		int ipod_hw_ver;
++
+ 		i2c_init = 1;
+ 
++		ipod_hw_ver = ipod_get_hw_version() >> 16;
++
+ 		/* reset I2C */
+-                outl(inl(0xcf005030) | (1<<8), 0xcf005030);
+-		outl(inl(0xcf005030) & ~(1<<8), 0xcf005030);
++		if (ipod_hw_ver > 0x3) {
++			ipod_i2c_base = 0x7000c000;
++
++			if (ipod_hw_ver == 0x4) {
++				/* GPIO port C disable port 0x10 */
++				outl(inl(0x6000d008) & ~0x10, 0x6000d008);
++
++				/* GPIO port C disable port 0x20 */
++				outl(inl(0x6000d008) & ~0x20, 0x6000d008);
++			}
++
++			outl(inl(0x6000600c) | 0x1000, 0x6000600c);	/* enable 12 */
++
++			outl(inl(0x60006004) | 0x1000, 0x60006004);	/* start reset 12 */
++			outl(inl(0x60006004) & ~0x1000, 0x60006004);	/* end reset 12 */
++
++			outl(0x0, 0x600060a4);
++			outl(0x80 | (0 << 8), 0x600060a4);
++
++				i2c_readbyte(0x8, 0);
++		} else {
++			ipod_i2c_base = 0xc0008000;
++
++			outl(inl(0xcf005000) | 0x2, 0xcf005000);
++
++			outl(inl(0xcf005030) | (1<<8), 0xcf005030);
++			outl(inl(0xcf005030) & ~(1<<8), 0xcf005030);
++		}
++	}
++}
++
++int
++ipod_i2c_read_byte(unsigned int addr, unsigned int *data)
++{
++	if (ipod_i2c_wait_not_busy() < 0) {
++		return -ETIMEDOUT;
++	}
++
++	// clear top 15 bits, left shift 1, or in 0x1 for a read
++	outb(((addr << 17) >> 16) | 0x1, IPOD_I2C_ADDR);
++
++	outb(inb(IPOD_I2C_CTRL) | 0x20, IPOD_I2C_CTRL);
++
++	outb(inb(IPOD_I2C_CTRL) | IPOD_I2C_SEND, IPOD_I2C_CTRL);
++
++	if (ipod_i2c_wait_not_busy() < 0) {
++		return -ETIMEDOUT;
++	}
++
++	if (data) {
++		*data = inb(IPOD_I2C_DATA0);
+ 	}
++
++	return 0;
+ }
+ 
+ int
+@@ -316,13 +335,36 @@
+ 	return ipod_i2c_send_bytes(addr, 2, data);
+ }
+ 
++int
++ipod_i2c_send_byte(unsigned int addr, int data0)
++{
++	unsigned char data[1];
++
++	data[0] = data0;
++
++	return ipod_i2c_send_bytes(addr, 1, data);
++}
++
++int
++i2c_readbyte(unsigned int dev_addr, int addr)
++{
++	int data;
++
++	ipod_i2c_send_byte(dev_addr, addr);
++	ipod_i2c_read_byte(dev_addr, &data);
++
++	return data;
++}
++
+ void
+ ipod_serial_init(void)
+ {
+ 	int hw_ver = ipod_get_hw_version() >> 16;
+ 
+ 	/* enable ttyS1 (piezo) */
+-	outl(inl(0xcf004040) & ~(1<<12), 0xcf004040);
++	if (hw_ver <= 0x3) {
++		outl(inl(0xcf004040) & ~(1<<12), 0xcf004040);
++	}
+ 	if (hw_ver == 0x3) {
+ 		/* port c, bit 0 and 3 disabled */
+ 		outl(inl(0xcf00000c) & ~((1<<0)|(1<<3)), 0xcf00000c);
+@@ -343,24 +385,35 @@
+ 	}
+ 
+ 	/* enable ttyS0 (remote) */
+-	if (hw_ver != 0x3) {
++	if (hw_ver < 0x3) {
+ 		outl(inl(0xcf00000c) & ~0x8, 0xcf00000c);
+ 	}
+ 
+-	/* 3g ttyS0 init */
+-	if (hw_ver == 0x3) {
++	if (hw_ver >= 0x3) {
++		ipod_i2c_init();
++
++		/* send some commands to the PCF */
++		/* to power up the 3.3V pin + ?? */
++
++		/* 4g diag this this (mini diag doesnt) */
++		/* ipod_i2c_send(0x8, 0x38, 0x0); */
++
+ 		ipod_i2c_send(0x8, 0x24, 0xf5);
+ 		ipod_i2c_send(0x8, 0x25, 0xf8);
++
++		/* 4g diag doesnt have this (mini diag does) */
+ 		ipod_i2c_send(0x8, 0x26, 0xf5);
++	}
++
++	/* 3g ttyS0 init */
++	if (hw_ver == 0x3) {
+ 		ipod_i2c_send(0x8, 0x34, 0x02);
+ 		ipod_i2c_send(0x8, 0x1b, 0xf9);
+ 
+-		// sub_0_2800147C(0)
+ 		outl(inl(0xcf004044) | (1<<4), 0xcf004044);
+ 		outl(inl(0xcf004048) & ~(1<<4), 0xcf004048);
+ 
+ 		/* port c bit 3 output 1 */
+-		// sub_0_28001434(1)
+ 		outl(inl(0xcf000008) | (1<<3), 0xcf000008);
+ 		outl(inl(0xcf000018) | (1<<3), 0xcf000018);
+ 		outl(inl(0xcf000028) | (1<<3), 0xcf000028);
+@@ -369,10 +422,57 @@
+ 		outl(inl(0xcf00000c) & ~0x1, 0xcf00000c);
+ 		outl(inl(0xcf00000c) & ~0x8, 0xcf00000c);
+ 	}
++
++	if (hw_ver == 0x4 || hw_ver == 0x5 || hw_ver == 0x7) {
++		/* 4g diag for ser1 */
++		outl(inl(0x70000014) & ~0xF00, 0x70000014);
++		outl(inl(0x70000014) | 0xA00, 0x70000014);
++
++		/* 4g diag for ser0 */
++		outl(inl(0x70000018) & ~0xC00, 0x70000018);
++
++		/* where did this come from? */
++		// outl(inl(0x70000020) & ~0x200, 0x70000020);
++
++		/* port c bit 3 output 1 */
++		outl(inl(0x6000d008) | (1<<3), 0x6000d008);
++		outl(inl(0x6000d018) | (1<<3), 0x6000d018);
++		outl(inl(0x6000d028) | (1<<3), 0x6000d028);
++
++		/* enable ser0 */
++		outl(inl(0x6000600c) | 0x40, 0x6000600c);
++
++		/* reset ser0 */
++		outl(inl(0x60006004) | 0x40, 0x60006004);
++		outl(inl(0x60006004) & ~0x40, 0x60006004);
++
++		/* enable ser1 */
++		outl(inl(0x6000600c) | 0x80, 0x6000600c);
++
++		/* reset ser1 */
++		outl(inl(0x60006004) | 0x80, 0x60006004);
++		outl(inl(0x60006004) & ~0x80, 0x60006004);
++	}
+ }
+ 
+ /* put our ptr in on chip ram to avoid caching problems */
+-static ipod_dma_handler_t * ipod_dma_handler = SYSINFO_TAG;
++static ipod_dma_handler_t * ipod_dma_handler = DMA_HANDLER;
++
++static ipod_cop_handler_t * ipod_cop_handler = COP_HANDLER;
++
++
++void ipod_handle_cop(void)
++{
++	if (*ipod_cop_handler != 0) {
++		(*ipod_cop_handler)();
++	}
++}
++
++void ipod_set_handle_cop(ipod_cop_handler_t new_handler)
++{
++	*ipod_cop_handler = new_handler;
++}
++
+ 
+ void ipod_set_process_dma(ipod_dma_handler_t new_handler)
+ {
+@@ -388,9 +488,12 @@
+ 
+ EXPORT_SYMBOL(ipod_get_hw_version);
+ EXPORT_SYMBOL(ipod_get_sysinfo);
++EXPORT_SYMBOL(ipod_is_pp5022);
+ EXPORT_SYMBOL(ipod_i2c_init);
+ EXPORT_SYMBOL(ipod_i2c_send_bytes);
+ EXPORT_SYMBOL(ipod_i2c_send);
++EXPORT_SYMBOL(ipod_i2c_send_byte);
+ EXPORT_SYMBOL(ipod_serial_init);
+ EXPORT_SYMBOL(ipod_set_process_dma);
++EXPORT_SYMBOL(ipod_set_handle_cop);
+ 
+Only in linux-2.4.24-svn/arch/armnommu/mach-ipod: ipod-ide.c
+diff -ur linux-2.4.24/arch/armnommu/mach-ipod/ipodremote.c linux-2.4.24-svn/arch/armnommu/mach-ipod/ipodremote.c
+--- linux-2.4.24/arch/armnommu/mach-ipod/ipodremote.c	2009-12-28 02:54:17.000000000 +0000
++++ linux-2.4.24-svn/arch/armnommu/mach-ipod/ipodremote.c	2009-12-28 03:55:02.000000000 +0000
+@@ -215,7 +215,7 @@
+ 
+ static int __init ipod_remote_init(void)
+ {
+-	printk("ipod_remote: $Id: ipodremote.c,v 1.2 2004/03/02 22:41:44 leachbj Exp $\n");
++	printk("ipod_remote: $Id: ipodremote.c,v 1.1 2003/03/21 10:37:18 leachbj Exp $\n");
+ 
+ 	serio_register_device(&ipod_remote_dev);
+ 
+diff -ur linux-2.4.24/arch/armnommu/mach-ipod/irq.c linux-2.4.24-svn/arch/armnommu/mach-ipod/irq.c
+--- linux-2.4.24/arch/armnommu/mach-ipod/irq.c	2009-12-28 02:54:17.000000000 +0000
++++ linux-2.4.24-svn/arch/armnommu/mach-ipod/irq.c	2009-12-28 03:55:02.000000000 +0000
+@@ -6,11 +6,14 @@
+ 
+ #include <linux/config.h>
+ #include <linux/version.h>
++#include <linux/kernel.h>
+ #include <asm/io.h>
+ #include <asm/mach/irq.h>
+ #include <asm/irq.h>
++#include <asm/timex.h>
+ 
+-static void ipod_unmask_irq(unsigned int irq)
++/* PP5002 functions */
++static void pp5002_unmask_irq(unsigned int irq)
+ {
+ 	/* unmask the interrupt */
+ 	outl((1 << irq), 0xcf001024);
+@@ -18,57 +21,133 @@
+ 	outl(inl(0xcf00102c) & ~(1 << irq), 0xcf00102c);
+ }
+ 
+-static void ipod_mask_irq(unsigned int irq)
++static void pp5002_mask_irq(unsigned int irq)
+ {
+ 	/* mask the interrupt */
+ 	outl((1 << irq), 0xcf001028);
+ }
+ 
+-static void ipod_mask_ack_irq(unsigned int irq)
++static void pp5002_mask_ack_irq(unsigned int irq)
+ {
+ 
+ 	/* there is no general IRQ ack, we have to do it at the source */
+ 	switch (irq) {
+-	case IDE_INT0_IRQ:
++	case PP5002_IDE_IRQ:
+ 		/* clear FIFO interrupt status */
+ 		outl(0xff, 0xc0003020);
+ 		outl(inl(0xc0003024) | (1<<4) | (1<<5), 0xc0003024);
+ 		break;
+ 
+-	case TIMER1_IRQ:
+-		inl(0xcf001104);
++	case PP5002_TIMER1_IRQ:
++		inl(PP5002_TIMER1_ACK);
+ 		break;
+ 	}
+ 
+-	ipod_mask_irq(irq);
++	pp5002_mask_irq(irq);
++}
++
++/* PP5020 functions */
++static void pp5020_unmask_irq(unsigned int irq)
++{
++	switch (irq) {
++	case PP5020_IDE_IRQ:
++		outl(inl(0xc3000028) | (1<<5), 0xc3000028);
++	}
++
++	if (irq < 32) {
++		outl((1 << irq), 0x60004024);
++	}
++	else {
++		/* hi interrupt enable */
++		outl(0x40000000, 0x60004024);
++
++		outl((1 << (irq - 32)), 0x60004124);
++	}
++}
++
++static void pp5020_mask_irq(unsigned int irq)
++{
++	/* mask the interrupt */
++	if (irq < 32) {
++		outl((1 << irq), 0x60004028);
++	}
++	else {
++		outl((1 << (irq - 32)), 0x60004128);
++	}
++}
++
++static void pp5020_mask_ack_irq(unsigned int irq)
++{
++	/* there is no general IRQ ack, we have to do it at the source */
++	switch (irq) {
++	case PP5020_TIMER1_IRQ:
++		inl(PP5020_TIMER1_ACK);
++		break;
++
++	case PP5020_IDE_IRQ:
++		outl(inl(0xc3000028) & ~((1<<4) | (1<<5)), 0xc3000028);
++		break;
++	}
++
++	pp5020_mask_irq(irq);
+ }
+ 
+ int ipod_init_irq(void)
+ {
+-	unsigned int irq;
++	int irq, ipod_hw_ver;
++
++	ipod_hw_ver = ipod_get_hw_version() >> 16;
+ 
+ 	/* disable all interrupts */
+-	outl(-1, 0xcf00101c);
+-	outl(-1, 0xcf001028);
+-	outl(-1, 0xcf001038);
++	if (ipod_hw_ver > 0x3) {
++		outl(-1, 0x60001138);
++		outl(-1, 0x60001128);
++		outl(-1, 0x6000111c);
++
++		outl(-1, 0x60001038);
++		outl(-1, 0x60001028);
++		outl(-1, 0x6000101c);
++	}
++	else {
++		outl(-1, 0xcf00101c);
++		outl(-1, 0xcf001028);
++		outl(-1, 0xcf001038);
++	}
+ 
+ 	/* clear all interrupts */
+ 	for ( irq = 0; irq < NR_IRQS; irq++ ) {
+ 
+-		if (!VALID_IRQ(irq)) continue;
++		if (ipod_hw_ver > 0x3) {
++			if (!PP5020_VALID_IRQ(irq)) continue;
++		}
++		else {
++			if (!PP5002_VALID_IRQ(irq)) continue;
++		}
+ 
+ 		irq_desc[irq].valid     = 1;
+ 		irq_desc[irq].probe_ok  = 1;
+-		irq_desc[irq].mask_ack  = ipod_mask_ack_irq;
+-		irq_desc[irq].mask      = ipod_mask_irq;
+-		irq_desc[irq].unmask    = ipod_unmask_irq;
++		if (ipod_hw_ver > 0x3) {
++			irq_desc[irq].mask_ack  = pp5020_mask_ack_irq;
++			irq_desc[irq].mask      = pp5020_mask_irq;
++			irq_desc[irq].unmask    = pp5020_unmask_irq;
++		}
++		else {
++			irq_desc[irq].mask_ack  = pp5002_mask_ack_irq;
++			irq_desc[irq].mask      = pp5002_mask_irq;
++			irq_desc[irq].unmask    = pp5002_unmask_irq;
++		}
+ 	}
+ 
+ 	/*
+ 	 * since the interrupt vectors at 0x0 are now installed
+ 	 * we can wake up the COP safely
+ 	 */
+-	outl(0xce, 0xcf004058);
++	if (ipod_hw_ver > 0x3) {
++		outl(0x0, 0x60007004);
++	}
++	else {
++		outl(0xce, 0xcf004058);
++	}
+ 
+         return 0;
+ }
+diff -ur linux-2.4.24/arch/armnommu/mach-ipod/keyboard.c linux-2.4.24-svn/arch/armnommu/mach-ipod/keyboard.c
+--- linux-2.4.24/arch/armnommu/mach-ipod/keyboard.c	2009-12-28 02:54:17.000000000 +0000
++++ linux-2.4.24-svn/arch/armnommu/mach-ipod/keyboard.c	2009-12-28 03:55:02.000000000 +0000
+@@ -1,7 +1,11 @@
+ /*
+  * keyboard.c - keyboard driver for iPod
+  *
+- * Copyright (c) 2003,2004 Bernard Leach (leachbj@bouncycastle.org)
++ * Copyright (c) 2003-2005 Bernard Leach (leachbj@bouncycastle.org)
++ * 
++ * 2005-04-08 4g/photo patched by Niccolo' Contessa <sonictooth@gmail.com>
++ *
++ * 2005-12-21 added /dev/wheel  Joshua Oreman <oremanj@gmail.com>
+  */
+ 
+ #include <linux/module.h>
+@@ -14,51 +18,217 @@
+ #include <linux/mm.h>
+ #include <linux/kbd_kern.h>
+ #include <linux/delay.h>
++#include <linux/input.h>
++#include <linux/errno.h>
++#include <linux/slab.h>
++#include <linux/miscdevice.h>
++#include <linux/poll.h>
+ #include <asm/io.h>
+ #include <asm/arch/irqs.h>
+ #include <asm/keyboard.h>
+ #include <asm/hardware.h>
+-
+-/* undefine these to produce keycodes from left/right/up/down */
+-#undef DO_SCROLLBACK
+-#undef DO_CONTRAST
+-#undef USE_ARROW_KEYS
++#include <asm/uaccess.h>
+ 
+ /* we use the keycodes and translation is 1 to 1 */
+-#define R_SC		19	/* 'r' */
+-#define L_SC		38	/* 'l' */
++#define R_SC		KEY_R
++#define L_SC		KEY_L
+ 
+-#if defined(USE_ARROW_KEYS)
+-#define UP_SC		103
+-#define LEFT_SC		105
+-#define RIGHT_SC	106
+-#define DOWN_SC		108
+-#else
+-#define UP_SC		50	/* 'm' */
+-#define LEFT_SC		17	/* 'w' */
+-#define RIGHT_SC	33	/* 'f' */
+-#define DOWN_SC		32	/* 'd' */
+-#endif
++#define UP_SC		KEY_M
++#define LEFT_SC		KEY_W
++#define RIGHT_SC	KEY_F
++#define DOWN_SC		KEY_D
+ 
+-#define ACTION_SC	28	/* '\n' */
+-
+-/* send ^S and ^Q for the hold switch */
+-#define LEFT_CTRL_SC	29
+-#define Q_SC		16
+-#define S_SC		31
++#define HOLD_SC		KEY_H
++#define ACTION_SC	KEY_ENTER
+ 
+ /* need to pass something becuase we use a shared irq */
+-#define KEYBOARD_DEV_ID	0x4b455942
++#define KEYBOARD_DEV_ID	(void *)0x4b455942
+ 
+ static unsigned ipod_hw_ver;
+ 
+-static void keyboard_interrupt(int irq, void *dev_id, struct pt_regs *regs)
++#define EV_SCROLL        0x1000
++#define EV_TAP           0x2000
++#define EV_PRESS         0x4000
++#define EV_RELEASE       0x8000
++#define EV_TOUCH         0x0100
++#define EV_LIFT          0x0200
++#define EV_MASK          0xff00
++
++#define BTN_ACTION       0x0001
++#define BTN_NEXT         0x0002
++#define BTN_PREVIOUS     0x0004
++#define BTN_PLAY         0x0008
++#define BTN_MENU         0x0010
++#define BTN_HOLD         0x0020
++#define BTN_MASK         0x00ff
++
++#define SCROLL_LEFT      0x0080
++#define SCROLL_RIGHT     0x0000
++#define SCROLL(dist) ((dist) < 0? (-(dist) & 0x7f) | SCROLL_LEFT : (dist) & 0x7f)
++#define SCROLL_MASK      0x007f
++
++/*
++ * We really want to restrict it to less-than-0x60,
++ * but that's not a power of 2 so 0x5f doesn't work as mask.
++ * We'll settle for 0x7f, since the val should never get
++ * above 0x5f in hardware anyway.
++ */
++#define TAP(loc)         ((loc) & 0x7f)
++#define TOUCH(loc)       ((loc) & 0x7f)
++#define LIFT(loc)        ((loc) & 0x7f)
++#define TAP_MASK         0x007f
++#define TOUCH_MASK       0x007f
++#define LIFT_MASK        0x007f
++
++static volatile int ikb_reading;
++static volatile int ikb_opened;
++static volatile unsigned short ikb_events[32];
++static volatile unsigned ikb_ev_head, ikb_ev_tail;
++
++static volatile unsigned ikb_pressed_at; /* jiffy value when user touched wheel, 0 if not touching. */
++static volatile unsigned ikb_first_loc; /* location where user first touched wheel */
++static volatile int ikb_current_scroll; /* current scroll distance */
++static volatile unsigned ikb_buttons_pressed, ikb_buttons_pressed_new; /* mask of BTN_* values */
++
++static DECLARE_WAIT_QUEUE_HEAD (ikb_read_wait);
++
++static void ikb_push_event (unsigned ev) 
++{
++	if (!ikb_opened) return;
++	
++	if ((ikb_ev_head+1 == ikb_ev_tail) || (ikb_ev_head == 31 && ikb_ev_tail == 0))
++		printk (KERN_ERR "dropping event %08x\n", ev);
++	
++	ikb_events[ikb_ev_head++] = ev;
++	ikb_ev_head &= 31;
++	wake_up_interruptible (&ikb_read_wait);
++}
++
++/* Turn the counter into a scroll event. */
++static void ikb_make_scroll_event (void)
++{
++	if (ikb_current_scroll) {
++		ikb_push_event (EV_SCROLL | SCROLL(ikb_current_scroll));
++		ikb_current_scroll = 0;
++	}
++}
++
++static void ikb_scroll (int dir) 
++{
++	ikb_current_scroll += dir;
++
++	while (dir > 0) {
++		handle_scancode (R_SC, 1);
++		handle_scancode (R_SC, 0);
++		dir--;
++	}
++
++	while (dir < 0) {
++		handle_scancode (L_SC, 1);
++		handle_scancode (L_SC, 0);
++		dir++;
++	}
++
++	if (ikb_reading)
++		ikb_make_scroll_event();
++}
++
++static void handle_scroll_wheel(int new_scroll, int was_hold, int reverse)
+ {
+ 	static int prev_scroll = -1;
++	static int scroll_state[4][4] = {
++		{0, 1, -1, 0},
++		{-1, 0, 0, 1},
++		{1, 0, 0, -1},
++		{0, -1, 1, 0}
++	};
++
++	if ( prev_scroll == -1 ) {
++		prev_scroll = new_scroll;
++	}
++	else if (!was_hold) {
++		switch (scroll_state[prev_scroll][new_scroll]) {
++		case 1:
++			if (reverse) {
++				/* 'r' keypress */
++				ikb_scroll (1);
++			}
++			else {
++				/* 'l' keypress */
++				ikb_scroll (-1);
++			}
++			break;
++		case -1:
++			if (reverse) {
++				/* 'l' keypress */
++				ikb_scroll (-1);
++			}
++			else {
++				/* 'r' keypress */
++				ikb_scroll (1);
++			}
++			break;
++		default:
++			/* only happens if we get out of sync */
++			break;
++		}
++	}
++
++	prev_scroll = new_scroll;
++}
++
++static void ikb_handle_button (int button, int press) 
++{
++	int sc;
++
++	if (press)
++		ikb_buttons_pressed_new |= button;
++	else
++		ikb_buttons_pressed_new &= ~button;
++	
++	/* Send the code to the TTY driver too */
++	switch (button) {
++	case BTN_ACTION:   sc = ACTION_SC; break;
++	case BTN_PREVIOUS: sc = LEFT_SC;   break;
++	case BTN_NEXT:     sc = RIGHT_SC;  break;
++	case BTN_MENU:     sc = UP_SC;     break;
++	case BTN_PLAY:     sc = DOWN_SC;   break;
++	case BTN_HOLD:     sc = HOLD_SC;   break;
++	default:           sc = 0;         break;
++	}
++
++	if (sc)
++		handle_scancode (sc, press);
++}
++
++static void ikb_start_buttons (void)
++{
++	ikb_buttons_pressed_new = ikb_buttons_pressed;
++}
++
++static void ikb_finish_buttons (void)
++{
++	/* Pressed: */
++	if (ikb_buttons_pressed_new & ~ikb_buttons_pressed) {
++		ikb_push_event (EV_PRESS | (ikb_buttons_pressed_new & ~ikb_buttons_pressed));
++	}
++	/* Released: */
++	if (ikb_buttons_pressed & ~ikb_buttons_pressed_new) {
++		ikb_push_event (EV_RELEASE | (ikb_buttons_pressed & ~ikb_buttons_pressed_new));
++	}
++	
++	ikb_buttons_pressed = ikb_buttons_pressed_new;
++}
++
++static void keyboard_interrupt(int irq, void *dev_id, struct pt_regs *regs)
++{
+ 	unsigned char source, state;
+ 	static int was_hold = 0;
+ 
+-	/* we need some delay for g3, cause hold generates several interrupts,
++	ikb_start_buttons();
++
++	/*
++	 * we need some delay for g3, cause hold generates several interrupts,
+ 	 * some of them delayed
+ 	 */
+ 	if (ipod_hw_ver == 0x3) {
+@@ -67,7 +237,7 @@
+ 
+ 	/* get source of interupts */
+ 	source = inb(0xcf000040);
+-	if ( source == 0 ) {
++	if (source == 0) {
+ 		return; 	/* not for us */
+ 	}
+ 
+@@ -88,158 +258,576 @@
+ 	kbd_pt_regs = regs;
+ 
+ 	if ( source & 0x20 ) {
+-		if ((ipod_hw_ver == 0x3 && (state & 0x20) == 0 ) || 
+-				(state & 0x20)) {
+-			/* CTRL-S down */
+-			handle_scancode(LEFT_CTRL_SC, 1);
+-			handle_scancode(S_SC, 1);
+-
+-			/* CTRL-S up */
+-			handle_scancode(S_SC, 0);
+-			handle_scancode(LEFT_CTRL_SC, 0);
+-		}
+-		else {
+-			/* CTRL-Q down */
+-			handle_scancode(LEFT_CTRL_SC, 1);
+-			handle_scancode(Q_SC, 1);
+-
+-			/* CTRL-Q up */
+-			handle_scancode(Q_SC, 0);
+-			handle_scancode(LEFT_CTRL_SC, 0);
+-			if (ipod_hw_ver == 0x3) {
++		if (ipod_hw_ver == 0x3) {
++			/* 3g hold switch is active low */
++			if (state & 0x20) {
++				ikb_handle_button (BTN_HOLD, 0);
+ 				was_hold = 1;
+ 			}
+-		}
+-		/* hold switch on 3g causes all outputs to go low */
+-		/* we shouldn't interpret these as key presses */
+-		if (ipod_hw_ver == 0x3) {
++			else {
++				ikb_handle_button (BTN_HOLD, 1);
++			}
++
++			/* hold switch on 3g causes all outputs to go low */
++			/* we shouldn't interpret these as key presses */
+ 			goto done;
+ 		}
++		else {
++			if (state & 0x20) {
++				ikb_handle_button (BTN_HOLD, 1);
++				was_hold = 1;
++			}
++			else {
++				ikb_handle_button (BTN_HOLD, 0);
++				was_hold = 0;
++			}
++		}
+ 	}
+ 
+-	if ( source & 0x1 ) {
+-		if ( state & 0x1 ) {
++	if (source & 0x1) {
++		if (state & 0x1) {
+ #if defined(DO_SCROLLBACK)
+ 			scrollfront(0);
+ #else
+-			handle_scancode(RIGHT_SC, 0);
++			ikb_handle_button (BTN_NEXT, 0);
+ #endif
+ 		}
+ #if !defined(DO_SCROLLBACK)
+ 		else {
+-			handle_scancode(RIGHT_SC, 1);
++			ikb_handle_button (BTN_NEXT, 1);
+ 		}
+ #endif
+ 	}
+-	if ( source & 0x2 ) {
+-		if ( state & 0x2 ) {
+-			handle_scancode(ACTION_SC, 0);
++	if (source & 0x2) {
++		if (state & 0x2) {
++			ikb_handle_button (BTN_ACTION, 0);
+ 		}
+ 		else {
+-			handle_scancode(ACTION_SC, 1);
++			ikb_handle_button (BTN_ACTION, 1);
+ 		}
+ 	}
+-
+-	if ( source & 0x4 ) {
+-		if ( state & 0x4 ) {
++	if (source & 0x4) {
++		if (state & 0x4) {
+ #if defined(DO_CONTRAST)
+ 			contrast_down();
+ #else
+-			handle_scancode(DOWN_SC, 0);
++			ikb_handle_button (BTN_PLAY, 0);
+ #endif
+ 		}
+ #if !defined(DO_CONTRAST)
+ 		else {
+-			handle_scancode(DOWN_SC, 1);
++			ikb_handle_button (BTN_PLAY, 1);
+ 		}
+ #endif
+ 	}
+-	if ( source & 0x8 ) {
+-		if ( state & 0x8 ) {
++	if (source & 0x8) {
++		if (state & 0x8) {
+ #if defined(DO_SCROLLBACK)
+ 			scrollback(0);
+ #else
+-			handle_scancode(LEFT_SC, 0);
++			ikb_handle_button (BTN_PREVIOUS, 0);
+ #endif
+ 		}
+ #if !defined(DO_SCROLLBACK)
+ 		else {
+-			handle_scancode(LEFT_SC, 1);
++			ikb_handle_button (BTN_PREVIOUS, 1);
+ 		}
+ #endif
+ 	}
+-	if ( source & 0x10 ) {
+-		if ( state & 0x10 ) {
++	if (source & 0x10) {
++		if (state & 0x10) {
+ #if defined(DO_CONTRAST)
+ 			contrast_up();
+ #else
+-			handle_scancode(UP_SC, 0);
++			ikb_handle_button (BTN_MENU, 0);
+ #endif
+ 		}
+ #if !defined(DO_CONTRAST)
+ 		else {
+-			handle_scancode(UP_SC, 1);
++			ikb_handle_button (BTN_MENU, 1);
+ 		}
+ #endif
+ 	}
+ 
+-	if ( source & 0xc0 ) {
+-		static int scroll_state[4][4] = {
+-			{0, 1, -1, 0},
+-			{-1, 0, 0, 1},
+-			{1, 0, 0, -1},
+-			{0, -1, 1, 0}
+-		};
+-		unsigned now_scroll = (state & 0xc0) >> 6;
+-						
+-		if ( prev_scroll == -1 ) {
+-			prev_scroll = now_scroll;
++	if (source & 0xc0) {
++		handle_scroll_wheel((state & 0xc0) >> 6, was_hold, 0);
++	}
++done:
++
++	tasklet_schedule(&keyboard_tasklet);
++#endif /* CONFIG_VT */
++
++	ikb_finish_buttons();
++
++	/* ack any active interrupts */
++	outb(source, 0xcf000070);
++}
++
++static void key_mini_interrupt(int irq, void *dev_id, struct pt_regs *regs)
++{
++	unsigned char source, wheel_source, state, wheel_state = 0;
++
++	ikb_start_buttons();
++
++	/*
++	 * we need some delay for mini, cause hold generates several interrupts,
++	 * some of them delayed
++	 */
++	udelay(250);
++
++	/* get source(s) of interupt */
++	source = inb(0x6000d040) & 0x3f;
++	if (ipod_hw_ver == 0x4) {
++		wheel_source = inb(0x6000d044) & 0x30;
++	}
++	else {
++		source &= 0x20;
++		wheel_source = 0x0;
++	}
++
++	if (source == 0 && wheel_source == 0) {
++		return; 	/* not for us */
++	}
++
++	/* get current keypad & wheel status */
++	state = inb(0x6000d030) & 0x3f;
++	if (ipod_hw_ver == 0x4) {
++		wheel_state = inb(0x6000d034) & 0x30;
++	}
++	else {
++		state &= 0x20;
++	}
++
++	/* toggle interrupt level */
++	outb(~state, 0x6000d060);
++	if (ipod_hw_ver == 0x4) {
++		outb(~wheel_state, 0x6000d064);
++	}
++
++#ifdef CONFIG_VT
++	kbd_pt_regs = regs;
++
++	if (source & 0x20) {
++		/* mini hold switch is active low */
++		if (state & 0x20) {
++			ikb_handle_button (BTN_HOLD, 0);
+ 		}
+ 		else {
+-			switch (scroll_state[prev_scroll][now_scroll]) {
+-			case 1:
+-				/* 'l' keypress */
+-				handle_scancode(L_SC, 1);
+-				handle_scancode(L_SC, 0);
+-				break;
+-			case -1:
+-				/* 'r' keypress */
+-				handle_scancode(R_SC, 1);
+-				handle_scancode(R_SC, 0);
+-				break;
+-			default:
+-				/* only happens if we get out of sync */
+-				break;
+-			}
++			ikb_handle_button (BTN_HOLD, 1);
++		}
++
++		/* hold switch on mini causes all outputs to go low */
++		/* we shouldn't interpret these as key presses */
++		goto done;
++	}
++
++	if (source & 0x1) {
++		if (state & 0x1) {
++			ikb_handle_button (BTN_ACTION, 0);
++		}
++		else {
++			ikb_handle_button (BTN_ACTION, 1);
++		}
++	}
++	if (source & 0x2) {
++		if (state & 0x2) {
++			ikb_handle_button (BTN_MENU, 0);
++		}
++		else {
++			ikb_handle_button (BTN_MENU, 1);
+ 		}
++	}
++	if (source & 0x4) {
++		if (state & 0x4) {
++			ikb_handle_button (BTN_PLAY, 0);
++		}
++		else {
++			ikb_handle_button (BTN_PLAY, 1);
++		}
++	}
++	if (source & 0x8) {
++		if (state & 0x8) {
++			ikb_handle_button (BTN_NEXT, 0);
++		}
++		else {
++			ikb_handle_button (BTN_NEXT, 1);
++		}
++	}
++	if (source & 0x10) {
++		if (state & 0x10) {
++			ikb_handle_button (BTN_PREVIOUS, 0);
++		}
++		else {
++			ikb_handle_button (BTN_PREVIOUS, 1);
++		}
++	}
+ 
+-		prev_scroll = now_scroll;
++	if (wheel_source & 0x30) {
++		handle_scroll_wheel((wheel_state & 0x30) >> 4, 0, 1);
+ 	}
+ done:
+ 
+ 	tasklet_schedule(&keyboard_tasklet);
+ #endif /* CONFIG_VT */
+ 
++	ikb_finish_buttons();
++
+ 	/* ack any active interrupts */
+-	outb(source, 0xcf000070);
++	if (source) {
++		outb(source, 0x6000d070);
++	}
++	if (wheel_source) {
++		outb(wheel_source, 0x6000d074);
++	}
+ }
+ 
+-void __init ipodkb_init_hw(void)
++static void opto_i2c_init(void)
+ {
+-	outb(~inb(0xcf000030), 0xcf000060);
+-	outb(inb(0xcf000040), 0xcf000070);
++	int i, curr_value;
++
++	/* wait for value to settle */
++	i = 1000;
++	curr_value = (inl(0x7000c104) << 16) >> 24;
++	while (i > 0)
++	{
++		int new_value = (inl(0x7000c104) << 16) >> 24;
++
++		if (new_value != curr_value) {
++			i = 10000;
++			curr_value = new_value;
++		}
++		else {
++			i--;
++		}
++	}
++
++	outl(inl(0x6000d024) | 0x10, 0x6000d024);	/* port B bit 4 = 1 */
+ 
+-	outb(inb(0xcf000004) | 0x1, 0xcf000004);
+-	outb(inb(0xcf000014) | 0x1, 0xcf000014);
+-	outb(inb(0xcf000024) | 0x1, 0xcf000024);
++	outl(inl(0x6000600c) | 0x10000, 0x6000600c);	/* dev enable */
++	outl(inl(0x60006004) | 0x10000, 0x60006004);	/* dev reset */
++	udelay(5);
++	outl(inl(0x60006004) & ~0x10000, 0x60006004);	/* dev reset finish */
++
++	outl(0xffffffff, 0x7000c120);
++	outl(0xffffffff, 0x7000c124);
++	outl(0xc00a1f00, 0x7000c100);
++	outl(0x1000000, 0x7000c104);
++}
+ 
+-	if ( request_irq(GPIO_IRQ, keyboard_interrupt, SA_SHIRQ, "keyboard", KEYBOARD_DEV_ID) ) {
+-		printk("ipodkb: IRQ %d failed\n", GPIO_IRQ);
++static void key_i2c_interrupt(int irq, void *dev_id, struct pt_regs *regs)
++{
++	unsigned reg, status;
++	static int button_mask = 0;
++	static int wheel_bits16_22 = -1;
++	static int wheel_events = 0;
++	int wheel_delta = 0;
++	int wheel_delta_abs = 0;
++	int wheel_value = 0;
++
++	ikb_start_buttons();
++
++	udelay(250);
++
++	reg = 0x7000c104;
++
++	if ((inl(0x7000c104) & 0x4000000) != 0) {
++		reg = reg + 0x3C;	/* 0x7000c140 */
++
++		status = inl(0x7000c140);
++		outl(0x0, 0x7000c140);	/* clear interrupt status? */
++
++		if ((status & 0x800000ff) == 0x8000001a) {
++			int new_button_mask = 0;
++			int new_wheel_value = 0;
++
++			/* NB: highest wheel = 0x5F, clockwise increases */
++			new_wheel_value = ((status << 9) >> 25) & 0xff;
++			
++			if ((status & 0x100) != 0) {
++				new_button_mask |= 0x1;	/* Action */
++				if (!(button_mask & 0x1)) {
++					ikb_handle_button (BTN_ACTION, 1);
++				}
++			}
++			else if (button_mask & 0x1) {
++				ikb_handle_button (BTN_ACTION, 0);
++			}
++
++			if ((status & 0x1000) != 0) {
++				new_button_mask |= 0x10;	/* Menu */
++				if (!(button_mask & 0x10)) {
++					ikb_handle_button (BTN_MENU, 1);
++				}
++			}
++			else if (button_mask & 0x10) {
++				ikb_handle_button (BTN_MENU, 0);
++			}
++
++			if ((status & 0x800) != 0) {
++				new_button_mask |= 0x8;	/* Play/Pause */
++				if (!(button_mask & 0x8)) {
++					ikb_handle_button (BTN_PLAY, 1);
++				}
++			}
++			else if (button_mask & 0x8) {
++				ikb_handle_button (BTN_PLAY, 0);
++			}
++
++			if ((status & 0x200) != 0) {
++				new_button_mask |= 0x2;	/* Next */
++				if (!(button_mask & 0x2)) {
++					ikb_handle_button (BTN_NEXT, 1);
++				}
++			}
++			else if (button_mask & 0x2) {
++				ikb_handle_button (BTN_NEXT, 0);
++			}
++
++			if ((status & 0x400) != 0) {
++				new_button_mask |= 0x4;	/* Prev */
++				if (!(button_mask & 0x4)) {
++					ikb_handle_button (BTN_PREVIOUS, 1);
++				}
++			}
++			else if (button_mask & 0x4) {
++				ikb_handle_button (BTN_PREVIOUS, 0);
++			}
++
++			if ((status & 0x40000000) != 0) {
++				/* scroll wheel down */
++				new_button_mask |= 0x20;
++
++				if (wheel_bits16_22 != -1) {
++					wheel_delta = new_wheel_value - wheel_bits16_22;
++					wheel_delta_abs = wheel_delta < 0 ? -wheel_delta : wheel_delta;
++
++					if (wheel_delta_abs > 48) {
++						if (wheel_bits16_22 > new_wheel_value) { 
++							wheel_bits16_22 -= 96;
++						}
++						else { 
++							wheel_bits16_22 += 96;
++						}
++					}
++
++					wheel_delta = new_wheel_value - wheel_bits16_22;
++
++					ikb_scroll (wheel_delta);
++				} else {
++					ikb_pressed_at = jiffies;
++					ikb_first_loc = new_wheel_value;
++					ikb_push_event (EV_TOUCH | TOUCH(new_wheel_value));
++				}
++				wheel_bits16_22 = new_wheel_value;
++			}
++			else if (button_mask & 0x20) {
++				/* scroll wheel up */
++				ikb_push_event (EV_LIFT | LIFT(wheel_bits16_22));
++				if ((ikb_current_scroll > -4) && (ikb_current_scroll < 4) &&
++				    (jiffies - ikb_pressed_at < HZ/5)) {
++					ikb_push_event (EV_TAP | TAP(ikb_first_loc));
++				}
++				ikb_make_scroll_event();
++
++				wheel_bits16_22 = -1;
++				wheel_events = 0;
++				ikb_pressed_at = 0;
++				ikb_first_loc = 0;
++			}
++
++			button_mask = new_button_mask;
++
++#ifdef CONFIG_VT
++			tasklet_schedule(&keyboard_tasklet);
++#endif /* CONFIG_VT */
++		}
++		else if ((status & 0x800000FF) == 0x8000003A) {
++			wheel_value = status & 0x800000FF;
++		}
++		else if (status == 0xffffffff) {
++			opto_i2c_init();
++		}
++	}
++
++	ikb_finish_buttons();
++
++	if ((inl(reg) & 0x8000000) != 0) {
++		outl(0xffffffff, 0x7000c120);
++		outl(0xffffffff, 0x7000c124);
+ 	}
+ 
+-	outb(0xff, 0xcf000050);
++	outl(inl(0x7000c104) | 0xC000000, 0x7000c104);
++	outl(0x400a1f00, 0x7000c100);
+ 
++	outl(inl(0x6000d024) | 0x10, 0x6000d024);	/* port B bit 4 = 1 */
++}
++
++static ssize_t ikb_read (struct file *file, char *buf, size_t nbytes, loff_t *ppos) 
++{
++	DECLARE_WAITQUEUE (wait, current);
++	ssize_t retval = 0, count = 0;
++	
++	if (nbytes == 0) return 0;
++
++	ikb_make_scroll_event();
++	ikb_reading = 1;
++
++	add_wait_queue (&ikb_read_wait, &wait);
++	while (nbytes > 0) {
++		int ev;
++
++		set_current_state (TASK_INTERRUPTIBLE);
++
++		if (ikb_ev_head == ikb_ev_tail) {
++			if (file->f_flags & O_NONBLOCK) {
++				retval = -EAGAIN;
++				break;
++			}
++			if (signal_pending (current)) {
++				retval = -ERESTARTSYS;
++				break;
++			}
++			schedule();
++			continue;
++		}
++		
++		for (ev = ikb_ev_tail; ev != ikb_ev_head && nbytes >= 2; ikb_ev_tail++, ikb_ev_tail &= 31, ev = ikb_ev_tail) {
++			put_user (ikb_events[ev], (unsigned short *)buf);
++			count += 2;
++			buf += 2;
++			nbytes -= 2;
++		}
++
++		break; /* only read as much as we have */
++	}
++
++	ikb_reading = 0;
++	current->state = TASK_RUNNING;
++	remove_wait_queue (&ikb_read_wait, &wait);
++
++	return (count? count : retval);
++}
++
++static unsigned int ikb_poll (struct file *file, poll_table *wait) 
++{
++	unsigned int mask = 0;
++
++	poll_wait (file, &ikb_read_wait, wait);
++
++	if (ikb_ev_head != ikb_ev_tail)
++		mask |= POLLIN | POLLRDNORM;
++
++	return mask;
++}
++
++/*
++ * We allow multiple opens, even though multiple readers will compete for events,
++ * since usually one reader is in wait() for the other to complete.
++ * (It's no worse than a bog-standard TTY device.)
++ */
++static int ikb_open (struct inode *inode, struct file *file) 
++{
++	MOD_INC_USE_COUNT;
++	ikb_opened++;
++	return 0;
++}
++
++static int ikb_release (struct inode *inode, struct file *file) 
++{
++	ikb_opened--;
++	MOD_DEC_USE_COUNT;
++	return 0;
++}
++
++static struct file_operations ikb_fops = {
++	read:		ikb_read,
++	poll:		ikb_poll,
++	open:		ikb_open,
++	release:	ikb_release,
++};
++static struct miscdevice ikb_misc = { MISC_DYNAMIC_MINOR, "wheel", &ikb_fops };
++
++void __init ipodkb_init_hw(void)
++{
+ 	/* get our hardware type */
+ 	ipod_hw_ver = ipod_get_hw_version() >> 16;
++
++	if (ipod_hw_ver == 0x4) {
++		/* mini */
++
++		/* buttons - enable as input */
++		outl(inl(0x6000d000) | 0x3f, 0x6000d000);
++		outl(inl(0x6000d010) & ~0x3f, 0x6000d010);
++
++		/* scroll wheel- enable as input */
++		outl(inl(0x6000d004) | 0x30, 0x6000d004); /* port b 4,5 */
++		outl(inl(0x6000d014) & ~0x30, 0x6000d014); /* port b 4,5 */
++
++		/* buttons - set interrupt levels */
++		outl(~(inl(0x6000d030) & 0x3f), 0x6000d060);
++		outl((inl(0x6000d040) & 0x3f), 0x6000d070);
++
++		/* scroll wheel - set interrupt levels */
++		outl(~(inl(0x6000d034) & 0x30), 0x6000d064);
++		outl((inl(0x6000d044) & 0x30), 0x6000d074);
++
++		if (request_irq(PP5020_GPIO_IRQ, key_mini_interrupt, SA_SHIRQ, "keyboard", KEYBOARD_DEV_ID)) {
++			printk("ipodkb: IRQ %d failed\n", PP5020_GPIO_IRQ);
++		}
++
++		/* enable interrupts */
++		outl(0x3f, 0x6000d050);
++		outl(0x30, 0x6000d054);
++	}
++	else if (ipod_hw_ver > 0x4) {
++		/* 4g and photo */
++		ipod_i2c_init();
++
++		opto_i2c_init();
++
++		if (request_irq(PP5020_I2C_IRQ, key_i2c_interrupt, SA_SHIRQ, "keyboard", KEYBOARD_DEV_ID)) {
++			printk("ipodkb: IRQ %d failed\n", PP5020_I2C_IRQ);
++		}
++
++		/* hold button - enable as input */
++		outl(inl(0x6000d000) | 0x20, 0x6000d000);
++		outl(inl(0x6000d010) & ~0x20, 0x6000d010);
++
++		/* hold button - set interrupt levels */
++		outl(~(inl(0x6000d030) & 0x20), 0x6000d060);
++		outl((inl(0x6000d040) & 0x20), 0x6000d070);
++
++		if (request_irq(PP5020_GPIO_IRQ, key_mini_interrupt, SA_SHIRQ, "keyboard", KEYBOARD_DEV_ID)) {
++			printk("ipodkb: IRQ %d failed\n", PP5020_GPIO_IRQ);
++		}
++
++		/* enable interrupts */
++		outl(0x20, 0x6000d050);
++	}
++	else {
++		/* 1g, 2g, 3g */
++		outb(~inb(0xcf000030), 0xcf000060);
++		outb(inb(0xcf000040), 0xcf000070);
++
++		if (ipod_hw_ver == 0x1) {
++			outb(inb(0xcf000004) | 0x1, 0xcf000004);
++			outb(inb(0xcf000014) | 0x1, 0xcf000014);
++			outb(inb(0xcf000024) | 0x1, 0xcf000024);
++		}
++
++		if (request_irq(PP5002_GPIO_IRQ, keyboard_interrupt, SA_SHIRQ, "keyboard", KEYBOARD_DEV_ID)) {
++			printk("ipodkb: IRQ %d failed\n", PP5002_GPIO_IRQ);
++		}
++
++		outb(0xff, 0xcf000050);
++	}
++
++	misc_register (&ikb_misc);
+ }
+ 
++/*
++ * Local Variables:
++ * c-basic-offset: 8
++ * indent-tabs-mode: t
++ * End:
++ */
+Only in linux-2.4.24-svn/arch/armnommu/mach-ipod: pcf50605.c
+diff -ur linux-2.4.24/arch/armnommu/mach-ipod/time.c linux-2.4.24-svn/arch/armnommu/mach-ipod/time.c
+--- linux-2.4.24/arch/armnommu/mach-ipod/time.c	2009-12-28 02:54:17.000000000 +0000
++++ linux-2.4.24-svn/arch/armnommu/mach-ipod/time.c	2009-12-28 03:55:02.000000000 +0000
+@@ -1,7 +1,7 @@
+ /*
+  * time.c - timer support for iPod
+  *
+- * Copyright (c) 2003, Bernard Leach (leachbj@bouncycastle.org)
++ * Copyright (c) 2003-2005, Bernard Leach (leachbj@bouncycastle.org)
+  */
+ 
+ #include <linux/config.h>
+@@ -19,13 +19,17 @@
+ 	return 0;
+ }
+ 
+-
+ /*
+  * Get the number of useconds since the last interrupt
+  */
+-extern unsigned long ipod_gettimeoffset(void)
++extern unsigned long pp5002_gettimeoffset(void)
++{
++	return USECS_PER_INT - (inl(PP5002_TIMER1) & 0xffff);
++}
++
++extern unsigned long pp5020_gettimeoffset(void)
+ {
+-	return USECS_PER_INT - (inl(IPOD_TIMER0) & 0xffff);
++	return USECS_PER_INT - (inl(PP5020_TIMER1) & 0xffff);
+ }
+ 
+ extern void ipod_timer_interrupt(int irq, void *dev_id, struct pt_regs *regs)
+diff -ur linux-2.4.24/arch/armnommu/mach-ipod/tsb43aa82.c linux-2.4.24-svn/arch/armnommu/mach-ipod/tsb43aa82.c
+--- linux-2.4.24/arch/armnommu/mach-ipod/tsb43aa82.c	2009-12-28 02:54:17.000000000 +0000
++++ linux-2.4.24-svn/arch/armnommu/mach-ipod/tsb43aa82.c	2009-12-28 03:55:02.000000000 +0000
+@@ -919,12 +919,8 @@
+ 	}
+ }
+ 
+-static __devinit void ipod_1394_hw_init(void)
++static __devinit void ipod_1394_hw_init(int ipod_hw_ver)
+ {
+-	unsigned ipod_hw_ver;
+-
+-	ipod_hw_ver = ipod_get_hw_version() >> 16;
+-
+ 	/* MIO setup? */
+ 	outl((inl(0xcf004040) & ~(1<<6)) | (1<<7), 0xcf004040);
+ 	outl(0x00001f1f, 0xcf00401c);
+@@ -995,7 +991,7 @@
+ 		/* Port E Bit 2 output high */
+ 		outl(inl(0xcf004048) | (1<<2), 0xcf004048);
+ 		udelay(0x1);
+-		/* Port E Bit 2 output high */
++		/* Port E Bit 4 output high */
+ 		outl(inl(0xcf004048) | (1<<4), 0xcf004048);
+ 
+ 		udelay(0x14);
+@@ -1009,7 +1005,7 @@
+ 		/* reset device i2c */
+ 		ipod_i2c_init();
+ 
+-		/* some i2c magic */
++		/* some i2c magic - this is the PCF address */
+ 		ipod_i2c_send(0x8, 0x39, 0);
+ 		ipod_i2c_send(0x8, 0x3a, 0);
+ 		ipod_i2c_send(0x8, 0x3b, 0);
+@@ -1040,8 +1036,14 @@
+ static int __devinit ipod_1394_init(void)
+ {
+ 	struct ti_ipod *ipod;
++	unsigned int ipod_hw_ver;
++
++	ipod_hw_ver = ipod_get_hw_version() >> 16;
++	if (ipod_hw_ver > 0x3) {
++		return 0;
++	}
+ 
+-	printk("ipod_1394: $Id: tsb43aa82.c,v 1.5 2004/05/17 18:22:13 leachbj Exp $\n");
++	printk("ipod_1394: $Id: tsb43aa82.c,v 1.8 2005/02/05 20:31:08 leachbj Exp $\n");
+ 
+ 	ipod_host = hpsb_alloc_host(&ipod_1394_driver, sizeof(struct ti_ipod));
+ 	if (!ipod_host) {
+@@ -1063,11 +1065,11 @@
+ 
+ 	tasklet_init(&ipod->tx_tasklet, tx_tasklet, (unsigned long)ipod);
+ 
+-	if (request_irq(GPIO_IRQ, ipod_1394_interrupt, SA_SHIRQ, IPOD_1394_DRIVER_NAME, ipod)) {
+-		printk(KERN_ERR "ipod_1394: IRQ %d failed\n", GPIO_IRQ);
++	if (request_irq(PP5002_GPIO_IRQ, ipod_1394_interrupt, SA_SHIRQ, IPOD_1394_DRIVER_NAME, ipod)) {
++		printk(KERN_ERR "ipod_1394: IRQ %d failed\n", PP5002_GPIO_IRQ);
+ 	}
+ 
+-	ipod_1394_hw_init();
++	ipod_1394_hw_init(ipod_hw_ver);
+ 
+ 
+ 	/* Busy off until ready */
+@@ -1179,7 +1181,7 @@
+ 	hpsb_remove_host(ipod->host);
+ 
+ 	/* free the IRQ */
+-	free_irq(GPIO_IRQ, ipod);
++	free_irq(PP5002_GPIO_IRQ, ipod);
+ 
+         /* Wait and kill tasklet */
+         tasklet_kill(&ipod->tx_tasklet);
+Only in linux-2.4.24-svn/arch/armnommu/mm: .svn
+Only in linux-2.4.24-svn/arch/armnommu/tools: .svn
+Only in linux-2.4.24-svn/drivers: .svn
+Only in linux-2.4.24-svn/drivers/char: .svn
+Only in linux-2.4.24-svn/drivers/ide: .svn
+diff -ur linux-2.4.24/drivers/ide/ide-probe.c linux-2.4.24-svn/drivers/ide/ide-probe.c
+--- linux-2.4.24/drivers/ide/ide-probe.c	2009-12-28 02:53:57.000000000 +0000
++++ linux-2.4.24-svn/drivers/ide/ide-probe.c	2009-12-28 03:55:02.000000000 +0000
+@@ -57,6 +57,11 @@
+ #include <asm/uaccess.h>
+ #include <asm/io.h>
+ 
++#ifdef CONFIG_IDE_IPOD
++#define MAX_HD		2
++static int hd_hardsectsizes[MAX_HD<<6];
++#endif
++
+ /**
+  *	generic_id		-	add a generic drive id
+  *	@drive:	drive to make an ID block for
+@@ -261,6 +266,29 @@
+ 	}
+ 	drive->media = ide_disk;
+ 	printk("%s DISK drive\n", (drive->is_flash) ? "CFA" : "ATA" );
++
++#ifdef CONFIG_IDE_IPOD
++#define ID_WORD_106(id)	((id)->words104_125[2])
++	/* bits 14 & 13 are set */
++	if ((ID_WORD_106(id) & 0xe000) == 0x6000) {
++		int d;
++		int logical_sec_per_phys_sec = 1;
++		if ((ID_WORD_106(id) & 0xf) == 1)
++			logical_sec_per_phys_sec = 2;
++		printk("%s: logical sector size %d\n", drive->name, logical_sec_per_phys_sec);
++
++		if (!hardsect_size[hwif->major]) {
++			hardsect_size[hwif->major] = hd_hardsectsizes;
++		}
++
++		for(d=0; d < (MAX_HD << 6); d++) {
++			hardsect_size[hwif->major][d] = 512 * logical_sec_per_phys_sec;
++		}
++	}
++#undef ID_WORD_106
++#undef MAX_HD
++#endif
++
+ 	QUIRK_LIST(drive);
+ 	return;
+ 
+diff -ur linux-2.4.24/drivers/ide/ide.c linux-2.4.24-svn/drivers/ide/ide.c
+--- linux-2.4.24/drivers/ide/ide.c	2009-12-28 02:53:57.000000000 +0000
++++ linux-2.4.24-svn/drivers/ide/ide.c	2009-12-28 03:55:02.000000000 +0000
+@@ -2581,6 +2581,12 @@
+ 		h8300_ide_init();
+ 	}
+ #endif
++#ifdef CONFIG_ARCH_IPOD
++	{
++		extern void ipod_ide_register(void);
++		ipod_ide_register();
++	}
++#endif
+ }
+ 
+ void __init ide_init_builtin_subdrivers (void)
+Only in linux-2.4.24-svn/drivers/ieee1394: .svn
+Only in linux-2.4.24-svn/drivers/scsi: .svn
+diff -ur linux-2.4.24/drivers/scsi/hosts.h linux-2.4.24-svn/drivers/scsi/hosts.h
+--- linux-2.4.24/drivers/scsi/hosts.h	2009-12-28 02:54:18.000000000 +0000
++++ linux-2.4.24-svn/drivers/scsi/hosts.h	2009-12-28 03:55:02.000000000 +0000
+@@ -22,7 +22,7 @@
+ #define _HOSTS_H
+ 
+ /*
+-    $Header: /vger/u4/cvs/linux/drivers/scsi/hosts.h,v 1.6 1997/01/19 23:07:13 davem Exp $
++    $Header: /cvsroot/ipodlinux/linux/drivers/scsi/hosts.h,v 1.1.1.1 2004/04/03 13:33:03 leachbj Exp $
+ */
+ 
+ #include <linux/config.h>
+diff -ur linux-2.4.24/drivers/scsi/scsi.c linux-2.4.24-svn/drivers/scsi/scsi.c
+--- linux-2.4.24/drivers/scsi/scsi.c	2009-12-28 02:54:18.000000000 +0000
++++ linux-2.4.24-svn/drivers/scsi/scsi.c	2009-12-28 03:55:02.000000000 +0000
+@@ -84,7 +84,7 @@
+ #endif
+ 
+ /*
+-   static const char RCSid[] = "$Header: /vger/u4/cvs/linux/drivers/scsi/scsi.c,v 1.38 1997/01/19 23:07:18 davem Exp $";
++   static const char RCSid[] = "$Header: /cvsroot/ipodlinux/linux/drivers/scsi/scsi.c,v 1.1.1.1 2004/04/03 13:33:02 leachbj Exp $";
+  */
+ 
+ /*
+Only in linux-2.4.24-svn/drivers/video: .svn
+Only in linux-2.4.24-svn/fs: .svn
+Only in linux-2.4.24-svn/fs/hfsplus: .svn
+Only in linux-2.4.24-svn/fs/partitions: .svn
+diff -ur linux-2.4.24/fs/partitions/msdos.c linux-2.4.24-svn/fs/partitions/msdos.c
+--- linux-2.4.24/fs/partitions/msdos.c	2002-11-28 23:53:15.000000000 +0000
++++ linux-2.4.24-svn/fs/partitions/msdos.c	2009-12-28 03:55:03.000000000 +0000
+@@ -17,6 +17,8 @@
+  *  Check partition table on IDE disks for common CHS translations
+  *
+  *  Re-organised Feb 1998 Russell King
++ *
++ *  20060226: Improved iPod partitiontable detection by Vincent Huisman (dataghost at dataghost dot com)
+  */
+ 
+ #include <linux/config.h>
+@@ -97,6 +99,17 @@
+ 	return (p[0] == MSDOS_LABEL_MAGIC1 && p[1] == MSDOS_LABEL_MAGIC2);
+ }
+ 
++#ifdef CONFIG_IDE_IPOD
++#define EXT3_LABEL_MAGIC1	0x53
++#define EXT3_LABEL_MAGIC2	0xEF
++
++static inline int
++ext3_magic_present(unsigned char *p)
++{
++	return (p[0] == EXT3_LABEL_MAGIC1 && p[1] == EXT3_LABEL_MAGIC2);
++}
++#endif
++
+ /*
+  * Create devices for each logical partition in an extended partition.
+  * The logical partitions form a linked list, with each entry being
+@@ -561,6 +574,9 @@
+ 	int sector_size = get_hardsect_size(to_kdev_t(bdev->bd_dev)) / 512;
+ 	int current_minor = first_part_minor;
+ 	int err;
++#ifdef CONFIG_IDE_IPOD
++	int sector_mult = 1;
++#endif
+ 
+ 	err = handle_ide_mess(bdev);
+ 	if (err <= 0)
+@@ -574,6 +590,50 @@
+ 	}
+ 	p = (struct partition *) (data + 0x1be);
+ 
++#ifdef CONFIG_IDE_IPOD
++	/*
++	 * Addition for iPods: check for actual filesystems to figure out the correct partition layout
++	 */
++	for (i=1 ; i<=4 ; i++,p++) {
++		unsigned char *partdata;
++
++		if (!NR_SECTS(p))
++			continue;
++		if (SYS_IND(p) == 0xb) {
++			partdata = read_dev_sector(bdev, first_sector+START_SECT(p)*sector_size*4, &sect);
++			if (msdos_magic_present(partdata + 510))
++				sector_mult = 4;
++
++			partdata = read_dev_sector(bdev, first_sector+START_SECT(p)*sector_size*2, &sect);
++			if (msdos_magic_present(partdata + 510))
++				sector_mult = 2;
++
++			partdata = read_dev_sector(bdev, first_sector+START_SECT(p)*sector_size, &sect);
++			if (msdos_magic_present(partdata + 510))
++				sector_mult = 1;
++        
++		} else if (SYS_IND(p) == 0x83) {
++			partdata = read_dev_sector(bdev, first_sector+START_SECT(p)*sector_size*4+2, &sect);
++			if (ext3_magic_present(partdata + 56))
++				sector_mult = 4;
++
++			partdata = read_dev_sector(bdev, first_sector+START_SECT(p)*sector_size*2+2, &sect);
++			if (ext3_magic_present(partdata + 56))
++				sector_mult = 2;
++
++			partdata = read_dev_sector(bdev, first_sector+START_SECT(p)*sector_size+2, &sect);
++			if (ext3_magic_present(partdata + 56))
++				sector_mult = 1;
++		}
++	}
++
++	printk("Experimental partition and filesystem detection code by Vincent Huisman (dataghost@dataghost.com)\n"); 
++	printk("Partition sector size: %d\n", sector_mult);
++
++	sector_size *= sector_mult;
++	p = (struct partition *) (data + 0x1be); // Reinitialize, duh
++#endif
++
+ 	/*
+ 	 * Look for partitions in two passes:
+ 	 * First find the primary and DOS-type extended partitions.
+Only in linux-2.4.24-svn/include: .svn
+Only in linux-2.4.24-svn/include/asm-armnommu: .svn
+Only in linux-2.4.24-svn/include/asm-armnommu/arch-ipod: .svn
+diff -ur linux-2.4.24/include/asm-armnommu/arch-ipod/hardware.h linux-2.4.24-svn/include/asm-armnommu/arch-ipod/hardware.h
+--- linux-2.4.24/include/asm-armnommu/arch-ipod/hardware.h	2009-12-28 02:54:18.000000000 +0000
++++ linux-2.4.24-svn/include/asm-armnommu/arch-ipod/hardware.h	2009-12-28 03:55:03.000000000 +0000
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2003,2004 Bernard Leach (leachbj@bouncycastle.org)
++ * Copyright (c) 2003-2005 Bernard Leach (leachbj@bouncycastle.org)
+  */
+ 
+ #ifndef __ASM_ARCH_HARDWARE_H
+@@ -8,6 +8,41 @@
+ /* this is called from drivers/block/blkmem.c */
+ #define HARD_RESET_NOW() ipod_hard_reset()
+ 
++/* PP5020,PP5002 register definitions */
++#define PP5002_PROC_ID	0xc4000000
++#define PP5002_COP_CTRL	0xcf004058
++
++#define PP5020_PROC_ID	0x60000000
++#define PP5020_COP_CTRL	0x60007004
++
++#define PP5002_IDE_PRIMARY_BASE		0xc00031e0
++#define PP5002_IDE_PRIMARY_CONTROL	0xc00033f8
++
++#define PP5020_IDE_PRIMARY_BASE		0xc30001e0
++#define PP5020_IDE_PRIMARY_CONTROL	0xc30003f8
++
++
++/* special locations in fast ram */
++#define PP_CPU_TYPE	0x40000000
++
++#define DMA_READ_OFF	0x40000004
++#define DMA_WRITE_OFF	0x40000008
++#define DMA_ACTIVE	0x4000000c
++#define DMA_STEREO	0x40000010
++#define DMA_HANDLER	(ipod_dma_handler_t *)0x40000014
++
++#define DMA_BASE	0x40000018
++
++#define COP_HANDLER	(ipod_dma_handler_t *)0x4001501C
++#define COP_STATE	0x40015020
++
++
++#define SYSINFO_TAG	(unsigned char *)0x40017f18
++#define SYSINFO_PTR	(struct sysinfo_t **)0x40017f1c
++
++#define SYSINFO_TAG_PP5022	(unsigned char *)0x4001ff18
++#define SYSINFO_PTR_PP5022	(struct sysinfo_t **)0x4001ff1c
++
+ #ifndef __ASSEMBLY__
+ struct sysinfo_t {
+ 	unsigned IsyS;  /* == "IsyS" */
+@@ -65,16 +100,22 @@
+ 
+ extern unsigned ipod_get_hw_version(void);
+ extern struct sysinfo_t *ipod_get_sysinfo(void);
++extern int ipod_is_pp5022();
+ 
+ extern void ipod_i2c_init(void);
+ extern int ipod_i2c_send_bytes(unsigned int addr, unsigned int len, unsigned char *data);
+ extern int ipod_i2c_send(unsigned int addr, int data0, int data1);
++extern int ipod_i2c_send_byte(unsigned int addr, int data0);
++extern int ipod_i2c_read_byte(unsigned int addr, unsigned int *data);
+ 
+ extern void ipod_serial_init(void);
+ 
+ typedef void (*ipod_dma_handler_t)(void);
++typedef void (*ipod_cop_handler_t)(void);
++
+ 
+ extern void ipod_set_process_dma(ipod_dma_handler_t new_handler);
++extern void ipod_set_handle_cop(ipod_cop_handler_t new_handler);
+ 
+ #endif
+ 
+diff -ur linux-2.4.24/include/asm-armnommu/arch-ipod/ide.h linux-2.4.24-svn/include/asm-armnommu/arch-ipod/ide.h
+--- linux-2.4.24/include/asm-armnommu/arch-ipod/ide.h	2009-12-28 02:54:18.000000000 +0000
++++ linux-2.4.24-svn/include/asm-armnommu/arch-ipod/ide.h	2009-12-28 03:55:03.000000000 +0000
+@@ -1,104 +1,21 @@
+ /*
+- * Copyright (c) 2003, Bernard Leach (leachbj@bouncycastle.org)
++ * Copyright (c) 2003-2005, Bernard Leach (leachbj@bouncycastle.org)
+  */
+ 
++
+ #ifndef __ASM_ARCH_IDE_H
+ #define __ASM_ARCH_IDE_H
+ 
+-/* we have one controller */
+-#undef MAX_HWIFS
+-#define MAX_HWIFS	1
+-
+-#define IDE_INLINE __inline__
+-
+-#define IDE_PRIMARY_BASE	0xc00031e0
+-#define IDE_PRIMARY_CONTROL	0xc00033f8
+-
+-static struct ipod_ide_defaults {
+-	ide_ioreg_t	base;
+-	int		irq;
+-} ipod_ide_defaults[MAX_HWIFS] = {
+-	{ (ide_ioreg_t)IDE_PRIMARY_BASE, 1 },
+-};
+-
+-static IDE_INLINE int ide_default_irq(ide_ioreg_t base)
+-{
+-	int i;
+-
+-	for ( i = 0; i < MAX_HWIFS; i++ )
+-		if ( ipod_ide_defaults[i].base == base )
+-			return ipod_ide_defaults[i].irq;
+-	return 0;
+-}
+-
+-static IDE_INLINE ide_ioreg_t ide_default_io_base(int index)
+-{
+-	if ( index >= 0 && index < MAX_HWIFS )
+-		return ipod_ide_defaults[index].base;
+-	return 0;
+-}
+-
+-/*
+- * Set up a hw structure for a specified data port, control port and IRQ.
+- * This should follow whatever the default interface uses.
+- */
+-static IDE_INLINE void ide_init_hwif_ports(
++static __inline__ void ide_init_hwif_ports(
+ 	hw_regs_t *hw,
+ 	ide_ioreg_t data_port,
+ 	ide_ioreg_t ctrl_port,
+ 	int *irq)
+ {
+-	ide_ioreg_t reg = data_port;
+-	int i;
+-
+-	for ( i = IDE_DATA_OFFSET; i <= IDE_STATUS_OFFSET; i++ ) {
+-		hw->io_ports[i] = reg;
+-		reg += 4;	/* our registers are on word boundaries */
+-	}
+-
+-	if (ctrl_port) {
+-		hw->io_ports[IDE_CONTROL_OFFSET] = ctrl_port;
+-	}
+-	else {
+-		hw->io_ports[IDE_CONTROL_OFFSET] = data_port + 0x218;
+-	}
+ }
+ 
+-/*
+- * This registers the standard ports for this architecture with the IDE
+- * driver.
+- */
+-static IDE_INLINE void ide_init_default_hwifs(void)
++static __inline__ void ide_init_default_hwifs(void)
+ {
+-	hw_regs_t hw;
+-	ide_ioreg_t base;
+-	int index;
+-
+-	outl(inl(0xc0003024) | (1<< 7), 0xc0003024);
+-	outl(inl(0xc0003024) & ~(1<<2), 0xc0003024);
+-
+-	outl(0x10, 0xc0003000);
+-	outl(0x80002150, 0xc0003004);
+-
+-	for (index = 0; index < MAX_HWIFS; index++) {
+-
+-		base = ide_default_io_base(index);
+-		if (!base) continue;
+-
+-		memset(&hw, 0, sizeof(hw));
+-		ide_init_hwif_ports(&hw, base, IDE_PRIMARY_CONTROL, NULL);
+-		hw.irq = ide_default_irq(base);
+-		ide_register_hw(&hw, NULL);
+-	}
+ }
+ 
+-#define ide_request_irq(irq,hand,flg,dev,id)	request_irq((irq),(hand),(flg),(dev),(id))
+-#define ide_free_irq(irq,dev_id)		free_irq((irq), (dev_id))
+-#define ide_check_region(from,extent)		check_region((from), (extent))
+-#define ide_request_region(from,extent,name)	request_region((from), (extent), (name))
+-#define ide_release_region(from,extent)		release_region((from), (extent))
+-
+-#define ide_ack_intr(hwif)              (1)
+-
+ #endif
+-
+diff -ur linux-2.4.24/include/asm-armnommu/arch-ipod/irqs.h linux-2.4.24-svn/include/asm-armnommu/arch-ipod/irqs.h
+--- linux-2.4.24/include/asm-armnommu/arch-ipod/irqs.h	2009-12-28 02:54:18.000000000 +0000
++++ linux-2.4.24-svn/include/asm-armnommu/arch-ipod/irqs.h	2009-12-28 03:55:03.000000000 +0000
+@@ -1,22 +1,51 @@
+ /*
+- * Copyright (c) 2003, Bernard Leach <leachbj@bouncycastle.org>
++ * Copyright (c) 2003-2005, Bernard Leach <leachbj@bouncycastle.org>
+  */
+ 
+ #ifndef __ASM_ARCH_IRQS_H__
+ #define __ASM_ARCH_IRQS_H__
+ 
+-#define IDE_INT0_IRQ	1
+-#define SER0_IRQ	4
+-#define I2S_IRQ		5
+-#define SER1_IRQ	7
+-#define TIMER1_IRQ	11
+-#define GPIO_IRQ	14
+-#define DMA_OUT_IRQ	30
+-#define DMA_IN_IRQ	31
++#define NR_IRQS	64
+ 
+-#define NR_IRQS	32
+-
+-#define VALID_IRQ(x)	(x==IDE_INT0_IRQ||x==SER0_IRQ||x==I2S_IRQ||x==SER1_IRQ||x==TIMER1_IRQ||x==GPIO_IRQ||x==DMA_OUT_IRQ||x==DMA_IN_IRQ)
++/* PP5002 */
++#define PP5002_IDE_IRQ		1
++#define PP5002_SER0_IRQ		4
++#define PP5002_I2S_IRQ		5
++#define PP5002_SER1_IRQ		7
++#define PP5002_TIMER1_IRQ	11
++#define PP5002_GPIO_IRQ		14
++#define PP5002_DMA_OUT_IRQ	30
++#define PP5002_DMA_IN_IRQ	31
++
++#define PP5002_VALID_IRQ(x)	(x==PP5002_IDE_IRQ||x==PP5002_SER0_IRQ||x==PP5002_I2S_IRQ||x==PP5002_SER1_IRQ||x==PP5002_TIMER1_IRQ||x==PP5002_GPIO_IRQ||x==PP5002_DMA_OUT_IRQ||x==PP5002_DMA_IN_IRQ)
++
++#define PP5002_IDE_MASK		(1 << PP5002_IDE_IRQ)
++#define PP5002_SER0_MASK	(1 << PP5002_SER0_IRQ)
++#define PP5002_I2S_MASK		(1 << PP5002_I2S_IRQ)
++#define PP5002_SER1_MASK	(1 << PP5002_SER1_IRQ)
++#define PP5002_TIMER1_MASK	(1 << PP5002_TIMER1_IRQ)
++#define PP5002_GPIO_MASK	(1 << PP5002_GPIO_IRQ)
++#define PP5002_DMA_OUT_MASK	(1 << PP5002_DMA_OUT_IRQ)
++
++/* PP5020 */
++#define PP5020_TIMER1_IRQ	0
++#define PP5020_TIMER2_IRQ	1
++#define PP5020_I2S_IRQ		10
++#define PP5020_IDE_IRQ		23
++#define PP5020_GPIO_IRQ		(32+0)
++#define PP5020_SER0_IRQ		(32+4)
++#define PP5020_SER1_IRQ		(32+5)
++#define PP5020_I2C_IRQ		(32+8)
++
++#define PP5020_VALID_IRQ(x)	(x==PP5020_TIMER1_IRQ||x==PP5020_I2S_IRQ||x==PP5020_GPIO_IRQ||x==PP5020_SER0_IRQ||x==PP5020_SER1_IRQ||x==PP5020_I2C_IRQ||x==PP5020_IDE_IRQ)
++
++#define PP5020_TIMER1_MASK	(1 << PP5020_TIMER1_IRQ)
++#define PP5020_I2S_MASK		(1 << PP5020_I2S_IRQ)
++#define PP5020_IDE_MASK		(1 << PP5020_IDE_IRQ)
++#define PP5020_GPIO_MASK	(1 << (PP5020_GPIO_IRQ-32))
++#define PP5020_SER0_MASK	(1 << (PP5020_SER0_IRQ-32))
++#define PP5020_SER1_MASK	(1 << (PP5020_SER1_IRQ-32))
++#define PP5020_I2C_MASK		(1 << (PP5020_I2C_IRQ-32))
+ 
+ #endif
+ 
+diff -ur linux-2.4.24/include/asm-armnommu/arch-ipod/keyboard.h linux-2.4.24-svn/include/asm-armnommu/arch-ipod/keyboard.h
+--- linux-2.4.24/include/asm-armnommu/arch-ipod/keyboard.h	2009-12-28 02:54:18.000000000 +0000
++++ linux-2.4.24-svn/include/asm-armnommu/arch-ipod/keyboard.h	2009-12-28 03:55:03.000000000 +0000
+@@ -13,7 +13,11 @@
+ #define kbd_translate(sc,kcp,rm)	({ *(kcp) = (sc); 1; })
+ #define kbd_unexpected_up(kc)		(0200)
+ #define kbd_leds(leds)
++#ifdef CONFIG_KB_IPOD
+ #define kbd_init_hw()			ipodkb_init_hw()
++#else
++#define kbd_init_hw()
++#endif
+ #define kbd_enable_irq()
+ #define kbd_disable_irq()
+ 
+diff -ur linux-2.4.24/include/asm-armnommu/arch-ipod/serial.h linux-2.4.24-svn/include/asm-armnommu/arch-ipod/serial.h
+--- linux-2.4.24/include/asm-armnommu/arch-ipod/serial.h	2009-12-28 02:54:18.000000000 +0000
++++ linux-2.4.24-svn/include/asm-armnommu/arch-ipod/serial.h	2009-12-28 03:55:03.000000000 +0000
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2003, Bernard Leach (leachbj@bouncycastle.org)
++ * Copyright (c) 2003-2005, Bernard Leach (leachbj@bouncycastle.org)
+  */
+ 
+ #ifndef __ASM_ARCH_SERIAL_H
+@@ -17,8 +17,13 @@
+ #undef SERIAL_DEBUG_AUTOCONF
+ 
+ 
+-#define IPOD_SER0_BASE	0xc0006000
+-#define IPOD_SER1_BASE	0xc0006040
++/* PP5002 */
++#define PP5002_IPOD_SER0_BASE	0xc0006000
++#define PP5002_IPOD_SER1_BASE	0xc0006040
++
++/* PP5020 */
++#define PP5020_IPOD_SER0_BASE	0x70006000
++#define PP5020_IPOD_SER1_BASE	0x70006040
+ 
+ /* The UART is clocked at 24MHz */
+ #define BASE_BAUD	(24576000 / 16)
+@@ -32,20 +37,20 @@
+ 	{  \
+ 	magic: 0, \
+ 	baud_base: BASE_BAUD, \
+-	irq: SER0_IRQ, \
++	irq: PP5002_SER0_IRQ, \
+ 	flags: STD_COM_FLAGS, \
+ 	type: PORT_UNKNOWN, \
+-	iomem_base: (u8*)IPOD_SER0_BASE, \
++	iomem_base: (u8*)PP5002_IPOD_SER0_BASE, \
+ 	iomem_reg_shift: 2, \
+ 	io_type: SERIAL_IO_MEM \
+ 	},      /* ttyS0 */ \
+         {  \
+         magic: 0, \
+         baud_base: BASE_BAUD, \
+-        irq: SER1_IRQ, \
++        irq: PP5002_SER1_IRQ, \
+         flags: STD_COM_FLAGS, \
+         type: PORT_UNKNOWN, \
+-        iomem_base: (u8*)IPOD_SER1_BASE, \
++        iomem_base: (u8*)PP5002_IPOD_SER1_BASE, \
+         iomem_reg_shift: 2, \
+         io_type: SERIAL_IO_MEM \
+ 	}       /* ttyS1 */
+diff -ur linux-2.4.24/include/asm-armnommu/arch-ipod/time.h linux-2.4.24-svn/include/asm-armnommu/arch-ipod/time.h
+--- linux-2.4.24/include/asm-armnommu/arch-ipod/time.h	2009-12-28 02:54:18.000000000 +0000
++++ linux-2.4.24-svn/include/asm-armnommu/arch-ipod/time.h	2009-12-28 03:55:03.000000000 +0000
+@@ -13,10 +13,13 @@
+  * supply the kernel with out time(r) functions.
+  */
+ 
+-extern unsigned long ipod_gettimeoffset(void);
+ extern int ipod_set_rtc(void);
+ extern void ipod_timer_interrupt(int irq, void *dev_id, struct pt_regs *regs);
+ 
++extern unsigned long pp5002_gettimeoffset(void);
++
++extern unsigned long pp5020_gettimeoffset(void);
++
+ /* */
+ extern struct irqaction timer_irq;
+ 
+@@ -29,22 +32,37 @@
+  */
+ extern __inline__ void setup_timer(void)
+ {
+-	/* store in kernel's function pointer */
+-	gettimeoffset = ipod_gettimeoffset;
+ 	set_rtc = ipod_set_rtc;
+-
+-	/* set up the timer interrupt */
+ 	timer_irq.handler = ipod_timer_interrupt;
+ 
+-	/* clear timer1 */
+-	outl(0x0, IPOD_TIMER0);
+-	inl(IPOD_TIMER0_ACK);
+-
+-	/* enable timer, period, trigger value 0x2710 -> 100Hz */
+-	outl(0xc0000000 | USECS_PER_INT, IPOD_TIMER0);
+-
+-	setup_arm_irq(TIMER1_IRQ, &timer_irq);
+-	enable_irq(TIMER1_IRQ);
++	if ((ipod_get_hw_version() >> 16) > 0x3) {
++		/* store in kernel's function pointer */
++		gettimeoffset = pp5020_gettimeoffset;
++
++		/* clear timer1 */
++		outl(0x0, PP5020_TIMER1);
++		inl(PP5020_TIMER1_ACK);
++
++		/* enable timer, period, trigger value 0x2710 -> 100Hz */
++		outl(0xc0000000 | USECS_PER_INT, PP5020_TIMER1);
++
++		setup_arm_irq(PP5020_TIMER1_IRQ, &timer_irq);
++		enable_irq(PP5020_TIMER1_IRQ);
++	}
++	else {
++		/* store in kernel's function pointer */
++		gettimeoffset = pp5002_gettimeoffset;
++
++		/* clear timer1 */
++		outl(0x0, PP5002_TIMER1);
++		inl(PP5002_TIMER1_ACK);
++
++		/* enable timer, period, trigger value 0x2710 -> 100Hz */
++		outl(0xc0000000 | USECS_PER_INT, PP5002_TIMER1);
++
++		setup_arm_irq(PP5002_TIMER1_IRQ, &timer_irq);
++		enable_irq(PP5002_TIMER1_IRQ);
++	}
+ }
+ 
+ #endif
+diff -ur linux-2.4.24/include/asm-armnommu/arch-ipod/timex.h linux-2.4.24-svn/include/asm-armnommu/arch-ipod/timex.h
+--- linux-2.4.24/include/asm-armnommu/arch-ipod/timex.h	2009-12-28 02:54:18.000000000 +0000
++++ linux-2.4.24-svn/include/asm-armnommu/arch-ipod/timex.h	2009-12-28 03:55:03.000000000 +0000
+@@ -1,15 +1,26 @@
+ /*
+- * Copyright (c) 2003, Bernard Leach (leachbj@bouncycastle.org)
++ * Copyright (c) 2003-2005, Bernard Leach (leachbj@bouncycastle.org)
+  */
+ 
+ #ifndef __ASM_ARCH_TIMEX_H__
+ #define __ASM_ARCH_TIMEX_H__
+ 
+-#define IPOD_TIMER0       0xcf001100
+-#define IPOD_TIMER0_ACK   0xcf001104
+-#define IPOD_TIMER_STATUS 0xcf001110
+-
+ #define USECS_PER_INT 0x2710
+ 
++/* PP5002 registers */
++#define PP5002_TIMER1       0xcf001100
++#define PP5002_TIMER1_ACK   0xcf001104
++
++#define PP5002_TIMER_STATUS 0xcf001110
++
++/* PP5020 registers */
++#define PP5020_TIMER1       0x60005000
++#define PP5020_TIMER1_ACK   0x60005004
++
++#define PP5020_TIMER2       0x60005008
++#define PP5020_TIMER2_ACK   0x6000500c
++
++#define PP5020_TIMER_STATUS 0x60005010
++
+ #endif
+ 
+Only in linux-2.4.24-svn/include/linux: .svn
+Only in linux-2.4.24-svn/kernel: .svn
