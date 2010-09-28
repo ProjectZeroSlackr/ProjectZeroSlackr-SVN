@@ -1,0 +1,250 @@
+can't find file to patch at input line 4
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff -r -u -N linux-2.4.24/Makefile linux-2.4.24-sansa/Makefile
+|--- linux-2.4.24/Makefile	2008-03-26 07:49:20.187500000 +0100
+|+++ linux-2.4.24-sansa/Makefile	2008-05-29 12:18:12.078125000 +0200
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 30
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff -r -u -N linux-2.4.24/arch/armnommu/Makefile linux-2.4.24-sansa/arch/armnommu/Makefile
+|--- linux-2.4.24/arch/armnommu/Makefile	2008-03-26 07:49:22.453125000 +0100
+|+++ linux-2.4.24-sansa/arch/armnommu/Makefile	2008-05-29 12:16:54.500000000 +0200
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 57
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff -r -u -N linux-2.4.24/arch/armnommu/boot/Makefile linux-2.4.24-sansa/arch/armnommu/boot/Makefile
+|--- linux-2.4.24/arch/armnommu/boot/Makefile	2008-03-26 07:49:22.500000000 +0100
+|+++ linux-2.4.24-sansa/arch/armnommu/boot/Makefile	2008-05-29 12:16:53.765625000 +0200
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+patching file linux-2.4.24/arch/armnommu/boot/cp.bat
+can't find file to patch at input line 79
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff -r -u -N linux-2.4.24/arch/armnommu/config.in linux-2.4.24-sansa/arch/armnommu/config.in
+|--- linux-2.4.24/arch/armnommu/config.in	2008-03-26 07:49:22.468750000 +0100
+|+++ linux-2.4.24-sansa/arch/armnommu/config.in	2008-05-29 12:16:53.765625000 +0200
+--------------------------
+No file to patch.  Skipping patch.
+6 out of 6 hunks ignored
+patching file linux-2.4.24/arch/armnommu/def-configs/sansa
+can't find file to patch at input line 847
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff -r -u -N linux-2.4.24/arch/armnommu/kernel/Makefile linux-2.4.24-sansa/arch/armnommu/kernel/Makefile
+|--- linux-2.4.24/arch/armnommu/kernel/Makefile	2008-03-26 07:49:23.484375000 +0100
+|+++ linux-2.4.24-sansa/arch/armnommu/kernel/Makefile	2008-05-29 12:16:53.812500000 +0200
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 871
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff -r -u -N linux-2.4.24/arch/armnommu/kernel/dma.c linux-2.4.24-sansa/arch/armnommu/kernel/dma.c
+|--- linux-2.4.24/arch/armnommu/kernel/dma.c	2008-03-26 07:49:23.562500000 +0100
+|+++ linux-2.4.24-sansa/arch/armnommu/kernel/dma.c	2008-05-29 12:16:53.796875000 +0200
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 882
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff -r -u -N linux-2.4.24/arch/armnommu/kernel/entry-armv.S linux-2.4.24-sansa/arch/armnommu/kernel/entry-armv.S
+|--- linux-2.4.24/arch/armnommu/kernel/entry-armv.S	2008-03-26 07:49:23.593750000 +0100
+|+++ linux-2.4.24-sansa/arch/armnommu/kernel/entry-armv.S	2008-05-29 12:16:53.796875000 +0200
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+patching file linux-2.4.24/arch/armnommu/kernel/head-arm-sansa.S
+can't find file to patch at input line 1164
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff -r -u -N linux-2.4.24/arch/armnommu/kernel/setup.c linux-2.4.24-sansa/arch/armnommu/kernel/setup.c
+|--- linux-2.4.24/arch/armnommu/kernel/setup.c	2008-03-26 07:49:23.718750000 +0100
+|+++ linux-2.4.24-sansa/arch/armnommu/kernel/setup.c	2008-05-29 12:16:53.812500000 +0200
+--------------------------
+No file to patch.  Skipping patch.
+3 out of 3 hunks ignored
+patching file linux-2.4.24/arch/armnommu/mach-sansa/Makefile
+patching file linux-2.4.24/arch/armnommu/mach-sansa/arch.c
+patching file linux-2.4.24/arch/armnommu/mach-sansa/as3514.h
+patching file linux-2.4.24/arch/armnommu/mach-sansa/audio.c
+patching file linux-2.4.24/arch/armnommu/mach-sansa/battery.c
+patching file linux-2.4.24/arch/armnommu/mach-sansa/cop.S
+patching file linux-2.4.24/arch/armnommu/mach-sansa/dma.c
+patching file linux-2.4.24/arch/armnommu/mach-sansa/fb.c
+patching file linux-2.4.24/arch/armnommu/mach-sansa/fb.c-new
+patching file linux-2.4.24/arch/armnommu/mach-sansa/hardware.c
+patching file linux-2.4.24/arch/armnommu/mach-sansa/irq.c
+patching file linux-2.4.24/arch/armnommu/mach-sansa/keyboard.c
+patching file linux-2.4.24/arch/armnommu/mach-sansa/lcd-as-memframe.S
+patching file linux-2.4.24/arch/armnommu/mach-sansa/pad.S
+patching file linux-2.4.24/arch/armnommu/mach-sansa/pp5020.h
+patching file linux-2.4.24/arch/armnommu/mach-sansa/rtc.c
+patching file linux-2.4.24/arch/armnommu/mach-sansa/sd.c
+patching file linux-2.4.24/arch/armnommu/mach-sansa/time.c
+can't find file to patch at input line 8671
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff -r -u -N linux-2.4.24/arch/armnommu/mm/init.c linux-2.4.24-sansa/arch/armnommu/mm/init.c
+|--- linux-2.4.24/arch/armnommu/mm/init.c	2008-03-26 07:49:24.796875000 +0100
+|+++ linux-2.4.24-sansa/arch/armnommu/mm/init.c	2008-05-29 12:16:54.500000000 +0200
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 8688
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff -r -u -N linux-2.4.24/arch/armnommu/tools/mach-types linux-2.4.24-sansa/arch/armnommu/tools/mach-types
+|--- linux-2.4.24/arch/armnommu/tools/mach-types	2008-03-26 07:49:25.156250000 +0100
+|+++ linux-2.4.24-sansa/arch/armnommu/tools/mach-types	2008-05-29 12:16:54.578125000 +0200
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 8697
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff -r -u -N linux-2.4.24/drivers/block/ll_rw_blk.c linux-2.4.24-sansa/drivers/block/ll_rw_blk.c
+|--- linux-2.4.24/drivers/block/ll_rw_blk.c	2003-11-28 19:26:19.000000000 +0100
+|+++ linux-2.4.24-sansa/drivers/block/ll_rw_blk.c	2008-05-29 12:17:21.828125000 +0200
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+The next patch would delete the file linux-2.4.24-sansa/drivers/sound/.version,
+which does not exist!  Assuming -R.
+patching file linux-2.4.24/drivers/sound/.version
+can't find file to patch at input line 8730
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff -r -u -N linux-2.4.24/drivers/video/Config.in linux-2.4.24-sansa/drivers/video/Config.in
+|--- linux-2.4.24/drivers/video/Config.in	2008-03-26 07:49:34.250000000 +0100
+|+++ linux-2.4.24-sansa/drivers/video/Config.in	2008-05-29 12:17:47.625000000 +0200
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 8744
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff -r -u -N linux-2.4.24/drivers/video/Makefile linux-2.4.24-sansa/drivers/video/Makefile
+|--- linux-2.4.24/drivers/video/Makefile	2008-03-26 07:49:34.250000000 +0100
+|+++ linux-2.4.24-sansa/drivers/video/Makefile	2008-05-29 12:17:48.437500000 +0200
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 8755
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff -r -u -N linux-2.4.24/drivers/video/fbcon.c linux-2.4.24-sansa/drivers/video/fbcon.c
+|--- linux-2.4.24/drivers/video/fbcon.c	2008-03-26 07:49:34.265625000 +0100
+|+++ linux-2.4.24-sansa/drivers/video/fbcon.c	2008-05-29 12:17:48.125000000 +0200
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 8770
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff -r -u -N linux-2.4.24/drivers/video/fbmem.c linux-2.4.24-sansa/drivers/video/fbmem.c
+|--- linux-2.4.24/drivers/video/fbmem.c	2008-03-26 07:49:34.265625000 +0100
+|+++ linux-2.4.24-sansa/drivers/video/fbmem.c	2008-05-29 12:17:48.125000000 +0200
+--------------------------
+No file to patch.  Skipping patch.
+3 out of 3 hunks ignored
+can't find file to patch at input line 8801
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff -r -u -N linux-2.4.24/fs/partitions/check.c linux-2.4.24-sansa/fs/partitions/check.c
+|--- linux-2.4.24/fs/partitions/check.c	2008-03-26 07:49:34.562500000 +0100
+|+++ linux-2.4.24-sansa/fs/partitions/check.c	2008-05-29 12:17:53.578125000 +0200
+--------------------------
+No file to patch.  Skipping patch.
+3 out of 3 hunks ignored
+patching file linux-2.4.24/include/asm-armnommu/arch-sansa/dma.h
+patching file linux-2.4.24/include/asm-armnommu/arch-sansa/hardware.h
+patching file linux-2.4.24/include/asm-armnommu/arch-sansa/io.h
+patching file linux-2.4.24/include/asm-armnommu/arch-sansa/irq.h
+patching file linux-2.4.24/include/asm-armnommu/arch-sansa/irqs.h
+patching file linux-2.4.24/include/asm-armnommu/arch-sansa/keyboard.h
+patching file linux-2.4.24/include/asm-armnommu/arch-sansa/memory.h
+patching file linux-2.4.24/include/asm-armnommu/arch-sansa/param.h
+patching file linux-2.4.24/include/asm-armnommu/arch-sansa/serial.h
+patching file linux-2.4.24/include/asm-armnommu/arch-sansa/system.h
+patching file linux-2.4.24/include/asm-armnommu/arch-sansa/time.h
+patching file linux-2.4.24/include/asm-armnommu/arch-sansa/timex.h
+patching file linux-2.4.24/include/asm-armnommu/arch-sansa/vmalloc.h
+The next patch would delete the file linux-2.4.24-sansa/include/asm-armnommu/mach-types.h,
+which does not exist!  Assuming -R.
+patching file linux-2.4.24/include/asm-armnommu/mach-types.h
+can't find file to patch at input line 10662
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff -r -u -N linux-2.4.24/include/asm-armnommu/pci.h linux-2.4.24-sansa/include/asm-armnommu/pci.h
+|--- linux-2.4.24/include/asm-armnommu/pci.h	2008-03-26 07:49:35.703125000 +0100
+|+++ linux-2.4.24-sansa/include/asm-armnommu/pci.h	2008-05-29 12:17:57.968750000 +0200
+--------------------------
+No file to patch.  Skipping patch.
+3 out of 3 hunks ignored
+can't find file to patch at input line 10723
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff -r -u -N linux-2.4.24/include/asm-armnommu/scatterlist.h linux-2.4.24-sansa/include/asm-armnommu/scatterlist.h
+|--- linux-2.4.24/include/asm-armnommu/scatterlist.h	2008-03-26 07:49:35.750000000 +0100
+|+++ linux-2.4.24-sansa/include/asm-armnommu/scatterlist.h	2008-05-29 12:17:58.000000000 +0200
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 10736
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff -r -u -N linux-2.4.24/include/asm-armnommu/types.h linux-2.4.24-sansa/include/asm-armnommu/types.h
+|--- linux-2.4.24/include/asm-armnommu/types.h	2008-03-26 07:49:35.843750000 +0100
+|+++ linux-2.4.24-sansa/include/asm-armnommu/types.h	2008-05-29 12:17:58.015625000 +0200
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 10747
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff -r -u -N linux-2.4.24/include/linux/serio.h linux-2.4.24-sansa/include/linux/serio.h
+|--- linux-2.4.24/include/linux/serio.h	2002-11-29 00:53:15.000000000 +0100
+|+++ linux-2.4.24-sansa/include/linux/serio.h	2008-05-29 12:18:09.468750000 +0200
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 10758
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff -r -u -N linux-2.4.24/kernel/Makefile linux-2.4.24-sansa/kernel/Makefile
+|--- linux-2.4.24/kernel/Makefile	2008-03-26 07:49:42.187500000 +0100
+|+++ linux-2.4.24-sansa/kernel/Makefile	2008-05-29 12:18:10.750000000 +0200
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
